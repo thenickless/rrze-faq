@@ -34,6 +34,18 @@ function init() {
     include_once('includes/REST-API/rrze-faq-rest-filter.php');
     include_once('includes/REST-API/rrze-faq-posttype-rest.php');
     include_once('includes/REST-API/rrze-faq-taxonomy-rest.php');
+    include_once('includes/faq/rrze-faq-list-table-helper.php');
+    include_once('includes/faq/rrze-faq-list-table.php');
+    
+    
+    if( ! class_exists( 'WP_List_Table' ) ) {
+        require_once( ABSPATH . 'wp-admin/includes/class-wp-screen.php' );
+        require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+        require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+        require_once( ABSPATH . 'wp-admin/includes/template.php' );
+    }
+    add_filter('set-screen-option', 'RRZE\Glossar\Server\list_table_set_option');
+    add_action('admin_menu', 'RRZE\Glossar\Server\faq_menu' );
 }
 
 function textdomain() {
@@ -143,3 +155,45 @@ function updateUrlOption() {
         add_option ($synonym_option, $syn);
     }*/
 //}
+
+    
+function faq_menu() {
+       
+    $faq_page = add_submenu_page( 
+        'edit.php?post_type=glossary', __( 'Show Server Glossary', 'rrze-faq' ), __( 'Show Server Glossary', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', 'RRZE\Glossar\Server\faq_page');
+    
+    add_action("load-{$faq_page}", 'RRZE\Glossar\Server\faq_screen_options');
+} 
+  
+function faq_page() {
+    $list_table = new RRZE_Faq();
+    $list_table->prepare_items();
+    ?>
+    <form method="get">
+        <input type="hidden" name="page" value="rrze-calendar">
+    <?php
+    $list_table->search_box(__('Suche', 'rrze-faq'), 'search_id');
+    ?>
+    </form>
+    <form method="post">
+        <?php
+        $list_table->views();
+        $list_table->display();
+        ?>
+    </form>
+    <?php
+}
+
+function faq_screen_options() {
+    $option = 'per_page';
+    $args = array(
+        'label' => __('Einträge pro Seite:', 'rrze-faq'),
+        'default' => 20,
+        'option' => 'feeds_per_page'
+    );
+    add_screen_option($option, $args);
+}
+
+function list_table_set_option($status, $option, $value) {
+    return $value;
+}
