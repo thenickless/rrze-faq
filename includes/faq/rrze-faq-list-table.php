@@ -8,7 +8,6 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class FAQ_List extends \WP_List_Table {
 
-	/** Class constructor */
 	public function __construct() {
 
 		parent::__construct( [
@@ -36,6 +35,8 @@ class FAQ_List extends \WP_List_Table {
 
 	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
+                        case 'id':
+                        case 'category':
 			case 'title':
 			case 'content':
 			case 'domain':
@@ -53,9 +54,11 @@ class FAQ_List extends \WP_List_Table {
 
 	function get_columns() {
 		$columns = [
-			'cb'      => '<input type="checkbox" />',
-			'title'    => __( 'Title', 'rrze-fau' ),
-			'content' => __( 'Content', 'rrze-fau' ),
+			'cb'        => '<input type="checkbox" />',
+                        'id'        => __( 'ID', 'rrze-fau' ),
+                        'category'  => __( 'Category', 'rrze-fau' ),
+			'title'     => __( 'Title', 'rrze-fau' ),
+			'content'   => __( 'Content', 'rrze-fau' ),
 			'domain'    => __( 'Domain', 'rrze-fau' )
 		];
 
@@ -138,7 +141,7 @@ class RRZE_FAQ {
 	public function plugin_menu() {
                 
             $faq_page = add_submenu_page( 
-                'edit.php?post_type=glossary', __( 'Show Server Glossary', 'rrze-faq' ), __( 'Show Server Glossary', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
+                'edit.php?post_type=glossary', __( 'Show Domain Glossary', 'rrze-faq' ), __( 'Show Domain Glossary', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
 
             add_action("load-{$faq_page}", array( $this, 'screen_option'));
 
