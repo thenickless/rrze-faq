@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Synonym\Server;
+namespace RRZE\Glossar\Server;
 
 Class DomainWPListTable {
     
@@ -8,7 +8,7 @@ Class DomainWPListTable {
         
         $i = 0;
         
-        $z = get_option('registerServer');
+        $z = get_option('registerDomain');
         
         if(!empty($z)) {
             $t = array_flip($z);

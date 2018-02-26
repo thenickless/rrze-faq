@@ -56,8 +56,8 @@ class FAQ_List extends \WP_List_Table {
 		$columns = [
 			'cb'        => '<input type="checkbox" />',
                         'id'        => __( 'ID', 'rrze-fau' ),
+                        'title'     => __( 'Title', 'rrze-fau' ),
                         'category'  => __( 'Category', 'rrze-fau' ),
-			'title'     => __( 'Title', 'rrze-fau' ),
 			'content'   => __( 'Content', 'rrze-fau' ),
 			'domain'    => __( 'Domain', 'rrze-fau' )
 		];
@@ -69,7 +69,8 @@ class FAQ_List extends \WP_List_Table {
 		$sortable_columns = array(
 			'title' => array( 'title', true ),
 			'content' => array( 'content', true ),
-                        'domain' => array( 'domain', true)
+                        'domain' => array( 'domain', true),
+                        'category' => array( 'category', true)
 		);
 
 		return $sortable_columns;
@@ -82,6 +83,21 @@ class FAQ_List extends \WP_List_Table {
 
 		return $actions;
 	}
+        
+        function extra_tablenav( $which ) {
+            $search = @$_POST['s'] ? esc_attr($_POST['s']) : "";
+            if ( $which == "top" ) : ?>
+            <form method="post">
+                <div class="actions">
+                        <p class="search-box">
+                                <label for="post-search-input" class="screen-reader-text">Search Pages:</label>
+                                <input type="search" value="<?php echo $search; ?>" name="s" id="post-search-input">
+                                <input type="submit" value="<?php _e( 'Search', 'rrze-synonym-server' ); ?>" class="button" id="search-submit" name="">
+                        </p>
+                </div>
+            </form>
+            <?php endif;
+	}
 
 	public function prepare_items() {
 
@@ -90,6 +106,18 @@ class FAQ_List extends \WP_List_Table {
 		$per_page     = $this->get_items_per_page( 'customers_per_page', 5 );
 		$current_page = $this->get_pagenum();
                 $data = FaqListTableHelper::getGlossaryForWPListTable();
+                if(@$_POST['s']) {
+                $s =  $_POST['s'];
+                $filterBy = $s;
+                echo $s;
+                $data = array_filter($data, function ($var) use ($filterBy) {
+                    return ($var['domain']      == $filterBy ||
+                            $var['title']       == $filterBy ||
+                            $var['category']    == $filterBy ||
+                            $var['content']     == $filterBy ||
+                            $var['id']          == $filterBy);
+                    });
+                }
                 $total_items  = count( $data );
                 usort( $data, array( $this, 'usort_reorder' ) );
                 $data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
@@ -130,7 +158,7 @@ class RRZE_FAQ {
 	public $faq_obj;
 
 	public function __construct() {
-		add_filter( 'set-screen-option', [ __CLASS__, 'set_screen' ], 10, 3 );
+		add_filter( 'set-screen-option', array(&$this, 'set_screen'), 10, 3 );
 		add_action( 'admin_menu', [ $this, 'plugin_menu' ] );
 	}
 
