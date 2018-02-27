@@ -109,45 +109,45 @@ class Domain_List extends \WP_List_Table {
         ) );
     }
 
-public function process_bulk_action() {
+    public function process_bulk_action() {
 
-if ( 'bulk-delete' === $this->current_action() ) {
+        if ( 'bulk-delete' === $this->current_action() ) {
 
-if(!isset($_REQUEST['domain'])) {
-echo Domain_List::selectMessage();
-} else {
-$v = $_REQUEST['domain'];
-$t = get_option('registerDomain');
-$c = array_flip($v);
-$res = array_diff_key($t, $c);
-update_option('registerDomain', $res);
-echo Domain_List::deletedMessage();
-}
+            if(!isset($_REQUEST['domain'])) {
+                echo Domain_List::selectMessage();
+            } else {
+                $v = $_REQUEST['domain'];
+                $t = get_option('registerDomain');
+                $c = array_flip($v);
+                $res = array_diff_key($t, $c);
+                update_option('registerDomain', $res);
+                echo Domain_List::deletedMessage();
+            }
 
-}
-}
+        }
+    }
 
-public function usort_reorder( $a, $b ) {
-$orderby = ! empty( $_REQUEST['orderby'] ) ? wp_unslash( $_REQUEST['orderby'] ) : 'id'; // WPCS: Input var ok.
-$order = ! empty( $_REQUEST['order'] ) ? wp_unslash( $_REQUEST['order'] ) : 'asc'; // WPCS: Input var ok.
-$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
-return ( 'asc' === $order ) ? $result : - $result;
-}
+    public function usort_reorder( $a, $b ) {
+        $orderby = ! empty( $_REQUEST['orderby'] ) ? wp_unslash( $_REQUEST['orderby'] ) : 'id'; // WPCS: Input var ok.
+        $order = ! empty( $_REQUEST['order'] ) ? wp_unslash( $_REQUEST['order'] ) : 'asc'; // WPCS: Input var ok.
+        $result = strcmp( $a[ $orderby ], $b[ $orderby ] );
+        return ( 'asc' === $order ) ? $result : - $result;
+    }
 
-public static function selectMessage() {
-$html = '<div id="message" class="updated notice is-dismissible">
-<p>' . __( 'Please selected a domain you want to delete.', 'rrze-faq' ) .'</p>
-</div>';
-return $html;
+    public static function selectMessage() {
+        $html = '<div id="message" class="updated notice is-dismissible">
+                <p>' . __( 'Please selected a domain you want to delete.', 'rrze-faq' ) .'</p>
+                </div>';
+        return $html;
 
-}
+    }
 
-public static function deletedMessage() {
-$html = '<div id="message" class="updated notice is-dismissible">
-<p>' . __( 'Domain deleted.', 'rrze-faq' ) .'</p>
-</div>';
-return $html;
-}                   
+    public static function deletedMessage() {
+        $html = '<div id="message" class="updated notice is-dismissible">
+                <p>' . __( 'Domain deleted.', 'rrze-faq' ) .'</p>
+                </div>';
+        return $html;
+    }
 
 }
 
