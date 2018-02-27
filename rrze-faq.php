@@ -38,9 +38,9 @@ function init() {
     include_once('includes/faq/rrze-faq-list-table.php');
     include_once('includes/domain/rrze-faq-domain-list.php');
     include_once('includes/domain/rrze-faq-domain-add.php');
-    new AddDomain();
+    new AddFaqDomain();
     include_once('includes/domain/rrze-faq-domain-get.php');
-    //new DomainWPListTable();
+    new DomainFaqWPListTable();
 }
 
 function textdomain() {

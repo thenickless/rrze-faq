@@ -2,12 +2,12 @@
 
 namespace RRZE\Glossar\Server;
 
-class AddDomain {
+class AddFaqDomain {
     
     public function __construct() {
         add_action('admin_menu', array($this,'rrze_faq_add_server'));
         add_action('admin_init', array($this, 'rrze_faq_server_settings'));
-        //delete_option('urls');
+        //delete_option('registerDomain');
         //delete_option(' serversynonyms');
     }
     
@@ -74,27 +74,87 @@ class AddDomain {
     function rrze_faq_server_register_save($value) {
         
         $url = $value['rrze_faq_server_options']['register_server'];
-         
-        if(!empty($url)) {
+        
+        if(!$this->checkDomain($url) && !empty($url)) {
+            echo AddFaqDomain::serviceMessage();
+        } elseif(!empty($url)) {
             if( get_option('registerDomain') === false ) {
                 $reg = array();
                 $reg[1] = $url;
                 add_option('registerDomain', $reg);
+                echo AddFaqDomain::addMessage();
             } else {
                 $server = get_option('registerDomain');
                 if(!in_array($url, $server)) {
                     array_push($server, $url);
                     update_option('registerDomain', $server);
+                    echo AddFaqDomain::addMessage();
+                } else {
+                   echo AddFaqDomain::registeredMessage();
                 }
             }
-            
-            $html = '<div id="message" class="updated notice is-dismissible">
-                    <p>' . __( 'Domain added. ', 'rrze-faq' ) . '
-                    <a href="admin.php?page=rrze_faq_server_options">Zur Übersicht</a></p>    
-                    </div>';
-            echo $html;
+           
+        } else {
+           echo AddFaqDomain::emptyMessage();
+           print_r(get_option('registerDomain'));
         }
         
-        print_r(get_option('registerDomain'));
+       
+    }
+    
+    function checkDomain($url) {
+        
+        $args = array(
+            'sslverify'   => false,
+        );
+        
+        $content = wp_remote_get("https://{$url}/wp-json/wp/v2/glossary?per_page=1", $args );
+        
+        $status_code = wp_remote_retrieve_response_code( $content );
+
+        if ( 200 === $status_code ) {
+
+           return true;
+            
+        }
+        
+    }
+    
+    static function addMessage() {
+        
+        $html = '<div id="message" class="updated notice is-dismissible">
+                <p>' . __( 'Domain added. ', 'rrze-faq' ) . '
+                <a href="admin.php?page=rrze_domain_options">Zur Übersicht</a></p>    
+                </div>';
+        return $html;
+        
+    }
+    
+    static function registeredMessage() {
+        
+        $html = '<div id="message" class="updated notice is-dismissible">
+                <p>' . __( 'Domain already registered. ', 'rrze-faq' ) . '
+                <a href="admin.php?page=rrze_domain_options">Zur Übersicht</a></p>    
+                </div>';
+        return $html;
+        
+    }
+    
+    static function emptyMessage() {
+        
+        $html = '<div id="message" class="updated notice is-dismissible">
+                <p>' . __( 'Please input a domain. ', 'rrze-faq' ) . '</p>    
+                </div>';
+        return $html;
+        
+    }
+    
+    static function serviceMessage() {
+        
+        $html = '<div id="message" class="updated notice is-dismissible">
+                <p>' . __( 'This service is not available for this domain. ', 'rrze-faq' ) . '</p>    
+                </div>';
+        return $html;
+        
     }
 }

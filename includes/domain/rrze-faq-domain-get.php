@@ -2,7 +2,7 @@
 
 namespace RRZE\Glossar\Server;
 
-Class DomainWPListTable {
+Class DomainFaqWPListTable {
     
      public static function listDomains() {
         

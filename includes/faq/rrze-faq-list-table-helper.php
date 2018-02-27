@@ -11,7 +11,7 @@ Class FaqListTableHelper {
         );
         
         //$content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?filter[glossary_category]=studium-a-z&per_page=200", $args );
-        $content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?filter&per_page=2000", $args );
+        $content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?per_page=2000", $args );
 
         $status_code = wp_remote_retrieve_response_code( $content );
 
