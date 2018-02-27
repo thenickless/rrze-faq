@@ -14,140 +14,140 @@ add_action('init', function() {
 
 class Domain_List extends \WP_List_Table {
 
-	public function __construct() {
+    public function __construct() {
 
-		parent::__construct( [
-			'singular' => __( 'FAQ', 'rrze-faq' ),
-			'plural'   => __( 'FAQs', 'rrze-faq' ),
-			'ajax'     => false
-		] );
+            parent::__construct( [
+                    'singular' => __( 'FAQ', 'rrze-faq' ),
+                    'plural'   => __( 'FAQs', 'rrze-faq' ),
+                    'ajax'     => false
+            ] );
 
-	}
+    }
 
-	public function no_items() {
-		_e( 'No Glossary Servers avaliable.', 'rrze-faq' );
-                delete_option('registerDomain');
-	}
+    public function no_items() {
+            _e( 'No Glossary Servers avaliable.', 'rrze-faq' );
+            delete_option('registerDomain');
+    }
 
-	public function column_default( $item, $column_name ) {
-            switch ( $column_name ) {
-                case 'id':
-                case 'domain':
-                        return $item[ $column_name ];
-                default:
-                        return print_r( $item, true ); //Show the whole array for troubleshooting purposes
-            }
-	}
-        
-        public function column_cb($item) {
-            return sprintf(
-                '<input type="checkbox" name="domain[]" value="%s" />', $item['id']
-            );    
+    public function column_default( $item, $column_name ) {
+        switch ( $column_name ) {
+            case 'id':
+            case 'domain':
+                    return $item[ $column_name ];
+            default:
+                    return print_r( $item, true ); //Show the whole array for troubleshooting purposes
         }
-       
-	function get_columns() {
-            $columns = [
-                    'cb'        => '<input type="checkbox" />',
-                    //'id'        => __( 'ID', 'rrze-fau' ),
-                    'domain'    => __( 'Domain', 'rrze-fau' )
-            ];
+    }
 
-            return $columns;
-	}
+    public function column_cb($item) {
+        return sprintf(
+            '<input type="checkbox" name="domain[]" value="%s" />', $item['id']
+        );    
+    }
 
-	public function get_sortable_columns() {
-            $sortable_columns = array(
-                    'title' => array( 'title', true ),
-                    'domain' => array( 'domain', true),
+    function get_columns() {
+        $columns = [
+                'cb'        => '<input type="checkbox" />',
+                //'id'        => __( 'ID', 'rrze-fau' ),
+                'domain'    => __( 'Domain', 'rrze-fau' )
+        ];
 
-            );
+        return $columns;
+    }
 
-            return $sortable_columns;
-	}
-        
-        public function get_bulk_actions() {
-            $actions = array(
-                'bulk-delete'        => __( 'Delete domains', 'rrze-faq' )
-            );
-            return $actions;
+    public function get_sortable_columns() {
+        $sortable_columns = array(
+                'title' => array( 'title', true ),
+                'domain' => array( 'domain', true),
+
+        );
+
+        return $sortable_columns;
+    }
+
+    public function get_bulk_actions() {
+        $actions = array(
+            'bulk-delete'        => __( 'Delete domains', 'rrze-faq' )
+        );
+        return $actions;
+    }
+
+    function extra_tablenav( $which ) {
+        $search = @$_POST['s'] ? esc_attr($_POST['s']) : "";
+        if ( $which == "top" ) : ?>
+        <form method="post">
+            <div class="actions">
+                    <p class="search-box">
+                            <label for="post-search-input" class="screen-reader-text">Search Pages:</label>
+                            <input type="search" value="<?php echo $search; ?>" name="s" id="post-search-input">
+                            <input type="submit" value="<?php _e( 'Search', 'rrze-faq' ); ?>" class="button" id="search-submit" name="">
+                    </p>
+            </div>
+        </form>
+        <?php endif;
+    }
+
+    public function prepare_items() {
+        $this->process_bulk_action();
+        $this->_column_headers = $this->get_column_info();
+        $per_page     = $this->get_items_per_page( 'domains_per_page', 5 );
+        $current_page = $this->get_pagenum();
+        $data = DomainFaqWPListTable::listDomains();
+        $total_items  = count( $data );
+        if($data) usort( $data, array( $this, 'usort_reorder' ) );
+        if($data) {
+            $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+        } else {
+            $items = '';
         }
+        $this->items = $items;
 
-        function extra_tablenav( $which ) {
-            $search = @$_POST['s'] ? esc_attr($_POST['s']) : "";
-            if ( $which == "top" ) : ?>
-            <form method="post">
-                <div class="actions">
-                        <p class="search-box">
-                                <label for="post-search-input" class="screen-reader-text">Search Pages:</label>
-                                <input type="search" value="<?php echo $search; ?>" name="s" id="post-search-input">
-                                <input type="submit" value="<?php _e( 'Search', 'rrze-faq' ); ?>" class="button" id="search-submit" name="">
-                        </p>
-                </div>
-            </form>
-            <?php endif;
-	}
+        $this->set_pagination_args( array(
+                'total_items' => $total_items,                     // WE have to calculate the total number of items.
+                'per_page'    => $per_page,                        // WE have to determine how many items to show on a page.
+                'total_pages' => ceil( $total_items / $per_page ), // WE have to calculate the total number of pages.
+        ) );
+    }
 
-	public function prepare_items() {
-            $this->process_bulk_action();
-            $this->_column_headers = $this->get_column_info();
-            $per_page     = $this->get_items_per_page( 'domains_per_page', 5 );
-            $current_page = $this->get_pagenum();
-            $data = DomainFaqWPListTable::listDomains();
-            $total_items  = count( $data );
-            if($data) usort( $data, array( $this, 'usort_reorder' ) );
-            if($data) {
-                $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
-            } else {
-                $items = '';
-            }
-            $this->items = $items;
+public function process_bulk_action() {
 
-            $this->set_pagination_args( array(
-                    'total_items' => $total_items,                     // WE have to calculate the total number of items.
-                    'per_page'    => $per_page,                        // WE have to determine how many items to show on a page.
-                    'total_pages' => ceil( $total_items / $per_page ), // WE have to calculate the total number of pages.
-            ) );
-	}
-        
-        public function process_bulk_action() {
+if ( 'bulk-delete' === $this->current_action() ) {
 
-            if ( 'bulk-delete' === $this->current_action() ) {
-                
-                if(!isset($_REQUEST['domain'])) {
-                    echo Domain_List::selectMessage();
-                } else {
-                    $v = $_REQUEST['domain'];
-                    $t = get_option('registerDomain');
-                    $c = array_flip($v);
-                    $res = array_diff_key($t, $c);
-                    update_option('registerDomain', $res);
-                    echo Domain_List::deletedMessage();
-                }
+if(!isset($_REQUEST['domain'])) {
+echo Domain_List::selectMessage();
+} else {
+$v = $_REQUEST['domain'];
+$t = get_option('registerDomain');
+$c = array_flip($v);
+$res = array_diff_key($t, $c);
+update_option('registerDomain', $res);
+echo Domain_List::deletedMessage();
+}
 
-            }
-        }
-        
-        public function usort_reorder( $a, $b ) {
-            $orderby = ! empty( $_REQUEST['orderby'] ) ? wp_unslash( $_REQUEST['orderby'] ) : 'id'; // WPCS: Input var ok.
-            $order = ! empty( $_REQUEST['order'] ) ? wp_unslash( $_REQUEST['order'] ) : 'asc'; // WPCS: Input var ok.
-            $result = strcmp( $a[ $orderby ], $b[ $orderby ] );
-            return ( 'asc' === $order ) ? $result : - $result;
-	}
-        
-        public static function selectMessage() {
-            $html = '<div id="message" class="updated notice is-dismissible">
-                    <p>' . __( 'Please selected a domain you want to delete.', 'rrze-faq' ) .'</p>
-                    </div>';
-            return $html;
-            
-        }
-        
-        public static function deletedMessage() {
-            $html = '<div id="message" class="updated notice is-dismissible">
-                    <p>' . __( 'Domain deleted.', 'rrze-faq' ) .'</p>
-                    </div>';
-            return $html;
-        }
+}
+}
+
+public function usort_reorder( $a, $b ) {
+$orderby = ! empty( $_REQUEST['orderby'] ) ? wp_unslash( $_REQUEST['orderby'] ) : 'id'; // WPCS: Input var ok.
+$order = ! empty( $_REQUEST['order'] ) ? wp_unslash( $_REQUEST['order'] ) : 'asc'; // WPCS: Input var ok.
+$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
+return ( 'asc' === $order ) ? $result : - $result;
+}
+
+public static function selectMessage() {
+$html = '<div id="message" class="updated notice is-dismissible">
+<p>' . __( 'Please selected a domain you want to delete.', 'rrze-faq' ) .'</p>
+</div>';
+return $html;
+
+}
+
+public static function deletedMessage() {
+$html = '<div id="message" class="updated notice is-dismissible">
+<p>' . __( 'Domain deleted.', 'rrze-faq' ) .'</p>
+</div>';
+return $html;
+}                   
 
 }
 
