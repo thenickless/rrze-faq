@@ -41,6 +41,7 @@ function init() {
     new AddFaqDomain();
     include_once('includes/domain/rrze-faq-domain-get.php');
     new DomainFaqWPListTable();
+    include_once('includes/shortcode/rrze-glossary-shortcode.php');
 }
 
 function textdomain() {
