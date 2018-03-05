@@ -119,9 +119,14 @@ class FAQ_List extends \WP_List_Table {
                     });
                 }
                 $total_items  = count( $data );
-                usort( $data, array( $this, 'usort_reorder' ) );
-                $data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
-		$this->items = $data;
+                if($data) usort( $data, array( $this, 'usort_reorder' ) );
+                //$data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+                if($data) {
+                    $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+                } else {
+                    $items = '';
+                }
+		$this->items = $items;
                 
                 $this->set_pagination_args( array(
 			'total_items' => $total_items,                     // WE have to calculate the total number of items.
@@ -133,6 +138,8 @@ class FAQ_List extends \WP_List_Table {
 	public function process_bulk_action() {
 
             if ( 'update' === $this->current_action() ) {
+                
+                
 
             }
 
