@@ -10,7 +10,7 @@ function fau_glossary( $atts, $content = null ) {
             "domain" => '',
             "rest"  => 0
             ), $atts));
-
+   
     return fau_get_glossar($id, $category, $color, $domain, $rest);   
 }
 
@@ -20,19 +20,30 @@ add_shortcode('faq', 'RRZE\Glossar\Server\fau_glossary' );
 
 function fau_get_glossar( $id=0, $cat='', $color = '', $domain, $rest) { 
     
-    if(isset($cat) && !empty($domain) && $rest = 1) {
+    delete_option('testData');
+    
+    if(isset($cat) && empty($id) && !empty($domain) && $rest = 1) {
        $domains = get_option('registerDomain');
-        if(in_array($domain, $domains )) {
-            $t = getFaqData($domain, $cat);
+        
+       if(in_array($domain, $domains )) {
+            $t = getFaqDataByCategory($domain, $cat);
             echo $t;
-           /* echo '<pre>';
-            print_r($t);
-            echo '</pre>';*/
         } else {
             return 'Domain not registered';
         }
         
-    } elseif (isset($id) && intval($id)>0) {
+    } elseif(isset($id) && intval($id)>0 && !empty($domain) && $rest = 1) {
+        echo $id;
+        $domains = get_option('registerDomain');
+        
+        if(in_array($domain, $domains )) {
+            $f = getFaqByID($domain, $id, $color);
+            echo $f;
+        } else {
+            return 'Domain not registered';
+        }
+        
+    } elseif (isset($id) && intval($id)>0 ) {
         $title = get_the_title($id);
         $letter = remove_accents(get_the_title($id));
         $letter = mb_substr($letter, 0, 1);
@@ -136,29 +147,84 @@ function fau_get_glossar( $id=0, $cat='', $color = '', $domain, $rest) {
         $return .= $accordion;
         $return .= '</div>'."\n";
         return $return;
-    }
+   } 
 }
 
-function getFaqData($domain, $category) {
+function getFaqByID($domain, $id, $color) {
+      $args = array(
+        'sslverify'   => false,
+    );
+    
+    //if ( get_option( 'testData' ) === false ) {
+        $content = wp_remote_get("https://{$domain}/wp-json/wp/v2/glossary/{$id}", $args );
+        $status_code = wp_remote_retrieve_response_code( $content );
+        if ( 200 === $status_code ) {
+            $response = $content['body'];
+                //add_option('testData', $response);
+        }
+    //}
+    
+    //$response = get_option('testData');
+
+    return formatRequestedDataByID($response, $color);
+ 
+}
+
+function formatRequestedDataByID($item, $color) {
+    
+    $list = json_decode($item, true);
+    $title = get_the_title($list['id']);
+    $letter = remove_accents($list['id']);
+    $letter = mb_substr($letter, 0, 1);
+    $letter = mb_strtoupper($letter, 'UTF-8');
+    $content = $list['content']['rendered'];
+    $content = str_replace( ']]>', ']]&gt;', $content );
+    if ( isset($content) && (mb_strlen($content) > 1)) {
+        $desc = $content;
+    } else {
+        $desc = get_post_meta( $id, 'description', true );
+    }
+
+    $result = '<article class="accordionbox fau-glossar" id="letter-'.$letter.'">'."\n";
+
+    if (isset($color) && strlen(fau_san($color))>0) {
+        $addclass= fau_san($color);
+         $result .= '<header class="'.$addclass.'"><h2>'. $list['title']['rendered'] .'</h2></header>'."\n";
+    } else {		
+        $result .= '<header><h2>' . $list['title']['rendered'] .'</h2></header>'."\n";
+    }
+    $result .= '<div class="body">'."\n";
+    $result .= $desc."\n";
+    $result .= '</div>'."\n";
+    $result .= '</article>'."\n";
+    return $result;
+}
+
+function getFaqDataByCategory($domain, $category) {
     $args = array(
         'sslverify'   => false,
     );
     
-    if ( get_option( 'testData' ) === false ) {
+    //if ( get_option( 'testData' ) === false ) {
         $content = wp_remote_get("https://{$domain}/wp-json/wp/v2/glossary?filter[glossary_category]={$category}&per_page=200", $args );
         $status_code = wp_remote_retrieve_response_code( $content );
         if ( 200 === $status_code ) {
             $response[] = $content['body'];
-                add_option('testData', $response);
+                //add_option('testData', $response);
         }
-    }
+    //}
     
-    $response = get_option('testData');
+    //$response = get_option('testData');
+        
+         echo '<pre>';
+    //print_r($response);
+    echo '</pre>';
 
     return formatRequestedData($response);
 }
 
 function formatRequestedData($data) {
+    
     $clean = array_filter($data);
 
     foreach($clean as $c => $v) {
@@ -190,21 +256,15 @@ function showFaqAccordion($items) {
     $letters = array();
 
     $accordion = '<div class="accordion">'."\n";
-    
-    echo '<pre>';
-    //print_r($items[1]['title']);
-    echo '</pre>';
+    $sort_title = array_multisort(
+        array_column($items, 'title'), 
+        SORT_ASC,
+        $items    
+        );
 
-    //$i = 0;
     for($i = 1; $i < count($items); $i++) {
-        //$id = uniqid();
-        //echo $items[$i]['title'];
-    //}
-    //foreach($items as $item) {
-      //  return $items['title'];*/
+    
         $letter = $items[$i]['title'];
-        echo $letter;
-        //return $letter;
         $letter = mb_substr($letter, 0, 1);
         $letter = mb_strtoupper($letter, 'UTF-8');
 
@@ -223,11 +283,6 @@ function showFaqAccordion($items) {
 
         $content = $items[$i]['content'];//apply_filters( 'the_content',  get_post_field('post_content',$post->ID) );
         $content = str_replace( ']]>', ']]&gt;', $items[$i]['content'] );
-        /*if ( isset($content) && (mb_strlen($content) > 1)) {
-            $desc = $content;
-        } else {
-            $desc = get_post_meta( $post->ID, 'description', true );
-        }*/
         $accordion .= $content;
 
         $accordion .= '    </div>'."\n";
