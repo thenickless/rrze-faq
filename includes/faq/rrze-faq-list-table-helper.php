@@ -16,6 +16,8 @@ Class FaqListTableHelper {
         
         $registeredDomains = get_option('registerDomain');
         
+        $flag = 0;
+        
         if($registeredDomains) { 
         
             foreach($registeredDomains as $k => $v) {
@@ -40,10 +42,10 @@ Class FaqListTableHelper {
                         $cat = json_decode($clean1[$a], true);
                     }
                     
-                    echo '<pre>';
+                    /*echo '<pre>';
                     print_r($cat[0]['slug']);
                     print_r(count($cat));
-                    echo '</pre>';
+                    echo '</pre>';*/
                     
                     for($z = 0;  $z < sizeof($cat); $z++) {
                         $o[$z]['id'] = $cat[$z]['id'];
@@ -69,14 +71,15 @@ Class FaqListTableHelper {
                         $item[$i]['content']    = $c['content']['rendered'];
                         $output = '';
                         $items = $c['glossary_category'];
-                        $count_items = (count($items));
+                        //$count_items = (count($items));
                         foreach($items as $t => $e) {
-                          foreach($o as $w => $p) {
+                                $output.= $e;
+                          /*foreach($o as $w => $p) {
                             if ($e === $o[$w]['id']) {
-                                echo $o[$w]['slug'];
-                              $output .= $o[$w]['slug'] . ($count_items > 1 ? ',' : '');
+                                //echo $o[$w]['slug'];
+                              $output .= $o[$w]['slug'];// . ($count_items > 1 ? ',' : '');
                             }
-                          }
+                          }*/
                         }
                         //$out = ($count_items > 1) ? substr($output, 0, -1) : '';
                         $item[$i]['category'] = $output;

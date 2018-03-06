@@ -20,32 +20,24 @@ add_shortcode('faq', 'RRZE\Glossar\Server\fau_glossary' );
 
 function fau_get_glossar($id, $cat='', $color = '', $domain, $rest) { 
     
-    //delete_option('testData');
-    
     if(isset($cat) && empty($id) && !empty($domain) && $rest = 1) {
         
-       echo $cat; 
-       
        $domains = get_option('registerDomain');
         
        if(in_array($domain, $domains )) {
             $t = getFaqDataByCategory($domain, $cat);
-            echo $t;
+            return $t;
         } else {
             return 'Domain not registered';
         }
         
     } elseif(isset($id) && intval($id)>0 && !empty($domain) && $rest = 1) {
         
-        echo $id;
-        
         $domains = get_option('registerDomain');
-        
-        //print_r($domains);
         
         if(in_array($domain, $domains )) {
             $f = getFaqByID($domain, $id, $color);
-            echo $f;
+            return $f;
         } else {
             return 'Domain not registered';
         }
@@ -212,42 +204,13 @@ function getFaqDataByCategory($domain, $category) {
     if ( 200 === $status_code ) {
         $response[] = $content['body'];
     }
-    
-    echo '<pre>';
-    //print_r($content['body'], true);
+   
     $b = json_decode($content['body'], true);
-    //print_r($b);
-    echo '</pre>';
-    
-    return formatRequestedData($b);
+   
+    return formatRequestedDataByCategory($b);
 }
 
-function formatRequestedData($data) {
-    
-    //$clean = array_filter($data);
-
-    /*foreach($clean as $c => $v) {
-        $list[$c] = json_decode($clean[$c], true);
-    }*/
-
-    //$i = 1;
-    /*foreach($data as $k => $v) {
-        foreach($v as $b => $c) {
-            $id = uniqid();
-            $item[$i]['unique'] = $id;
-            $item[$i]['id']         = $c[$i]['id'];
-            $item[$i]['title']      = $c['title']['rendered'];
-            $item[$i]['content']    = $c['content']['rendered'];
-            $url = parse_url($c['guid']['rendered']);
-            $item[$i]['domain']     = $url['host'];
-            $i++;
-        }
-    }*/
-    
-    
-    /*echo '<pre>';
-    print_r($data);
-    echo '</pre>';*/
+function formatRequestedDataByCategory($data) {
     
     for($i = 0; $i < sizeof($data); $i++) {
         $id = uniqid();
@@ -261,12 +224,16 @@ function formatRequestedData($data) {
     
     return showFaqAccordion($item);
         
-    /*echo '<pre>';
-    print_r($item);
-    echo '</pre>';*/
 }
 
 function showFaqAccordion($items) {
+    
+    $collator = new \Collator('de_DE');
+
+    usort($items, function (array $a, array $b) use ($collator) {
+        $result = $collator->compare($a['title'], $b['title']);
+        return $result;
+    });
     
     $return = '<div class="fau-glossar">';
 
@@ -274,25 +241,12 @@ function showFaqAccordion($items) {
     $letters = array();
 
     $accordion = '<div class="accordion">'."\n";
-    $sort_title = array_multisort(
-        array_column($items, 'title'), 
-        SORT_ASC,
-        $items    
-        );
-    
-   /* echo '<pre>';
-    print_r($items);
-    echo '</pre>';*/
     
     $i = 0;
     
     foreach($items as $item) {
-        //echo $item['title'];
-   
-
-    //for($i = ; $i < sizeof($items); $i++) {
-    
-        $letter = $item['title'];
+       
+        $letter = remove_accents($item['title']);
         $letter = mb_substr($letter, 0, 1);
         $letter = mb_strtoupper($letter, 'UTF-8');
 
