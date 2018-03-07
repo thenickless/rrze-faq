@@ -104,6 +104,8 @@ Class FaqListTableHelper {
                     print_r($t);
                     echo '</pre>';
                     $flag = 1;
+                    
+                    
 
             if($flag == 1) {
                 $clean = array_filter($response);
@@ -123,22 +125,43 @@ Class FaqListTableHelper {
                         $host = $url['host'];
                         $output = '';
                         $e = 0;
-                        $items = $c['glossary_category'];
+                        $item[$i]['glossary'] = $c['glossary_category'];
+                        $p = $c['glossary_category'];
+                        $l = count($p);
+                        //print_r($p);
+                        //$r = count($s);
+                        //echo $r;
+                        //$e = 0;
                      
-                            foreach($items as $d => $z) {
-                                //if($t[$z][$v] == $host) {
-                                //echo $host;
-                                for($r = 0; $r < sizeof($t); $r++) {
-                                    //$output .= $t[$r][][0]['slug'];
+                            foreach($item[$i]['glossary'] as $d => $z) {
+                                        
+                                    for($w = 0; $w < sizeof($t); $w++) {
+                                          $p = count($t[$w]); 
+                                           echo $p;
+                                        
+                                        for($j = 0; $j < count($t[$w]); $j++) {
+                                            
+                                              // echo '<pre>';
+                                            if($z == $t[$w][$j]['id']) {
+                                        $output .= $t[$w][$j]['slug'];
+                //echo '</pre>';
+                                            //$output .= $t[$w][$i]['slug'];
+                                        }
+                                           /* foreach($t as $u => $r) {
+                                                //if($z == $r[$w]['id']) {
+                                                    $output .= $r[$w]['id'];
+                                                //}*/
+                                            }
                                     
-                                    foreach($t as $s => $u) {
-                                        $output .= $u[0]['slug'];
+                                        //echo $w;
+                                    //}  */          
                                     }
+                                  
                                 }
                                
                                 //}*/
                                  //$output .= $z;
-                            }
+                            //}
                             //$output .= $z;
                         //}
                         //$count_items = (count($items));
@@ -159,6 +182,11 @@ Class FaqListTableHelper {
                         $i++;
                     }
                 }
+                
+                echo '<pre>';
+                //print_r($item);
+                echo '</pre>';
+                
                 return $item;
             } else {
                 return;
