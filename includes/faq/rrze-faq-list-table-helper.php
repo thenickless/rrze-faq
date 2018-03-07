@@ -42,71 +42,19 @@ Class FaqListTableHelper {
                         $cat = json_decode($clean1[$a], true);
                     }
                     
-                    /*echo '<pre>';
-                    print_r($cat[0]['slug']);
-                    print_r(count($cat));
-                    echo '</pre>';*/
-                    
                     for($z = 0;  $z < sizeof($cat); $z++) {
                         $o[$z]['id'] = $cat[$z]['id'];
                         $o[$z]['slug'] = $cat[$z]['slug'];
                         $o[$z]['domain'] = $v;
                         
                     }
-                    //$stack = add_option('slugStack');
-                    //$stack[] = $o;
-                    echo '<pre>';
-                    //print_r($o);
-                    echo '</pre>';
-                    
-                    /*if( get_option('slugStack') === false ) {
-                        $stack = array();
-                        $stack[1] = $o;
-                        add_option('slugStack', $stack);
-                    } else {
-                        //echo 'zweites mal';
-                        $u = get_option('slugStack');
-                        for($a = 1; $a <= sizeof($u); $a++) {
-                            //echo $u[$a]['wordpress.dev'][0]['slug'];
-                            if(!array_key_exists($v, $u[$a])){
-                          echo $u[1][$v][0]['slug'];
-                            }
-                        /*foreach($u as $q => $e) {
-                            echo $e;
-                        }*/
-                      //  }
-                        /*$add = get_option('slugStack');
-                        for($a = 0; $a < sizeof($add); $a++) {
-                            foreach($)
-                            
-                        }
-                       
-                        if(!in_array($url, $add)) {
-                            array_push($server, $url);
-                            update_option('slugStack', $server);
-                        }*/
-                    //}
-                    
-                    $u = get_option('slugStack');
-                    
-                    delete_option('slugStack');
                     
                     $t[] = $o;
+                    $flag = 1;
                     
                 }
             }
             
-              /*for($e = 0; $e < sizeof($t); $e++) {
-                       print_r($t[$e][$v]); 
-                    }*/
-                    
-                    echo '<pre>';
-                    print_r($t);
-                    echo '</pre>';
-                    $flag = 1;
-                    
-                    
-
             if($flag == 1) {
                 $clean = array_filter($response);
 
@@ -115,6 +63,8 @@ Class FaqListTableHelper {
                 }
 
                 $i = 1;
+                $o = 0;
+                $separator = '';
                 foreach($list as $k => $b) {
                     foreach($b as $b => $c) {
                         $item[$i]['id']         = $c['id'];
@@ -124,69 +74,30 @@ Class FaqListTableHelper {
                         $item[$i]['domain']     = $url['host'];
                         $host = $url['host'];
                         $output = '';
-                        $e = 0;
                         $item[$i]['glossary'] = $c['glossary_category'];
-                        $p = $c['glossary_category'];
-                        $l = count($p);
-                        //print_r($p);
-                        //$r = count($s);
-                        //echo $r;
-                        //$e = 0;
-                     
-                            foreach($item[$i]['glossary'] as $d => $z) {
-                                        
-                                    for($w = 0; $w < sizeof($t); $w++) {
-                                          $p = count($t[$w]); 
-                                           echo $p;
-                                        
-                                        for($j = 0; $j < count($t[$w]); $j++) {
-                                            
-                                              // echo '<pre>';
-                                            if($z == $t[$w][$j]['id']) {
-                                        $output .= $t[$w][$j]['slug'];
-                //echo '</pre>';
-                                            //$output .= $t[$w][$i]['slug'];
-                                        }
-                                           /* foreach($t as $u => $r) {
-                                                //if($z == $r[$w]['id']) {
-                                                    $output .= $r[$w]['id'];
-                                                //}*/
-                                            }
-                                    
-                                        //echo $w;
-                                    //}  */          
+                        foreach($item[$i]['glossary'] as $d => $z) {
+                            for($w = 0; $w < sizeof($t); $w++) {
+                                for($j = 0; $j < count($t[$w]); $j++) {
+                                    if($z == $t[$w][$j]['id']) {
+                                        if($o > 1) $separator = ',';
+                                        $output .= $t[$w][$j]['slug'] . $separator ;
+                                        $o++;
                                     }
-                                  
+                                   
                                 }
                                
-                                //}*/
-                                 //$output .= $z;
-                            //}
-                            //$output .= $z;
-                        //}
-                        //$count_items = (count($items));
-                        /*foreach($items as $t => $e) {
-                            foreach($o as $d => $z) {
-                               //print_r($t);
                             }
-                                //$output.= $e;
-                          /*foreach($o as $w => $p) {
-                            if ($e === $o[$w]['id']) {
-                                //echo $o[$w]['slug'];
-                              $output .= $o[$w]['slug'];// . ($count_items > 1 ? ',' : '');
-                            }
-                          }*/
-                        //}
-                        //$out = ($count_items > 1) ? substr($output, 0, -1) : '';
-                        $item[$i]['category'] = $output;
+                        }
+                        $u = substr($output, -1, 1);
+                        if($u == ',') {
+                           $out = substr($output, 0, -1);
+                        }else {
+                            $out = $output;
+                        }
+                        $item[$i]['category'] = $out;
                         $i++;
                     }
                 }
-                
-                echo '<pre>';
-                //print_r($item);
-                echo '</pre>';
-                
                 return $item;
             } else {
                 return;
