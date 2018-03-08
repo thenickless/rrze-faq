@@ -5,19 +5,19 @@ namespace RRZE\Glossar\Server;
 function fau_glossary_post_type() {	
 
     $labels = array(
-            'name'                => _x( 'Glossar-Einträge', 'Post Type General Name', 'fau' ),
-            'singular_name'       => _x( 'Glossar-Eintrag', 'Post Type Singular Name', 'fau' ),
-            'menu_name'           => __( 'Glossar', 'fau' ),
-            'parent_item_colon'   => __( 'Übergeordneter Glossar-Eintrag', 'fau' ),
-            'all_items'           => __( 'Alle Glossar-Einträge', 'fau' ),
-            'view_item'           => __( 'Eintrag anzeigen', 'fau' ),
-            'add_new_item'        => __( 'Glossar-Eintrag hinzufügen', 'fau' ),
-            'add_new'             => __( 'Neuer Glossar-Eintrag', 'fau' ),
-            'edit_item'           => __( 'Eintrag bearbeiten', 'fau' ),
-            'update_item'         => __( 'Eintrag aktualisieren', 'fau' ),
-            'search_items'        => __( 'Glossar-Eintrag suchen', 'fau' ),
-            'not_found'           => __( 'Keine Glossar-Einträge gefunden', 'fau' ),
-            'not_found_in_trash'  => __( 'Keine Glossar-Einträge im Papierkorb gefunden', 'fau' ),
+            'name'                => _x( 'Faqs', 'Post Type General Name', 'rrze-faq' ),
+            'singular_name'       => _x( 'Faqs', 'Post Type Singular Name', 'rrze-faq' ),
+            'menu_name'           => __( 'Faq', 'rrze-faq' ),
+            'parent_item_colon'   => __( 'Parent Faqs', 'rrze-faq' ),
+            'all_items'           => __( 'All Faqs', 'rrze-faq' ),
+            'view_item'           => __( 'Show Faq', 'rrze-faq' ),
+            'add_new_item'        => __( 'Add Faq', 'rrze-faq' ),
+            'add_new'             => __( 'New Faq', 'rrze-faq' ),
+            'edit_item'           => __( 'Edit Faq', 'rrze-faq' ),
+            'update_item'         => __( 'Update Faq', 'rrze-faq' ),
+            'search_items'        => __( 'Search Faq', 'rrze-faq' ),
+            'not_found'           => __( 'No Faqs found', 'rrze-faq' ),
+            'not_found_in_trash'  => __( 'No Faqs found in trash', 'rrze-faq' ),
     );
     $rewrite = array(
             'slug'                => 'glossary',
@@ -26,8 +26,8 @@ function fau_glossary_post_type() {
             'feeds'               => true,
     );
     $args = array(
-            'label'               => __( 'glossar', 'fau' ),
-            'description'         => __( 'Glossar-Informationen', 'fau' ),
+            'label'               => __( 'faq', 'rrze-faq' ),
+            'description'         => __( 'faq informations', 'rrze-faq' ),
             'labels'              => $labels,
             'supports'            => array( 'title', 'editor' ),
             'taxonomies'          => array( 'glossary_category' ),

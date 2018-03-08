@@ -14,8 +14,8 @@ class AddFaqDomain {
     public function rrze_faq_add_server() {
         add_submenu_page( 
             'edit.php?post_type=glossary', 
-                __( 'Add New Domain', 'rrze-faq' ), 
-                __( 'Add New Domain', 'rrze-faq' ), 
+                __( 'Add Domain', 'rrze-faq' ), 
+                __( 'Add Domain', 'rrze-faq' ), 
                 'manage_options', 
                 'rrze_faq_server_add_options', 
                 array(&$this, 'rrze_faq_server_add_settings')
@@ -25,8 +25,8 @@ class AddFaqDomain {
     function rrze_faq_server_add_settings() { 
     //delete_option('registerDomain');?>
         <div class="wrap">
-            <h2><?php  _e( 'Register new domain', 'rrze-faq' ) ?></h2>
-            <h2><?php  _e( 'Register the domain from which you want to get glossaries.', 'rrze-faq' ) ?></h2>
+            <h2><?php  _e( 'Add new domain', 'rrze-faq' ) ?></h2>
+            <h2><?php  _e( 'Register domains which you want to get faqs from.', 'rrze-faq' ) ?></h2>
             <form method="post">
                 <?php settings_fields('rrze_faq_add_server_options_group');?>
                 <?php do_settings_sections('rrze_faq_server_plugin');?>

@@ -11,7 +11,7 @@ function fau_glossary_restrict_manage_posts() {
         foreach ($filters as $tax_slug) {
             $tax_obj = get_taxonomy($tax_slug);
             wp_dropdown_categories(array(
-                'show_option_all' => sprintf(__('Alle %s anzeigen', 'fau'), $tax_obj->label),
+                'show_option_all' => sprintf(__('Show all %s', 'rrze-faq'), $tax_obj->label),
                 'taxonomy' => $tax_slug,
                 'name' => $tax_obj->name,
                 'orderby' => 'name',

@@ -56,11 +56,11 @@ class FAQ_List extends \WP_List_Table {
 	function get_columns() {
 		$columns = [
 			'cb'        => '<input type="checkbox" />',
-                        'id'        => __( 'ID', 'rrze-fau' ),
-                        'title'     => __( 'Title', 'rrze-fau' ),
-                        'category'  => __( 'Category', 'rrze-fau' ),
-			'content'   => __( 'Content', 'rrze-fau' ),
-			'domain'    => __( 'Domain', 'rrze-fau' )
+                        'id'        => __( 'ID', 'rrze-faq' ),
+                        'title'     => __( 'Title', 'rrze-faq' ),
+                        'category'  => __( 'Category', 'rrze-faq' ),
+			'content'   => __( 'Content', 'rrze-faq' ),
+			'domain'    => __( 'Domain', 'rrze-faq' )
 		];
 
 		return $columns;
@@ -108,6 +108,7 @@ class FAQ_List extends \WP_List_Table {
 		$current_page = $this->get_pagenum();
                 $data = get_option('serverfaq');
                 if(!$data) $data = FaqListTableHelper::getGlossaryForWPListTable();
+                //$data = FaqListTableHelper::getGlossaryForWPListTable();
                 if(@$_POST['s']) {
                 $s =  $_POST['s'];
                 $filterBy = $s;
@@ -178,7 +179,7 @@ class RRZE_FAQ {
 	public function plugin_menu() {
                 
             $faq_page = add_submenu_page( 
-                'edit.php?post_type=glossary', __( 'Show Domain Glossary', 'rrze-faq' ), __( 'Show Domain Glossary', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
+                'edit.php?post_type=glossary', __( 'Remote Faqs', 'rrze-faq' ), __( 'Remote Faqs', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
 
             add_action("load-{$faq_page}", array( $this, 'screen_option'));
 
@@ -187,7 +188,7 @@ class RRZE_FAQ {
 	public function plugin_settings_page() {
         ?>
             <div class="wrap">
-                <h2><?php _e( 'Domain Glossary List', 'rrze-faq' ) ?></h2>
+                <h2><?php _e( 'Remote Faq List', 'rrze-faq' ) ?></h2>
 
                 <div id="poststuff">
                     <div id="post-body" class="metabox-holder columns-2">

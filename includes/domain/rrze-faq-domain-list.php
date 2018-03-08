@@ -49,7 +49,7 @@ class Domain_List extends \WP_List_Table {
         $columns = [
                 'cb'        => '<input type="checkbox" />',
                 //'id'        => __( 'ID', 'rrze-fau' ),
-                'domain'    => __( 'Domain', 'rrze-fau' )
+                'domain'    => __( 'Domain', 'rrze-faq' )
         ];
 
         return $columns;
@@ -171,8 +171,8 @@ class DOMAIN_FAQ {
 
         $domain_page = add_submenu_page( 
             'edit.php?post_type=glossary', 
-            __( 'Glossary list', 'rrze-faq' ), 
-            __( 'Glossary list', 'rrze-faq' ), 
+            __( 'Show Domains', 'rrze-faq' ), 
+            __( 'Show Domains', 'rrze-faq' ), 
             'manage_options', 
             'rrze_domain_options', 
             array($this, 'plugin_domain_settings_page')
@@ -185,7 +185,7 @@ class DOMAIN_FAQ {
     public function plugin_domain_settings_page() {
     ?>
         <div class="wrap">
-            <h2><?php _e( 'Domain Glossary List', 'rrze-faq' ) ?></h2>
+            <h2><?php _e( 'Domain list', 'rrze-faq' ) ?></h2>
             <form method="post">
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">

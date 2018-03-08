@@ -31,7 +31,6 @@ function init() {
     include_once('includes/posttype/rrze-faq-metabox.php');
     include_once('includes/posttype/rrze-faq-admin.php');
     include_once('includes/posttype/rrze-faq-helper.php');
-    include_once('includes/posttype/rrze-faq-admin-view.php');
     include_once('includes/REST-API/rrze-faq-rest-filter.php');
     include_once('includes/REST-API/rrze-faq-posttype-rest.php');
     include_once('includes/REST-API/rrze-faq-taxonomy-rest.php');

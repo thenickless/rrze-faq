@@ -78,7 +78,7 @@ Class FaqListTableHelper {
                         foreach($item[$i]['glossary'] as $d => $z) {
                             for($w = 0; $w < sizeof($t); $w++) {
                                 for($j = 0; $j < count($t[$w]); $j++) {
-                                    if($z == $t[$w][$j]['id']) {
+                                    if($z == $t[$w][$j]['id'] && $t[$w][$j]['domain'] == $host) {
                                         if($o > 1) $separator = ',';
                                         $output .= $t[$w][$j]['slug'] . $separator ;
                                         $o++;
