@@ -19,7 +19,7 @@ const RRZE_PHP_VERSION              = '7.0';
 const RRZE_WP_VERSION               = '4.9';
     
 add_action('plugins_loaded', 'RRZE\Glossar\Server\init');
-//add_action ('synonymhook', 'RRZE\Synonym\Server\updateUrlOption');
+add_action ('faqhook', 'RRZE\Glossar\Server\updateList');
 register_activation_hook(__FILE__, 'RRZE\Glossar\Server\activation');
 
 
@@ -31,6 +31,7 @@ function init() {
     include_once('includes/posttype/rrze-faq-metabox.php');
     include_once('includes/posttype/rrze-faq-admin.php');
     include_once('includes/posttype/rrze-faq-helper.php');
+    include_once('includes/posttype/rrze-faq-admin-view.php');
     include_once('includes/REST-API/rrze-faq-rest-filter.php');
     include_once('includes/REST-API/rrze-faq-posttype-rest.php');
     include_once('includes/REST-API/rrze-faq-taxonomy-rest.php');
@@ -51,7 +52,7 @@ function textdomain() {
 function activation() {
     textdomain();
     system_requirements();
-    //synonymcron();
+    faq_cron();
     
   /*  $caps_synonym = get_caps('synonym');
     add_caps('administrator', $caps_synonym);*/
@@ -119,7 +120,7 @@ function system_requirements() {
     }
 }
 
-/*function synonym_cron_schedules($schedules){
+function faq_cron_schedules($schedules){
     if(!isset($schedules["5min"])){
         $schedules["5min"] = array(
             'interval' => 5*60,
@@ -128,26 +129,26 @@ function system_requirements() {
     return $schedules;
 }
 
-add_filter('cron_schedules','RRZE\Synonym\Server\synonym_cron_schedules');
+add_filter('cron_schedules','RRZE\Glossar\Server\faq_cron_schedules');
 
-function synonymcron() {
-    if (!wp_next_scheduled( 'synonymhook' )) {
-      wp_schedule_event( time(), '5min', 'synonymhook' );
+function faq_cron() {
+    if (!wp_next_scheduled( 'faqhook' )) {
+      wp_schedule_event( time(), '5min', 'faqhook' );
     }
 }
 
-function updateUrlOption() {
+function updateList() {
     
     //delete_option('urls');
     //getSynonymsForWPListTable
     
-    $synonym_option = 'serversynonyms';
-    $syn = WplisttableHelper::getSynonymsForWPListTable();
+    $faq_option = 'serverfaq';
+    $faq = FaqListTableHelper::getGlossaryForWPListTable();
     
-    if( get_option($synonym_option) !== false) {
-        update_option($synonym_option, $syn);
+    if( get_option($faq_option) !== false) {
+        update_option($faq_option, $faq);
     } else {
         $autoload = 'no';
-        add_option ($synonym_option, $syn);
-    }*/
-//}
+        add_option ($faq_option, $faq);
+    }
+}

@@ -8,7 +8,8 @@ function fau_glossary_taxonomy() {
         'glossary',   		 //post type name
         array(
             'hierarchical'	=> true,
-            'label' 		=> __('Glossar-Kategorien', 'fau'),  //Display name
+            'label' 		=> __('Glossar-Kategorien', 'fau'),//Display name
+            'show_admin_column' => true,
             'query_var' 	=> true,
             'rewrite'		=> array(
                    'slug'	    => 'glossaries', // This controls the base slug that will display before each term

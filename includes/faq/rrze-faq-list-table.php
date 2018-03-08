@@ -31,6 +31,7 @@ class FAQ_List extends \WP_List_Table {
 
 	public function no_items() {
 		_e( 'No Glossary Servers avaliable.', 'rrze-faq' );
+                delete_option('serverfaq');
 	}
 
 	public function column_default( $item, $column_name ) {
@@ -105,11 +106,11 @@ class FAQ_List extends \WP_List_Table {
 		$this->process_bulk_action();
 		$per_page     = $this->get_items_per_page( 'customers_per_page', 5 );
 		$current_page = $this->get_pagenum();
-                $data = FaqListTableHelper::getGlossaryForWPListTable();
+                $data = get_option('serverfaq');
+                if(!$data) $data = FaqListTableHelper::getGlossaryForWPListTable();
                 if(@$_POST['s']) {
                 $s =  $_POST['s'];
                 $filterBy = $s;
-                echo $s;
                 $data = array_filter($data, function ($var) use ($filterBy) {
                     return ($var['domain']      == $filterBy ||
                             $var['title']       == $filterBy ||
@@ -136,13 +137,14 @@ class FAQ_List extends \WP_List_Table {
 	}
 
 	public function process_bulk_action() {
-
-            if ( 'update' === $this->current_action() ) {
-                
-                
-
+            if ('update' === $this->current_action()) {
+               $faq = FaqListTableHelper::getGlossaryForWPListTable();
+               update_option('serverfaq', $faq);
+               $html = '<div id="message" class="updated notice is-dismissible">
+                           <p>' . __( 'List updated!', 'rrze-faq' ) .'</p>
+                   </div>';
+               echo $html;
             }
-
 	}
         
         public function usort_reorder( $a, $b ) {
