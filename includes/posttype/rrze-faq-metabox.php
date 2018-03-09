@@ -5,7 +5,7 @@ namespace RRZE\Glossar\Server;
 function fau_glossar_metabox() {
     add_meta_box(
         'fau_glossar_metabox',
-        __( 'Nutzungshinweise', 'fau' ),
+        __( 'Terms of use', 'rrze-faq' ),
         'RRZE\Glossar\Server\fau_glossar_metabox_content',
         'glossary',
         'normal',
@@ -17,7 +17,7 @@ function fau_glossar_metabox_content( $object, $box ) {
     global $post;
 
     if ($post->ID >0) {
-        $helpuse = __('<p>Einbindung in Seiten und Beiträgen via: </p>','fau');
+        $helpuse = __('<p>Integration in pages and posts via: </p>','fau');
 
         $helpuse .= '<ul><li>Einzelbeiträge:';
         $helpuse .= '<pre> [glossary id="'.$post->ID.'"] </pre>';

@@ -25,7 +25,7 @@ class Domain_List extends \WP_List_Table {
     }
 
     public function no_items() {
-            _e( 'No Glossary Servers avaliable.', 'rrze-faq' );
+            _e( 'No domains registered', 'rrze-faq' );
             delete_option('registerDomain');
     }
 

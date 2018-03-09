@@ -30,7 +30,7 @@ class FAQ_List extends \WP_List_Table {
 
 
 	public function no_items() {
-		_e( 'No Glossary Servers avaliable.', 'rrze-faq' );
+		_e( 'No entries', 'rrze-faq' );
                 delete_option('serverfaq');
 	}
 

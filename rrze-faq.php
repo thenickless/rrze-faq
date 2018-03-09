@@ -45,7 +45,7 @@ function init() {
 }
 
 function textdomain() {
-    load_plugin_textdomain('rrze-synonym-server', FALSE, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
+    load_plugin_textdomain('rrze-faq', FALSE, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
 }
 
 function activation() {
