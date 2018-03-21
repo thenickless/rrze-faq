@@ -1,0 +1,32 @@
+/*
+ * CSS Settings for FAU Glossary/FAQ
+ */
+.fau-glossar {
+  margin-top: 50px; }
+.fau-glossar .letters {
+  margin-bottom: 30px;
+  text-align: center; }
+.fau-glossar .letters li {
+  border: 1px solid #e7e7eb;
+  color: #e7e7eb;
+  vertical-align: middle;
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  margin: 2px;
+  border-radius: 4px;
+  list-style-type: none;
+  display: inline;
+  padding: 10px; }
+.fau-glossar .letters li a {
+  text-decoration: none;
+  outline: none; }
+.fau-glossar .letters li.filled {
+  border-color: lightgrey;
+  background: lightgrey;
+  color: #00458c; }
+.fau-glossar .letters li.filled:hover {
+  background-color: #00458c; }
+.fau-glossar .letters li.filled:hover a {
+  background-color: #00458c;
+  color: #fff; }
