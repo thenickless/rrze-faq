@@ -4,7 +4,7 @@
  * Plugin Name:     Faq
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-faq.git
  * Description:     WordPress-Plugin: Shortcode zur Einbindung von eigenen Synonymen sowie von Synonymen aus dem FAU-Netzwerk 
- * Version:         1.0.2
+ * Version:         1.0.3
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v2
@@ -127,6 +127,8 @@ function custom_libraries() {
 
     if(!in_array($current_theme, $themes)) {
         wp_register_style( 'rrze-faq-styles', plugins_url( 'rrze-faq/assets/css/styles.css', dirname(__FILE__)));
+        wp_register_script( 'rrze-faq-js', plugins_url( 'rrze-faq/assets/js/scripts.js', dirname(__FILE__)), array('jquery'),'', true);
+        wp_enqueue_script( 'rrze-faq-js' );
         wp_enqueue_style( 'rrze-faq-styles' );
     }
    
