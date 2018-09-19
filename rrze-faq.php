@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Plugin Name:     Faq
+ * Plugin Name:     RRZE-FAQ
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-faq.git
- * Description:     WordPress-Plugin: Shortcode zur Einbindung von eigenen Synonymen sowie von Synonymen aus dem FAU-Netzwerk 
- * Version:         1.0.4
+ * Description:     WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQs, Synonymen oder Glossaren in Websites. Die Einträge können Site-Übergreifend mit anderen Websites des Netzwerks synchronisiert werden.
+ * Version:         1.0.5
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v2
@@ -121,24 +121,16 @@ function system_requirements() {
 }
 
 function custom_libraries() {
-    
-    $current_theme = wp_get_theme();
-    $themes = array('FAU-Einrichtungen', 'FAU-Natfak', 'FAU-Philfak', 'FAU-RWFak', 'FAU-Techfak', 'FAU-Medfak');
-
-    if(!in_array($current_theme, $themes)) {
-        wp_register_style( 'rrze-faq-styles', plugins_url( 'rrze-faq/assets/css/styles.css', dirname(__FILE__)));
-        wp_register_script( 'rrze-faq-js', plugins_url( 'rrze-faq/assets/js/scripts.js', dirname(__FILE__)), array('jquery'),'', true);
-        wp_enqueue_script( 'rrze-faq-js' );
-        wp_enqueue_style( 'rrze-faq-styles' );
-    }
+    wp_register_style( 'rrze-faq-styles', plugins_url( 'rrze-faq/assets/css/rrze-faq.css', dirname(__FILE__)));
+    wp_register_script( 'rrze-faq-js', plugins_url( 'rrze-faq/assets/js/rrze-faq.min.js', dirname(__FILE__)), array('jquery'),'', true);
    
 }
 
 function faq_cron_schedules($schedules){
-    if(!isset($schedules["5min"])){
-        $schedules["5min"] = array(
-            'interval' => 5*60,
-            'display' => __('Once every 5 minutes'));
+    if(!isset($schedules["15min"])){
+        $schedules["15min"] = array(
+            'interval' => 15*60,
+            'display' => __('Once every 15 minutes'));
     }
     return $schedules;
 }
@@ -147,7 +139,7 @@ add_filter('cron_schedules','RRZE\Glossar\Server\faq_cron_schedules');
 
 function faq_cron() {
     if (!wp_next_scheduled( 'faqhook' )) {
-      wp_schedule_event( time(), '5min', 'faqhook' );
+      wp_schedule_event( time(), '15min', 'faqhook' );
     }
 }
 

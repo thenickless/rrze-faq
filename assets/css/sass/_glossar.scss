@@ -1,11 +1,27 @@
+//
+// CSS Settings for FAU Glossary/FAQ
+//
+
 /*
- * CSS Settings for FAU Glossary/FAQ
+ * Accordion
  */
 
-$colorStandardHellgrau: #e7e7eb;;
-$colorContentBorders: lightgrey;
-$colorPrimary: #00458c;;
-$colorLightest: red;
+h3.accordion-heading {
+    width: 100%;
+    padding: 0 !important;
+    margin: 0;
+    border: none;
+    text-align: left;
+}
+button.accordion-toggle {
+    width: 100%;
+    border: none;
+    text-align: left;
+}
+button.expand-all {
+    margin: 5px 0;
+    float: right;
+}
 
 .fau-glossar {
     margin-top: 50px;
@@ -37,10 +53,10 @@ $colorLightest: red;
 		color: $colorPrimary;
 	    }
 	    &.filled:hover {
-		background-color: #00458c;
+		background-color:$colorPrimary;
 	    }
             &.filled:hover a {
-		background-color: #00458c;
+		background-color:$colorPrimary;
                 color: #fff;
 	    }
 	}

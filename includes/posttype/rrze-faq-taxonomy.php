@@ -8,7 +8,7 @@ function fau_glossary_taxonomy() {
         'glossary',   		 //post type name
         array(
             'hierarchical'	=> true,
-            'label' 		=> __('Category', 'rrze-faq'),//Display name
+            'label' 		=> __('Category', 'rrze-faq'), //Display name
             'show_admin_column' => true,
             'query_var' 	=> true,
             'rewrite'		=> array(

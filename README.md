@@ -1,5 +1,5 @@
-# rrze-faq
-WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ's sowie von FAQ-Einträgen aus dem FAU-Netzwerk.<br/>
+# RRZE-FAQ
+WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ's sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
 Hierbei wurden die Funktionen vom früheren Glossar übernommen und erweitert.
 
 ## Allgemeins
@@ -33,3 +33,4 @@ Die Kategorie und die jeweilige Id des FAQ's können Sie der Liste unter dem Men
 [faq id="2215763" domain="site1.wordpress.dev" rest="1" color="med"] 
 [faq category="personen" domain="site1.wordpress.dev" rest="1"] 
 ```
+

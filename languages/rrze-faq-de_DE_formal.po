@@ -2,233 +2,217 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Faq\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 10:36+0100\n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: RRZE-Webteam <webmaster@rrze.fau.de>\n"
-"Language: de_DE@formal\n"
+"POT-Creation-Date: 2018-09-19 08:56+0000\n"
+"PO-Revision-Date: 2018-09-19 09:51+0000\n"
+"Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
+"Language-Team: Deutsch (Sie)\n"
+"Language: de_DE_formal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
-"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
-"esc_html_x:1,2c\n"
+"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPath-1: ..\n"
+"X-Poedit-SearchPath-1: .."
 
-#: ../includes/domain/rrze-faq-domain-add.php:17
-#: ../includes/domain/rrze-faq-domain-add.php:18
+#: includes/domain/rrze-faq-domain-add.php:17
+#: includes/domain/rrze-faq-domain-add.php:18
 msgid "Add Domain"
 msgstr "Neue Domain hinzufügen"
 
-#: ../includes/domain/rrze-faq-domain-add.php:28
+#: includes/domain/rrze-faq-domain-add.php:28
 msgid "Add new domain"
 msgstr "Neue Domain hinzufügen"
 
-#: ../includes/domain/rrze-faq-domain-add.php:29
+#: includes/domain/rrze-faq-domain-add.php:29
 msgid "Register domains which you want to get faqs from."
 msgstr "Registrieren Sie eine Domain von welcher Sie Faqs beziehen möchten."
 
-#: ../includes/domain/rrze-faq-domain-add.php:34
-msgid "Save"
-msgstr "Speichern"
-
-#: ../includes/domain/rrze-faq-domain-add.php:57
+#: includes/domain/rrze-faq-domain-add.php:57
 msgid "Domain:"
 msgstr "Domain:"
 
-#: ../includes/domain/rrze-faq-domain-add.php:126
+#: includes/domain/rrze-faq-domain-add.php:126
 msgid "Domain added. "
 msgstr "Domain hinzugefügt!"
 
-#: ../includes/domain/rrze-faq-domain-add.php:136
+#: includes/domain/rrze-faq-domain-add.php:136
 msgid "Domain already registered. "
 msgstr "Domain ist bereits registriert!"
 
-#: ../includes/domain/rrze-faq-domain-add.php:146
+#: includes/domain/rrze-faq-domain-add.php:146
 msgid "Please input a domain. "
 msgstr "Bitte geben Sie eine Domain ein!"
 
-#: ../includes/domain/rrze-faq-domain-add.php:155
+#: includes/domain/rrze-faq-domain-add.php:155
 msgid "This service is not available for this domain. "
 msgstr "Für diese Domain der Service nicht verfügbar!"
 
-#: ../includes/domain/rrze-faq-domain-list.php:20
-#: ../includes/faq/rrze-faq-list-table.php:14
+#: includes/domain/rrze-faq-domain-list.php:20
+#: includes/posttype/rrze-faq-posttype.php:10
+#: includes/posttype/rrze-faq-posttype.php:29
+#: includes/faq/rrze-faq-list-table.php:14
 msgid "FAQ"
 msgstr "FAQ"
 
-#: ../includes/domain/rrze-faq-domain-list.php:21
-#: ../includes/faq/rrze-faq-list-table.php:15
+#: includes/domain/rrze-faq-domain-list.php:21
+#: includes/faq/rrze-faq-list-table.php:15
 msgid "FAQs"
 msgstr "FAQ’s"
 
-#: ../includes/domain/rrze-faq-domain-list.php:28
+#: includes/domain/rrze-faq-domain-list.php:28
 msgid "No domains registered"
 msgstr "Keine Domains registriert"
 
-#: ../includes/domain/rrze-faq-domain-list.php:52
-#: ../includes/faq/rrze-faq-list-table.php:63
+#: includes/domain/rrze-faq-domain-list.php:52
+#: includes/faq/rrze-faq-list-table.php:63
 msgid "Domain"
 msgstr "Domain"
 
-#: ../includes/domain/rrze-faq-domain-list.php:70
+#: includes/domain/rrze-faq-domain-list.php:70
 msgid "Delete domains"
 msgstr "Domain löschen"
 
-#: ../includes/domain/rrze-faq-domain-list.php:83
-#: ../includes/faq/rrze-faq-list-table.php:96
+#: includes/domain/rrze-faq-domain-list.php:83
 msgid "Search"
 msgstr "Suchen"
 
-#: ../includes/domain/rrze-faq-domain-list.php:139
+#: includes/domain/rrze-faq-domain-list.php:139
 msgid "Please selected a domain you want to delete."
 msgstr "Wählen Sie die zu löschenden Domains aus!"
 
-#: ../includes/domain/rrze-faq-domain-list.php:147
+#: includes/domain/rrze-faq-domain-list.php:147
 msgid "Domain deleted."
 msgstr "Domain gelöscht!"
 
-#: ../includes/domain/rrze-faq-domain-list.php:174
-#: ../includes/domain/rrze-faq-domain-list.php:175
+#: includes/domain/rrze-faq-domain-list.php:174
+#: includes/domain/rrze-faq-domain-list.php:175
 msgid "Show Domains"
 msgstr "Domains anzeigen"
 
-#: ../includes/domain/rrze-faq-domain-list.php:188
+#: includes/domain/rrze-faq-domain-list.php:188
 msgid "Domain list"
 msgstr "Domainliste"
 
-#: ../includes/faq/rrze-faq-list-table.php:33
-msgid "No entries"
-msgstr "Keine Einträge"
+#: includes/posttype/rrze-faq-posttype.php:8
+msgctxt "FAQ, Synonym or Glossar entries"
+msgid "FAQs"
+msgstr "FAQs"
 
-#: ../includes/faq/rrze-faq-list-table.php:59
-msgid "ID"
-msgstr "ID"
+#: includes/posttype/rrze-faq-posttype.php:9
+msgctxt "Single FAQ, Synonym or Glossar "
+msgid "FAQ"
+msgstr "FAQ"
 
-#: ../includes/faq/rrze-faq-list-table.php:60
-msgid "Title"
-msgstr "Titel"
+#: includes/posttype/rrze-faq-posttype.php:30
+msgid "FAQ informations"
+msgstr "FAQ Informationen"
 
-#: ../includes/faq/rrze-faq-list-table.php:61
-#: ../includes/posttype/rrze-faq-taxonomy.php:11
+#: includes/posttype/rrze-faq-metabox.php:8
+msgid "How to"
+msgstr "Benutzungshinweise"
+
+#: includes/posttype/rrze-faq-metabox.php:20
+msgid "<p>Integration in pages and posts via: </p>"
+msgstr "<p>Einbindung in Seiten und Beiträgen via: </p>"
+
+#: includes/posttype/rrze-faq-metabox.php:22
+msgid "Single entries"
+msgstr "Einzelne Einträge"
+
+#: includes/posttype/rrze-faq-metabox.php:24
+msgid ""
+"You can also add color codes for the departments: color=\"<em>faculty "
+"shortcut</em>\", where <em>faculty shortcut</em> could be: <code>tf</code>, "
+"<code>nat</code>, <code>rw</code>, <code>med</code>, <code>phil</code>."
+msgstr ""
+"Einträge können auch mit dem Farbcode der Fakultäten ergänzt werden.  Hierzu "
+"wird im Shortcode das Attribut color ergänzt:  color=\"<em>"
+"Fakultätsabkürzung</em>\". Die Abkürzungen lauten: <code>tf</code>, <code>"
+"nat</code>, <code>rw</code>, <code>med</code>, <code>phil</code>."
+
+#: includes/posttype/rrze-faq-metabox.php:25
+msgid ""
+"Notice: A single display of an entriy will not be displayed as accordion "
+"element."
+msgstr ""
+"Hinweis: Bei der Darstellung eines einzelnen Eintrags wird dieser nicht in "
+"einem Accordion gezeigt."
+
+#: includes/posttype/rrze-faq-metabox.php:27
+msgid "Accordion with category"
+msgstr "Accordion mit allen Einträgen einer Kategorie"
+
+#: includes/posttype/rrze-faq-metabox.php:29
+msgid "Accordion with all entries"
+msgstr "Accordion mit allen Einträgen"
+
+#: includes/posttype/rrze-faq-taxonomy.php:11
+#: includes/faq/rrze-faq-list-table.php:61
 msgid "Category"
 msgstr "Kategorie"
 
-#: ../includes/faq/rrze-faq-list-table.php:62
-msgid "Content"
-msgstr "Content"
-
-#: ../includes/faq/rrze-faq-list-table.php:82
-msgid "Update list"
-msgstr "Aktualisieren"
-
-#: ../includes/faq/rrze-faq-list-table.php:145
-msgid "List updated!"
-msgstr "Liste aktualisiert!"
-
-#: ../includes/faq/rrze-faq-list-table.php:182
-msgid "Remote Faqs"
-msgstr "Remote FAQ’s"
-
-#: ../includes/faq/rrze-faq-list-table.php:191
-msgid "Remote Faq List"
-msgstr "Remote Faq Liste"
-
-#: ../includes/posttype/rrze-faq-manage-posts.php:14
+#: includes/posttype/rrze-faq-manage-posts.php:14
 #, php-format
 msgid "Show all %s"
 msgstr "Alle %s anzeigen"
 
-#: ../includes/posttype/rrze-faq-metabox.php:8
-msgid "Terms of use"
-msgstr "Nutzungshinweise"
+#: includes/faq/rrze-faq-list-table.php:33
+msgid "No entries"
+msgstr "Keine Einträge"
 
-#: ../includes/posttype/rrze-faq-metabox.php:20
-msgid "<p>Integration in pages and posts via: </p>"
-msgstr "<p>Einbindung in Seiten und Beiträgen via: </p>"
+#: includes/faq/rrze-faq-list-table.php:59
+msgid "ID"
+msgstr "ID"
 
-#: ../includes/posttype/rrze-faq-posttype.php:8
-msgctxt "Post Type General Name"
-msgid "Faqs"
-msgstr "Faq-Einträge"
+#: includes/faq/rrze-faq-list-table.php:60
+msgid "Title"
+msgstr "Titel"
 
-#: ../includes/posttype/rrze-faq-posttype.php:9
-msgctxt "Post Type Singular Name"
-msgid "Faqs"
-msgstr "Fax-Eintrag"
+#: includes/faq/rrze-faq-list-table.php:62
+msgid "Content"
+msgstr "Content"
 
-#: ../includes/posttype/rrze-faq-posttype.php:10
-msgid "Faq"
-msgstr "FAQ"
+#: includes/faq/rrze-faq-list-table.php:82
+msgid "Update list"
+msgstr "Aktualisieren"
 
-#: ../includes/posttype/rrze-faq-posttype.php:11
-msgid "Parent Faqs"
-msgstr "Übergeordneter FAQ-Eintrag"
+#: includes/faq/rrze-faq-list-table.php:145
+msgid "List updated!"
+msgstr "Liste aktualisiert!"
 
-#: ../includes/posttype/rrze-faq-posttype.php:12
-msgid "All Faqs"
-msgstr "Alle FAQ-Einträge"
+#: includes/faq/rrze-faq-list-table.php:182
+msgid "Remote FAQs"
+msgstr "FAQs von anderen Webauftritten"
 
-#: ../includes/posttype/rrze-faq-posttype.php:13
-msgid "Show Faq"
-msgstr "Eintrag anzeigen"
+#: includes/faq/rrze-faq-list-table.php:191
+msgid "Remote Faq List"
+msgstr "Remote Faq Liste"
 
-#: ../includes/posttype/rrze-faq-posttype.php:14
-msgid "Add Faq"
-msgstr "FAQ-Eintrag hinzufügen"
-
-#: ../includes/posttype/rrze-faq-posttype.php:15
-msgid "New Faq"
-msgstr "Neuer FAQ-Eintrag"
-
-#: ../includes/posttype/rrze-faq-posttype.php:16
-msgid "Edit Faq"
-msgstr "Eintrag bearbeiten"
-
-#: ../includes/posttype/rrze-faq-posttype.php:17
-msgid "Update Faq"
-msgstr "Eintrag aktualisieren"
-
-#: ../includes/posttype/rrze-faq-posttype.php:18
-msgid "Search Faq"
-msgstr "FAQ-Eintrag suchen"
-
-#: ../includes/posttype/rrze-faq-posttype.php:19
-msgid "No Faqs found"
-msgstr "Keine FAQ-Einträge"
-
-#: ../includes/posttype/rrze-faq-posttype.php:20
-msgid "No Faqs found in trash"
-msgstr "Keine FAQ-Einträge im Papierkorb gefunden"
-
-#: ../includes/posttype/rrze-faq-posttype.php:29
-msgid "faq"
-msgstr "faq"
-
-#: ../includes/posttype/rrze-faq-posttype.php:30
-msgid "faq informations"
-msgstr "FAQ-Informationen"
-
-#: ../rrze-faq.php:108
-#, php-format
-msgid ""
-"Your server is running PHP version %s. Please upgrade at least to PHP "
-"version %s."
+#. Name of the plugin
+msgid "RRZE-FAQ"
 msgstr ""
 
-#: ../rrze-faq.php:112
-#, php-format
+#. Description of the plugin
 msgid ""
-"Your Wordpress version is %s. Please upgrade at least to Wordpress version "
-"%s."
+"WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQs, Synonymen oder "
+"Glossaren in Websites. Die Einträge können Site-Übergreifend mit anderen "
+"Websites des Netzwerks synchronisiert werden."
 msgstr ""
 
-#: ../rrze-faq.php:126
-msgid "Once every 5 minutes"
-msgstr "Alle 5 Minuten Cronjob aktualisieren"
+#. URI of the plugin
+msgid "https://github.com/RRZE-Webteam/rrze-faq.git"
+msgstr ""
+
+#. Author of the plugin
+msgid "RRZE-Webteam"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://blogs.fau.de/webworking/"
+msgstr ""
