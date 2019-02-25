@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE-FAQ
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-faq.git
  * Description:     WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQs, Synonymen oder Glossaren in Websites. Die Einträge können Site-Übergreifend mit anderen Websites des Netzwerks synchronisiert werden.
- * Version:         1.0.5
+ * Version:         1.0.6
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v2
@@ -53,54 +53,8 @@ function activation() {
     textdomain();
     system_requirements();
     faq_cron();
-    
-  /*  $caps_synonym = get_caps('synonym');
-    add_caps('administrator', $caps_synonym);*/
-}
 
-/*
-function deactivation() {
-   wp_clear_scheduled_hook('synonymhook');
-    
-    $caps_synonym = get_caps('synonym');
-    remove_caps('administrator',  $caps_synonym);
-    flush_rewrite_rules();
 }
-
-function get_caps($cap_type) {
-    $caps = array(
-        "edit_" . $cap_type,
-        "read_" . $cap_type,
-        "delete_" . $cap_type,
-        "edit_" . $cap_type . "s",
-        "edit_others_" . $cap_type . "s",
-        "publish_" . $cap_type . "s",
-        "read_private_" . $cap_type . "s",
-        "delete_" . $cap_type . "s",
-        "delete_private_" . $cap_type . "s",
-        "delete_published_" . $cap_type . "s",
-        "delete_others_" . $cap_type . "s",
-        "edit_private_" . $cap_type . "s",
-        "edit_published_" . $cap_type . "s",                
-    );
-    
-    return $caps;
-}
-
-function add_caps($role, $caps) {
-    $role = get_role($role);
-    foreach($caps as $cap) {
-        $role->add_cap($cap);
-    }        
-}
-
-function remove_caps($role, $caps) {
-    $role = get_role($role);
-    foreach($caps as $cap) {
-        $role->remove_cap($cap);
-    }        
-}    
-*/
 
 function system_requirements() {
     $error = '';

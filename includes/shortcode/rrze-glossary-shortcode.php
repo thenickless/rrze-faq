@@ -164,8 +164,15 @@ function getFaqByID($domain, $id, $color) {
     $args = array(
         'sslverify'   => false,
     );
+    if (strpos($domain, 'http') === 0) {
+	$domainurl = $domain;
+    } else {
+	$domainurl = 'https://'.$domain;
+    }
+
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary/'.$id;
     
-    $content = wp_remote_get("https://{$domain}/wp-json/wp/v2/glossary/{$id}", $args );
+    $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );
     if ( 200 === $status_code ) {
         $response = $content['body'];
@@ -210,7 +217,15 @@ function getFaqDataByCategory($domain, $category) {
         'sslverify'   => false,
     );
     
-    $content = wp_remote_get("https://{$domain}/wp-json/wp/v2/glossary?filter[glossary_category]={$category}&per_page=200", $args );
+    if (strpos($domain, 'http') === 0) {
+	$domainurl = $domain;
+    } else {
+	$domainurl = 'https://'.$domain;
+    }
+
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[glossary_category]='.$category.'&per_page=200';
+    
+    $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );
     if ( 200 === $status_code ) {
         $response[] = $content['body'];

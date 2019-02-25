@@ -68,7 +68,7 @@ class AddFaqDomain {
     
     function rrze_faq_server_textarea_callback() {
 	$options = get_option('rrze_faq_server_options');
-	echo "https://www.<input type='text' placeholder='z.B. musik.fau.de' size='50' id='rrze_faq_server_input' name='rrze_faq_server_options[register_server]' />";
+	echo "<input type='text' placeholder='https://www.domain.fau.de' size='50' id='rrze_faq_server_input' name='rrze_faq_server_options[register_server]' />";
     }
     
     function rrze_faq_server_register_save($value) {
@@ -107,8 +107,15 @@ class AddFaqDomain {
         $args = array(
             'sslverify'   => false,
         );
-        
-        $content = wp_remote_get("https://{$url}/wp-json/wp/v2/glossary?per_page=1", $args );
+         if (strpos($url, 'http') === 0) {
+	    $domainurl = $url;
+	} else {
+	    $domainurl = 'https://'.$url;
+	}
+
+	$getfrom = $domainurl.'/wp-json/wp/v2/glossary?per_page=1';
+	
+        $content = wp_remote_get($getfrom, $args );
         
         $status_code = wp_remote_retrieve_response_code( $content );
 
