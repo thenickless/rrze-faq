@@ -1,22 +1,49 @@
 # RRZE-FAQ
-WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ's sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
-Hierbei wurden die Funktionen vom früheren Glossar übernommen und erweitert.
 
-## Allgemeins
+Das Plugin erlaubt das Anlegen von FAQ- oder Glossar-Einträgen. Diese können einzelnt, 
+via Kategorien und als ganzes angezeigt werden.  Darüber hinaus können FAQ-EInträge 
+andere Domains mit den selben PLugins übernommen und angezeogt werden.
 
-Die Möglichkeit eigene FAQ's (Glossare) zu definieren ist nun in ein eigenes Plugin ausgelagert worden.
-Weiterhin können Glossare wie gewohnt im Backend unter dem Menüpunkt FAQ's angelegt werden.
-Darüber hinaus können nun auch FAQ's von anderen Domains eingebunden werden.
 
-## Verwendung des Shortcodes (wie bisher)
+## Download 
+
+GITHub-Repo: https://github.com/RRZE-Webteam/rrze-faq/
+
+
+## Autor 
+RRZE-Webteam , http://www.rrze.fau.de
+
+## Copryright
+
+GNU General Public License (GPL) Version 2 
+
+
+
+## Verwendung des Shortcodes
+
+
+### Aufruf aller FAQ-Einträge:
 
 ```html
-[glossary id="1156754"] 
-[glossary category="RW"]
-
-[faq id="1156754"] 
-[faq category="RW"]  
+[faq]  
 ```
+
+
+### Aufruf einer Kategorie von FAQ-Einträgen
+
+```html 
+[faq category="$Kategorieslug"]  
+```
+
+### Aufruf eines einzelnen FAQ-Eintrags
+
+```html 
+[faq id="$FAQ-ID"]  
+```
+
+
+Der bisher bei den FAU Themes verwendete Shortcode [glossary] wird durch das Plugin ebenfalls unterstützt.
+
 
 ## Erweiterung des Shortcodes (FAQ`s von anderen Domains)
 
