@@ -169,7 +169,8 @@ function getFaqByID($domain, $id, $color) {
     } else {
 	$domainurl = 'https://'.$domain;
     }
-
+    $domainurl = filter_var($domainurl, FILTER_SANITIZE_URL);
+    $id = sanitize_key($id);
     $getfrom = $domainurl.'/wp-json/wp/v2/glossary/'.$id;
     
     $content = wp_remote_get($getfrom, $args );
@@ -222,7 +223,8 @@ function getFaqDataByCategory($domain, $category) {
     } else {
 	$domainurl = 'https://'.$domain;
     }
-
+    $domainurl = filter_var($domainurl, FILTER_SANITIZE_URL);
+    $category = sanitize_key($category);
     $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[glossary_category]='.$category.'&per_page=200';
     
     $content = wp_remote_get($getfrom, $args );

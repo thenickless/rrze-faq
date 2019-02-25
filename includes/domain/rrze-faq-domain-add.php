@@ -7,8 +7,6 @@ class AddFaqDomain {
     public function __construct() {
         add_action('admin_menu', array($this,'rrze_faq_add_server'));
         add_action('admin_init', array($this, 'rrze_faq_server_settings'));
-        //delete_option('registerDomain');
-        //delete_option(' serversynonyms');
     }
     
     public function rrze_faq_add_server() {
@@ -23,7 +21,7 @@ class AddFaqDomain {
     }
     
     function rrze_faq_server_add_settings() { 
-    //delete_option('registerDomain');?>
+    ?>
         <div class="wrap">
             <h2><?php  _e( 'Add new domain', 'rrze-faq' ) ?></h2>
             <h2><?php  _e( 'Register domains which you want to get faqs from.', 'rrze-faq' ) ?></h2>
@@ -112,19 +110,16 @@ class AddFaqDomain {
 	} else {
 	    $domainurl = 'https://'.$url;
 	}
+	$domainurl = filter_var($domainurl, FILTER_SANITIZE_URL);
 
 	$getfrom = $domainurl.'/wp-json/wp/v2/glossary?per_page=1';
-	
-        $content = wp_remote_get($getfrom, $args );
-        
-        $status_code = wp_remote_retrieve_response_code( $content );
+	$content = wp_remote_get($getfrom, $args );
+	$status_code = wp_remote_retrieve_response_code( $content );
 
-        if ( 200 === $status_code ) {
+	if ( 200 === $status_code ) {
+	       return true;  
+	}
 
-           return true;
-            
-        }
-        
     }
     
     static function addMessage() {
