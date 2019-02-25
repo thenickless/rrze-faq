@@ -11,16 +11,16 @@ function fau_glossary( $atts, $content = null ) {
             "rest"  => 0
             ), $atts));
    
-    return fau_get_glossar($id, $category, $color, $domain, $rest);   
+    return fau_get_glossar($id, $category, $color, $domain);   
 }
 
 add_shortcode('glossary', 'RRZE\Glossar\Server\fau_glossary' );
 add_shortcode('fau_glossar', 'RRZE\Glossar\Server\fau_glossary' );
 add_shortcode('faq', 'RRZE\Glossar\Server\fau_glossary' );
 
-function fau_get_glossar($id, $cat='', $color = '', $domain, $rest) { 
+function fau_get_glossar($id, $cat='', $color = '', $domain) { 
     
-    if(isset($cat) && empty($id) && !empty($domain) && $rest = 1) {
+    if(isset($cat) && empty($id) && !empty($domain)) {
         
        $domains = get_option('registerDomain');
         
@@ -31,7 +31,7 @@ function fau_get_glossar($id, $cat='', $color = '', $domain, $rest) {
             return 'Domain not registered';
         }
         
-    } elseif(isset($id) && intval($id)>0 && !empty($domain) && $rest = 1) {
+    } elseif(isset($id) && intval($id)>0 && !empty($domain)) {
         
         $domains = get_option('registerDomain');
         
@@ -164,8 +164,15 @@ function getFaqByID($domain, $id, $color) {
     $args = array(
         'sslverify'   => false,
     );
+    if (strpos($domain, 'http') === 0) {
+	$domainurl = $domain;
+    } else {
+	$domainurl = 'https://'.$domain;
+    }
+
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary/'.$id;
     
-    $content = wp_remote_get("https://{$domain}/wp-json/wp/v2/glossary/{$id}", $args );
+    $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );
     if ( 200 === $status_code ) {
         $response = $content['body'];
@@ -210,7 +217,15 @@ function getFaqDataByCategory($domain, $category) {
         'sslverify'   => false,
     );
     
-    $content = wp_remote_get("https://{$domain}/wp-json/wp/v2/glossary?filter[glossary_category]={$category}&per_page=200", $args );
+    if (strpos($domain, 'http') === 0) {
+	$domainurl = $domain;
+    } else {
+	$domainurl = 'https://'.$domain;
+    }
+
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[glossary_category]='.$category.'&per_page=200';
+    
+    $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );
     if ( 200 === $status_code ) {
         $response[] = $content['body'];

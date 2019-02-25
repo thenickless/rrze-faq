@@ -21,16 +21,23 @@ Class FaqListTableHelper {
         if($registeredDomains) { 
         
             foreach($registeredDomains as $k => $v) {
+		
+		if (strpos($v, 'http') === 0) {
+		    $domainurl = $v;
+		} else {
+		    $domainurl = 'https://'.$v;
+		}
 
-                $content = wp_remote_get("https://{$v}/wp-json/wp/v2/glossary?per_page=2000", $args );
+		$getfrom = $domainurl.'/wp-json/wp/v2/glossary?per_page=2000';
+                $content = wp_remote_get($getfrom, $args );
 
                 $status_code = wp_remote_retrieve_response_code( $content );
 
                 if ( 200 === $status_code ) {
 
                     $response[] = $content['body'];
-                    
-                    $category = wp_remote_get("https://{$v}/wp-json/wp/v2/glossary_category?per_page=100", $args);
+                    $getfrom = $domainurl.'/wp-json/wp/v2/glossary_category?per_page=100';
+                    $category = wp_remote_get($getfrom, $args);
 
                     $categories[] = $category['body'];
                     
@@ -45,7 +52,7 @@ Class FaqListTableHelper {
                     for($z = 0;  $z < sizeof($cat); $z++) {
                         $o[$z]['id'] = $cat[$z]['id'];
                         $o[$z]['slug'] = $cat[$z]['slug'];
-                        $o[$z]['domain'] = $v;
+                        $o[$z]['domain'] = $domainurl;
                         
                     }
                     

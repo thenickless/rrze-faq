@@ -8,16 +8,7 @@ function fau_glossary_post_type() {
             'name'                => _x( 'FAQs', 'FAQ, Synonym or Glossar entries', 'rrze-faq' ),
             'singular_name'       => _x( 'FAQ', 'Single FAQ, Synonym or Glossar ', 'rrze-faq' ),
             'menu_name'           => __( 'FAQ', 'rrze-faq' ),
-        /*    'parent_item_colon'   => __( 'Parent FAQs', 'rrze-faq' ),
-            'all_items'           => __( 'All FAQs', 'rrze-faq' ),
-            'view_item'           => __( 'Show FAQ', 'rrze-faq' ),
-            'add_new_item'        => __( 'Add FAQ', 'rrze-faq' ),
-            'add_new'             => __( 'New FAQ', 'rrze-faq' ),
-            'edit_item'           => __( 'Edit FAQ', 'rrze-faq' ),
-            'update_item'         => __( 'Update FAQ', 'rrze-faq' ),
-            'search_items'        => __( 'Search FAQ', 'rrze-faq' ),
-            'not_found'           => __( 'No FAQs found', 'rrze-faq' ),
-            'not_found_in_trash'  => __( 'No FAQs found in trash', 'rrze-faq' ), */
+
     );
     $rewrite = array(
             'slug'                => 'glossary',
