@@ -11,16 +11,16 @@ function fau_glossary( $atts, $content = null ) {
             "rest"  => 0
             ), $atts));
    
-    return fau_get_glossar($id, $category, $color, $domain, $rest);   
+    return fau_get_glossar($id, $category, $color, $domain);   
 }
 
 add_shortcode('glossary', 'RRZE\Glossar\Server\fau_glossary' );
 add_shortcode('fau_glossar', 'RRZE\Glossar\Server\fau_glossary' );
 add_shortcode('faq', 'RRZE\Glossar\Server\fau_glossary' );
 
-function fau_get_glossar($id, $cat='', $color = '', $domain, $rest) { 
+function fau_get_glossar($id, $cat='', $color = '', $domain) { 
     
-    if(isset($cat) && empty($id) && !empty($domain) && $rest = 1) {
+    if(isset($cat) && empty($id) && !empty($domain)) {
         
        $domains = get_option('registerDomain');
         
@@ -31,7 +31,7 @@ function fau_get_glossar($id, $cat='', $color = '', $domain, $rest) {
             return 'Domain not registered';
         }
         
-    } elseif(isset($id) && intval($id)>0 && !empty($domain) && $rest = 1) {
+    } elseif(isset($id) && intval($id)>0 && !empty($domain)) {
         
         $domains = get_option('registerDomain');
         

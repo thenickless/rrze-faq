@@ -29,8 +29,28 @@ Die Domain finden Sie unter dem Menüpunkt - __Domains anzeigen__.
 
 Die Kategorie und die jeweilige Id des FAQ's können Sie der Liste unter dem Menüpunkt - __Remote FAQ's__ - entnehmen.
 
+
+### Ausgabe aller FAQs einer entfernten Domain
+
 ```html
-[faq id="2215763" domain="site1.wordpress.dev" rest="1" color="med"] 
-[faq category="personen" domain="site1.wordpress.dev" rest="1"] 
+[faq  domain="www.wordpress.dev" ] 
+```
+
+Es wird per Default stets angenommen, daß die API via SSL erreichbar ist. Sollte eine Domain nicht via SSL erreichbar sein, ist das 
+Protokoll mit anzugeben:
+
+```html
+[faq  domain="http://plain.wordpress.dev" ] 
+```
+
+### Ausgabe der FAQs einer entfernten Domainmit einer Kategorie
+
+```html
+[faq category="personen" domain="site1.wordpress.dev" ] 
+```
+
+### Ausgabe einer speziellen FAQs einer entfernten Domainmit über ihre ID
+```html
+[faq id="2215763" domain="site1.wordpress.dev"] 
 ```
 
