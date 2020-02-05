@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE-FAQ
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-faq.git
  * Description:     WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQs, Synonymen oder Glossaren in Websites. Die Einträge können Site-Übergreifend mit anderen Websites des Netzwerks synchronisiert werden.
- * Version:         1.0.7
+ * Version:         1.0.8
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v2
@@ -22,6 +22,7 @@ add_action('plugins_loaded', 'RRZE\Glossar\Server\init');
 add_action ('faqhook', 'RRZE\Glossar\Server\updateList');
 add_action( 'wp_enqueue_scripts', 'RRZE\Glossar\Server\custom_libraries');
 register_activation_hook(__FILE__, 'RRZE\Glossar\Server\activation');
+
 
 
 function init() {

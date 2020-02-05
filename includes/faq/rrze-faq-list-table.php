@@ -106,31 +106,37 @@ class FAQ_List extends \WP_List_Table {
 		$this->process_bulk_action();
 		$per_page     = $this->get_items_per_page( 'customers_per_page', 5 );
 		$current_page = $this->get_pagenum();
-                $data = get_option('serverfaq');
-                if(!$data) $data = FaqListTableHelper::getGlossaryForWPListTable();
-                //$data = FaqListTableHelper::getGlossaryForWPListTable();
-                if(@$_POST['s']) {
-                $s =  $_POST['s'];
-                $filterBy = $s;
-                $data = array_filter($data, function ($var) use ($filterBy) {
-                    return ($var['domain']      == $filterBy ||
-                            $var['title']       == $filterBy ||
-                            $var['category']    == $filterBy ||
-                            $var['content']     == $filterBy ||
-                            $var['id']          == $filterBy);
-                    });
-                }
-                $total_items  = count( $data );
-                if($data) usort( $data, array( $this, 'usort_reorder' ) );
-                //$data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
-                if($data) {
-                    $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
-                } else {
-                    $items = '';
-                }
+        $data = get_option('serverfaq');
+        if( !$data ){
+			$data = FaqListTableHelper::getGlossaryForWPListTable();
+		}
+        if ( @$_POST['s'] ) {
+			$s =  $_POST['s'];
+            $filterBy = $s;
+            $data = array_filter($data, function ($var) use ($filterBy) {
+                return ($var['domain']      == $filterBy ||
+                	$var['title']       == $filterBy ||
+                    $var['category']    == $filterBy ||
+                    $var['content']     == $filterBy ||
+                    $var['id']          == $filterBy);
+            });
+		}
+		$items = '';
+		$total_items  = 0;
+		if ( isset( $data ) ){
+		    $total_items = count( $data );
+            if ( $data ) {
+				usort( $data, array( $this, 'usort_reorder' ) );
+			} 
+            if ( $data ) {
+                $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+            } else {
+                $items = '';
+			}
+		}
 		$this->items = $items;
                 
-                $this->set_pagination_args( array(
+        $this->set_pagination_args( array(
 			'total_items' => $total_items,                     // WE have to calculate the total number of items.
 			'per_page'    => $per_page,                        // WE have to determine how many items to show on a page.
 			'total_pages' => ceil( $total_items / $per_page ), // WE have to calculate the total number of pages.
