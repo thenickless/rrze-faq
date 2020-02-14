@@ -185,7 +185,7 @@ class RRZE_FAQ {
 	public function plugin_menu() {
                 
             $faq_page = add_submenu_page( 
-                'edit.php?post_type=glossary', __( 'Remote FAQs', 'rrze-faq' ), __( 'Remote FAQs', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
+                'edit.php?post_type=glossary', __( 'All Remote FAQ', 'rrze-faq' ), __( 'All Remote FAQ', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
 
             add_action("load-{$faq_page}", array( $this, 'screen_option'));
 

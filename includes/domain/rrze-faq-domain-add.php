@@ -1,6 +1,7 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+// namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ;
 
 class AddFaqDomain {
     
@@ -24,7 +25,7 @@ class AddFaqDomain {
     ?>
         <div class="wrap">
             <h2><?php  _e( 'Add new domain', 'rrze-faq' ) ?></h2>
-            <h2><?php  _e( 'Register domains which you want to get faqs from.', 'rrze-faq' ) ?></h2>
+            <h2><?php  _e( 'Register domains which you want to get FAQ from.', 'rrze-faq' ) ?></h2>
             <form method="post">
                 <?php settings_fields('rrze_faq_add_server_options_group');?>
                 <?php do_settings_sections('rrze_faq_server_plugin');?>

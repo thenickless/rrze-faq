@@ -69,6 +69,7 @@ Class FaqListTableHelper {
                     $list[$c] = json_decode($clean[$c], true);
                 }
 
+            
                 $i = 1;
                 $o = 0;
                 $separator = '';

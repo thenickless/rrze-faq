@@ -1,115 +1,139 @@
 <?php
 
+/*
+Plugin Name:     RRZE FAQ
+Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
+Description:     
+Version:         2.0.0
+Author:          RRZE Webteam
+Author URI:      https://blogs.fau.de/webworking/
+License:         GNU General Public License v2
+License URI:     http://www.gnu.org/licenses/gpl-2.0.html
+Domain Path:     /languages
+Text Domain:     rrze-faq
+*/
+
+namespace RRZE\FAQ;
+
+
+/*
+Die Codezeile defined('ABSPATH') || exit;
+verhindert den direkten Zugriff auf die PHP-Dateien über URL und stellt sicher,
+dass die Plugin-Dateien nur innerhalb der WordPress-Umgebung ausgeführt werden.
+Denn wenn bspw. eine Datei I/O-Operationen enthält,
+kann sie schließlich kompromittiert werden (durch einen Angreifer),
+was zu unerwartetem Verhalten führen kann.
+*/
+defined('ABSPATH') || exit;
+
+require_once 'config/config.php';
+
+use RRZE\FAQ\Main;
+
+const RRZE_PHP_VERSION = '7.3';
+const RRZE_WP_VERSION = '5.2';
+
+const RRZE_PLUGIN_FILE = __FILE__;
+
+// Automatische Laden von Klassen.
+spl_autoload_register(function ($class) {
+    $prefix = __NAMESPACE__;
+    $base_dir = __DIR__ . '/includes/';
+
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
+// Registriert die Plugin-Funktion, die bei Aktivierung des Plugins ausgeführt werden soll.
+register_activation_hook(__FILE__, __NAMESPACE__ . '\activation');
+// Registriert die Plugin-Funktion, die ausgeführt werden soll, wenn das Plugin deaktiviert wird.
+register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
+// Wird aufgerufen, sobald alle aktivierten Plugins geladen wurden.
+add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
+
 /**
- * Plugin Name:     RRZE-FAQ
- * Plugin URI:      https://github.com/RRZE-Webteam/rrze-faq.git
- * Description:     WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQs, Synonymen oder Glossaren in Websites. Die Einträge können Site-Übergreifend mit anderen Websites des Netzwerks synchronisiert werden.
- * Version:         1.0.8
- * Author:          RRZE-Webteam
- * Author URI:      https://blogs.fau.de/webworking/
- * License:         GNU General Public License v2
- * License URI:     http://www.gnu.org/licenses/gpl-2.0.html
- * Domain Path:     /languages
- * Text Domain:     rrze-faq
+ * Einbindung der Sprachdateien.
  */
-
-namespace RRZE\Glossar\Server;
-
-const RRZE_PHP_VERSION              = '7.0';
-const RRZE_WP_VERSION               = '4.9';
-    
-add_action('plugins_loaded', 'RRZE\Glossar\Server\init');
-add_action ('faqhook', 'RRZE\Glossar\Server\updateList');
-add_action( 'wp_enqueue_scripts', 'RRZE\Glossar\Server\custom_libraries');
-register_activation_hook(__FILE__, 'RRZE\Glossar\Server\activation');
-
-
-
-function init() {
-    textdomain();
-    include_once('includes/posttype/rrze-faq-posttype.php');
-    include_once('includes/posttype/rrze-faq-taxonomy.php');
-    include_once('includes/posttype/rrze-faq-manage-posts.php');
-    include_once('includes/posttype/rrze-faq-metabox.php');
-    include_once('includes/posttype/rrze-faq-admin.php');
-    include_once('includes/posttype/rrze-faq-helper.php');
-    include_once('includes/REST-API/rrze-faq-rest-filter.php');
-    include_once('includes/REST-API/rrze-faq-posttype-rest.php');
-    include_once('includes/REST-API/rrze-faq-taxonomy-rest.php');
-    include_once('includes/faq/rrze-faq-list-table-helper.php');
-    include_once('includes/faq/rrze-faq-list-table.php');
-    include_once('includes/domain/rrze-faq-domain-list.php');
-    include_once('includes/domain/rrze-faq-domain-add.php');
-    new AddFaqDomain();
-    include_once('includes/domain/rrze-faq-domain-get.php');
-    new DomainFaqWPListTable();
-    include_once('includes/shortcode/rrze-glossary-shortcode.php');
+function load_textdomain()
+{
+    load_plugin_textdomain('rrze-jobs', false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
 }
 
-function textdomain() {
-    load_plugin_textdomain('rrze-faq', FALSE, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
-}
-
-function activation() {
-    textdomain();
-    system_requirements();
-    faq_cron();
-
-}
-
-function system_requirements() {
+/**
+ * Überprüft die minimal erforderliche PHP- u. WP-Version.
+ */
+function system_requirements()
+{
     $error = '';
-
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
-        $error = sprintf(__('Your server is running PHP version %s. Please upgrade at least to PHP version %s.', 'rrze-plugin-help'), PHP_VERSION, RRZE_PHP_VERSION);
+        /* Übersetzer: 1: aktuelle PHP-Version, 2: erforderliche PHP-Version */
+        $error = sprintf(__('The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.', 'rrze-jobs'), PHP_VERSION, RRZE_PHP_VERSION);
+    } elseif (version_compare($GLOBALS['wp_version'], RRZE_WP_VERSION, '<')) {
+        /* Übersetzer: 1: aktuelle WP-Version, 2: erforderliche WP-Version */
+        $error = sprintf(__('The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.', 'rrze-jobs'), $GLOBALS['wp_version'], RRZE_WP_VERSION);
     }
+    return $error;
+}
 
-    if (version_compare($GLOBALS['wp_version'], RRZE_WP_VERSION, '<')) {
-        $error = sprintf(__('Your Wordpress version is %s. Please upgrade at least to Wordpress version %s.', 'rrze-plugin-help'), $GLOBALS['wp_version'], RRZE_WP_VERSION);
-    }
+/**
+ * Wird durchgeführt, nachdem das Plugin aktiviert wurde.
+ */
+function activation() {
+    // Sprachdateien werden eingebunden.
+    load_textdomain();
 
+    // Überprüft die minimal erforderliche PHP- u. WP-Version.
     // Wenn die Überprüfung fehlschlägt, dann wird das Plugin automatisch deaktiviert.
-    if (!empty($error)) {
-        deactivate_plugins(plugin_basename(__FILE__), FALSE, TRUE);
+    if ($error = system_requirements()) {
+        deactivate_plugins(plugin_basename(__FILE__), false, true);
         wp_die($error);
     }
+
+    // Ab hier können die Funktionen hinzugefügt werden,
+    // die bei der Aktivierung des Plugins aufgerufen werden müssen.
+    // Bspw. wp_schedule_event, flush_rewrite_rules, etc.
 }
 
-function custom_libraries() {
-    wp_register_style( 'rrze-faq-styles', plugins_url( 'rrze-faq/assets/css/rrze-faq.css', dirname(__FILE__)));
-    wp_register_script( 'rrze-faq-js', plugins_url( 'rrze-faq/assets/js/rrze-faq.min.js', dirname(__FILE__)), array('jquery'),'', true);
-   
+/**
+ * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
+ */
+function deactivation() {
+    // Hier können die Funktionen hinzugefügt werden, die
+    // bei der Deaktivierung des Plugins aufgerufen werden müssen.
+    // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
+
+    // delete_option(Options::get_option_name());
 }
 
-function faq_cron_schedules($schedules){
-    if(!isset($schedules["15min"])){
-        $schedules["15min"] = array(
-            'interval' => 15*60,
-            'display' => __('Once every 15 minutes'));
-    }
-    return $schedules;
-}
+/**
+ * Wird durchgeführt, nachdem das WP-Grundsystem hochgefahren
+ * und alle Plugins eingebunden wurden.
+ */
+function loaded() {
+    // Sprachdateien werden eingebunden.
+    load_textdomain();
 
-add_filter('cron_schedules','RRZE\Glossar\Server\faq_cron_schedules');
-
-function faq_cron() {
-    if (!wp_next_scheduled( 'faqhook' )) {
-      wp_schedule_event( time(), '15min', 'faqhook' );
-    }
-}
-
-function updateList() {
-    
-    //delete_option('urls');
-    //getSynonymsForWPListTable
-    
-    $faq_option = 'serverfaq';
-    $faq = FaqListTableHelper::getGlossaryForWPListTable();
-    
-    if( get_option($faq_option) !== false) {
-        update_option($faq_option, $faq);
+    // Überprüft die minimal erforderliche PHP- u. WP-Version.
+    if ($error = system_requirements()) {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        $plugin_data = get_plugin_data(__FILE__);
+        $plugin_name = $plugin_data['Name'];
+        $tag = is_network_admin() ? 'network_admin_notices' : 'admin_notices';
+        add_action($tag, function () use ($plugin_name, $error) {
+            printf('<div class="notice notice-error"><p>%1$s: %2$s</p></div>', esc_html($plugin_name), esc_html($error));
+        });
     } else {
-        $autoload = 'no';
-        add_option ($faq_option, $faq);
+        // Hauptklasse (Main) wird instanziiert.
+        $main = new Main(__FILE__);
+        $main->onLoaded();
     }
 }

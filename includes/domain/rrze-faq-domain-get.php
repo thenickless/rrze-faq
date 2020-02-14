@@ -1,6 +1,8 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+// namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ;
+
 
 Class DomainFaqWPListTable {
     

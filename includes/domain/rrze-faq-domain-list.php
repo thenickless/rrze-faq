@@ -1,6 +1,8 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+// namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ;
+
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
     
@@ -8,9 +10,9 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
        
 }
 
-add_action('init', function() {
-    DOMAIN_FAQ::get_instance();
-});
+// add_action('init', function() {
+//     DOMAIN_FAQ::get_instance();
+// });
 
 class Domain_List extends \WP_List_Table {
 
@@ -93,13 +95,18 @@ class Domain_List extends \WP_List_Table {
         $per_page     = $this->get_items_per_page( 'domains_per_page', 5 );
         $current_page = $this->get_pagenum();
         $data = DomainFaqWPListTable::listDomains();
-        $total_items  = count( $data );
-        if($data) usort( $data, array( $this, 'usort_reorder' ) );
-        if($data) {
-            $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
-        } else {
-            $items = '';
+        $items = '';
+        $total_items = 0;
+        if ( isset( $data ) ){
+            $total_items = count( $data );
+            if ( $data ) {
+                usort( $data, array( $this, 'usort_reorder' ) );
+            }
+            if ( $data ) {
+                $items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+            }
         }
+
         $this->items = $items;
 
         $this->set_pagination_args( array(
@@ -171,8 +178,8 @@ class DOMAIN_FAQ {
 
         $domain_page = add_submenu_page( 
             'edit.php?post_type=glossary', 
-            __( 'Show Domains', 'rrze-faq' ), 
-            __( 'Show Domains', 'rrze-faq' ), 
+            __( 'All Domains', 'rrze-faq' ), 
+            __( 'All Domains', 'rrze-faq' ), 
             'manage_options', 
             'rrze_domain_options', 
             array($this, 'plugin_domain_settings_page')
@@ -220,11 +227,11 @@ class DOMAIN_FAQ {
         $this->domain_obj = new Domain_List();
     }
 
-    public static function get_instance() {
-        if ( ! isset( self::$instance ) ) {
-                self::$instance = new self();
-        }
+    // public static function get_instance() {
+    //     if ( ! isset( self::$instance ) ) {
+    //             self::$instance = new self();
+    //     }
 
-        return self::$instance;
-    }
+    //     return self::$instance;
+    // }
 }
