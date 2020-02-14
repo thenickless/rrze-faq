@@ -5,7 +5,7 @@ namespace RRZE\FAQ;
 defined('ABSPATH') || exit;
 use function RRZE\FAQ\Config\getShortcodeSettings;
 
-
+$settings;
 
 /**
  * Shortcode
@@ -29,10 +29,13 @@ class Shortcode
      * Variablen Werte zuweisen.
      * @param string $pluginFile Pfad- und Dateiname der Plugin-Datei
      */
-    public function __construct($pluginFile, $settings)
+    // public function __construct($pluginFile, $settings)
+    public function __construct()
     {
-        $this->pluginFile = $pluginFile;
+        // $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings();
+        add_action( 'init',  [$this, 'gutenberg_init'] );
+        add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 );
     }
 
     /**
@@ -41,8 +44,9 @@ class Shortcode
      */
     public function onLoaded()
     {
-        add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
-        add_shortcode('basis_shortcode', [$this, 'shortcodeOutput'], 10, 2);
+        // add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
+        // add_shortcode('basis_shortcode', [$this, 'shortcodeOutput'], 10, 2);
+        // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 );
     }
 
     /**
@@ -50,8 +54,8 @@ class Shortcode
      */
     public function enqueueScripts()
     {
-        wp_register_style('basis-shortcode', plugins_url('assets/css/shortcode.css', plugin_basename($this->pluginFile)));
-        wp_register_script('basis-shortcode', plugins_url('assets/js/shortcode.js', plugin_basename($this->pluginFile)));
+        // wp_register_style('basis-shortcode', plugins_url('assets/css/shortcode.css', plugin_basename($this->pluginFile)));
+        // wp_register_script('basis-shortcode', plugins_url('assets/js/shortcode.js', plugin_basename($this->pluginFile)));
     }
 
 

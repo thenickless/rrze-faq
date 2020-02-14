@@ -91,16 +91,16 @@ class Settings
      */
     public function onLoaded()
     {
-        $this->setMenu();
-        $this->setSections();
-        $this->setFields();
-        $this->setTabs();
+        // $this->setMenu();
+        // $this->setSections();
+        // $this->setFields();
+        // $this->setTabs();
 
         $this->optionName = getOptionName();
-        $this->options = $this->getOptions();
+        // $this->options = $this->getOptions();
 
-        add_action('admin_init', [$this, 'adminInit']);
-        add_action('admin_menu', [$this, 'adminMenu']);
+        // add_action('admin_init', [$this, 'adminInit']);
+        // add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
     }
 

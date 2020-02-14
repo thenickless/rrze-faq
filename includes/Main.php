@@ -37,8 +37,8 @@ class Main {
         $settings->onLoaded();
 
         // Shortcode-Klasse wird instanziiert.
-        $shortcode = new Shortcode($this->pluginFile, $settings);
-        $shortcode->onLoaded();
+        // $shortcode = new Shortcode($this->pluginFile, $settings);
+        // $shortcode->onLoaded();
 
         // Custom Post Types werden instanziiert.
         // var_dump(__DIR__ );
@@ -63,6 +63,11 @@ class Main {
         include_once( __DIR__ . '/domain/rrze-faq-domain-add.php' );
         new AddFaqDomain();
         // include_once( __DIR__ . '/shortcode/rrze-glossary-shortcode.php' );
+        // Shortcode wird eingebunden.
+        include 'Shortcode.php';
+
+        $shortcode = new Shortcode();
+
     }
 
     /**
