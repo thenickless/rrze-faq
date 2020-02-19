@@ -46,7 +46,7 @@ function createBlock() {
 				for ( var fieldname in phpConfig ){
 					switch( phpConfig[fieldname]['field_type'] ){
 						case 'checkbox': 
-							ret.push( createElement( CheckboxControl, { checked: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : phpConfig[fieldname]['checked'] ), label: phpConfig[fieldname]['label'], onChange: changeField.bind( fieldname ) } ) );
+							ret.push( createElement( CheckboxControl, { checked: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : phpConfig[fieldname]['default'] ), label: phpConfig[fieldname]['label'], onChange: changeField.bind( fieldname ) } ) );
 							break;
 						case 'radio': 
 							var opts = [];
@@ -70,7 +70,7 @@ function createBlock() {
 							ret.push( createElement( TextareaControl, { value: att[fieldname], label: phpConfig[fieldname]['label'], type: phpConfig[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 							break;
 						case 'toggle': 
-							ret.push( createElement( ToggleControl, { checked: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : phpConfig[fieldname]['checked'] ), label: phpConfig[fieldname]['label'], type: phpConfig[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
+							ret.push( createElement( ToggleControl, { checked: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : phpConfig[fieldname]['default'] ), label: phpConfig[fieldname]['label'], type: phpConfig[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 							break;
 					}
 				}

@@ -5,8 +5,8 @@ namespace RRZE\Glossar\Server;
 function fau_glossary_post_type() {	
 
     $labels = array(
-            'name'                => _x( 'FAQ', 'FAQ, Synonym or Glossar entries', 'rrze-faq' ),
-            'singular_name'       => _x( 'FAQ', 'Single FAQ, Synonym or Glossar ', 'rrze-faq' ),
+            'name'                => _x( 'FAQ', 'FAQ, synonym or glossary entries', 'rrze-faq' ),
+            'singular_name'       => _x( 'FAQ', 'Single FAQ, synonym or glossary ', 'rrze-faq' ),
             'menu_name'           => __( 'FAQ', 'rrze-faq' ),
             'add_new'             => __( 'Add FAQ', 'rrze-faq' ),
             'add_new_item'        => __( 'Add new FAQ', 'rrze-faq' ),

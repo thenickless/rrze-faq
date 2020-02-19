@@ -189,43 +189,59 @@ function getOptionName()
 function getShortcodeSettings(){
 	return [
 		'block' => [
-            'blocktype' => 'rrze-faq/glossary', // dieser Wert muss angepasst werden
-			'blockname' => 'glossary', // dieser Wert muss angepasst werden
-			'title' => 'RRZE Glossary', // Der Titel, der in der Blockauswahl im Gutenberg Editor angezeigt wird
-			'category' => 'widgets', // Die Kategorie, in der der Block im Gutenberg Editor angezeigt wird
-            'icon' => 'admin-users',  // Das Icon des Blocks
-            'show_block' => 'content', // 'right' or 'content' : Anzeige des Blocks im Content-Bereich oder in der rechten Spalte
-			'message' => __( 'Find the settings on the right side', 'rrze-faq' ) // erscheint bei Auswahl des Blocks, wenn "show_block" auf 'right' gesetzt ist
+            'blocktype' => 'rrze-faq/faq',
+			'blockname' => 'faq',
+			'title' => 'RRZE FAQ',
+			'category' => 'widgets',
+            'icon' => 'admin-users',
+            'show_block' => 'content',
+			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
+		],
+        'glossary' => [
+			'values' => [
+				'category' => __( 'Categories', 'rrze-faq' ),
+				'tag' => __( 'Tags', 'rrze-faq' )
+			],
+			'default' => 'category',
+			'field_type' => 'select',
+			'label' => __( 'Glossary', 'rrze-faq' ),
+			'type' => 'string'
 		],
 		'category' => [
 			'default' => '',
-			'field_type' => 'text', // Art des Feldes im Gutenberg Editor
-			'label' => __( 'Glossary', 'rrze-faq' ),
-			'type' => 'text' // Variablentyp der Eingabe
+			'field_type' => 'text',
+			'label' => __( 'Category', 'rrze-faq' ),
+			'type' => 'text'
+        ],
+		'tag' => [
+			'default' => '',
+			'field_type' => 'text',
+			'label' => __( 'Tag', 'rrze-faq' ),
+			'type' => 'text'
         ],
 		'id' => [
 			'default' => NULL,
-			'field_type' => 'text', // Art des Feldes im Gutenberg Editor
+			'field_type' => 'text',
 			'label' => __( 'ID', 'rrze-faq' ),
-			'type' => 'number' // Variablentyp der Eingabe
+			'type' => 'number'
 		],
 		'color' => [
 			'default' => '',
-			'field_type' => 'text', // Art des Feldes im Gutenberg Editor
+			'field_type' => 'text',
 			'label' => __( 'Color', 'rrze-faq' ),
-			'type' => 'text' // Variablentyp der Eingabe
+			'type' => 'text'
         ],
 		'domain' => [
 			'default' => '',
-			'field_type' => 'text', // Art des Feldes im Gutenberg Editor
+			'field_type' => 'text',
 			'label' => __( 'Domain', 'rrze-faq' ),
-			'type' => 'text' // Variablentyp der Eingabe
+			'type' => 'text'
         ],
         'rest' => [
-            'field_type' => 'toggle',
+			'default' => TRUE,
+            'field_type' => 'checkbox',
             'label' => __( 'Rest', 'rrze-faq' ),
-            'type' => 'boolean',
-            'checked'   => FALSE
+            'type' => 'boolean'
         ]
     ];
 }

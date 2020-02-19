@@ -6,23 +6,23 @@ global $tax;
 $tax = [
     [ 
         'name' => 'glossary_category',
-        'label' => __('Glossary', 'rrze-faq'),
-        'slug' => 'glossaries',
+        'label' => __('Category', 'rrze-faq'),
+        'slug' => 'categories',
         'rest_base' => 'glossary_category',
         'labels' => array(
-            'singular_name' => __('Glossary', 'rrze-faq'),
-            'add_new' => __('Add new glossary', 'rrze-faq'),
-            'add_new_item' => __('Add new glossary', 'rrze-faq'),
-            'new_item' => __('New glossary', 'rrze-faq'),
-            'view_item' => __('Show glossary', 'rrze-faq'),
-            'view_items' => __('Show glossaries', 'rrze-faq'),
-            'search_items' => __('Search glossaries', 'rrze-faq'),
-            'not_found' => __('No glossary found', 'rrze-faq'),
-            'all_items' => __('All glossaries', 'rrze-faq'),
-            'separate_items_with_commas' => __('Separate glossaries with commas', 'rrze-faq'),
-            'choose_from_most_used' => __('Choose from the most used glossaries', 'rrze-faq'),
-            'edit_item' => __('Edit glossary', 'rrze-faq'),
-            'update_item' => __('Update glossary', 'rrze-faq')
+            'singular_name' => __('Category', 'rrze-faq'),
+            'add_new' => __('Add new category', 'rrze-faq'),
+            'add_new_item' => __('Add new category', 'rrze-faq'),
+            'new_item' => __('New category', 'rrze-faq'),
+            'view_item' => __('Show category', 'rrze-faq'),
+            'view_items' => __('Show categories', 'rrze-faq'),
+            'search_items' => __('Search categories', 'rrze-faq'),
+            'not_found' => __('No category found', 'rrze-faq'),
+            'all_items' => __('All categories', 'rrze-faq'),
+            'separate_items_with_commas' => __('Separate categories with commas', 'rrze-faq'),
+            'choose_from_most_used' => __('Choose from the most used categories', 'rrze-faq'),
+            'edit_item' => __('Edit category', 'rrze-faq'),
+            'update_item' => __('Update category', 'rrze-faq')
         )
     ],
     [ 
