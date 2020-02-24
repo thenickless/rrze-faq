@@ -23,11 +23,10 @@ function fau_glossary_post_type() {
     );
 
     $args = array(
-            'label'               => __( 'asdfasdfaFAQ', 'rrze-faq' ),
+            'label'               => __( 'FAQ', 'rrze-faq' ),
             'description'         => __( 'FAQ informations', 'rrze-faq' ),
             'labels'              => $labels,
             'supports'            => array( 'title', 'editor' ),
-            'taxonomies'          => array( 'glossary_tag', 'glossary_category' ),
             'hierarchical'        => false,
             'public'              => true,
             'show_ui'             => true,

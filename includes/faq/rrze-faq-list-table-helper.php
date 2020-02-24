@@ -3,7 +3,7 @@
 namespace RRZE\Glossar\Server;
 
 /*
- *  $content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?filter[glossary_category]=studium-a-z&per_page=200", $args );
+ *  $content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?filter[glossary_categoryegory]=studium-a-z&per_page=200", $args );
  */
 
 Class FaqListTableHelper {
@@ -36,7 +36,7 @@ Class FaqListTableHelper {
                 if ( 200 === $status_code ) {
 
                     $response[] = $content['body'];
-                    $getfrom = $domainurl.'/wp-json/wp/v2/glossary_category?per_page=100';
+                    $getfrom = $domainurl.'/wp-json/wp/v2/glossary_categoryegory?per_page=100';
                     $category = wp_remote_get($getfrom, $args);
 
                     $categories[] = $category['body'];
@@ -82,7 +82,7 @@ Class FaqListTableHelper {
                         $item[$i]['domain']     = $url['host'];
                         $host = $url['host'];
                         $output = '';
-                        $item[$i]['glossary'] = $c['glossary_category'];
+                        $item[$i]['glossary'] = $c['glossary_categoryegory'];
                         foreach($item[$i]['glossary'] as $d => $z) {
                             for($w = 0; $w < sizeof($t); $w++) {
                                 for($j = 0; $j < count($t[$w]); $j++) {

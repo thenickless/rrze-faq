@@ -36,15 +36,6 @@ class Main {
         $settings = new Settings($this->pluginFile);
         $settings->onLoaded();
 
-        // Shortcode-Klasse wird instanziiert.
-        // $shortcode = new Shortcode($this->pluginFile, $settings);
-        // $shortcode->onLoaded();
-
-        // Custom Post Types werden instanziiert.
-        // var_dump(__DIR__ );
-        // var_dump($this->pluginFile);
-        // var_dump(__FILE__);
-        // exit;
         include_once( __DIR__ . '/posttype/rrze-faq-posttype.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-taxonomy.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-manage-posts.php' );
@@ -53,21 +44,17 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
         include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
         include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
-        include_once( __DIR__ . '/REST-API/rrze-faq-taxonomy-rest.php' );
         include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
         include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
         include_once( __DIR__ . '/domain/rrze-faq-domain-get.php' );
         include_once( __DIR__ . '/domain/rrze-faq-domain-list.php' );
         new DOMAIN_FAQ();
-        // new DomainFaqWPListTable();
         include_once( __DIR__ . '/domain/rrze-faq-domain-add.php' );
         new AddFaqDomain();
-        // include_once( __DIR__ . '/shortcode/rrze-glossary-shortcode.php' );
+
         // Shortcode wird eingebunden.
         include 'Shortcode.php';
-
         $shortcode = new Shortcode();
-
     }
 
     /**

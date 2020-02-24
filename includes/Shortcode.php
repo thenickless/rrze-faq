@@ -32,8 +32,8 @@ class Shortcode {
     public function __construct() {
         // $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings();
+        add_action( 'init', [$this, 'fill_gutenberg_options'] );
         add_action( 'init',  [$this, 'gutenberg_init'] );
-        // add_action('admin_enqueue_scripts', [$this, 'enqueueScripts']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
@@ -226,15 +226,19 @@ class Shortcode {
             // attribute category or tag is given or none of them
             $aLetters = array();
             $aCategory = array();
-            $field = '';
             $aTax = array();
             $tax_query = '';
             $postQuery = array('post_type' => 'glossary', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false);
-            if ( $category ){
-                $aTax['category'] = explode(',', trim( $category ) );
-            }
-            if ( $tag ){
-                $aTax['tag'] = explode(',', trim( $tag ) );
+
+            $fields = array( 'category', 'tag' );
+            foreach( $fields as $field ){
+                if ( $$field ){
+                    if ( is_array( $$field ) ){
+                        $aTax[$field] = $$field;    
+                    }else{
+                        $aTax[$field] = explode(',', trim( $field ) );
+                    }
+                }
             }
             $tax_query = $this->get_tax_query( $aTax );
             if ( $tax_query ){
@@ -303,6 +307,44 @@ class Shortcode {
     }
     
 
+    public function fill_gutenberg_options() {
+        // Skip if Gutenberg isnot enabled
+        if ( ! function_exists( 'register_block_type' ) ) {
+            return;
+        }
+
+
+        // fill selects "category" and "tag"
+        $fields = array( 'category', 'tag' );
+        foreach ( $fields as $field ) {
+            $terms = get_terms([
+                'taxonomy' => 'glossary_' . $field,
+                'hide_empty' => TRUE
+            ]);
+            $this->settings[$field]['field_type'] = 'multi_select';
+            $this->settings[$field]['default'] = array('');
+            $this->settings[$field]['type'] = 'array';
+            $this->settings[$field]['items'] = array( 'type' => 'string' );
+            $this->settings[$field]['values'][0] = __( '-- all --', 'rrze-faq' );
+            foreach ( $terms as $term ){
+                $this->settings[$field]['values'][$term->name] = $term->name;
+            }
+        }
+
+        // fill select "id"
+        $all_post_ids = get_posts(array(
+            'fields'          => 'ids',
+            'posts_per_page'  => -1,
+            'post_type' => 'glossary'
+        ));
+        $this->settings['id']['field_type'] = 'select';
+        $this->settings['id']['type'] = 'string';
+        $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
+        foreach ( $all_post_ids as $id ){
+            $this->settings['id']['values'][$id] = $id;
+        }
+
+    }
 
     public function gutenberg_init() {
         // Skip block registration if Gutenberg is not enabled/merged.

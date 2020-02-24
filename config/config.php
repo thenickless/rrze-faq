@@ -193,7 +193,7 @@ function getShortcodeSettings(){
 			'blockname' => 'faq',
 			'title' => 'RRZE FAQ',
 			'category' => 'widgets',
-            'icon' => 'admin-users',
+            'icon' => 'editor-help',
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
@@ -225,12 +225,12 @@ function getShortcodeSettings(){
 			'label' => __( 'ID', 'rrze-faq' ),
 			'type' => 'number'
 		],
-		'color' => [
-			'default' => '',
-			'field_type' => 'text',
-			'label' => __( 'Color', 'rrze-faq' ),
-			'type' => 'text'
-        ],
+		// 'color' => [
+		// 	'default' => '',
+		// 	'field_type' => 'text',
+		// 	'label' => __( 'Color', 'rrze-faq' ),
+		// 	'type' => 'text'
+        // ],
 		'domain' => [
 			'default' => '',
 			'field_type' => 'text',

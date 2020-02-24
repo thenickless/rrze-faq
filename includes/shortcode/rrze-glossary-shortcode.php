@@ -72,13 +72,13 @@ function fau_get_glossar($id, $cat='', $color = '', $domain) {
     } else {
         $category = array();
         if ($cat) {
-            $category = get_term_by('slug', $cat, 'glossary_category');
+            $category = get_term_by('slug', $cat, 'glossary_categoryegory');
         }	
         if ($category) {
             $catid = $category->term_id;
             $posts = get_posts(array('post_type' => 'glossary', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
                 array(
-                        'taxonomy' => 'glossary_category',
+                        'taxonomy' => 'glossary_categoryegory',
                         'field' => 'id', // can be slug or id - a CPT-onomy term's ID is the same as its post ID
                         'terms' => $catid
                         )
@@ -223,7 +223,7 @@ function getFaqDataByCategory($domain, $category) {
 	$domainurl = 'https://'.$domain;
     }
 
-    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[glossary_category]='.$category.'&per_page=200';
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[glossary_categoryegory]='.$category.'&per_page=200';
     
     $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );

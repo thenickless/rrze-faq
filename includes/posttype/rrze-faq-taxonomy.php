@@ -7,7 +7,7 @@ $tax = [
     [ 
         'name' => 'glossary_category',
         'label' => __('Category', 'rrze-faq'),
-        'slug' => 'categories',
+        'slug' => 'category',
         'rest_base' => 'glossary_category',
         'labels' => array(
             'singular_name' => __('Category', 'rrze-faq'),
@@ -28,7 +28,7 @@ $tax = [
     [ 
         'name' => 'glossary_tag',
         'label' => __('Tags', 'rrze-faq'),
-        'slug' => 'tags',
+        'slug' => 'tag',
         'rest_base' => 'glossary_tag',
         'labels' => array(
             'singular_name' => __('Tag', 'rrze-faq'),
@@ -53,20 +53,21 @@ function fau_glossary_taxonomy() {
     global $tax;
 
     foreach ($tax as $t){
-        register_taxonomy(
+        $ret = register_taxonomy(
             $t['name'],  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
             'glossary',   		 //post type name
             array(
-                'hierarchical'	=> false,
+                'hierarchical'	=> FALSE,
                 'label' 		=> $t['label'], //Display name
                 'labels'        => $t['labels'],
-                'show_admin_column' => true,
-                'query_var' 	=> true,
+                'show_ui'       => TRUE,
+                'show_admin_column' => TRUE,
+                'query_var' 	=> TRUE,
                 'rewrite'		=> array(
                        'slug'	    => $t['slug'], // This controls the base slug that will display before each term
-                       'with_front'	    => false // Don't display the category base before
+                       'with_front'	    => TRUE // Don't display the category base before
                 ),
-                'show_in_rest'       => true,
+                'show_in_rest'       => TRUE,
                 'rest_base'          => $t['rest_base'],
                 'rest_controller_class' => 'WP_REST_Terms_Controller'
             )
