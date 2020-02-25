@@ -197,6 +197,17 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
+        'glossaryStyle' => [
+			'values' => [
+				'' => __( '-- none --', 'rrze-faq' ),
+				'a-z' => __( 'A - Z', 'rrze-faq' ),
+				'tagcloud' => __( 'Tagcloud', 'rrze-faq' )
+			],
+			'default' => 'a-z',
+			'field_type' => 'select',
+			'label' => __( 'Glossary style', 'rrze-faq' ),
+			'type' => 'string'
+		],
         'glossary' => [
 			'values' => [
 				'category' => __( 'Categories', 'rrze-faq' ),
@@ -204,7 +215,7 @@ function getShortcodeSettings(){
 			],
 			'default' => 'category',
 			'field_type' => 'select',
-			'label' => __( 'Glossary', 'rrze-faq' ),
+			'label' => __( 'Glossary content', 'rrze-faq' ),
 			'type' => 'string'
 		],
 		'category' => [
@@ -225,12 +236,20 @@ function getShortcodeSettings(){
 			'label' => __( 'ID', 'rrze-faq' ),
 			'type' => 'number'
 		],
-		// 'color' => [
-		// 	'default' => '',
-		// 	'field_type' => 'text',
-		// 	'label' => __( 'Color', 'rrze-faq' ),
-		// 	'type' => 'text'
-        // ],
+		'color' => [
+			'values' => [
+				'medfak' => __( 'Buttered Rum (medfak)', 'rrze-faq' ),
+				'natfak' => __( 'Eastern Blue (natfak)', 'rrze-faq' ),
+				'rwfak' => __( 'Flame Red (rwfak)', 'rrze-faq' ),
+				'philfak' => __( 'Observatory (philfak)', 'rrze-faq' ),
+				'' => __( 'Prussian Blue', 'rrze-faq' ),
+				'techfak' => __( 'Raven (techfak)', 'rrze-faq' )
+			],
+			'default' => '',
+			'field_type' => 'select',
+			'label' => __( 'Color', 'rrze-faq' ),
+			'type' => 'string'
+        ],
 		'domain' => [
 			'default' => '',
 			'field_type' => 'text',

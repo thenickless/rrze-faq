@@ -34,6 +34,7 @@ class Shortcode {
         $this->settings = getShortcodeSettings();
         add_action( 'init', [$this, 'fill_gutenberg_options'] );
         add_action( 'init',  [$this, 'gutenberg_init'] );
+        // add_action( 'init', [$this, 'enqueueScripts'] );
         add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
@@ -53,8 +54,12 @@ class Shortcode {
      * Enqueue der Skripte.
      */
     public function enqueueScripts() {
-        // wp_register_style('rrze-faq', plugins_url('../assets/css/rrze-faq.css', __FILE__ ));
+        // wp_register_style('rrze-faq-elements', 'https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-content/plugins/rrze-elements/assets/css/rrze-elements.min.css' );
+        // wp_enqueue_style( 'rrze-faq-elements' );
+        // wp_register_script('rrze-faq-elements-js', 'https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-content/plugins/rrze-elements/includes/Accordion/assets/js/rrze-accordion.min.js' );
+        // wp_enqueue_script('rrze-faq-elements-js');
         wp_register_script('rrze-faq', plugins_url('../assets/js/rrze-faq.js', __FILE__ ));
+        // wp_enqueue_script('rrze-faq');
     }
 
     private function get_letter( &$txt ) {
@@ -62,7 +67,7 @@ class Shortcode {
     }
 
     private function create_a_z( &$aSearch ){
-        $ret = '<ul class="letters" aria-hidden="true">';
+        $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
         foreach ( range( 'A', 'Z' ) as $a ) {
             if ( array_key_exists( $a, $aSearch ) ) {
                 $ret .= '<li class="filled"><a href="#letter-'.$a.'">'.$a.'</a></li>';
@@ -70,7 +75,7 @@ class Shortcode {
                 $ret .= '<li>'.$a.'</li>';
             }
         }
-        return $ret . '</ul>';
+        return $ret . '</ul></div>';
     }
 
     private function get_tax_query( &$aTax ){
@@ -130,6 +135,8 @@ class Shortcode {
         extract( $atts );
 
         $content = '';
+        $glossaryStyle  = ( isset( $glossaryStyle ) ? $glossaryStyle : '' );
+        $color = ( isset( $color ) ? $color : '' );
 
         if ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE ){
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
@@ -172,11 +179,11 @@ class Shortcode {
                 foreach ( $items as $item ) {
                     $letter = $this->get_letter( $item['title'] );
                     $aLetters[$letter] = TRUE; 
-                    $accordion .= '[collapse title="' . $item['title'] . '"]' . str_replace( ']]>', ']]&gt;', $item['content'] ) . '[/collapse]';
+                    $accordion .= '[collapse title="' . $item['title'] . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $item['content'] ) . '[/collapse]';
                 }
         
                 $accordion .= '[/collapsibles]';
-                $content = '<div class="fau-glossar">' . $this->create_a_z( $aLetters ) . '</div>';
+                $content = $this->create_a_z( $aLetters );
                 $content .= do_shortcode( $accordion );
             } else {
                 return __( 'Domain is not registered', 'rrze-faq' );
@@ -201,14 +208,14 @@ class Shortcode {
                 
                 $list = json_decode( $item, true );
                 $title = get_the_title( $list['id'] );
-                // $letter = $this->get_letter( $title );
+                $letter = $this->get_letter( $title );
         
                 $content = str_replace( $list['content']['rendered'] );
                 if ( !isset( $content ) || ( mb_strlen($content) < 1 ) ) {
                     $content = get_post_meta( $id, 'description', true );
                 }
             
-                $accordion = '[collapsibles][collapse title="' . $title . '"]' . $content . '[/collapse][/collapsibles]';
+                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
                 $content = do_shortcode( $accordion );
             } else {
                 return __( 'Domain is not registered', 'rrze-faq' );
@@ -216,11 +223,12 @@ class Shortcode {
         } elseif ( isset( $id ) && intval( $id ) > 0 ) {
             // SINGLE FAQ
             $title = get_the_title( $id );
+            $letter = $this->get_letter( $title );
             $content = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field('post_content',$id) ) );
             if ( !isset( $content ) || ( mb_strlen( $content ) < 1)) {
                 $content = get_post_meta( $id, 'description', true );
             }
-            $accordion = '[collapsibles][collapse title="' . $title . '"]' . $content . '[/collapse][/collapsibles]';
+            $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
             $content = do_shortcode( $accordion );
         } else {
             // attribute category or tag is given or none of them
@@ -265,13 +273,14 @@ class Shortcode {
                     }                    
                 }
                 if ( $aLetters ){
-                    $content = '<div class="fau-glossar">' . $this->create_a_z( $aLetters ) . '</div>';
+                    $content = ( $glossaryStyle == 'a-z' ? $this->create_a_z( $aLetters ) : wp_tag_cloud( array( 'taxonomy' => 'glossary_tag' ) ) );
                 }
 
                 asort( $aUsedTags );
                 $accordion = '[collapsibles]';
                 foreach ( $aUsedTags as $k => $aVal ){
-                    $accordion .= '[collapse title="' . $k . '"]';
+                    $letter = $this->get_letter( $k );
+                    $accordion .= '[collapse title="' . $k . '" color="' . $color . '" name="letter-' . $letter . '"]';
                     // find the postIDs to this tag
                     $aIDs = $this->search_array_by_key( $aVal['ID'], $aPostIDs );
                     foreach ( $aIDs as $ID ){
@@ -295,10 +304,10 @@ class Shortcode {
                     if ( !isset( $content ) || ( mb_strlen($content) < 1 ) ) {
                         $content = get_post_meta( $post->ID, 'description', true );
                     }
-                    $accordion .= '[collapse title="' . $title . '"]' . $content . '[/collapse]';
+                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse]';
                 }
                 $accordion .= '[/collapsibles]';
-                $content = '<div class="fau-glossar">' . $this->create_a_z( $aLetters ) . '</div>';
+                $content = $this->create_a_z( $aLetters );
                 $content .= do_shortcode( $accordion );
             }
        } 
