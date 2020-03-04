@@ -1,16 +1,16 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ\Server;
 
-function fau_glossary_restrict_manage_posts() {
+function rrze_faq_restrict_manage_posts() {
     global $typenow;
 
-    if( $typenow == "glossary" ){
-        $filters = get_object_taxonomies($typenow);
+    if( $typenow == "faq" ){
+        $filters = get_object_taxonomies( $typenow );
 
-        foreach ($filters as $tax_slug) {
-            $tax_obj = get_taxonomy($tax_slug);
-            wp_dropdown_categories(array(
+        foreach ( $filters as $tax_slug ) {
+            $tax_obj = get_taxonomy( $tax_slug );
+            wp_dropdown_categories( array(
                 'show_option_all' => sprintf(__('Show all %s', 'rrze-faq'), $tax_obj->label),
                 'taxonomy' => $tax_slug,
                 'name' => $tax_obj->name,
@@ -24,4 +24,4 @@ function fau_glossary_restrict_manage_posts() {
     }
 }
 
-add_action( 'restrict_manage_posts', 'RRZE\Glossar\Server\fau_glossary_restrict_manage_posts' );
+add_action( 'restrict_manage_posts', 'RRZE\FAQ\Server\rrze_faq_restrict_manage_posts' );

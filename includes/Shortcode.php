@@ -13,53 +13,31 @@ $settings;
 class Shortcode {
 
     /**
-     * Der vollständige Pfad- und Dateiname der Plugin-Datei.
-     * @var string
-     */
-    protected $pluginFile;
-
-    /**
      * Settings-Objekt
      * @var object
      */
     private $settings = '';
 
-    /**
-     * Variablen Werte zuweisen.
-     * @param string $pluginFile Pfad- und Dateiname der Plugin-Datei
-     */
-    // public function __construct($pluginFile, $settings)
     public function __construct() {
-        // $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings();
         add_action( 'init', [$this, 'fill_gutenberg_options'] );
         add_action( 'init',  [$this, 'gutenberg_init'] );
-        // add_action( 'init', [$this, 'enqueueScripts'] );
-        add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
+        add_action( 'init', [$this, 'enqueueScripts'] );
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
         add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
     }
 
     /**
-     * Er wird ausgeführt, sobald die Klasse instanziiert wird.
-     * @return void
-     */
-    public function onLoaded() {
-        // add_shortcode('basis_shortcode', [$this, 'shortcodeOutput'], 10, 2);
-        // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 );
-    }
-
-    /**
      * Enqueue der Skripte.
      */
     public function enqueueScripts() {
-        // wp_register_style('rrze-faq-elements', 'https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-content/plugins/rrze-elements/assets/css/rrze-elements.min.css' );
-        // wp_enqueue_style( 'rrze-faq-elements' );
-        // wp_register_script('rrze-faq-elements-js', 'https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-content/plugins/rrze-elements/includes/Accordion/assets/js/rrze-accordion.min.js' );
-        // wp_enqueue_script('rrze-faq-elements-js');
-        wp_register_script('rrze-faq', plugins_url('../assets/js/rrze-faq.js', __FILE__ ));
-        // wp_enqueue_script('rrze-faq');
+        // wp_register_style( 'theme-css', get_stylesheet_directory_uri() . "/style.css", false, '1.0', 'all' );
+        // wp_enqueue_style( 'theme-css' );
+        wp_register_script( 'rrze-faq-js', plugins_url( '../assets/js/rrze-faq.js', __FILE__ ) );
+        wp_enqueue_script( 'rrze-faq' );
+        wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/plugin.css', plugin_basename( __FILE__ ) ) );
+        wp_enqueue_style( 'rrze-faq-css' );
     }
 
     private function get_letter( &$txt ) {
@@ -78,20 +56,25 @@ class Shortcode {
         return $ret . '</ul></div>';
     }
 
+    private function create_tagcloud( &$tags ) {
+        $ret = '';
+        // foreach()
+    }
+
     private function get_tax_query( &$aTax ){
         $ret = '';
         $aTmp = array();
         foreach( $aTax as $field => $aVal ){
             $aID = array();
             foreach( $aVal as $val ){
-                $term = get_term_by( 'slug', $val, 'glossary_' . $field );
+                $term = get_term_by( 'slug', $val, 'faq_' . $field );
                 if ( $term ){
                     $aID[] = $term->term_id;
                 }
             }
             if ( $aID ){
                 $aTmp[] = array(
-                    'taxonomy' => 'glossary_' . $field,
+                    'taxonomy' => 'faq_' . $field,
                     'field' => 'id', // can be slug or id - a CPT-onomy term's ID is the same as its post ID
                     'terms' => $aID,
                     'operator' => 'IN'
@@ -123,7 +106,6 @@ class Shortcode {
      * @return string Gib den Inhalt zurück
      */
     public function shortcodeOutput( $atts ) {
-
         // merge given attributes with default ones
         $atts_default = array();
         foreach( $this->settings as $k => $v ){
@@ -134,25 +116,49 @@ class Shortcode {
         $atts = shortcode_atts( $atts_default, $atts );
         extract( $atts );
 
+        $domain = 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList';
+        $content = wp_remote_get( $domain );
+        $status_code = wp_remote_retrieve_response_code( $content );
+
+
+        // echo '<pre>';
+        // var_dump($content);
+        // var_dump($status_code);
+        // echo '</pre>';
+        // exit;
+        
+
         $content = '';
-        $glossaryStyle  = ( isset( $glossaryStyle ) ? $glossaryStyle : '' );
+        $glossarystyle  = ( isset( $glossarystyle ) ? $glossarystyle : '' );
         $color = ( isset( $color ) ? $color : '' );
 
         if ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE ){
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
         }
 
+        $domain = ( $datasource != 'website' ? $domain : FALSE );
+
         if(isset($category) && empty($id) && !empty($domain)) {
             // DOMAIN
             $domains = get_option('registerDomain');
-            if(in_array($domain, $domains )) {
-                if ( strpos( $domain, 'http' ) === 0 ) {
-                    $domainurl = $domain;
-                } else {
-                    $domainurl = 'https://' . $domain;
-                }
-            
-                $content = wp_remote_get( $domainurl . '/wp-json/wp/v2/glossary?filter[glossary_category]=' . $category . '&per_page=200', array( 'sslverify'   => false ) );
+            // if(in_array($domain, $domains )) {
+            //     if ( strpos( $domain, 'http' ) === 0 ) {
+            //         $domainurl = $domain;
+            //     } else {
+            //         $domainurl = 'https://' . $domain;
+            //     }
+                
+                // if ( $domain == 'otrs' ){
+                    $content = wp_remote_get( $domain );
+                // } else {
+                //     $content = wp_remote_get( $domainurl . '/wp-json/wp/v2/glossary?filter[faq_category]=' . $category . '&per_page=200', array( 'sslverify'   => false ) );
+                // }
+
+                // echo '<pre>';
+                // var_dump($content);
+                // echo '</pre>';
+                // exit;
+
                 $status_code = wp_remote_retrieve_response_code( $content );
                 if ( $status_code === 200 ) {
                     $content = $content['body'];
@@ -185,9 +191,9 @@ class Shortcode {
                 $accordion .= '[/collapsibles]';
                 $content = $this->create_a_z( $aLetters );
                 $content .= do_shortcode( $accordion );
-            } else {
-                return __( 'Domain is not registered', 'rrze-faq' );
-            }
+            // } else {
+            //     return __( 'Domain is not registered', 'rrze-faq' );
+            // }
         } elseif( isset( $id ) && intval( $id ) > 0 && !empty( $domain ) ) {
             // DOMAIN
             $domains = get_option('registerDomain');
@@ -261,19 +267,27 @@ class Shortcode {
                 foreach( $posts as $post ) {
                     // get all tags for each post
                     $aTermIds = array();
-                    $term = wp_get_post_terms( $post->ID, 'glossary_tag' );
+                    $aTerms = array();
+                    $term = wp_get_post_terms( $post->ID, 'faq_tag' );
                     if ( $term ){
                         foreach( $term as $t ){
                             $aTermIds[] = $t->term_id;
                             $letter = $this->get_letter( $t->name );
+                            // $aTerms = (array)$t;
+                            // $aTerms['link'] = '#letter_' . $letter;
                             $aLetters[$letter] = TRUE; 
                             $aUsedTags[$t->name] = array( 'letter' => $letter, 'ID' => $t->term_id );
                             $aPostIDs[$t->term_id][] = $post->ID;
                         }
+                        $aTerms = (object)$aTerms;
                     }                    
                 }
                 if ( $aLetters ){
-                    $content = ( $glossaryStyle == 'a-z' ? $this->create_a_z( $aLetters ) : wp_tag_cloud( array( 'taxonomy' => 'glossary_tag' ) ) );
+                    if ( $glossarystyle ) {
+                        // 2DO : links setzen -> #letter-b
+                        // https://wordpress.stackexchange.com/questions/225693/how-to-add-css-class-to-cloud-tag-anchors
+                        $content = ( $glossarystyle == 'a-z' ? $this->create_a_z( $aLetters ) : wp_generate_tag_cloud( $term ) );
+                    }
                 }
 
                 asort( $aUsedTags );
@@ -322,12 +336,17 @@ class Shortcode {
             return;
         }
 
+        // fill select "datasource"
+        $domains = get_option( 'registerDomain' );
+        foreach ( $domains as $domain  ){
+            $this->settings['datasource']['values'][$domain] = $domain;
+        }
 
         // fill selects "category" and "tag"
         $fields = array( 'category', 'tag' );
         foreach ( $fields as $field ) {
             $terms = get_terms([
-                'taxonomy' => 'glossary_' . $field,
+                'taxonomy' => 'faq_' . $field,
                 'hide_empty' => TRUE
             ]);
             $this->settings[$field]['field_type'] = 'multi_select';
@@ -353,6 +372,31 @@ class Shortcode {
             $this->settings['id']['values'][$id] = $id;
         }
 
+        // echo ini_get('max_execution_time'); // 60 sec
+        // exit;
+
+        // fill FAQ
+        // $i = 0;
+        // https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList
+        // $faqIDs = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQSearch' );
+        // $status_code = wp_remote_retrieve_response_code( $faqIDs );
+        // if ( 200 === $status_code ) {
+        //     $faqIDs = json_decode( $faqIDs['body'], true );
+        //     foreach ( $faqIDs['ID'] as $ID ){
+        //         // if ($i<360){ // 30 sec
+        //             $faq = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQ?ItemID=' . $ID, array( 'timeout' => 999 ) );
+        //             $status_code = wp_remote_retrieve_response_code( $faq );
+        //             echo $status_code . '<br>';
+        //             // if ( 200 === $status_code ) {
+        //             //     echo 'OK';
+        //             //     // $faq = json_decode( $faq['body'], true );
+        //             //     // $this->settings['id']['values'][$faq['FAQItem'][0]['ID']] = $faq['FAQItem'][0]['ID'];
+        //             // }
+        //         //     $i++;
+        //         // }
+        //     }
+        //     exit;
+        // }
     }
 
     public function gutenberg_init() {
@@ -363,7 +407,6 @@ class Shortcode {
 
         $js = '../assets/js/gutenberg.js';
         $editor_script = $this->settings['block']['blockname'] . '-blockJS';
-
         wp_register_script(
             $editor_script,
             plugins_url( $js, __FILE__ ),
@@ -376,11 +419,14 @@ class Shortcode {
             ),
             filemtime( dirname( __FILE__ ) . '/' . $js )
         );
-
         wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
+        $css = '../assets/css/gutenberg.css';
+        $editor_style = 'gutenberg-css';
+        wp_register_style( $editor_style, plugins_url( $css, __FILE__ ) );
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
+            'style' => $editor_style,
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
             ) 

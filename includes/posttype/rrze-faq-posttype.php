@@ -1,8 +1,8 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ\Server;
 
-function fau_glossary_post_type() {	
+function rrze_faq_post_type() {	
 
     $labels = array(
             'name'                => _x( 'FAQ', 'FAQ, synonym or glossary entries', 'rrze-faq' ),
@@ -16,7 +16,7 @@ function fau_glossary_post_type() {
     );
 
     $rewrite = array(
-            'slug'                => 'glossary',
+            'slug'                => 'faq',
             'with_front'          => true,
             'pages'               => true,
             'feeds'               => true,
@@ -38,15 +38,15 @@ function fau_glossary_post_type() {
             'has_archive'         => true,
             'exclude_from_search' => true,
             'publicly_queryable'  => true,
-            'query_var'           => 'glossary',
+            'query_var'           => 'faq',
             'rewrite'             => $rewrite,
             'show_in_rest'        => true,
-            'rest_base'           => 'glossary',
+            'rest_base'           => 'faq',
             'rest_controller_class' => 'WP_REST_Posts_Controller',
     );
 
-    register_post_type( 'glossary', $args );
+    register_post_type( 'faq', $args );
 
 }
 
-add_action( 'init', 'RRZE\Glossar\Server\fau_glossary_post_type', 0 );
+add_action( 'init', 'RRZE\FAQ\Server\rrze_faq_post_type', 0 );

@@ -1,6 +1,6 @@
 <?php
 
-// namespace RRZE\Glossar\Server;
+// namespace RRZE\FAQ\Server;
 namespace RRZE\FAQ;
 
 class AddFaqDomain {
@@ -12,7 +12,7 @@ class AddFaqDomain {
     
     public function rrze_faq_add_server() {
         add_submenu_page( 
-            'edit.php?post_type=glossary', 
+            'edit.php?post_type=faq', 
                 __( 'Add Domain', 'rrze-faq' ), 
                 __( 'Add Domain', 'rrze-faq' ), 
                 'manage_options', 
@@ -106,35 +106,36 @@ class AddFaqDomain {
         $args = array(
             'sslverify'   => false,
         );
-         if (strpos($url, 'http') === 0) {
-	    $domainurl = $url;
-	} else {
-	    $domainurl = 'https://'.$url;
-	}
-	$domainurl = filter_var($domainurl, FILTER_SANITIZE_URL);
+        if (strpos($url, 'http') === 0) {
+	        $domainurl = $url;
+	    } else {
+	        $domainurl = 'https://'.$url;
+	    }
+	    $domainurl = filter_var($domainurl, FILTER_SANITIZE_URL);
 
-	$getfrom = $domainurl.'/wp-json/wp/v2/glossary?per_page=1';
-	$content = wp_remote_get($getfrom, $args );
-	$status_code = wp_remote_retrieve_response_code( $content );
+	    $getfrom = $domainurl.'/wp-json/wp/v2/faq?per_page=1';
+	    $content = wp_remote_get($getfrom, $args );
+        $status_code = wp_remote_retrieve_response_code( $content );
+        
+        // echo '<pre>';
+        // echo '$status_code = ' . $status_code;
+        // echo '$content = ' . print_r( $content );
+        // echo '</pre>';
 
-	if ( 200 === $status_code ) {
+	    if ( 200 === $status_code ) {
 	       return true;  
-	}
-
+	    }
     }
     
     static function addMessage() {
-        
         $html = '<div id="message" class="updated notice is-dismissible">
                 <p>' . __( 'Domain added. ', 'rrze-faq' ) . '
                 <a href="admin.php?page=rrze_domain_options">Zur Übersicht</a></p>    
                 </div>';
         return $html;
-        
     }
     
     static function registeredMessage() {
-        
         $html = '<div id="message" class="updated notice is-dismissible">
                 <p>' . __( 'Domain already registered. ', 'rrze-faq' ) . '
                 <a href="admin.php?page=rrze_domain_options">Zur Übersicht</a></p>    
@@ -144,20 +145,16 @@ class AddFaqDomain {
     }
     
     static function emptyMessage() {
-        
         $html = '<div id="message" class="updated notice is-dismissible">
                 <p>' . __( 'Please input a domain. ', 'rrze-faq' ) . '</p>    
                 </div>';
         return $html;
-        
     }
     
     static function serviceMessage() {
-        
         $html = '<div id="message" class="updated notice is-dismissible">
                 <p>' . __( 'This service is not available for this domain. ', 'rrze-faq' ) . '</p>    
                 </div>';
         return $html;
-        
     }
 }

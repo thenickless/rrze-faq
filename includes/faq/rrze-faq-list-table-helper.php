@@ -1,14 +1,14 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ\Server;
 
 /*
- *  $content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?filter[glossary_categoryegory]=studium-a-z&per_page=200", $args );
+ *  $content = wp_remote_get("https://wordpress.dev/wp-json/wp/v2/glossary?filter[faq_categoryegory]=studium-a-z&per_page=200", $args );
  */
 
 Class FaqListTableHelper {
 
-    public static function getGlossaryForWPListTable() {
+    public static function getFAQForWPListTable() {
         
         $args = array(
             'sslverify'   => false,
@@ -36,7 +36,7 @@ Class FaqListTableHelper {
                 if ( 200 === $status_code ) {
 
                     $response[] = $content['body'];
-                    $getfrom = $domainurl.'/wp-json/wp/v2/glossary_categoryegory?per_page=100';
+                    $getfrom = $domainurl.'/wp-json/wp/v2/faq_categoryegory?per_page=100';
                     $category = wp_remote_get($getfrom, $args);
 
                     $categories[] = $category['body'];
@@ -82,7 +82,7 @@ Class FaqListTableHelper {
                         $item[$i]['domain']     = $url['host'];
                         $host = $url['host'];
                         $output = '';
-                        $item[$i]['glossary'] = $c['glossary_categoryegory'];
+                        $item[$i]['glossary'] = $c['faq_category'];
                         foreach($item[$i]['glossary'] as $d => $z) {
                             for($w = 0; $w < sizeof($t); $w++) {
                                 for($j = 0; $j < count($t[$w]); $j++) {

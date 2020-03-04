@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ\Server;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -36,8 +36,8 @@ class FAQ_List extends \WP_List_Table {
 
 	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
-                        case 'id':
-                        case 'category':
+            case 'id':
+            case 'category':
 			case 'title':
 			case 'content':
 			case 'domain':
@@ -56,9 +56,9 @@ class FAQ_List extends \WP_List_Table {
 	function get_columns() {
 		$columns = [
 			'cb'        => '<input type="checkbox" />',
-                        'id'        => __( 'ID', 'rrze-faq' ),
-                        'title'     => __( 'Title', 'rrze-faq' ),
-                        'category'  => __( 'Category', 'rrze-faq' ),
+            'id'        => __( 'ID', 'rrze-faq' ),
+            'title'     => __( 'Title', 'rrze-faq' ),
+            'category'  => __( 'Category', 'rrze-faq' ),
 			'content'   => __( 'Content', 'rrze-faq' ),
 			'domain'    => __( 'Domain', 'rrze-faq' )
 		];
@@ -70,8 +70,8 @@ class FAQ_List extends \WP_List_Table {
 		$sortable_columns = array(
 			'title' => array( 'title', true ),
 			'content' => array( 'content', true ),
-                        'domain' => array( 'domain', true),
-                        'category' => array( 'category', true)
+            'domain' => array( 'domain', true),
+            'category' => array( 'category', true)
 		);
 
 		return $sortable_columns;
@@ -90,11 +90,11 @@ class FAQ_List extends \WP_List_Table {
             if ( $which == "top" ) : ?>
             <form method="post">
                 <div class="actions">
-                        <p class="search-box">
-                                <label for="post-search-input" class="screen-reader-text">Search Pages:</label>
-                                <input type="search" value="<?php echo $search; ?>" name="s" id="post-search-input">
-                                <input type="submit" value="<?php _e( 'Search', 'rrze-synonym-server' ); ?>" class="button" id="search-submit" name="">
-                        </p>
+                    <p class="search-box">
+                        <label for="post-search-input" class="screen-reader-text">Search Pages:</label>
+                        <input type="search" value="<?php echo $search; ?>" name="s" id="post-search-input">
+                        <input type="submit" value="<?php _e( 'Search', 'rrze-synonym-server' ); ?>" class="button" id="search-submit" name="">
+                    </p>
                 </div>
             </form>
             <?php endif;
@@ -108,7 +108,7 @@ class FAQ_List extends \WP_List_Table {
 		$current_page = $this->get_pagenum();
         $data = get_option('serverfaq');
         if( !$data ){
-			$data = FaqListTableHelper::getGlossaryForWPListTable();
+			$data = FaqListTableHelper::getFAQForWPListTable();
 		}
         if ( @$_POST['s'] ) {
 			$s =  $_POST['s'];
@@ -144,15 +144,15 @@ class FAQ_List extends \WP_List_Table {
 	}
 
 	public function process_bulk_action() {
-            if ('update' === $this->current_action()) {
-               $faq = FaqListTableHelper::getGlossaryForWPListTable();
-               update_option('serverfaq', $faq);
-               $html = '<div id="message" class="updated notice is-dismissible">
-                           <p>' . __( 'List updated!', 'rrze-faq' ) .'</p>
-                   </div>';
-               echo $html;
-            }
-	}
+		if ('update' === $this->current_action()) {
+			$faq = FaqListTableHelper::getFAQForWPListTable();
+			update_option('serverfaq', $faq);
+			$html = '<div id="message" class="updated notice is-dismissible">
+						<p>' . __( 'List updated!', 'rrze-faq' ) .'</p>
+				</div>';
+			echo $html;
+		 }
+ 	}
         
         public function usort_reorder( $a, $b ) {
 		// If no sort, default to title.
@@ -185,7 +185,7 @@ class RRZE_FAQ {
 	public function plugin_menu() {
                 
             $faq_page = add_submenu_page( 
-                'edit.php?post_type=glossary', __( 'All Remote FAQ', 'rrze-faq' ), __( 'All Remote FAQ', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
+                'edit.php?post_type=faq', __( 'All Remote FAQ', 'rrze-faq' ), __( 'All Remote FAQ', 'rrze-faq' ), 'manage_options', 'rrze_faq_options', array($this, 'plugin_settings_page'));
 
             add_action("load-{$faq_page}", array( $this, 'screen_option'));
 

@@ -69,38 +69,30 @@ class Settings
      */
     protected $currentTab = '';
 
-    /**
-     * [protected description]
-     * @var string
-     */
-    protected $settingsPrefix;
 
     /**
      * Variablen Werte zuweisen.
      * @param string $pluginFile [description]
      */
-    public function __construct($pluginFile)
-    {
+    public function __construct($pluginFile) {
         $this->pluginFile = $pluginFile;
-        $this->settingsPrefix = dirname(plugin_basename($this->pluginFile)) . '-';
     }
 
     /**
      * Er wird ausgeführt, sobald die Klasse instanziiert wird.
      * @return void
      */
-    public function onLoaded()
-    {
-        // $this->setMenu();
-        // $this->setSections();
-        // $this->setFields();
-        // $this->setTabs();
+    public function onLoaded() {
+        $this->setMenu();
+        $this->setSections();
+        $this->setFields();
+        $this->setTabs();
 
         $this->optionName = getOptionName();
-        // $this->options = $this->getOptions();
+        $this->options = $this->getOptions();
 
-        // add_action('admin_init', [$this, 'adminInit']);
-        // add_action('admin_menu', [$this, 'adminMenu']);
+        add_action('admin_init', [$this, 'adminInit']);
+        add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
     }
 
@@ -129,9 +121,26 @@ class Settings
     /**
      * Einstellungsfelder einstellen.
      */
-    protected function setFields()
-    {
+    protected function setFields() {
         $this->settingsFields = getFields();
+
+        // fill "categories"
+        $tmp = array();
+        foreach( $this->settingsFields['sync'] as $field ) {
+            if ( $field['name'] == 'categories' ){
+                $cats = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList' );
+                $status_code = wp_remote_retrieve_response_code( $cats );
+                if ( 200 === $status_code ) {
+                    $cats = json_decode( $cats['body'], true );
+                    foreach ( $cats['Category'] as $cat ){
+                        $field['options'][$cat['ID']] = $cat['Name'];
+                    }
+                    sort( $field['options'] );
+                }
+            }
+            $tmp[] = $field;
+        }
+        $this->settingsFields['sync'] = $tmp;
     }
 
     /**
@@ -253,8 +262,7 @@ class Settings
      * Einstellungsbereiche als Registerkarte anzeigen.
      * Zeigt alle Beschriftungen der Einstellungsbereiche als Registerkarte an.
      */
-    public function showTabs()
-    {
+    public function showTabs() {
         $html = '<h1>' . $this->settingsMenu['title'] . '</h1>' . PHP_EOL;
 
         if (count($this->settingsSections) < 2) {
@@ -264,10 +272,10 @@ class Settings
         $html .= '<h2 class="nav-tab-wrapper wp-clearfix">';
 
         foreach ($this->settingsSections as $section) {
-            $class = $this->settingsPrefix . $section['id'] == $this->currentTab ? 'nav-tab-active' : $this->defaultTab;
+            $class = $section['id'] == $this->currentTab ? 'nav-tab-active' : $this->defaultTab;
             $html .= sprintf(
                 '<a href="?page=%4$s&current-tab=%1$s" class="nav-tab %3$s" id="%1$s-tab">%2$s</a>',
-                esc_attr($this->settingsPrefix . $section['id']),
+                esc_attr($section['id']),
                 $section['title'],
                 esc_attr($class),
                 $this->settingsMenu['menu_slug']
@@ -283,28 +291,38 @@ class Settings
      * Anzeigen der Einstellungsbereiche.
      * Zeigt für jeden Einstellungsbereich das entsprechende Formular an.
      */
-    public function showSections()
-    {
+    public function showSections() {
         foreach ($this->settingsSections as $section) {
-            if ($this->settingsPrefix . $section['id'] != $this->currentTab) {
+            if ($section['id'] != $this->currentTab) {
                 continue;
-            } ?>
-            <div id="<?php echo $this->settingsPrefix . $section['id']; ?>">
-                <form method="post" action="options.php">
-                    <?php settings_fields($this->settingsPrefix . $section['id']); ?>
-                    <?php do_settings_sections($this->settingsPrefix . $section['id']); ?>
-                    <?php submit_button(); ?>
-                </form>
-            </div>
-        <?php
+            }
+            $get = '';
+            switch ( $this->currentTab ) {
+                case 'sync': 
+                    $btn_label = __('Syncronize now', 'rrze-faq' );
+                    $get = '?sync';
+                    break;
+                case 'log': 
+                    $btn_label = __('Delete logfile', 'rrze-faq' );
+                    $get = '?del';
+                    break;
+                default: 
+                    $btn_label = '';
+                    $get = '?update';
+            }
+            echo '<div id="' . $section['id'] . '">';
+            echo '<form method="post" action="options.php'. $get . '">';
+            settings_fields($section['id']);
+            do_settings_sections($section['id']);
+            submit_button( $btn_label );
+            echo '</form></div>';
         }
     }
 
     /**
      * Optionen Seitenausgabe
      */
-    public function pageOutput()
-    {
+    public function pageOutput() {
         echo '<div class="wrap">', PHP_EOL;
         $this->showTabs();
         $this->showSections();
@@ -314,8 +332,7 @@ class Settings
     /**
      * Erstellt die Kontexthilfe der Einstellungsseite.
      */
-    public function adminHelpTab()
-    {
+    public function adminHelpTab() {
         $screen = get_current_screen();
 
         if (!method_exists($screen, 'add_help_tab') || $screen->id != $this->optionsPage) {
@@ -358,7 +375,7 @@ class Settings
                 $callback = null;
             }
 
-            add_settings_section($this->settingsPrefix . $section['id'], $section['title'], $callback, $this->settingsPrefix . $section['id']);
+            add_settings_section($section['id'], $section['title'], $callback, $section['id']);
         }
 
         // Hinzufügen von Einstellungsfelder
@@ -387,7 +404,7 @@ class Settings
                     'step' => isset($option['step']) ? $option['step'] : '',
                 ];
 
-                add_settings_field("{$section}[{$name}]", $label, $callback, $this->settingsPrefix . $section, $this->settingsPrefix . $section, $args);
+                add_settings_field("{$section}[{$name}]", $label, $callback, $section, $section, $args);
 
                 if (in_array($type, ['color', 'file'])) {
                     add_action('admin_enqueue_scripts', [$this, $type . 'EnqueueScripts']);
@@ -397,7 +414,7 @@ class Settings
 
         // Registrieren der Einstellungen
         foreach ($this->settingsSections as $section) {
-            register_setting($this->settingsPrefix . $section['id'], $this->optionName, [$this, 'sanitizeOptions']);
+            register_setting($section['id'], $this->optionName, [$this, 'sanitizeOptions']);
         }
     }
 
@@ -415,19 +432,18 @@ class Settings
             [$this, 'pageOutput']
         );
 
-        add_action('load-' . $this->optionsPage, [$this, 'adminHelpTab']);
+        // add_action('load-' . $this->optionsPage, [$this, 'adminHelpTab']);
     }
 
     /**
      * Registerkarten einstellen
      */
-    protected function setTabs()
-    {
+    protected function setTabs() {
         foreach ($this->settingsSections as $key => $val) {
             if ($key == 0) {
-                $this->defaultTab = $this->settingsPrefix . $val['id'];
+                $this->defaultTab = $val['id'];
             }
-            $this->allTabs[] = $this->settingsPrefix . $val['id'];
+            $this->allTabs[] = $val['id'];
         }
 
         $this->currentTab = array_key_exists('current-tab', $_GET) && in_array($_GET['current-tab'], $this->allTabs) ? $_GET['current-tab'] : $this->defaultTab;
@@ -802,4 +818,48 @@ class Settings
 
         echo $html;
     }
+
+    public function callbackHidden($args) {
+        $value = time();
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $type = 'hidden';
+        $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
+
+        $html = sprintf(
+            '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s>',
+            $type,
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $value,
+            $placeholder
+        );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+    public function callbackLogfile($args) {
+        if ( file_exists( $args['default'] ) ) {
+            $lines = file( $args['default'] );
+            if ( $lines !== false ) {
+                echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><tbody>';
+                foreach ( $lines as $line ){
+                    $parts = explode( ',', $line);
+                    if ( count( $parts ) > 8 ){
+                        echo '<tr><td>' . $parts[0] . ' | ' . ' job offers: ' . $parts[1] . ' (new: ' . $parts[2] . ', updated: ' . $parts[3] . ', deleted: ' . $parts[4] . ') Execution time: ' . $parts[5] . ' s / mode: ' . $parts[6] . ' / Providers: ' . $parts[7] . ' / prio: ' . $parts[8] . ' / ' . ( $parts[9] == 1 ? 'with' : 'without' ) . ' internal job offers' . '</td></tr>';
+                    }else{
+                        echo '<tr><td>' . $line . '</td></tr>';
+                    }
+                }
+                echo '</tbody></table>';
+            }else{
+                echo __( 'Logfile is empty.', 'rrze-faq' );
+            }
+        }else{
+            echo __( 'Logfile is empty.', 'rrze-faq' );
+        }
+    }
+
 }

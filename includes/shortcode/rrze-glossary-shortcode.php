@@ -1,25 +1,21 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ\Server;
 
-function fau_glossary( $atts, $content = null ) {
+add_shortcode('glossary', 'RRZE\FAQ\Server\rrze_get_faq' );
+add_shortcode('fau_glossar', 'RRZE\FAQ\Server\rrze_get_faq' );
+add_shortcode('faq', 'RRZE\FAQ\Server\rrze_get_faq' );
+
+function rrze_get_faq( $atts ) { 
+
     extract(shortcode_atts(array(
-            "category" => '',
-            "id"    => '',
-            "color" => '',
-            "domain" => '',
-            "rest"  => 0
-            ), $atts));
-   
-    return fau_get_glossar($id, $category, $color, $domain);   
-}
+        "category" => '',
+        "id"    => '',
+        "color" => '',
+        "domain" => '',
+        "rest"  => 0
+        ), $atts));
 
-add_shortcode('glossary', 'RRZE\Glossar\Server\fau_glossary' );
-add_shortcode('fau_glossar', 'RRZE\Glossar\Server\fau_glossary' );
-add_shortcode('faq', 'RRZE\Glossar\Server\fau_glossary' );
-
-function fau_get_glossar($id, $cat='', $color = '', $domain) { 
-    
     if(isset($cat) && empty($id) && !empty($domain)) {
         
        $domains = get_option('registerDomain');
@@ -72,19 +68,19 @@ function fau_get_glossar($id, $cat='', $color = '', $domain) {
     } else {
         $category = array();
         if ($cat) {
-            $category = get_term_by('slug', $cat, 'glossary_categoryegory');
+            $category = get_term_by('slug', $cat, 'faq_categoryegory');
         }	
         if ($category) {
             $catid = $category->term_id;
-            $posts = get_posts(array('post_type' => 'glossary', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
+            $posts = get_posts(array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
                 array(
-                        'taxonomy' => 'glossary_categoryegory',
+                        'taxonomy' => 'faq_categoryegory',
                         'field' => 'id', // can be slug or id - a CPT-onomy term's ID is the same as its post ID
                         'terms' => $catid
                         )
                 ), 'suppress_filters' => false));
         } else {
-            $posts = get_posts(array('post_type' => 'glossary', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false));
+            $posts = get_posts(array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false));
         }
         $return = '<div class="fau-glossar">';
 
@@ -223,7 +219,7 @@ function getFaqDataByCategory($domain, $category) {
 	$domainurl = 'https://'.$domain;
     }
 
-    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[glossary_categoryegory]='.$category.'&per_page=200';
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[faq_categoryegory]='.$category.'&per_page=200';
     
     $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );

@@ -1,6 +1,6 @@
 <?php
 
-// namespace RRZE\Glossar\Server;
+// namespace RRZE\FAQ\Server;
 namespace RRZE\FAQ;
 
 
@@ -177,7 +177,7 @@ class DOMAIN_FAQ {
     public function plugin_domain_menu() {
 
         $domain_page = add_submenu_page( 
-            'edit.php?post_type=glossary', 
+            'edit.php?post_type=faq', 
             __( 'All Domains', 'rrze-faq' ), 
             __( 'All Domains', 'rrze-faq' ), 
             'manage_options', 

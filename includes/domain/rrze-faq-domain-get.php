@@ -1,6 +1,6 @@
 <?php
 
-// namespace RRZE\Glossar\Server;
+// namespace RRZE\FAQ\Server;
 namespace RRZE\FAQ;
 
 

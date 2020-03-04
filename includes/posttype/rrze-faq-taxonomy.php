@@ -1,14 +1,14 @@
 <?php
 
-namespace RRZE\Glossar\Server;
+namespace RRZE\FAQ\Server;
 
 global $tax;
 $tax = [
     [ 
-        'name' => 'glossary_category',
+        'name' => 'faq_category',
         'label' => __('Category', 'rrze-faq'),
         'slug' => 'category',
-        'rest_base' => 'glossary_category',
+        'rest_base' => 'faq_category',
         'labels' => array(
             'singular_name' => __('Category', 'rrze-faq'),
             'add_new' => __('Add new category', 'rrze-faq'),
@@ -26,10 +26,10 @@ $tax = [
         )
     ],
     [ 
-        'name' => 'glossary_tag',
+        'name' => 'faq_tag',
         'label' => __('Tags', 'rrze-faq'),
         'slug' => 'tag',
-        'rest_base' => 'glossary_tag',
+        'rest_base' => 'faq_tag',
         'labels' => array(
             'singular_name' => __('Tag', 'rrze-faq'),
             'add_new' => __('Add new tag', 'rrze-faq'),
@@ -49,13 +49,13 @@ $tax = [
 ];
 
 
-function fau_glossary_taxonomy() {
+function rrze_faq_taxonomy() {
     global $tax;
 
     foreach ($tax as $t){
         $ret = register_taxonomy(
             $t['name'],  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
-            'glossary',   		 //post type name
+            'faq',   		 //post type name
             array(
                 'hierarchical'	=> FALSE,
                 'label' 		=> $t['label'], //Display name
@@ -75,4 +75,4 @@ function fau_glossary_taxonomy() {
     }
 }
 
-add_action( 'init', 'RRZE\Glossar\Server\fau_glossary_taxonomy');
+add_action( 'init', 'RRZE\FAQ\Server\rrze_faq_taxonomy');

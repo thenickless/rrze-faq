@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-24 17:04+0000\n"
-"PO-Revision-Date: 2020-02-24 17:18+0000\n"
+"PO-Revision-Date: 2020-02-26 09:12+0000\n"
 "Last-Translator: Benjamin <benjamin.klemencic@fau.de>\n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de_DE_formal\n"
@@ -94,7 +94,7 @@ msgstr "Kategorien"
 #: includes/posttype/rrze-faq-taxonomy.php:9
 #: includes/posttype/rrze-faq-taxonomy.php:13
 msgid "Category"
-msgstr "Kategory"
+msgstr "Kategorie"
 
 #: includes/posttype/rrze-faq-taxonomy.php:23
 msgid "Choose from the most used categories"

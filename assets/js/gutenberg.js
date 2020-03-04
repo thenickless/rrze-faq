@@ -35,6 +35,7 @@ function createBlock() {
 				  	}
 				}
 			}
+			
 	
 			if ( ( props['isSelected'] === false ) && ( edited === true ) ){
 				clean( att );
@@ -53,7 +54,7 @@ function createBlock() {
 							for ( var v in phpConfig[fieldname]['values'] ){
 								opts.push( JSON.parse( '{"value":"' + v + '", "label":"' + phpConfig[fieldname]['values'][v] + '"}' ) );
 							}
-							ret.push( createElement( RadioControl, { selected: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : phpConfig[fieldname]['selected'] ), label: phpConfig[fieldname]['label'], onChange: changeField.bind( fieldname ), options: opts } ) );
+							ret.push( createElement( RadioControl, { selected: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : phpConfig[fieldname]['default'] ), label: phpConfig[fieldname]['label'], onChange: changeField.bind( fieldname ), options: opts } ) );
 							break;
 						case 'multi_select': 
 						case 'select': 
