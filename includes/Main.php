@@ -31,11 +31,15 @@ class Main {
      * Es wird ausgeführt, sobald die Klasse instanziiert wird.
      */
     public function onLoaded() {
-        add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
+        add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
         // actions: update, sync, delete logfile
-        add_action('update_option_rrze-faq', [$this, 'doIt']); 
+        add_action( 'update_option_rrze-faq', [$this, 'doIt'] ); 
         // Auto-Sync
-        add_action('rrze_faq_auto_update', [$this, 'cronSync']);
+        add_action( 'rrze_faq_auto_update', [$this, 'cronSync'] );
+        // Editable FAQ (if synced: non-editable / if self-written: editable)
+        add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
+        add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
+        add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
 
         // Settings-Klasse wird instanziiert.
         $settings = new Settings($this->pluginFile);
@@ -44,7 +48,7 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-posttype.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-taxonomy.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-manage-posts.php' );
-        include_once( __DIR__ . '/posttype/rrze-faq-metabox.php');
+        // include_once( __DIR__ . '/posttype/rrze-faq-metabox.php');
         include_once( __DIR__ . '/posttype/rrze-faq-admin.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
         include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
@@ -60,7 +64,6 @@ class Main {
         // Shortcode wird eingebunden.
         include 'Shortcode.php';
         $shortcode = new Shortcode();
-
     }
 
     /**
@@ -69,6 +72,45 @@ class Main {
     public function enqueueScripts() {
         wp_register_style('rrze-faq', plugins_url('assets/css/plugin.css', plugin_basename($this->pluginFile)));
     }
+
+
+    /**
+     * Trigger editable of CPT faq: 
+     * synced FAQ should not be editable
+     * self-written FAQ have to be editable
+     */
+    public function gutenberg_post_meta( $can_edit, $post)  {
+        $ret = TRUE;
+        if ( get_post_meta( $post->ID, 'source', TRUE ) ) {
+            $ret = FALSE;
+        }
+        return $ret;
+    }
+    public function toggle_editor( $post ) {
+        if ( $post->post_type == 'faq' ) {
+            $source = get_post_meta( $post->ID, "source", true );
+            if ( $source ){
+                remove_post_type_support( 'faq', 'editor' );
+                remove_post_type_support( 'faq', 'title' );
+            } else {
+                remove_meta_box( 'read_only_content_box', 'faq', 'normal' );
+            }
+        }
+    }
+    public function add_content_box() {
+        add_meta_box(
+            'read_only_content_box', // id, used as the html id att
+            '&nbsp;', // meta box title
+            [$this, 'read_only_cb'], // callback function, spits out the content
+            'faq', // post type or page. This adds to posts only
+            'normal', // context, where on the screen
+            'high' // priority, where should this go in the context
+        );
+    }
+    public function read_only_cb( $post ) {
+        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
+    }
+
 
     /**
      * Click on buttons "update", "sync" or "delete logfile"

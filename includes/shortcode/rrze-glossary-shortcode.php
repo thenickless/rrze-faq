@@ -68,13 +68,13 @@ function rrze_get_faq( $atts ) {
     } else {
         $category = array();
         if ($cat) {
-            $category = get_term_by('slug', $cat, 'faq_categoryegory');
+            $category = get_term_by('slug', $cat, 'faq_category');
         }	
         if ($category) {
             $catid = $category->term_id;
             $posts = get_posts(array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
                 array(
-                        'taxonomy' => 'faq_categoryegory',
+                        'taxonomy' => 'faq_category',
                         'field' => 'id', // can be slug or id - a CPT-onomy term's ID is the same as its post ID
                         'terms' => $catid
                         )
@@ -219,7 +219,7 @@ function getFaqDataByCategory($domain, $category) {
 	$domainurl = 'https://'.$domain;
     }
 
-    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[faq_categoryegory]='.$category.'&per_page=200';
+    $getfrom = $domainurl.'/wp-json/wp/v2/glossary?filter[faq_category]='.$category.'&per_page=200';
     
     $content = wp_remote_get($getfrom, $args );
     $status_code = wp_remote_retrieve_response_code( $content );

@@ -34,34 +34,27 @@ class Sync {
                             $faq = json_decode( $faq['body'], true );
                             if ( !isset( $faq['Error'] ) && $faq['FAQItem'][0]['Valid'] == 'valid' ) {
                                 // add FAQ
-                                $meta_input  = array(
-                                    'source' => 'OTRS',
-                                    'faqID' => $faq['FAQItem'][0]['FAQID'],
-                                    'lang' => $faq['FAQItem'][0]['Language'],
-                                    'field1' => $faq['FAQItem'][0]['Field1'],
-                                    'field2' => $faq['FAQItem'][0]['Field2'],
-                                    'field3' => $faq['FAQItem'][0]['Field3'],
-                                    'field4' => $faq['FAQItem'][0]['Field4'],
-                                    'field5' => $faq['FAQItem'][0]['Field5'],
-                                );
 
-                                $tax_input = array(
-                                    'faq_category' => $faq['FAQItem'][0]['CategoryName'],
-                                    'faq_tag' => str_replace( ' ', ',', $faq['FAQItem'][0]['Keywords'] )
-                                );
-        
-                                $postVals = array(
+                                $post_id = wp_insert_post( array(
                                     'post_title' => $faq['FAQItem'][0]['Title'],
-                                    // 'post_content' => '',
+                                    'post_content' => ( $faq['FAQItem'][0]['Field1'] ? '<h2>' . __( 'Symptom', 'rrze-faq' ) . '</h2><p>' . $faq['FAQItem'][0]['Field1'] . '<p/>' : '' ) . 
+                                        ( $faq['FAQItem'][0]['Field2'] ? '<h2>' . __( 'Problem', 'rrze-faq' ) . '</h2><p>' . $faq['FAQItem'][0]['Field2'] . '<p/>' : '' ) . 
+                                        ( $faq['FAQItem'][0]['Field3'] ? '<h2>' . __( 'Solution', 'rrze-faq' ) . '</h2><p>' . $faq['FAQItem'][0]['Field3'] . '<p/>' : '' ),
                                     'post_name' => sanitize_title( $faq['FAQItem'][0]['Title'] ),
                                     'post_type' => 'faq',
                                     'comment_status' => 'closed',
                                     'ping_status' => 'closed',
                                     'post_status' => 'publish',
-                                    'meta_input' => $meta_input,
-                                    'tax_input' => $tax_input
-                                );
-                                $post_id = wp_insert_post( $postVals );
+                                    'meta_input' => array(
+                                        'source' => 'OTRS',
+                                        'faqID' => $faq['FAQItem'][0]['FAQID'],
+                                        'lang' => $faq['FAQItem'][0]['Language']
+                                        ),
+                                    'tax_input' => array(
+                                        'faq_category' => $faq['FAQItem'][0]['CategoryName'],
+                                        'faq_tag' => str_replace( ' ', ',', $faq['FAQItem'][0]['Keywords'] )
+                                        )
+                                    ) );
                                 $iNew++;
                             }
                         }
@@ -71,8 +64,10 @@ class Sync {
         }
 
         date_default_timezone_set('Europe/Berlin');
-        $msg = date("Y-m-d H:i:s") . ',' . $iDel . ' deleted | ' . $iNew . ' inserted,' . sprintf( '%.2f', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] );
-        logIt( $msg );
+        $msg = $iNew . __( ' FAQ added', 'rrze-faq' ) . '. ' . $iDel . __( ' FAQ deleted', 'rrze-faq' ) . '. Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+        add_settings_error( 'Sync completed', 'synccompleted', $msg );
+        settings_errors();
+        logIt( date("Y-m-d H:i:s") . ' | ' . $msg );
         return;
     }
 }

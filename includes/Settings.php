@@ -135,7 +135,7 @@ class Settings
                     foreach ( $cats['Category'] as $cat ){
                         $field['options'][$cat['ID']] = $cat['Name'];
                     }
-                    sort( $field['options'] );
+                    asort( $field['options'] );
                 }
             }
             $tmp[] = $field;

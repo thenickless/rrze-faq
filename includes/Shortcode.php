@@ -329,7 +329,6 @@ class Shortcode {
        return $content;
     }
     
-
     public function fill_gutenberg_options() {
         // Skip if Gutenberg isnot enabled
         if ( ! function_exists( 'register_block_type' ) ) {
@@ -360,16 +359,19 @@ class Shortcode {
         }
 
         // fill select "id"
-        $all_post_ids = get_posts(array(
-            'fields'          => 'ids',
+        $all_post_ids = get_posts( array(
             'posts_per_page'  => -1,
-            'post_type' => 'glossary'
+            'post_type' => 'faq',
+            'order' => 'ASC',
+            'orderby' => 'title'
         ));
+        
         $this->settings['id']['field_type'] = 'select';
         $this->settings['id']['type'] = 'string';
         $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
-        foreach ( $all_post_ids as $id ){
-            $this->settings['id']['values'][$id] = $id;
+        foreach ( $all_post_ids as $faq){
+            // echo $faq->post_title . '<br>';
+            $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) ); // ist sortiert aber nicht in dem select feld
         }
 
         // echo ini_get('max_execution_time'); // 60 sec

@@ -74,9 +74,6 @@ function getFields() {
 				'label' => __('Categories', 'rrze-faq' ),
 				'desc' => __('Please select all categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
 				'type' => 'multicheck',
-				'options' => [
-				],
-				'default' => ''
 			],
 			[
 				'name' => 'sync_check',

@@ -7,4 +7,4 @@ function rrze_faq_rte_add_buttons( $plugin_array ) {
     return $plugin_array;
 }
 
-add_filter( 'mce_external_plugins','RRZE\FAQ\Server\rrze_faq_rte_add_buttons');
+// add_filter( 'mce_external_plugins','RRZE\FAQ\Server\rrze_faq_rte_add_buttons');
