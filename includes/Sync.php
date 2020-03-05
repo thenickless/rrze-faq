@@ -37,9 +37,9 @@ class Sync {
 
                                 $post_id = wp_insert_post( array(
                                     'post_title' => $faq['FAQItem'][0]['Title'],
-                                    'post_content' => ( $faq['FAQItem'][0]['Field1'] ? '<h2>' . __( 'Symptom', 'rrze-faq' ) . '</h2><p>' . $faq['FAQItem'][0]['Field1'] . '<p/>' : '' ) . 
-                                        ( $faq['FAQItem'][0]['Field2'] ? '<h2>' . __( 'Problem', 'rrze-faq' ) . '</h2><p>' . $faq['FAQItem'][0]['Field2'] . '<p/>' : '' ) . 
-                                        ( $faq['FAQItem'][0]['Field3'] ? '<h2>' . __( 'Solution', 'rrze-faq' ) . '</h2><p>' . $faq['FAQItem'][0]['Field3'] . '<p/>' : '' ),
+                                    'post_content' => ( $faq['FAQItem'][0]['Field1'] ? '<h3>' . __( 'Symptom', 'rrze-faq' ) . '</h3><p>' . $faq['FAQItem'][0]['Field1'] . '<p/>' : '' ) . 
+                                        ( $faq['FAQItem'][0]['Field2'] ? '<h3>' . __( 'Problem', 'rrze-faq' ) . '</h3><p>' . $faq['FAQItem'][0]['Field2'] . '<p/>' : '' ) . 
+                                        ( $faq['FAQItem'][0]['Field3'] ? '<h3>' . __( 'Solution', 'rrze-faq' ) . '</h3><p>' . $faq['FAQItem'][0]['Field3'] . '<p/>' : '' ),
                                     'post_name' => sanitize_title( $faq['FAQItem'][0]['Title'] ),
                                     'post_type' => 'faq',
                                     'comment_status' => 'closed',

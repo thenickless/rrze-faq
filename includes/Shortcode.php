@@ -337,8 +337,10 @@ class Shortcode {
 
         // fill select "datasource"
         $domains = get_option( 'registerDomain' );
-        foreach ( $domains as $domain  ){
-            $this->settings['datasource']['values'][$domain] = $domain;
+        if ( $domains ){
+            foreach ( $domains as $domain  ){
+                $this->settings['datasource']['values'][$domain] = $domain;
+            }
         }
 
         // fill selects "category" and "tag"

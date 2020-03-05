@@ -90,8 +90,10 @@ class Main {
         if ( $post->post_type == 'faq' ) {
             $source = get_post_meta( $post->ID, "source", true );
             if ( $source ){
-                remove_post_type_support( 'faq', 'editor' );
                 remove_post_type_support( 'faq', 'title' );
+                remove_post_type_support( 'faq', 'editor' );
+                remove_meta_box( 'tagsdiv-faq_category', 'faq', 'side' );
+                remove_meta_box( 'tagsdiv-faq_tag', 'faq', 'side' );
             } else {
                 remove_meta_box( 'read_only_content_box', 'faq', 'normal' );
             }
@@ -100,7 +102,7 @@ class Main {
     public function add_content_box() {
         add_meta_box(
             'read_only_content_box', // id, used as the html id att
-            '&nbsp;', // meta box title
+            __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq'), // meta box title
             [$this, 'read_only_cb'], // callback function, spits out the content
             'faq', // post type or page. This adds to posts only
             'normal', // context, where on the screen
@@ -108,7 +110,9 @@ class Main {
         );
     }
     public function read_only_cb( $post ) {
-        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
+        $cats = implode( ', ', wp_get_post_terms( $post->ID,  'faq_category', array( 'fields' => 'names' ) ) );
+        $tags = implode( ', ', wp_get_post_terms( $post->ID,  'faq_tag', array( 'fields' => 'names' ) ) );
+        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content ) . '<hr>' . ( $cats ? '<h3>' . __('Category', 'rrze-faq' ) . '</h3><p>' . $cats . '</p>' : '' ) . ( $tags ? '<h3>' . __('Tags', 'rrze-faq' ) . '</h3><p>' . $tags .'</p>' : '' );
     }
 
 
