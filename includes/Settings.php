@@ -127,7 +127,7 @@ class Settings
         // fill "categories"
         $tmp = array();
         foreach( $this->settingsFields['sync'] as $field ) {
-            if ( $field['name'] == 'categories' ){
+            if ( $field['name'] == 'otrs_categories' ){
                 $cats = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList' );
                 $status_code = wp_remote_retrieve_response_code( $cats );
                 if ( 200 === $status_code ) {
@@ -148,8 +148,12 @@ class Settings
      * @param [type] $section [description]
      * @param [type] $field   [description]
      */
-    protected function addField($section, $field)
-    {
+    protected function addField($section, $field) {
+
+
+        echo 'addField';
+        exit;
+
         $defaults = array(
             'name'  => '',
             'label' => '',
@@ -299,7 +303,7 @@ class Settings
             $get = '';
             switch ( $this->currentTab ) {
                 case 'sync': 
-                    $btn_label = __('Syncronize now', 'rrze-faq' );
+                    $btn_label = __('Synchronize now', 'rrze-faq' );
                     $get = '?sync';
                     break;
                 case 'log': 
@@ -670,6 +674,37 @@ class Settings
      * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
      */
+    public function callbackMultiSelect($args) {
+        $value = $this->getOption($args['section'], $args['id'], $args['default']);
+        $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $html  = sprintf(
+            '<select class="%1$s" id="%3$s-%4$s" name="%2$s[%3$s_%4$s][]" multiple="multiple">',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id']
+        );
+
+        foreach ($args['options'] as $key => $label) {
+            $html .= sprintf(
+                '<option value="%s"%s>%s</option>',
+                $key,
+                selected( true, in_array( $key, $value ), false ),
+                $label
+            );
+        }
+
+        $html .= sprintf('</select>');
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+
+    /**
+     * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
+     * @param array   $args Argumente des Einstellungsfelds
+     */
     public function callbackSelect($args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
@@ -683,6 +718,9 @@ class Settings
         );
 
         foreach ($args['options'] as $key => $label) {
+            echo '<pre>';
+            var_dump($value);
+            exit;
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 $key,

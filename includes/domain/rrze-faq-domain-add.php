@@ -117,11 +117,6 @@ class AddFaqDomain {
 	    $content = wp_remote_get($getfrom, $args );
         $status_code = wp_remote_retrieve_response_code( $content );
         
-        // echo '<pre>';
-        // echo '$status_code = ' . $status_code;
-        // echo '$content = ' . print_r( $content );
-        // echo '</pre>';
-
 	    if ( 200 === $status_code ) {
 	       return true;  
 	    }

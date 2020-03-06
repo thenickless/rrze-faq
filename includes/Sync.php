@@ -21,7 +21,7 @@ class Sync {
         // sync all FAQ for each selected category
         $iNew = 0;
         $option = get_option( 'rrze-faq' );
-        foreach ( $option['sync_categories'] as $catID ){
+        foreach ( $option['sync_otrs_categories'] as $catID ){
             $faqIDs = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQSearch?CategoryIDs=' . $catID );
             $status_code = wp_remote_retrieve_response_code( $faqIDs );
             if ( $status_code === 200 ) {

@@ -32,7 +32,7 @@ class Main {
      */
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
-        // actions: update, sync, delete logfile
+        // Actions: update, sync, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'doIt'] ); 
         // Auto-Sync
         add_action( 'rrze_faq_auto_update', [$this, 'cronSync'] );
@@ -40,6 +40,11 @@ class Main {
         add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
         add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
         add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
+        // Table "All FAQ"
+        add_filter( 'manage_edit-faq_columns', [$this, 'faq_table_head'] );
+        add_action( 'manage_faq_posts_custom_column', [$this, 'faq_table_content'], 10, 2 );
+        add_filter( 'manage_edit-faq_sortable_columns', [$this, 'faq_sortable_columns'] );
+    
 
         // Settings-Klasse wird instanziiert.
         $settings = new Settings($this->pluginFile);
@@ -65,6 +70,7 @@ class Main {
         include 'Shortcode.php';
         $shortcode = new Shortcode();
     }
+
 
     /**
      * Enqueue der globale Skripte.
@@ -115,6 +121,25 @@ class Main {
         echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content ) . '<hr>' . ( $cats ? '<h3>' . __('Category', 'rrze-faq' ) . '</h3><p>' . $cats . '</p>' : '' ) . ( $tags ? '<h3>' . __('Tags', 'rrze-faq' ) . '</h3><p>' . $tags .'</p>' : '' );
     }
 
+    /**
+     * Table "All FAQ"
+     */
+    public function faq_table_head( $columns ) {
+        $columns['source']  = __( 'Source', 'rrze-faq' );
+        return $columns;
+    }
+    public function faq_table_content( $column_name, $post_id ) {
+        if( $column_name == 'source' ) {
+            $source = get_post_meta( $post_id, 'source', true );
+            echo $source;
+        }
+    }
+    public function faq_sortable_columns( $columns ) {
+        $columns['taxonomy-faq_category'] = 'taxonomy-faq_category';
+        $columns['source']	= 'source';
+        return $columns;
+    }
+
 
     /**
      * Click on buttons "update", "sync" or "delete logfile"
@@ -126,6 +151,19 @@ class Main {
             $sync->doSync( 'manual' );
         } elseif ( isset( $_GET['del'] ) ) {
             deleteLogfile();
+        } else {
+            $this->checkDomain();
+        }
+    }
+
+    public function checkDomain( ) {
+
+        echo 'hier ist es zu spät. options sind bereits gespeichert. use add_action( \'update_option_myoption\', function( $old_value, $new_value ) {\'';
+exit;
+
+        $new_domain = $_POST['rrze-faq']['domains_new_domain'];
+        if ( $new_domain == 'xyz' ){
+            add_settings_error('domains_new_domain','domains_new_domain_error','This is not a valid domain.','error');        
         }
     }
 

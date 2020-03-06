@@ -56,6 +56,10 @@ function getSections() {
 			'title' => __('Synchronization', 'rrze-faq' )
 		],
 		[
+			'id'    => 'domains',
+			'title' => __('Domains', 'rrze-faq' )
+		],
+		[
 		  	'id' => 'log',
 		  	'title' => __('Logfile', 'rrze-faq' )
 		]    
@@ -70,17 +74,25 @@ function getFields() {
     return [
 		'sync' => [
 			[
-				'name' => 'categories',
-				'label' => __('Categories', 'rrze-faq' ),
+				'name' => 'otrs_categories',
+				'label' => __('Categories from OTRS', 'rrze-faq' ),
 				'desc' => __('Please select all categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
-				'type' => 'multicheck',
+				'type' => 'multiselect'
 			],
 			[
 				'name' => 'sync_check',
 				'label' => __('Automatic', 'rrze-faq' ),
 				'desc' => __('Syncronize FAQ automatically.', 'rrze-faq' ),
-				'type' => 'checkbox',
+				'type' => 'checkbox'
 			],
+		],
+		'domains' => [
+			[
+				'name' => 'new_domain',
+				'label' => __('Add this domain', 'rrze-faq' ),
+				'desc' => __('Enter the domain you want to receive FAQ from.<br><br><font color="red">Domain . wp-json/wp/v2/faq / faq_category / faq_tag auf Existenz prüfen</font>', 'rrze-faq' ),
+				'type' => 'text'
+			]
 		],
     	'log' => [
         	[
