@@ -125,16 +125,16 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-        'datasource' => [
-			'values' => [
-				'website' => __( 'This website', 'rrze-faq' ),
-				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
-			],
-			'default' => 'website',
-			'field_type' => 'select',
-			'label' => __( 'Data source', 'rrze-faq' ),
-			'type' => 'string'
-		],
+        // 'datasource' => [
+		// 	'values' => [
+		// 		'website' => __( 'This website', 'rrze-faq' ),
+		// 		'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
+		// 	],
+		// 	'default' => 'website',
+		// 	'field_type' => 'select',
+		// 	'label' => __( 'Data source', 'rrze-faq' ),
+		// 	'type' => 'string'
+		// ],
         'glossary' => [
 			'values' => [
 				'category' => __( 'Categories', 'rrze-faq' ),
@@ -156,16 +156,16 @@ function getShortcodeSettings(){
 			'label' => __( 'Glossary style', 'rrze-faq' ),
 			'type' => 'string'
 		],
-		'category' => [
+		'categories' => [
 			'default' => '',
 			'field_type' => 'text',
-			'label' => __( 'Category', 'rrze-faq' ),
+			'label' => __( 'Categories', 'rrze-faq' ),
 			'type' => 'text'
         ],
-		'tag' => [
+		'tags' => [
 			'default' => '',
 			'field_type' => 'text',
-			'label' => __( 'Tag', 'rrze-faq' ),
+			'label' => __( 'Tags', 'rrze-faq' ),
 			'type' => 'text'
         ],
 		'id' => [

@@ -44,6 +44,9 @@ class Main {
         add_filter( 'manage_edit-faq_columns', [$this, 'faq_table_head'] );
         add_action( 'manage_faq_posts_custom_column', [$this, 'faq_table_content'], 10, 2 );
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'faq_sortable_columns'] );
+        // Check Domain before storing
+        add_filter( 'pre_update_option_rrze-faq',  [$this, 'checkDomain'], 10, 1 );
+ 
     
 
         // Settings-Klasse wird instanziiert.
@@ -151,20 +154,21 @@ class Main {
             $sync->doSync( 'manual' );
         } elseif ( isset( $_GET['del'] ) ) {
             deleteLogfile();
-        } else {
-            $this->checkDomain();
         }
     }
 
-    public function checkDomain( ) {
-
-        echo 'hier ist es zu spät. options sind bereits gespeichert. use add_action( \'update_option_myoption\', function( $old_value, $new_value ) {\'';
-exit;
-
-        $new_domain = $_POST['rrze-faq']['domains_new_domain'];
-        if ( $new_domain == 'xyz' ){
-            add_settings_error('domains_new_domain','domains_new_domain_error','This is not a valid domain.','error');        
+    public function checkDomain( $fields ) {
+        if ( $fields['domains_new_domain'] ) {
+            $fields['domains_new_domain'] = preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['domains_new_domain'] ) . '/wp-json/wp/v2/glossary?per_page=1';
+            // preg_replace wg endendem / vor /wp-json
+            $content = wp_remote_get( $fields['domains_new_domain'] );
+            $status_code = wp_remote_retrieve_response_code( $content );
+            if ( $status_code != 200 ) {
+                add_settings_error( 'domains_new_domain', 'domains_new_domain_error', $fields['domains_new_domain'] . ' is not valid.', 'error' );        
+                $fields['domains_new_domain'] = '';
+            }
         }
+        return $fields;
     }
 
     public function cronSync() {

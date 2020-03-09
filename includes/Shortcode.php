@@ -346,18 +346,42 @@ class Shortcode {
         // fill selects "category" and "tag"
         $fields = array( 'category', 'tag' );
         foreach ( $fields as $field ) {
-            $terms = get_terms([
-                'taxonomy' => 'faq_' . $field,
-                'hide_empty' => TRUE
-            ]);
+            // set new params for gutenberg / the old ones are used for shortcode in classic editor
             $this->settings[$field]['field_type'] = 'multi_select';
             $this->settings[$field]['default'] = array('');
             $this->settings[$field]['type'] = 'array';
             $this->settings[$field]['items'] = array( 'type' => 'string' );
             $this->settings[$field]['values'][0] = __( '-- all --', 'rrze-faq' );
+
+            // get values from website's database
+            $terms = get_terms([
+                'taxonomy' => 'faq_' . $field,
+                'hide_empty' => TRUE
+            ]);
             foreach ( $terms as $term ){
                 $this->settings[$field]['values'][$term->name] = $term->name;
             }
+
+            // get values from domains
+
+            $options = get_option('rrze-faq' );
+            if ( isset( $options['domains_new_domain'] ) ) {
+                $domains = explode( ',', $options['domains_new_domain'] );
+                foreach( $domains as $domain ){
+                    $content = wp_remote_get( $fields['domains_new_domain'] );
+                    $status_code = wp_remote_retrieve_response_code( $content );
+                    if ( $status_code != 200 ) {
+                        
+                    }        
+                }
+
+            }
+    
+
+            //     $getfrom = $domainurl . '/wp-json/wp/v2/faq_glossary?_fields=name,id;
+            // https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-json/wp/v2/faq?faq_category=950
+            // https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-json/wp/v2/faq?faq_category=951,950&faq_tag=90
+
         }
 
         // fill select "id"
@@ -372,35 +396,8 @@ class Shortcode {
         $this->settings['id']['type'] = 'string';
         $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
         foreach ( $all_post_ids as $faq){
-            // echo $faq->post_title . '<br>';
             $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) ); // ist sortiert aber nicht in dem select feld
         }
-
-        // echo ini_get('max_execution_time'); // 60 sec
-        // exit;
-
-        // fill FAQ
-        // $i = 0;
-        // https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList
-        // $faqIDs = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQSearch' );
-        // $status_code = wp_remote_retrieve_response_code( $faqIDs );
-        // if ( 200 === $status_code ) {
-        //     $faqIDs = json_decode( $faqIDs['body'], true );
-        //     foreach ( $faqIDs['ID'] as $ID ){
-        //         // if ($i<360){ // 30 sec
-        //             $faq = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQ?ItemID=' . $ID, array( 'timeout' => 999 ) );
-        //             $status_code = wp_remote_retrieve_response_code( $faq );
-        //             echo $status_code . '<br>';
-        //             // if ( 200 === $status_code ) {
-        //             //     echo 'OK';
-        //             //     // $faq = json_decode( $faq['body'], true );
-        //             //     // $this->settings['id']['values'][$faq['FAQItem'][0]['ID']] = $faq['FAQItem'][0]['ID'];
-        //             // }
-        //         //     $i++;
-        //         // }
-        //     }
-        //     exit;
-        // }
     }
 
     public function gutenberg_init() {

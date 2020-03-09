@@ -149,11 +149,6 @@ class Settings
      * @param [type] $field   [description]
      */
     protected function addField($section, $field) {
-
-
-        echo 'addField';
-        exit;
-
         $defaults = array(
             'name'  => '',
             'label' => '',
@@ -676,6 +671,7 @@ class Settings
      */
     public function callbackMultiSelect($args) {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
+        $value = ( $value ? $value : array() );
         $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
         $html  = sprintf(
             '<select class="%1$s" id="%3$s-%4$s" name="%2$s[%3$s_%4$s][]" multiple="multiple">',
