@@ -102,6 +102,8 @@ class AddFaqDomain {
     }
     
     function checkDomain($url) {
+
+        return;
         
         $args = array(
             'sslverify'   => false,

@@ -77,7 +77,8 @@ function getFields() {
 				'name' => 'otrs_categories',
 				'label' => __('Categories from OTRS', 'rrze-faq' ),
 				'desc' => __('Please select all categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
-				'type' => 'multiselect'
+				'type' => 'multiselect',
+				'options' => []
 			],
 			[
 				'name' => 'sync_check',
@@ -88,9 +89,9 @@ function getFields() {
 		],
 		'domains' => [
 			[
-				'name' => 'new_domain',
+				'name' => 'new',
 				'label' => __('Add this domain', 'rrze-faq' ),
-				'desc' => __('Enter the domain you want to receive FAQ from.<br><br><font color="red">Domain . wp-json/wp/v2/faq / faq_category / faq_tag auf Existenz prüfen</font>', 'rrze-faq' ),
+				'desc' => __('Enter the domain you want to receive FAQ from.', 'rrze-faq' ),
 				'type' => 'text'
 			]
 		],
@@ -125,16 +126,16 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-        // 'datasource' => [
-		// 	'values' => [
-		// 		'website' => __( 'This website', 'rrze-faq' ),
-		// 		'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
-		// 	],
-		// 	'default' => 'website',
-		// 	'field_type' => 'select',
-		// 	'label' => __( 'Data source', 'rrze-faq' ),
-		// 	'type' => 'string'
-		// ],
+        'datasource' => [
+			'values' => [
+				'website' => __( 'This website', 'rrze-faq' ),
+				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
+			],
+			'default' => 'website',
+			'field_type' => 'select',
+			'label' => __( 'Data source', 'rrze-faq' ),
+			'type' => 'string'
+		],
         'glossary' => [
 			'values' => [
 				'category' => __( 'Categories', 'rrze-faq' ),
@@ -147,22 +148,22 @@ function getShortcodeSettings(){
 		],
         'glossarystyle' => [
 			'values' => [
-				'' => __( '-- none --', 'rrze-faq' ),
+				'' => __( '-- hidden --', 'rrze-faq' ),
 				'a-z' => __( 'A - Z', 'rrze-faq' ),
 				'tagcloud' => __( 'Tagcloud', 'rrze-faq' )
 			],
 			'default' => 'a-z',
-			'field_type' => 'select',
+			'field_type' => 'radio',
 			'label' => __( 'Glossary style', 'rrze-faq' ),
 			'type' => 'string'
 		],
-		'categories' => [
+		'category' => [
 			'default' => '',
 			'field_type' => 'text',
 			'label' => __( 'Categories', 'rrze-faq' ),
 			'type' => 'text'
         ],
-		'tags' => [
+		'tag' => [
 			'default' => '',
 			'field_type' => 'text',
 			'label' => __( 'Tags', 'rrze-faq' ),
@@ -171,7 +172,7 @@ function getShortcodeSettings(){
 		'id' => [
 			'default' => NULL,
 			'field_type' => 'text',
-			'label' => __( 'ID', 'rrze-faq' ),
+			'label' => __( 'FAQ', 'rrze-faq' ),
 			'type' => 'number'
 		],
 		'color' => [

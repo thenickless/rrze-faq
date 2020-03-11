@@ -35,7 +35,7 @@ class Main {
         // Actions: update, sync, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'doIt'] ); 
         // Auto-Sync
-        add_action( 'rrze_faq_auto_update', [$this, 'cronSync'] );
+        // add_action( 'rrze_faq_auto_update', [$this, 'cronSync'] );
         // Editable FAQ (if synced: non-editable / if self-written: editable)
         add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
         add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
@@ -60,14 +60,14 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-admin.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
         include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
-        include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
-        include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
-        include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
-        include_once( __DIR__ . '/domain/rrze-faq-domain-get.php' );
-        include_once( __DIR__ . '/domain/rrze-faq-domain-list.php' );
-        new DOMAIN_FAQ();
-        include_once( __DIR__ . '/domain/rrze-faq-domain-add.php' );
-        new AddFaqDomain();
+        // include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
+        // include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
+        // include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
+        // include_once( __DIR__ . '/domain/rrze-faq-domain-get.php' );
+        // include_once( __DIR__ . '/domain/rrze-faq-domain-list.php' );
+        // new DOMAIN_FAQ();
+        // include_once( __DIR__ . '/domain/rrze-faq-domain-add.php' );
+        // new AddFaqDomain();
 
         // Shortcode wird eingebunden.
         include 'Shortcode.php';
@@ -149,23 +149,28 @@ class Main {
      */
     public function doIt() {
         if ( isset( $_GET['sync'] ) ) {
-            $this->jobCron();
-            $sync = new Sync();
-            $sync->doSync( 'manual' );
+            // $this->jobCron();
+            // $sync = new Sync();
+            // $sync->doSync( 'manual' );
         } elseif ( isset( $_GET['del'] ) ) {
             deleteLogfile();
         }
     }
 
     public function checkDomain( $fields ) {
-        if ( $fields['domains_new_domain'] ) {
-            $fields['domains_new_domain'] = preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['domains_new_domain'] ) . '/wp-json/wp/v2/glossary?per_page=1';
-            // preg_replace wg endendem / vor /wp-json
-            $content = wp_remote_get( $fields['domains_new_domain'] );
+        if ( $fields['domains_new'] ) {
+            $fields['domains_new'] = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['domains_new'] ) );
+            // $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/faq?per_page=1' );
+            $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
             $status_code = wp_remote_retrieve_response_code( $content );
+
             if ( $status_code != 200 ) {
-                add_settings_error( 'domains_new_domain', 'domains_new_domain_error', $fields['domains_new_domain'] . ' is not valid.', 'error' );        
-                $fields['domains_new_domain'] = '';
+                add_settings_error( 'domains_new', 'domains_new_error', $fields['domains_new'] . ' is not valid.', 'error' );        
+            } else {
+                $options = get_option( 'rrze-faq' );
+                $fields['domains_urls'] = ( $options['$domains_urls'] ? $options['$domains_urls'] . ',' : '' ) . $fields['domains_new'];
+                $fields['domains_new'] = '';
+                // unset( $fields['domains_new'] );
             }
         }
         return $fields;

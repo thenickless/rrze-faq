@@ -118,29 +118,30 @@ class Settings
         $this->settingsSections[] = $section;
     }
 
+    
     /**
      * Einstellungsfelder einstellen.
      */
     protected function setFields() {
         $this->settingsFields = getFields();
 
-        // fill "categories"
-        $tmp = array();
-        foreach( $this->settingsFields['sync'] as $field ) {
-            if ( $field['name'] == 'otrs_categories' ){
-                $cats = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList' );
-                $status_code = wp_remote_retrieve_response_code( $cats );
-                if ( 200 === $status_code ) {
-                    $cats = json_decode( $cats['body'], true );
-                    foreach ( $cats['Category'] as $cat ){
-                        $field['options'][$cat['ID']] = $cat['Name'];
-                    }
-                    asort( $field['options'] );
-                }
-            }
-            $tmp[] = $field;
-        }
-        $this->settingsFields['sync'] = $tmp;
+        // // fill "categories"
+        // $tmp = array();
+        // foreach( $this->settingsFields['sync'] as $field ) {
+        //     if ( $field['name'] == 'otrs_categories' ){
+        //         $cats = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList' );
+        //         $status_code = wp_remote_retrieve_response_code( $cats );
+        //         if ( 200 === $status_code ) {
+        //             $cats = json_decode( $cats['body'], true );
+        //             foreach ( $cats['Category'] as $cat ){
+        //                 $field['options'][$cat['ID']] = $cat['Name'];
+        //             }
+        //             asort( $field['options'] );
+        //         }
+        //     }
+        //     $tmp[] = $field;
+        // }
+        // $this->settingsFields['sync'] = $tmp;
     }
 
     /**
@@ -669,7 +670,7 @@ class Settings
      * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
      */
-    public function callbackMultiSelect($args) {
+    public function callbackMultiSelect( $args ) {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
         $value = ( $value ? $value : array() );
         $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
@@ -714,9 +715,9 @@ class Settings
         );
 
         foreach ($args['options'] as $key => $label) {
-            echo '<pre>';
-            var_dump($value);
-            exit;
+            // echo '<pre>';
+            // var_dump($value);
+            // exit;
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 $key,

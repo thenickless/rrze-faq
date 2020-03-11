@@ -157,6 +157,10 @@ function enqueueScripts() {
 }
 
 function getFaqByID($domain, $id, $color) {
+
+
+    return;
+
     $args = array(
         'sslverify'   => false,
     );
@@ -208,7 +212,11 @@ function formatRequestedDataByID($item, $color) {
     return $result;
 }
 
+
 function getFaqDataByCategory($domain, $category) {
+
+    return;
+
     $args = array(
         'sslverify'   => false,
     );

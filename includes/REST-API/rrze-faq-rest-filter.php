@@ -30,8 +30,10 @@ function rest_api_filter_add_filter_param( $args, $request ) {
 add_action( 'rest_api_init', 'RRZE\FAQ\Server\rest_api_filter_add_filters' );
 
 add_filter( 'rest_endpoints', function( $endpoints ) {
-    if( isset( $endpoints['/wp/v2/glossary'][0]['args']['per_page']['maximum'] ) )
-        $endpoints['/wp/v2/glossary'][0]['args']['per_page']['maximum'] = 2000;
+        // if( isset( $endpoints['/wp/v2/glossary'][0]['args']['per_page']['maximum'] ) )
+        //         $endpoints['/wp/v2/glossary'][0]['args']['per_page']['maximum'] = 2000;
+        if( isset( $endpoints['/wp/v2/faq'][0]['args']['per_page']['maximum'] ) )
+                $endpoints['/wp/v2/faq'][0]['args']['per_page']['maximum'] = 2000;
 
     return $endpoints;  
 });

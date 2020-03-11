@@ -9,6 +9,8 @@ namespace RRZE\FAQ\Server;
 Class FaqListTableHelper {
 
     public static function getFAQForWPListTable() {
+
+        return;
         
         $args = array(
             'sslverify'   => false,

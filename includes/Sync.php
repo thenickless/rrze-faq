@@ -9,6 +9,9 @@ defined('ABSPATH') || exit;
 
 class Sync {
     public function doSync( $mode ) {
+
+        return;
+
         // delete all FAQ that came from OTRS
         $iDel = 0;
         // $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => 'OTRS', 'numberposts' => -1 ) );
