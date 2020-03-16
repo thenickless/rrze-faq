@@ -3,8 +3,8 @@
 /*
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
-Description:     
-Version:         2.2.2
+Description:       
+Version:         2.2.4
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2

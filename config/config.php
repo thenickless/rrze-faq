@@ -6,12 +6,20 @@ defined('ABSPATH') || exit;
 
 define( 'LOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
 
+
+
 /**
  * Gibt der Name der Option zurück.
  * @return array [description]
  */
 function getOptionName() {
     return 'rrze-faq';
+}
+
+
+function getOTRS(){
+// const OTRS = 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST';
+	return 'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST';
 }
 
 /**
@@ -93,7 +101,11 @@ function getFields() {
 				'label' => __('Add this domain', 'rrze-faq' ),
 				'desc' => __('Enter the domain you want to receive FAQ from.', 'rrze-faq' ),
 				'type' => 'text'
-			]
+			],
+			[
+				'name' => 'urls',
+				'type' => 'hidden'
+		  	]
 		],
     	'log' => [
         	[

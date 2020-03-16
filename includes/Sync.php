@@ -2,15 +2,17 @@
 
 namespace RRZE\FAQ;
 
+use function RRZE\FAQ\Config\getOTRS;
 use function RRZE\FAQ\Config\logIt;
 
 
 defined('ABSPATH') || exit;
 
+
 class Sync {
     public function doSync( $mode ) {
 
-        return;
+        define( 'OTRS', getOTRS() );
 
         // delete all FAQ that came from OTRS
         $iDel = 0;
@@ -25,13 +27,13 @@ class Sync {
         $iNew = 0;
         $option = get_option( 'rrze-faq' );
         foreach ( $option['sync_otrs_categories'] as $catID ){
-            $faqIDs = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQSearch?CategoryIDs=' . $catID );
+            $faqIDs = wp_remote_get( OTRS . '/FAQSearch?CategoryIDs=' . $catID );
             $status_code = wp_remote_retrieve_response_code( $faqIDs );
             if ( $status_code === 200 ) {
                 $faqIDs = json_decode( $faqIDs['body'], true );
                 if ( !isset( $faqIDs['Error'] ) ) {
                     foreach ( $faqIDs['ID'] as $faqID ){
-                        $faq = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/FAQ?ItemID=' . $faqID );
+                        $faq = wp_remote_get( OTRS . '/FAQ?ItemID=' . $faqID );
                         $status_code = wp_remote_retrieve_response_code($faq );
                         if ( $status_code === 200 ) {
                             $faq = json_decode( $faq['body'], true );

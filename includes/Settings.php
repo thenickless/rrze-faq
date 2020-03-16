@@ -4,6 +4,7 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
+use function RRZE\FAQ\Config\getOTRS;
 use function RRZE\FAQ\Config\getOptionName;
 use function RRZE\FAQ\Config\getMenuSettings;
 use function RRZE\FAQ\Config\getHelpTab;
@@ -13,8 +14,7 @@ use function RRZE\FAQ\Config\getFields;
 /**
  * Settings-Klasse
  */
-class Settings
-{
+class Settings {
     /**
      * Der vollständige Pfad- und Dateiname der Plugin-Datei.
      * @var string
@@ -96,16 +96,14 @@ class Settings
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
     }
 
-    protected function setMenu()
-    {
+    protected function setMenu() {
         $this->settingsMenu = getmenuSettings();
     }
 
     /**
      * Einstellungsbereiche einstellen.
      */
-    protected function setSections()
-    {
+    protected function setSections() {
         $this->settingsSections = getSections();
     }
 
@@ -113,8 +111,7 @@ class Settings
      * Einen einzelnen Einstellungsbereich hinzufügen.
      * @param array   $section
      */
-    protected function addSection($section)
-    {
+    protected function addSection($section) {
         $this->settingsSections[] = $section;
     }
 
@@ -125,23 +122,23 @@ class Settings
     protected function setFields() {
         $this->settingsFields = getFields();
 
-        // // fill "categories"
-        // $tmp = array();
-        // foreach( $this->settingsFields['sync'] as $field ) {
-        //     if ( $field['name'] == 'otrs_categories' ){
-        //         $cats = wp_remote_get( 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList' );
-        //         $status_code = wp_remote_retrieve_response_code( $cats );
-        //         if ( 200 === $status_code ) {
-        //             $cats = json_decode( $cats['body'], true );
-        //             foreach ( $cats['Category'] as $cat ){
-        //                 $field['options'][$cat['ID']] = $cat['Name'];
-        //             }
-        //             asort( $field['options'] );
-        //         }
-        //     }
-        //     $tmp[] = $field;
-        // }
-        // $this->settingsFields['sync'] = $tmp;
+        // fill "categories"
+        $tmp = array();
+        foreach( $this->settingsFields['sync'] as $field ) {
+            if ( $field['name'] == 'otrs_categories' ){
+                $cats = wp_remote_get( getOTRS() . '/CategoryList' );
+                $status_code = wp_remote_retrieve_response_code( $cats );
+                if ( 200 === $status_code ) {
+                    $cats = json_decode( $cats['body'], true );
+                    foreach ( $cats['Category'] as $cat ){
+                        $field['options'][$cat['ID']] = $cat['Name'];
+                    }
+                    asort( $field['options'] );
+                }
+            }
+            $tmp[] = $field;
+        }
+        $this->settingsFields['sync'] = $tmp;
     }
 
     /**

@@ -35,7 +35,7 @@ class Main {
         // Actions: update, sync, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'doIt'] ); 
         // Auto-Sync
-        // add_action( 'rrze_faq_auto_update', [$this, 'cronSync'] );
+        // add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
         // Editable FAQ (if synced: non-editable / if self-written: editable)
         add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
         add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
@@ -149,9 +149,9 @@ class Main {
      */
     public function doIt() {
         if ( isset( $_GET['sync'] ) ) {
-            // $this->jobCron();
-            // $sync = new Sync();
-            // $sync->doSync( 'manual' );
+            // $this->setCronjob();
+            $sync = new Sync();
+            $sync->doSync( 'manual' );
         } elseif ( isset( $_GET['del'] ) ) {
             deleteLogfile();
         }
@@ -160,23 +160,22 @@ class Main {
     public function checkDomain( $fields ) {
         if ( $fields['domains_new'] ) {
             $fields['domains_new'] = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['domains_new'] ) );
-            // $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/faq?per_page=1' );
-            $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
+            $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/faq?per_page=1' );
+            // $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
             $status_code = wp_remote_retrieve_response_code( $content );
 
             if ( $status_code != 200 ) {
                 add_settings_error( 'domains_new', 'domains_new_error', $fields['domains_new'] . ' is not valid.', 'error' );        
             } else {
                 $options = get_option( 'rrze-faq' );
-                $fields['domains_urls'] = ( $options['$domains_urls'] ? $options['$domains_urls'] . ',' : '' ) . $fields['domains_new'];
-                $fields['domains_new'] = '';
-                // unset( $fields['domains_new'] );
+                $fields['domains_urls'] = ( $options['domains_urls'] ? $options['domains_urls'] . ',' : '' ) . $fields['domains_new'];
             }
         }
+        unset( $fields['domains_new'] );
         return $fields;
     }
 
-    public function cronSync() {
+    public function runCronjob() {
         // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
         $sync = [
                 'workdays' => [ 2, 8, 11, 14, 17, 20 ],
@@ -201,11 +200,10 @@ class Main {
         }
     }
 
-    public function jobCron() {
-        $options = get_option('rrze-faq' );
-        if (isset($options['sync_sync_check'])
-            && $options['sync_sync_check'] != 'on') {
-            if (wp_next_scheduled( 'rrze_faq_auto_update' )) {
+    public function setCronjob() {
+        $options = get_option( 'rrze-faq' );
+        if ( isset( $options['sync_sync_check'] ) && $options['sync_sync_check'] != 'on' ) {
+            if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
                 wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
             }
             return;
@@ -213,19 +211,17 @@ class Main {
 
         //Use wp_next_scheduled to check if the event is already scheduled*/
         if( !wp_next_scheduled( 'rrze_faq_auto_update' )) {
-            //Schedule the event for right now, then to repeat daily using the hook 'cris_create_cron'
-            date_default_timezone_set('Europe/Berlin');
-            wp_schedule_event( strtotime('today 13:00'), 'hourly', 'rrze_faq_auto_update' );
+            date_default_timezone_set( 'Europe/Berlin' );
+            wp_schedule_event( strtotime( 'today 13:00' ), 'hourly', 'rrze_faq_auto_update' );
             $timestamp = wp_next_scheduled( 'rrze_faq_auto_update' );
             if ($timestamp) {
-                $message = __('Settings saved', 'rrze-faq' )
+                $message = __( 'Settings saved', 'rrze-faq' )
                     . '<br />'
-                    . __('Next automatically synchronization:', 'rrze-faq' ) . ' '
+                    . __( 'Next automatically synchronization:', 'rrze-faq' ) . ' '
                     . get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'd.m.Y - H:i' );
-                add_settings_error('AutoSyncComplete', 'autosynccomplete', $message , 'updated' );
+                add_settings_error( 'AutoSyncComplete', 'autosynccomplete', $message , 'updated' );
                 settings_errors();
             }
         }
     }
-
 }
