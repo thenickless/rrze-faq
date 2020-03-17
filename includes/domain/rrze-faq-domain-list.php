@@ -92,7 +92,7 @@ class Domain_List extends \WP_List_Table {
     public function prepare_items() {
         $this->process_bulk_action();
         $this->_column_headers = $this->get_column_info();
-        $per_page     = $this->get_items_per_page( 'domains_per_page', 5 );
+        $per_page     = $this->get_items_per_page( 'doms_per_page', 5 );
         $current_page = $this->get_pagenum();
         $data = DomainFaqWPListTable::listDomains();
         $items = '';
@@ -219,7 +219,7 @@ class DOMAIN_FAQ {
         $args   = [
                 'label'   => 'Domains',
                 'default' => 5,
-                'option'  => 'domains_per_page'
+                'option'  => 'doms_per_page'
         ];
 
         add_screen_option( $option, $args );

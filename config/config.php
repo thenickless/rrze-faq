@@ -65,7 +65,7 @@ function getSections() {
 			'title' => __('Synchronization', 'rrze-faq' )
 		],
 		[
-			'id'    => 'domains',
+			'id'    => 'doms',
 			'title' => __('Domains', 'rrze-faq' )
 		],
 		[
@@ -96,7 +96,7 @@ function getFields() {
 				'type' => 'checkbox'
 			],
 		],
-		'domains' => [
+		'doms' => [
 			[
 				'name' => 'new',
 				'label' => __('Add this domain', 'rrze-faq' ),

@@ -341,8 +341,8 @@ class Shortcode {
 
         $options = get_option( 'rrze-faq' );
 
-        if ( isset( $options['domains_urls'] ) ){
-            $domains = explode( ',', $options['domains_urls'] );
+        if ( isset( $options['doms_urls'] ) ){
+            $domains = explode( ',', $options['doms_urls'] );
             foreach ( $domains as $domain  ){
                 $this->settings['datasource']['values'][$domain] = $domain;
             }
@@ -369,8 +369,8 @@ class Shortcode {
             }
 
             // get categories and tags from other domains
-            if ( isset( $options['domains_urls'] ) ) {
-                $domains = explode( ',', $options['domains_urls'] );
+            if ( isset( $options['doms_urls'] ) ) {
+                $domains = explode( ',', $options['doms_urls'] );
 
                 foreach( $domains as $domain ){
                     $page = 1;

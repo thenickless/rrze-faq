@@ -316,7 +316,7 @@ class Settings {
             settings_fields($section['id']);
             do_settings_sections($section['id']);
             submit_button( $btn_label );
-            if ( $this->currentTab == 'domains' ){
+            if ( $this->currentTab == 'doms' ){
                 $this->domainOuput();
             }            
             echo '</form></div>';
@@ -335,11 +335,14 @@ class Settings {
 
     public function domainOuput(){
         $options = get_option( 'rrze-faq' );
-        $domains = explode( ',', $options['domains_urls'] );
+        $domains = explode( ',', $options['doms_urls'] );
         if ( $domains ){
-            echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><thead><tr><th>Added domains:</th></tr></thead><tbody>';
+            echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
             foreach ( $domains as $domain ){
-                echo '<tr><td>' . $domain . '</td></tr>';
+                echo '<tr><td>' . $domain . '</td>'; 
+                echo '<td><input type="hidden" name="del_domain" value="' . $domain . '">';
+                submit_button( __( 'Delete', 'rrze-faq' ) );
+                echo '</td></tr>';
             }
             echo '</tbody></table>';
         }

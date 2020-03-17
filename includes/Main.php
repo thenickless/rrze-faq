@@ -145,7 +145,7 @@ class Main {
 
 
     /**
-     * Click on buttons "update", "sync" or "delete logfile"
+     * Click on buttons "update", "sync", "add domain", "delete"(domain) or "delete logfile"
      */
     public function doIt() {
         if ( isset( $_GET['sync'] ) ) {
@@ -154,24 +154,43 @@ class Main {
             $sync->doSync( 'manual' );
         } elseif ( isset( $_GET['del'] ) ) {
             deleteLogfile();
+        } elseif ( isset( $_POST['del_domain'] ) ) {
+            $this->deleteDomain( $_POST['del_domain'] );
+        }
+    }
+
+    public function deleteDomain( $domain ){
+
+        if ( $domain ){
+            $options = get_option( 'rrze-faq' );
+            echo '<pre>';
+            // var_dump($options);
+            echo '<br>$domain = ' . $domain;
+            echo '<br>1 : ' . $options['doms_urls'];
+            $options['doms_urls'] = str_replace( $domain . ',', '', $options['doms_urls'] );
+            echo '<br>2 : ' . $options['doms_urls'];
+            $options['doms_urls'] = str_replace( $domain, '', $options['doms_urls'] );
+            echo '<br>3 : ' . $options['doms_urls'];
+            update_option( 'doms_urls',  $options['doms_urls']);
+            exit;
         }
     }
 
     public function checkDomain( $fields ) {
-        if ( $fields['domains_new'] ) {
-            $fields['domains_new'] = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['domains_new'] ) );
-            $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/faq?per_page=1' );
-            // $content = wp_remote_get( $fields['domains_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
+        if ( $fields['doms_new'] ) {
+            $fields['doms_new'] = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['doms_new'] ) );
+            $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/faq?per_page=1' );
+            // $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
             $status_code = wp_remote_retrieve_response_code( $content );
 
             if ( $status_code != 200 ) {
-                add_settings_error( 'domains_new', 'domains_new_error', $fields['domains_new'] . ' is not valid.', 'error' );        
+                add_settings_error( 'doms_new', 'doms_new_error', $fields['doms_new'] . ' is not valid.', 'error' );        
             } else {
                 $options = get_option( 'rrze-faq' );
-                $fields['domains_urls'] = ( $options['domains_urls'] ? $options['domains_urls'] . ',' : '' ) . $fields['domains_new'];
+                $fields['doms_urls'] = ( $options['doms_urls'] ? $options['doms_urls'] . ',' : '' ) . $fields['doms_new'];
             }
         }
-        unset( $fields['domains_new'] );
+        unset( $fields['doms_new'] );
         return $fields;
     }
 
