@@ -57,6 +57,7 @@ function getHelpTab() {
  * Gibt die Einstellungen der Optionsbereiche zurück.
  * @return array [description]
  */
+
 function getSections() {
 	return [
 		[
