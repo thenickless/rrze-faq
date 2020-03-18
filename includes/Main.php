@@ -32,8 +32,10 @@ class Main {
      */
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
-        // Actions: update, sync, delete logfile
+        // Actions: update, sync, add domain, delete domain, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'doIt'] ); 
+        add_action( 'update_option_registeredDomains', [$this, 'deleteDomain'] ); 
+        add_filter( 'pre_update_option_rrze-faq',  [$this, 'checkDomain'], 10, 1 );
         // Auto-Sync
         // add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
         // Editable FAQ (if synced: non-editable / if self-written: editable)
@@ -44,8 +46,6 @@ class Main {
         add_filter( 'manage_edit-faq_columns', [$this, 'faq_table_head'] );
         add_action( 'manage_faq_posts_custom_column', [$this, 'faq_table_content'], 10, 2 );
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'faq_sortable_columns'] );
-        // Check Domain before storing
-        add_filter( 'pre_update_option_rrze-faq',  [$this, 'checkDomain'], 10, 1 );
  
     
 
@@ -145,52 +145,48 @@ class Main {
 
 
     /**
-     * Click on buttons "update", "sync", "add domain", "delete"(domain) or "delete logfile"
+     * Click on buttons "update", "sync" or "delete logfile"
      */
     public function doIt() {
+
+        echo 'doIt()';
+        exit;
+
         if ( isset( $_GET['sync'] ) ) {
             // $this->setCronjob();
             $sync = new Sync();
             $sync->doSync( 'manual' );
         } elseif ( isset( $_GET['del'] ) ) {
             deleteLogfile();
-        } elseif ( isset( $_POST['del_domain'] ) ) {
-            $this->deleteDomain( $_POST['del_domain'] );
         }
     }
 
     public function deleteDomain( $domain ){
 
+
+        echo 'about to delete ' . $domain;
+        exit;
+
         if ( $domain ){
-            $options = get_option( 'rrze-faq' );
-            echo '<pre>';
-            // var_dump($options);
-            echo '<br>$domain = ' . $domain;
-            echo '<br>1 : ' . $options['doms_urls'];
-            $options['doms_urls'] = str_replace( $domain . ',', '', $options['doms_urls'] );
-            echo '<br>2 : ' . $options['doms_urls'];
-            $options['doms_urls'] = str_replace( $domain, '', $options['doms_urls'] );
-            echo '<br>3 : ' . $options['doms_urls'];
-            update_option( 'doms_urls',  $options['doms_urls']);
-            exit;
+            update_option( 'registeredDomains', array_merge( array_diff( get_option( 'registeredDomains' ), array( $domain ) ) ) );
         }
     }
 
     public function checkDomain( $fields ) {
         if ( $fields['doms_new'] ) {
             $fields['doms_new'] = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['doms_new'] ) );
-            $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/faq?per_page=1' );
             // $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
+            $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/faq?per_page=1' );
             $status_code = wp_remote_retrieve_response_code( $content );
-
             if ( $status_code != 200 ) {
                 add_settings_error( 'doms_new', 'doms_new_error', $fields['doms_new'] . ' is not valid.', 'error' );        
             } else {
-                $options = get_option( 'rrze-faq' );
-                $fields['doms_urls'] = ( $options['doms_urls'] ? $options['doms_urls'] . ',' : '' ) . $fields['doms_new'];
+                $domains = get_option( 'registeredDomains' );
+                $domains[] = $fields['doms_new'];
+                update_option( 'registeredDomains', $domains );
             }
+            unset( $fields['doms_new'] );
         }
-        unset( $fields['doms_new'] );
         return $fields;
     }
 
@@ -221,7 +217,7 @@ class Main {
 
     public function setCronjob() {
         $options = get_option( 'rrze-faq' );
-        if ( isset( $options['sync_sync_check'] ) && $options['sync_sync_check'] != 'on' ) {
+        if ( isset( $options['otrs_sync_check'] ) && $options['otrs_sync_check'] != 'on' ) {
             if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
                 wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
             }

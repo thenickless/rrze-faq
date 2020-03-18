@@ -61,8 +61,8 @@ function getHelpTab() {
 function getSections() {
 	return [
 		[
-			'id'    => 'sync',
-			'title' => __('Synchronization', 'rrze-faq' )
+			'id'    => 'otrs',
+			'title' => __('OTRS', 'rrze-faq' )
 		],
 		[
 			'id'    => 'doms',
@@ -79,20 +79,21 @@ function getSections() {
  * Gibt die Einstellungen der Optionsfelder zurück.
  * @return array [description]
  */
+
 function getFields() {
     return [
-		'sync' => [
+		'otrs' => [
 			[
-				'name' => 'otrs_categories',
-				'label' => __('Categories from OTRS', 'rrze-faq' ),
+				'name' => 'categories',
+				'label' => __('Categories', 'rrze-faq' ),
 				'desc' => __('Please select all categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
 				'type' => 'multiselect',
 				'options' => []
 			],
 			[
 				'name' => 'sync_check',
-				'label' => __('Automatic', 'rrze-faq' ),
-				'desc' => __('Syncronize FAQ automatically.', 'rrze-faq' ),
+				'label' => __('Synchronization', 'rrze-faq' ),
+				'desc' => __('Update FAQ automatically', 'rrze-faq' ),
 				'type' => 'checkbox'
 			],
 		],
@@ -102,11 +103,7 @@ function getFields() {
 				'label' => __('Add this domain', 'rrze-faq' ),
 				'desc' => __('Enter the domain you want to receive FAQ from.', 'rrze-faq' ),
 				'type' => 'text'
-			],
-			[
-				'name' => 'urls',
-				'type' => 'hidden'
-		  	]
+			]
 		],
     	'log' => [
         	[

@@ -26,7 +26,7 @@ class Sync {
         // sync all FAQ for each selected category
         $iNew = 0;
         $option = get_option( 'rrze-faq' );
-        foreach ( $option['sync_otrs_categories'] as $catID ){
+        foreach ( $option['otrs_categories'] as $catID ){
             $faqIDs = wp_remote_get( OTRS . '/FAQSearch?CategoryIDs=' . $catID );
             $status_code = wp_remote_retrieve_response_code( $faqIDs );
             if ( $status_code === 200 ) {
@@ -70,7 +70,7 @@ class Sync {
 
         date_default_timezone_set('Europe/Berlin');
         $msg = $iNew . __( ' FAQ added', 'rrze-faq' ) . '. ' . $iDel . __( ' FAQ deleted', 'rrze-faq' ) . '. Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
-        add_settings_error( 'Sync completed', 'synccompleted', $msg );
+        add_settings_error( 'Synchronization completed', 'synccompleted', $msg );
         settings_errors();
         logIt( date("Y-m-d H:i:s") . ' | ' . $msg );
         return;

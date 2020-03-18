@@ -124,8 +124,8 @@ class Settings {
 
         // fill "categories"
         $tmp = array();
-        foreach( $this->settingsFields['sync'] as $field ) {
-            if ( $field['name'] == 'otrs_categories' ){
+        foreach( $this->settingsFields['otrs'] as $field ) {
+            if ( $field['name'] == 'categories' ){
                 $cats = wp_remote_get( getOTRS() . '/CategoryList' );
                 $status_code = wp_remote_retrieve_response_code( $cats );
                 if ( 200 === $status_code ) {
@@ -138,7 +138,7 @@ class Settings {
             }
             $tmp[] = $field;
         }
-        $this->settingsFields['sync'] = $tmp;
+        $this->settingsFields['otrs'] = $tmp;
     }
 
     /**
@@ -293,23 +293,21 @@ class Settings {
             if ($section['id'] != $this->currentTab) {
                 continue;
             }
+            $btn_label = '';
             $get = '';
             switch ( $this->currentTab ) {
-                case 'sync': 
+                case 'otrs': 
                     $btn_label = __('Synchronize now', 'rrze-faq' );
                     $get = '?sync';
                     break;
-                case 'domains': 
+                case 'doms': 
                     $btn_label = __('Add domain', 'rrze-faq' );
-                    $get = '?domains';
+                    $get = '?doms';
                     break;
                 case 'log': 
                     $btn_label = __('Delete logfile', 'rrze-faq' );
                     $get = '?del';
                     break;
-                default: 
-                    $btn_label = '';
-                    $get = '?update';
             }
             echo '<div id="' . $section['id'] . '">';
             echo '<form method="post" action="options.php'. $get . '">';
@@ -317,9 +315,10 @@ class Settings {
             do_settings_sections($section['id']);
             submit_button( $btn_label );
             if ( $this->currentTab == 'doms' ){
-                $this->domainOuput();
+                $this->domainOutput();
             }            
-            echo '</form></div>';
+            echo '</form>';
+            echo '</div>';
         }
     }
 
@@ -333,14 +332,16 @@ class Settings {
         echo '</div>', PHP_EOL;
     }
 
-    public function domainOuput(){
-        $options = get_option( 'rrze-faq' );
-        $domains = explode( ',', $options['doms_urls'] );
+    public function domainOutput(){
+        $domains = get_option( 'registeredDomains' );
         if ( $domains ){
-            echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
+            echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
+            settings_fields( 'registeredDomains' );
+            do_settings_sections( 'registeredDomains' );
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
             foreach ( $domains as $domain ){
                 echo '<tr><td>' . $domain . '</td>'; 
-                echo '<td><input type="hidden" name="del_domain" value="' . $domain . '">';
+                echo '<td><input type="radio"><input type="hidden" name="del_domain" value="' . $domain . '"><input type="hidden" name="t" value="' . time() . '">';
                 submit_button( __( 'Delete', 'rrze-faq' ) );
                 echo '</td></tr>';
             }
@@ -435,6 +436,8 @@ class Settings {
         foreach ($this->settingsSections as $section) {
             register_setting($section['id'], $this->optionName, [$this, 'sanitizeOptions']);
         }
+        register_setting( 'registeredDomains', 'del_domain', [$this, 'sanitizeOptions']);
+
     }
 
     /**

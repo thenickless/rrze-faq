@@ -340,10 +340,8 @@ class Shortcode {
         }
 
         $options = get_option( 'rrze-faq' );
-
-        if ( isset( $options['doms_urls'] ) ){
-            $domains = explode( ',', $options['doms_urls'] );
-            foreach ( $domains as $domain  ){
+        if ( isset( $options['doms_url'] ) ){
+            foreach ( $options['doms_url'] as $domain  ){
                 $this->settings['datasource']['values'][$domain] = $domain;
             }
         }
@@ -369,10 +367,8 @@ class Shortcode {
             }
 
             // get categories and tags from other domains
-            if ( isset( $options['doms_urls'] ) ) {
-                $domains = explode( ',', $options['doms_urls'] );
-
-                foreach( $domains as $domain ){
+            if ( isset( $options['doms_url'] ) ) {
+                foreach( $options['doms_url'] as $domain ){
                     $page = 1;
                     do {
                         // $request = wp_remote_get( $domain . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
