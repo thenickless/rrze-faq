@@ -99,11 +99,17 @@ function getFields() {
 		],
 		'doms' => [
 			[
-				'name' => 'new',
+				'name' => 'new_url',
 				'label' => __('Add this domain', 'rrze-faq' ),
-				'desc' => __('Enter the domain you want to receive FAQ from.', 'rrze-faq' ),
+				'desc' => __('Enter the domain\'s URL you want to receive FAQ from.', 'rrze-faq' ),
 				'type' => 'text'
-			]
+			],
+			[
+				'name' => 'new_name',
+				'label' => __('Shortcut', 'rrze-faq' ),
+				'desc' => __('Enter a short name for this domain.', 'rrze-faq' ),
+				'type' => 'text'
+			],
 		],
     	'log' => [
         	[
@@ -132,16 +138,16 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-        'datasource' => [
-			'values' => [
-				'website' => __( 'This website', 'rrze-faq' ),
-				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
-			],
-			'default' => 'website',
-			'field_type' => 'select',
-			'label' => __( 'Data source', 'rrze-faq' ),
-			'type' => 'string'
-		],
+        // 'datasource' => [
+		// 	'values' => [
+		// 		'website' => __( 'This website', 'rrze-faq' ),
+		// 		'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
+		// 	],
+		// 	'default' => 'website',
+		// 	'field_type' => 'select',
+		// 	'label' => __( 'Data source', 'rrze-faq' ),
+		// 	'type' => 'string'
+		// ],
         'glossary' => [
 			'values' => [
 				'category' => __( 'Categories', 'rrze-faq' ),

@@ -33,6 +33,7 @@ class Main {
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
         // Actions: sync, add domain, delete domain, delete logfile
+        add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
         // Auto-Sync
         // add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
@@ -145,14 +146,12 @@ class Main {
     /**
      * Click on buttons "sync", "add domain", "delete domain" or "delete logfile"
      */
-    public function switchTask() {
-        if ( isset( $_GET['sync'] ) ){
-            // $this->setCronjob();
-            $sync = new Sync();
-            $sync->doSync( 'manual' );
-        } elseif ( isset( $_GET['doms'] ) ){
-            if ( isset( $_POST['rrze-faq']['doms_new'] ) && $_POST['rrze-faq']['doms_new'] != '' ){
-                $this->checkDomain( $_POST['rrze-faq']['doms_new'] );
+    public function switchTask( $options ) {
+        if ( isset( $_GET['doms'] ) ){
+            if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' && isset( $_POST['rrze-faq']['doms_new_name'] ) && $_POST['rrze-faq']['doms_new_name'] != '' ){
+                $this->addDomain( $_POST['rrze-faq']['doms_new_url'], $_POST['rrze-faq']['doms_new_name'] );
+                unset( $options['doms_new_url'] );
+                unset( $options['doms_new_name'] );
             } else {
                 foreach ( $_POST as $key => $val ){
                     if ( substr( $key, 0, 11 ) === "del_domain_" ){
@@ -163,27 +162,44 @@ class Main {
         } elseif ( isset( $_GET['del'] ) ){
             deleteLogfile();
         }
+        return $options;
     }
 
-    public function deleteDomain( $domain ){
-        if ( $domain ){
-            update_option( 'registeredDomains', array_merge( array_diff( get_option( 'registeredDomains' ), array( $domain ) ) ) );
+    public function checkSync() {
+        if ( isset( $_GET['sync'] ) ){
+            // $this->setCronjob();
+            $sync = new Sync();
+            $sync->doSync( 'manual' );
         }
     }
 
-    public function checkDomain( $domain ) {
-        $domain = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $domain ) );
-        // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );
-        $content = wp_remote_get( $domain . 'wp-json/wp/v2/faq?per_page=1' );
-        $status_code = wp_remote_retrieve_response_code( $content );
-        if ( $status_code != 200 ) {
-            add_settings_error( 'doms_new', 'doms_new_error', $domain . ' is not valid.', 'error' );        
-        } else {
+    public function deleteDomain( $name ){
+        if ( $name ){
             $domains = get_option( 'registeredDomains' );
-            $domains[] = $domain;
-            update_option( 'registeredDomains', $domains );
+            update_option( 'registeredDomains', array_merge( array_diff_key( $domains, array( $name => '' ) ) ) );
         }
-        unset( $_POST['rrze-faq']['doms_new'] );
+    }
+
+    public function addDomain( $url, $name ) {
+        $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
+        $domains = get_option( 'registeredDomains' );
+
+        // echo '<pre>';
+        // var_dump($domains);
+        // exit;
+
+        if ( !$domains || in_array( $url, $domains ) === FALSE ) {
+            // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );
+            $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
+            $status_code = wp_remote_retrieve_response_code( $content );
+            if ( $status_code != 200 ) {
+                add_settings_error( 'doms_new_url', 'doms_new_error', $url . ' is not valid.', 'error' );        
+            } else {
+                $domains = get_option( 'registeredDomains' );
+                $domains[$name] = $url;
+                update_option( 'registeredDomains', $domains );
+            }
+        }
     }
 
     public function runCronjob() {

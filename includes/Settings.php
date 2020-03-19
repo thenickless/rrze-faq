@@ -334,20 +334,23 @@ class Settings {
 
     public function domainOutput(){
         $domains = get_option( 'registeredDomains' );
+        // echo '<pre>';
+        // var_dump($domains);
+        // exit;
         if ( $domains ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
             // settings_fields( 'registeredDomains' );
             // do_settings_sections( 'registeredDomains' );
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
 
-            foreach ( $domains as $domain ){
-                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $domain . '"></td><td>'. $domain . '</td></tr>';
+            foreach ( $domains as $name => $url ){
+                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $name . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
                 $i++;
             }
             // echo '<input type="hidden" name="tmp_timestamp" value="' . time() . '">';
             echo '</tbody></table>';
-            submit_button( __( 'Delete', 'rrze-faq' ) );
+            submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
         }
     }
 

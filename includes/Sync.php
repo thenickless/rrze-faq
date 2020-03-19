@@ -26,6 +26,7 @@ class Sync {
         // sync all FAQ for each selected category
         $iNew = 0;
         $option = get_option( 'rrze-faq' );
+
         foreach ( $option['otrs_categories'] as $catID ){
             $faqIDs = wp_remote_get( OTRS . '/FAQSearch?CategoryIDs=' . $catID );
             $status_code = wp_remote_retrieve_response_code( $faqIDs );
