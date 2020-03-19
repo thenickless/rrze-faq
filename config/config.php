@@ -138,16 +138,16 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-        // 'datasource' => [
-		// 	'values' => [
-		// 		'website' => __( 'This website', 'rrze-faq' ),
-		// 		'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
-		// 	],
-		// 	'default' => 'website',
-		// 	'field_type' => 'select',
-		// 	'label' => __( 'Data source', 'rrze-faq' ),
-		// 	'type' => 'string'
-		// ],
+        'datasource' => [
+			'values' => [
+				'website' => __( 'This website', 'rrze-faq' ),
+				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
+			],
+			'default' => 'website',
+			'field_type' => 'select',
+			'label' => __( 'Data source', 'rrze-faq' ),
+			'type' => 'string'
+		],
         'glossary' => [
 			'values' => [
 				'category' => __( 'Categories', 'rrze-faq' ),
