@@ -32,10 +32,8 @@ class Main {
      */
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
-        // Actions: update, sync, add domain, delete domain, delete logfile
-        add_action( 'update_option_rrze-faq', [$this, 'doIt'] ); 
-        add_action( 'update_option_registeredDomains', [$this, 'deleteDomain'] ); 
-        add_filter( 'pre_update_option_rrze-faq',  [$this, 'checkDomain'], 10, 1 );
+        // Actions: sync, add domain, delete domain, delete logfile
+        add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
         // Auto-Sync
         // add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
         // Editable FAQ (if synced: non-editable / if self-written: editable)
@@ -145,49 +143,47 @@ class Main {
 
 
     /**
-     * Click on buttons "update", "sync" or "delete logfile"
+     * Click on buttons "sync", "add domain", "delete domain" or "delete logfile"
      */
-    public function doIt() {
-
-        echo 'doIt()';
-        exit;
-
-        if ( isset( $_GET['sync'] ) ) {
+    public function switchTask() {
+        if ( isset( $_GET['sync'] ) ){
             // $this->setCronjob();
             $sync = new Sync();
             $sync->doSync( 'manual' );
-        } elseif ( isset( $_GET['del'] ) ) {
+        } elseif ( isset( $_GET['doms'] ) ){
+            if ( isset( $_POST['rrze-faq']['doms_new'] ) && $_POST['rrze-faq']['doms_new'] != '' ){
+                $this->checkDomain( $_POST['rrze-faq']['doms_new'] );
+            } else {
+                foreach ( $_POST as $key => $val ){
+                    if ( substr( $key, 0, 11 ) === "del_domain_" ){
+                        $this->deleteDomain( $val );
+                    }
+                }
+            }
+        } elseif ( isset( $_GET['del'] ) ){
             deleteLogfile();
         }
     }
 
     public function deleteDomain( $domain ){
-
-
-        echo 'about to delete ' . $domain;
-        exit;
-
         if ( $domain ){
             update_option( 'registeredDomains', array_merge( array_diff( get_option( 'registeredDomains' ), array( $domain ) ) ) );
         }
     }
 
-    public function checkDomain( $fields ) {
-        if ( $fields['doms_new'] ) {
-            $fields['doms_new'] = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $fields['doms_new'] ) );
-            // $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/glossary?per_page=1' );
-            $content = wp_remote_get( $fields['doms_new'] . 'wp-json/wp/v2/faq?per_page=1' );
-            $status_code = wp_remote_retrieve_response_code( $content );
-            if ( $status_code != 200 ) {
-                add_settings_error( 'doms_new', 'doms_new_error', $fields['doms_new'] . ' is not valid.', 'error' );        
-            } else {
-                $domains = get_option( 'registeredDomains' );
-                $domains[] = $fields['doms_new'];
-                update_option( 'registeredDomains', $domains );
-            }
-            unset( $fields['doms_new'] );
+    public function checkDomain( $domain ) {
+        $domain = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $domain ) );
+        // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );
+        $content = wp_remote_get( $domain . 'wp-json/wp/v2/faq?per_page=1' );
+        $status_code = wp_remote_retrieve_response_code( $content );
+        if ( $status_code != 200 ) {
+            add_settings_error( 'doms_new', 'doms_new_error', $domain . ' is not valid.', 'error' );        
+        } else {
+            $domains = get_option( 'registeredDomains' );
+            $domains[] = $domain;
+            update_option( 'registeredDomains', $domains );
         }
-        return $fields;
+        unset( $_POST['rrze-faq']['doms_new'] );
     }
 
     public function runCronjob() {

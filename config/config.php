@@ -110,11 +110,7 @@ function getFields() {
           		'name' => 'logfile',
           		'type' => 'logfile',
           		'default' => LOGFILE
-        	],
-			[
-		  		'name' => 'sync_timestamp',
-		  		'type' => 'hidden'
-			]
+        	]
       	]
     ];
 }
