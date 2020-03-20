@@ -339,13 +339,14 @@ class Shortcode {
             return;
         }
 
-        $options = get_option( 'rrze-faq' );
-        if ( isset( $options['doms_url'] ) ){
-            foreach ( $options['doms_url'] as $domain  ){
-                $this->settings['datasource']['values'][$domain] = $domain;
+        $domains = get_option( 'registeredDomains' );
+        if ( $domains ){
+            foreach ( $domains as $name => $url ){
+                $this->settings['datasource']['values'][$url] = $name;
             }
         }
 
+        $options = get_option( 'rrze-faq' );
         // fill selects "category" and "tag"
         $fields = array( 'category', 'tag' );
         foreach ( $fields as $field ) {
@@ -367,12 +368,12 @@ class Shortcode {
             }
 
             // get categories and tags from other domains
-            if ( isset( $options['doms_url'] ) ) {
-                foreach( $options['doms_url'] as $domain ){
+            if ( $domains ) {
+                foreach( $domains as $name => $url ){
                     $page = 1;
                     do {
-                        // $request = wp_remote_get( $domain . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
-                        $request = wp_remote_get( $domain . 'wp-json/wp/v2/glossary_' . $field . '?page=' . $page );
+                        // $request = wp_remote_get( $url . 'wp-json/wp/v2/glossary_' . $field . '?page=' . $page );
+                        $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
                         $status_code = wp_remote_retrieve_response_code( $request );
                         if ( $status_code == 200 ){
                             $body = json_decode( wp_remote_retrieve_body( $request ), true );
@@ -410,17 +411,20 @@ class Shortcode {
         }
 
         // get FAQ from other domains
-        if ( isset( $domains ) ) {
-            foreach( $domains as $domain ){
+        if ( $domains ) {
+            foreach( $domains as $name => $url ){
                 $page = 1;
                 do {
-                    // $request = wp_remote_get( $domain . 'wp-json/wp/v2/faq?_fields=name,id&page=' . $page );
-                    $request = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?page=' . $page );
+                    // $request = wp_remote_get( $url . 'wp-json/wp/v2/glossary?page=' . $page );
+                    $request = wp_remote_get( $url . 'wp-json/wp/v2/faq?page=' . $page );
                     $status_code = wp_remote_retrieve_response_code( $request );
                     if ( $status_code == 200 ){
                         $body = json_decode( wp_remote_retrieve_body( $request ), true );
                         if ( !empty( $body ) ){
                             foreach( $body as $entry ){
+                                // echo '<pre>';
+                                // var_dump($entry);
+                                // exit;
                                 $this->settings['id']['values'][$entry['id']] = $entry['title']['rendered'];
                             }
                         }
