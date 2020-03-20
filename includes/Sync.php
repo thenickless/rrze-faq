@@ -40,7 +40,6 @@ class Sync {
                             $faq = json_decode( $faq['body'], true );
                             if ( !isset( $faq['Error'] ) && $faq['FAQItem'][0]['Valid'] == 'valid' ) {
                                 // add FAQ
-
                                 $post_id = wp_insert_post( array(
                                     'post_title' => $faq['FAQItem'][0]['Title'],
                                     'post_content' => ( $faq['FAQItem'][0]['Field1'] ? '<h3>' . __( 'Symptom', 'rrze-faq' ) . '</h3><p>' . $faq['FAQItem'][0]['Field1'] . '<p/>' : '' ) . 
@@ -61,6 +60,11 @@ class Sync {
                                         'faq_tag' => str_replace( ' ', ',', $faq['FAQItem'][0]['Keywords'] )
                                         )
                                     ) );
+                                $term_ids = wp_get_post_terms( $post_id, 'faq_category', array( 'fields' => 'ids' ) );
+                                array_push( $term_ids, wp_get_post_terms( $post_id, 'faq_tag', array( 'fields' => 'ids' ) ) );
+                                foreach( $term_ids as $id ){
+                                    add_term_meta( $id, 'source', 'OTRS', TRUE );
+                                }
                                 $iNew++;
                             }
                         }

@@ -72,6 +72,15 @@ function rrze_faq_taxonomy() {
                 'rest_controller_class' => 'WP_REST_Terms_Controller'
             )
         );
+        register_term_meta(
+            $t['name'], 
+            'source', 
+                [
+                // 'object_subtype' => 'my_article',
+                'type' => 'string',
+                'single' => TRUE,
+                'show_in_rest' => TRUE
+          ]);
     }
 }
 

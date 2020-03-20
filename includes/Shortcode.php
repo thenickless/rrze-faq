@@ -367,20 +367,25 @@ class Shortcode {
                 $this->settings[$field]['values'][$term->name] = $term->name;
             }
 
+
+// next:
+// rest api filter methode nutzen, um alle cats, tags, faq ohne OTRS zu finden
+
             // get categories and tags from other domains
             if ( $domains ) {
                 foreach( $domains as $name => $url ){
                     $page = 1;
                     do {
                         // $request = wp_remote_get( $url . 'wp-json/wp/v2/glossary_' . $field . '?page=' . $page );
-                        $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
+                        // $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
+                        $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?page=' . $page );
                         $status_code = wp_remote_retrieve_response_code( $request );
                         if ( $status_code == 200 ){
                             $body = json_decode( wp_remote_retrieve_body( $request ), true );
                             if ( !empty( $body ) ){
                                 foreach( $body as $entry ){
-                                    // $this->settings[$field]['values'][$entry['id']] = $entry['name'];
-                                    $this->settings[$field]['values'][$entry['id']] = 'XZZZ Testeintrag' . $entry['id'];
+                                    $this->settings[$field]['values'][$entry['id']] = $entry['name'];
+                                    // $this->settings[$field]['values'][$entry['id']] = 'XZZZ Testeintrag' . $entry['id'];
                                 }
                             }
                         }
@@ -411,6 +416,7 @@ class Shortcode {
         }
 
         // get FAQ from other domains
+
         if ( $domains ) {
             foreach( $domains as $name => $url ){
                 $page = 1;
@@ -418,6 +424,10 @@ class Shortcode {
                     // $request = wp_remote_get( $url . 'wp-json/wp/v2/glossary?page=' . $page );
                     $request = wp_remote_get( $url . 'wp-json/wp/v2/faq?page=' . $page );
                     $status_code = wp_remote_retrieve_response_code( $request );
+                    // echo '<pre>';
+                    // var_dump($request);
+                    // exit;
+            
                     if ( $status_code == 200 ){
                         $body = json_decode( wp_remote_retrieve_body( $request ), true );
                         if ( !empty( $body ) ){

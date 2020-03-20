@@ -50,3 +50,22 @@ function rrze_faq_post_type() {
 }
 
 add_action( 'init', 'RRZE\FAQ\Server\rrze_faq_post_type', 0 );
+
+
+// make API deliver source and lang for FAQ
+function create_api_posts_meta_field() {
+    $fields = array( 'faq', 'faq_category', 'faq_tag' );
+    foreach( $fields as $field ){
+        register_rest_field( $field, 'post-meta-fields', array(
+                'get_callback'    => 'RRZE\FAQ\Server\get_post_meta_for_api',
+                'schema'          => null,
+             )
+         );
+    }        
+}
+ 
+function get_post_meta_for_api( $object ) {
+    return get_post_meta( $object['id'] );
+}
+
+add_action( 'rest_api_init', 'RRZE\FAQ\Server\create_api_posts_meta_field' );
