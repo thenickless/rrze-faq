@@ -333,7 +333,18 @@ class Shortcode {
        return $content;
     }
 
+    public function sortIt( &$arr ){
+        uasort( $arr, function($a, $b) {
+            // return strtolower( $a ) <=> strtolower( $b );
+            return strtolower( $b ) <=> strtolower( $a );
+        } );
+    }
+
     public function fill_gutenberg_options() {
+
+        echo 'fill';
+        exit;
+
         // Skip if Gutenberg isnot enabled
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
@@ -364,7 +375,7 @@ class Shortcode {
             ]);
 
             foreach ( $terms as $term ){
-                $this->settings[$field]['values'][$term->name] = $term->name;
+                $this->settings[$field]['values'][$term->id] = $term->name;
             }
 
 
@@ -376,7 +387,6 @@ class Shortcode {
                 foreach( $domains as $name => $url ){
                     $page = 1;
                     do {
-                        // $request = wp_remote_get( $url . 'wp-json/wp/v2/glossary_' . $field . '?page=' . $page );
                         // $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
                         $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?page=' . $page );
                         $status_code = wp_remote_retrieve_response_code( $request );
@@ -385,7 +395,6 @@ class Shortcode {
                             if ( !empty( $body ) ){
                                 foreach( $body as $entry ){
                                     $this->settings[$field]['values'][$entry['id']] = $entry['name'];
-                                    // $this->settings[$field]['values'][$entry['id']] = 'XZZZ Testeintrag' . $entry['id'];
                                 }
                             }
                         }
@@ -393,10 +402,6 @@ class Shortcode {
                     } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
                 }
             }
-
-            uasort( $this->settings[$field]['values'], function($a, $b) {
-                return $a <=> $b;
-            } );
         }
         // https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-json/wp/v2/faq?faq_category=951,950&faq_tag=90
 
@@ -443,11 +448,16 @@ class Shortcode {
                 } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
             }
         }
-
-        uasort( $this->settings['id']['values'], function($a, $b) {
-            return $a <=> $b;
-        } );
+        // echo '<pre>';
+        // echo 'vorher';
+        // var_dump( $this->settings['id']['values'] );
+        $this->sortIt( $this->settings['id']['values'] );
+//         echo 'nachher';
+//         var_dump( $this->settings['id']['values'] );
+// exit;
+        return $this->settings;
     }
+
 
     public function gutenberg_init() {
         // Skip block registration if Gutenberg is not enabled/merged.
@@ -455,7 +465,16 @@ class Shortcode {
             return;
         }
 
-        $this->fill_gutenberg_options();
+        // echo '<pre>';
+        // echo 'vorher';
+        // var_dump($this->settings);
+
+
+        // $this->fill_gutenberg_options();
+//         echo '<pre>';
+//         echo 'nachher';
+//         var_dump($this->settings);
+// exit;
 
         $js = '../assets/js/gutenberg.js';
         $editor_script = $this->settings['block']['blockname'] . '-blockJS';
@@ -480,7 +499,8 @@ class Shortcode {
             'editor_script' => $editor_script,
             'style' => $editor_style,
             'render_callback' => [$this, 'shortcodeOutput'],
-            'attributes' => $this->settings
+            // 'attributes' => $this->settings
+            'attributes' => $this->fill_gutenberg_options()
             ) 
         );
 
