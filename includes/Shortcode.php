@@ -26,7 +26,16 @@ class Shortcode {
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
         add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
+        add_action( 'enqueue_block_assets', [ $this, 'prefill' ] );
     }
+
+    public function prefill(){
+        // if ( has_block( $this->settings['block']['blocktype'] ) ) {        
+            $editor_script = $this->settings['block']['blockname'] . '-blockJS';
+            wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->fill_gutenberg_options() );
+        // }
+    }
+
 
     /**
      * Enqueue der Skripte.
@@ -106,10 +115,6 @@ class Shortcode {
      * @return string Gib den Inhalt zurück
      */
     public function shortcodeOutput( $atts ) {
-
-        return;
-
-
         // merge given attributes with default ones
         $atts_default = array();
         foreach( $this->settings as $k => $v ){
@@ -118,6 +123,10 @@ class Shortcode {
             }
         }
         $atts = shortcode_atts( $atts_default, $atts );
+
+        // echo '<pre>';
+        // return json_encode($atts);
+
         extract( $atts );
 
         // $domain = 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList';
@@ -142,7 +151,7 @@ class Shortcode {
 
         $domain = ( $datasource != 'website' ? $domain : FALSE );
 
-        if(isset($category) && empty($id) && !empty($domain)) {
+        if( isset( $category ) && empty($id) && $domain ) {
             // DOMAIN
             $domains = get_option('registerDomain');
             // if(in_array($domain, $domains )) {
@@ -198,7 +207,7 @@ class Shortcode {
             // } else {
             //     return __( 'Domain is not registered', 'rrze-faq' );
             // }
-        } elseif( isset( $id ) && intval( $id ) > 0 && !empty( $domain ) ) {
+        } elseif( isset( $id ) && intval( $id ) > 0 && $domain ) {
             // DOMAIN
             $domains = get_option('registerDomain');
             if( in_array( $domain, $domains ) ) {
@@ -231,6 +240,7 @@ class Shortcode {
                 return __( 'Domain is not registered', 'rrze-faq' );
             }
         } elseif ( isset( $id ) && intval( $id ) > 0 ) {
+            // return json_encode($atts);
             // SINGLE FAQ
             $title = get_the_title( $id );
             $letter = $this->get_letter( $title );
@@ -329,7 +339,7 @@ class Shortcode {
                 $content .= do_shortcode( $accordion );
             }
        } 
-       $this->enqueueScripts();
+    //    $this->enqueueScripts();
        return $content;
     }
 
@@ -342,8 +352,8 @@ class Shortcode {
 
     public function fill_gutenberg_options() {
 
-        echo 'fill';
-        exit;
+        // echo 'fill';
+        // exit;
 
         // Skip if Gutenberg isnot enabled
         if ( ! function_exists( 'register_block_type' ) ) {
@@ -371,7 +381,13 @@ class Shortcode {
             // get categories and tags from this website
             $terms = get_terms([
                 'taxonomy' => 'faq_' . $field,
-                'hide_empty' => TRUE
+                'hide_empty' => TRUE,
+                // 'meta_query' => array(
+                //     array(
+                //         'key' => 'source',
+                //         'value' => 'OTRS',
+                //     )
+                // )
             ]);
 
             foreach ( $terms as $term ){
@@ -410,9 +426,16 @@ class Shortcode {
             'posts_per_page'  => -1,
             'post_type' => 'faq',
             'order' => 'ASC',
-            'orderby' => 'title'
+            'orderby' => 'title',
+            'fields' => 'ID',
+            'meta_query' => array(
+                array(
+                    'key' => 'source',
+                    'value' => 'website',
+                )
+            )
         ));
-        
+
         $this->settings['id']['field_type'] = 'select';
         $this->settings['id']['type'] = 'string';
         $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
@@ -448,15 +471,10 @@ class Shortcode {
                 } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
             }
         }
-        // echo '<pre>';
-        // echo 'vorher';
-        // var_dump( $this->settings['id']['values'] );
         $this->sortIt( $this->settings['id']['values'] );
-//         echo 'nachher';
-//         var_dump( $this->settings['id']['values'] );
-// exit;
         return $this->settings;
     }
+
 
 
     public function gutenberg_init() {
@@ -464,18 +482,6 @@ class Shortcode {
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
-
-        // echo '<pre>';
-        // echo 'vorher';
-        // var_dump($this->settings);
-
-
-        // $this->fill_gutenberg_options();
-//         echo '<pre>';
-//         echo 'nachher';
-//         var_dump($this->settings);
-// exit;
-
         $js = '../assets/js/gutenberg.js';
         $editor_script = $this->settings['block']['blockname'] . '-blockJS';
         wp_register_script(
@@ -492,18 +498,22 @@ class Shortcode {
         );
         wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
+        $test = 'function() {alert("edit block")}';
+
         $css = '../assets/css/gutenberg.css';
         $editor_style = 'gutenberg-css';
         wp_register_style( $editor_style, plugins_url( $css, __FILE__ ) );
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
             'style' => $editor_style,
+            'edit' => $test,
             'render_callback' => [$this, 'shortcodeOutput'],
-            // 'attributes' => $this->settings
-            'attributes' => $this->fill_gutenberg_options()
+            'attributes' => $this->settings
+            // 'attributes' => $this->fill_gutenberg_options()
             ) 
         );
 
         wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
+        // wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->fill_gutenberg_options() );
     }
 }
