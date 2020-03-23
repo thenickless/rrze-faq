@@ -63,7 +63,7 @@ class Sync {
                                 $term_ids = wp_get_post_terms( $post_id, 'faq_category', array( 'fields' => 'ids' ) );
                                 array_push( $term_ids, wp_get_post_terms( $post_id, 'faq_tag', array( 'fields' => 'ids' ) ) );
                                 foreach( $term_ids as $id ){
-                                    add_term_meta( $id, 'source', 'OTRS', TRUE );
+                                    update_term_meta( $id, 'source', 'OTRS' );
                                 }
                                 $iNew++;
                             }

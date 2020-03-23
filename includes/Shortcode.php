@@ -26,7 +26,7 @@ class Shortcode {
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
         add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
-        add_action( 'enqueue_block_assets', [ $this, 'prefill' ] );
+        // add_action( 'enqueue_block_assets', [ $this, 'prefill' ] );
     }
 
     public function prefill(){
@@ -256,7 +256,7 @@ class Shortcode {
             $aCategory = array();
             $aTax = array();
             $tax_query = '';
-            $postQuery = array('post_type' => 'glossary', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false);
+            $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false);
 
             $fields = array( 'category', 'tag' );
             foreach( $fields as $field ){
