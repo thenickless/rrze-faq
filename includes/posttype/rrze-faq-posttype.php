@@ -71,16 +71,19 @@ function get_post_meta_for_api( $object ) {
 add_action( 'rest_api_init', 'RRZE\FAQ\Server\create_api_posts_meta_field' );
 
 
-function set_term_source( $post_ID, $terms, $term_ids ){
-    foreach( $term_ids as $term_id ){
-        add_term_meta( $term_id, 'source', 'website', TRUE );
-    }
-}
 
 function set_source( $post_ID ){
     add_post_meta( $post_ID, 'source', 'website', TRUE );
 }
 
+function set_term_source( $term_id ){
+    add_term_meta( $term_id, 'source', 'website', TRUE );
+}
+
 // set default source for faq, faq_tag and faq_category
 add_action('publish_faq', 'RRZE\FAQ\Server\set_source', 10, 1 );
-add_action('set_object_terms', 'RRZE\FAQ\Server\set_term_source', 10, 3 );
+add_action('create_faq_category', 'RRZE\FAQ\Server\set_term_source', 10, 1 );
+add_action('create_faq_tag', 'RRZE\FAQ\Server\set_term_source', 10, 1 );
+
+
+
