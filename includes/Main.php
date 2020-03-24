@@ -45,9 +45,15 @@ class Main {
         add_filter( 'manage_edit-faq_columns', [$this, 'faq_table_head'] );
         add_action( 'manage_faq_posts_custom_column', [$this, 'faq_table_content'], 10, 2 );
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'faq_sortable_columns'] );
+        // Table "Category"
+        add_filter( 'manage_edit-faq_category_columns', [$this, 'faq_table_head'] );
+        add_filter( 'manage_faq_category_custom_column', [$this, 'faq_tax_table_content'], 10, 3 );
+        add_filter( 'manage_edit-faq_category_sortable_columns', [$this, 'faq_tax_sortable_columns'] );
+        // Table "Tags"
+        add_filter( 'manage_edit-faq_tag_columns', [$this, 'faq_table_head'] );
+        add_filter( 'manage_faq_tag_custom_column', [$this, 'faq_tax_table_content'], 10, 3 );
+        add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'faq_tax_sortable_columns'] );
  
-    
-
         // Settings-Klasse wird instanziiert.
         $settings = new Settings($this->pluginFile);
         $settings->onLoaded();
@@ -124,10 +130,10 @@ class Main {
     }
 
     /**
-     * Table "All FAQ"
+     * Adds sortable column "source" to tables "All FAQ", "Category" and "Tags"
      */
     public function faq_table_head( $columns ) {
-        $columns['source']  = __( 'Source', 'rrze-faq' );
+        $columns['source'] = __( 'Source', 'rrze-faq' );
         return $columns;
     }
     public function faq_table_content( $column_name, $post_id ) {
@@ -138,9 +144,20 @@ class Main {
     }
     public function faq_sortable_columns( $columns ) {
         $columns['taxonomy-faq_category'] = 'taxonomy-faq_category';
-        $columns['source']	= 'source';
+        $columns['source'] = __( 'Source', 'rrze-faq' );;
         return $columns;
     }
+    public function faq_tax_table_content( $content, $column_name, $term_id ) {
+        if( $column_name == 'source' ) {
+            $source = get_term_meta( $term_id, 'source', true );
+            echo $source;
+        }
+    }
+    public function faq_tax_sortable_columns( $columns ) {
+        $columns['source'] = __( 'Source', 'rrze-faq' );
+        return $columns;
+    }
+
 
 
     /**

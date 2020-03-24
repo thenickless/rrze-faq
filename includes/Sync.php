@@ -61,7 +61,7 @@ class Sync {
                                         )
                                     ) );
                                 $term_ids = wp_get_post_terms( $post_id, 'faq_category', array( 'fields' => 'ids' ) );
-                                array_push( $term_ids, wp_get_post_terms( $post_id, 'faq_tag', array( 'fields' => 'ids' ) ) );
+                                $term_ids = array_merge( $term_ids, wp_get_post_terms( $post_id, 'faq_tag', array( 'fields' => 'ids' ) ) );
                                 foreach( $term_ids as $id ){
                                     update_term_meta( $id, 'source', 'OTRS' );
                                 }
