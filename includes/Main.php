@@ -37,7 +37,7 @@ class Main {
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
         // Auto-Sync
         // add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
-        // Editable FAQ (if synced: non-editable / if self-written: editable)
+        // Editable FAQ (if synced: non-editable / if self-written (source == 'website'): editable)
         add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
         add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
         add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
@@ -95,7 +95,8 @@ class Main {
      */
     public function gutenberg_post_meta( $can_edit, $post)  {
         $ret = TRUE;
-        if ( get_post_meta( $post->ID, 'source', TRUE ) ) {
+        $source = get_post_meta( $post->ID, 'source', TRUE );
+        if ( $source && $source != 'website' ) {
             $ret = FALSE;
         }
         return $ret;
@@ -103,7 +104,7 @@ class Main {
     public function toggle_editor( $post ) {
         if ( $post->post_type == 'faq' ) {
             $source = get_post_meta( $post->ID, "source", true );
-            if ( $source ){
+            if ( $source && $source != 'website' ){
                 remove_post_type_support( 'faq', 'title' );
                 remove_post_type_support( 'faq', 'editor' );
                 remove_meta_box( 'tagsdiv-faq_category', 'faq', 'side' );
