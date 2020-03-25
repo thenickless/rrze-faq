@@ -208,14 +208,18 @@ class Shortcode {
                             
             $aLetters = array();
             $accordion = '[collapsibles]';
-            foreach ( $items as $title => $content ) {
+            foreach ( $items as $title => $txt ) {
                 $letter = $this->get_letter( $title );
                 $aLetters[$letter] = TRUE; 
-                $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $content ) . '[/collapse]';
+                $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $txt ) . '[/collapse]';
             }
     
             $accordion .= '[/collapsibles]';
-            $content = $this->create_a_z( $aLetters );
+            if ( !$single && $glossary ){
+                    $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
+            }
+
+            // $content = $this->create_a_z( $aLetters );
             $content .= do_shortcode( $accordion );
 
         // } elseif( intval( $id ) > 0 && $domain ) {
