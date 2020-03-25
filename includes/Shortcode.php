@@ -72,12 +72,16 @@ class Shortcode {
     private function get_tax_query( &$aTax ){
         $ret = '';
         $aTmp = array();
+
         foreach( $aTax as $field => $aVal ){
             $aID = array();
             foreach( $aVal as $val ){
                 $term = get_term_by( 'slug', $val, 'faq_' . $field );
                 if ( $term ){
                     $aID[] = $term->term_id;
+                }else{
+                    // category or tag is given but cannot be found. To supress output of all FAQ, term_id = 0 is used
+                    $aID[] = 0;
                 }
             }
             if ( $aID ){
@@ -144,13 +148,13 @@ class Shortcode {
         $glossarystyle  = ( isset( $glossarystyle ) ? $glossarystyle : '' );
         $color = ( isset( $color ) ? $color : '' );
 
-        if ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE ){
+        if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
         }
 
         $domain = ( $datasource != 'website' ? $domain : FALSE );
 
-        if( isset( $category ) && empty($id) && $domain ) {
+        if( $category && !$id && $domain ) {
             // DOMAIN
             $domains = get_option('registerDomain');
             // if(in_array($domain, $domains )) {
@@ -206,7 +210,7 @@ class Shortcode {
             // } else {
             //     return __( 'Domain is not registered', 'rrze-faq' );
             // }
-        } elseif( isset( $id ) && intval( $id ) > 0 && $domain ) {
+        } elseif( intval( $id ) > 0 && $domain ) {
             // DOMAIN
             $domains = get_option('registerDomain');
             if( in_array( $domain, $domains ) ) {
@@ -238,7 +242,7 @@ class Shortcode {
             } else {
                 return __( 'Domain is not registered', 'rrze-faq' );
             }
-        } elseif ( isset( $id ) && intval( $id ) > 0 ) {
+        } elseif ( intval( $id ) > 0 ) {
             // return json_encode($atts);
             // SINGLE FAQ
             $title = get_the_title( $id );
@@ -247,8 +251,10 @@ class Shortcode {
             if ( !isset( $content ) || ( mb_strlen( $content ) < 1)) {
                 $content = get_post_meta( $id, 'description', true );
             }
-            $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
-            $content = do_shortcode( $accordion );
+            if ( $content) {
+                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
+                $content = do_shortcode( $accordion );
+            }
         } else {
             // attribute category or tag is given or none of them
             $aLetters = array();
@@ -258,12 +264,15 @@ class Shortcode {
             $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false);
 
             $fields = array( 'category', 'tag' );
+
             foreach( $fields as $field ){
                 if ( $$field ){
                     if ( is_array( $$field ) ){
-                        $aTax[$field] = $$field;    
+                        echo 'array';
+                        exit;
+                            $aTax[$field] = $$field;    
                     }else{
-                        $aTax[$field] = explode(',', trim( $field ) );
+                        $aTax[$field] = explode(',', trim( $$field ) );
                     }
                 }
             }
@@ -271,17 +280,21 @@ class Shortcode {
             if ( $tax_query ){
                 $postQuery['tax_query'] = $tax_query;
             }
+
             $posts = get_posts( $postQuery );
 
-            if ( $glossary == 'tag' ){
-                // get all used tags
-                $aUsedTags = array();
+            // if ( $glossary == 'tag' ){
+            if ( $glossary ){
+                // get all used tags or categories
+                // $aUsedTags = array();
+                $aUsedTerms = array();
                 $aPostIDs = array();
                 foreach( $posts as $post ) {
                     // get all tags for each post
                     $aTermIds = array();
                     $aTerms = array();
-                    $term = wp_get_post_terms( $post->ID, 'faq_tag' );
+                    // $term = wp_get_post_terms( $post->ID, 'faq_tag' );
+                    $term = wp_get_post_terms( $post->ID, 'faq_' . $glossary );
                     if ( $term ){
                         foreach( $term as $t ){
                             $aTermIds[] = $t->term_id;
@@ -289,23 +302,24 @@ class Shortcode {
                             // $aTerms = (array)$t;
                             // $aTerms['link'] = '#letter_' . $letter;
                             $aLetters[$letter] = TRUE; 
-                            $aUsedTags[$t->name] = array( 'letter' => $letter, 'ID' => $t->term_id );
+                            // $aUsedTags[$t->name] = array( 'letter' => $letter, 'ID' => $t->term_id );
+                            $aUsedTerms[$t->name] = array( 'letter' => $letter, 'ID' => $t->term_id );
                             $aPostIDs[$t->term_id][] = $post->ID;
                         }
                         $aTerms = (object)$aTerms;
                     }                    
                 }
                 if ( $aLetters ){
-                    if ( $glossarystyle ) {
-                        // 2DO : links setzen -> #letter-b
-                        // https://wordpress.stackexchange.com/questions/225693/how-to-add-css-class-to-cloud-tag-anchors
-                        $content = ( $glossarystyle == 'a-z' ? $this->create_a_z( $aLetters ) : wp_generate_tag_cloud( $term ) );
-                    }
+                    // 2DO : links setzen -> #letter-b
+                    // https://wordpress.stackexchange.com/questions/225693/how-to-add-css-class-to-cloud-tag-anchors
+                    $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
                 }
 
-                asort( $aUsedTags );
+                // asort( $aUsedTags );
+                asort( $aUsedTerms );
                 $accordion = '[collapsibles]';
-                foreach ( $aUsedTags as $k => $aVal ){
+                // foreach ( $aUsedTags as $k => $aVal ){
+                foreach ( $aUsedTerms as $k => $aVal ){
                     $letter = $this->get_letter( $k );
                     $accordion .= '[collapse title="' . $k . '" color="' . $color . '" name="letter-' . $letter . '"]';
                     // find the postIDs to this tag
@@ -327,14 +341,13 @@ class Shortcode {
                     $title = get_the_title( $post->ID );
                     $letter = $this->get_letter( $title );
                     $aLetters[$letter] = TRUE; 
-                    $content = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field( 'post_content', $post->ID ) ) );
-                    if ( !isset( $content ) || ( mb_strlen($content) < 1 ) ) {
-                        $content = get_post_meta( $post->ID, 'description', true );
+                    $tmp = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field( 'post_content', $post->ID ) ) );
+                    if ( !isset( $tmp ) || ( mb_strlen( $tmp ) < 1 ) ) {
+                        $tmp = get_post_meta( $post->ID, 'description', true );
                     }
-                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse]';
+                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $tmp . '[/collapse]';
                 }
                 $accordion .= '[/collapsibles]';
-                $content = $this->create_a_z( $aLetters );
                 $content .= do_shortcode( $accordion );
             }
        } 

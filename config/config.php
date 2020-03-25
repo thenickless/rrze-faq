@@ -153,7 +153,7 @@ function getShortcodeSettings(){
 				'category' => __( 'Categories', 'rrze-faq' ),
 				'tag' => __( 'Tags', 'rrze-faq' )
 			],
-			'default' => 'category',
+			'default' => '',
 			'field_type' => 'select',
 			'label' => __( 'Glossary content', 'rrze-faq' ),
 			'type' => 'string'
@@ -164,7 +164,7 @@ function getShortcodeSettings(){
 				'a-z' => __( 'A - Z', 'rrze-faq' ),
 				'tagcloud' => __( 'Tagcloud', 'rrze-faq' )
 			],
-			'default' => 'a-z',
+			'default' => '',
 			'field_type' => 'radio',
 			'label' => __( 'Glossary style', 'rrze-faq' ),
 			'type' => 'string'
