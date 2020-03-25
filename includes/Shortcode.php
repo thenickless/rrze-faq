@@ -170,29 +170,39 @@ class Shortcode {
             // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_category]=cat1&filter[faq_tag]=master
             // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_tag]=bewerbung
 
-            $domain = $domains[$domain];
+            $domain = $domains[$domain] . '/wp-json/wp/v2/faq';
 
             $filter = '';
-            if ( $category ){
-                $filter = '&filter[faq_category]=' . $category;
-            } 
-            if ( $tag ) {
-                $filter .= '&filter[faq_tag]=' . $tag;
-            } 
+            $single = FALSE;
+
+            if ( intval( $id ) > 0 ){
+                // single FAQ
+                $single = TRUE;
+                $domain .= '/' . $id . '/';
+            } else {
+                if ( $category ){
+                    $filter = '&filter[faq_category]=' . $category;
+                } 
+                if ( $tag ) {
+                    $filter .= '&filter[faq_tag]=' . $tag;
+                } 
+            }
 
             do {
-                $request = wp_remote_get( $domain . '/wp-json/wp/v2/faq?page=' . $page . $filter );
+                $request = wp_remote_get( $domain . '?page=' . $page . $filter );
                 $status_code = wp_remote_retrieve_response_code( $request );
                 if ( $status_code == 200 ){
                     $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                    if ( !empty( $entries ) ){
+                    if ( !empty( $entries ) && isset( $entries[0] )){
                         foreach( $entries as $entry ){
                             $items[$entry['title']['rendered']] = $entry['content']['rendered'];
                         }
+                    } else {
+                        $items[$entries['title']['rendered']] = $entries['content']['rendered'];
                     }
                 }
                 $page++;   
-            } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+            } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) && !$single );
 
             ksort( $items );
                             
