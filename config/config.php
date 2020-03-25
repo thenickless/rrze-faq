@@ -138,14 +138,14 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-        'datasource' => [
+        'domain' => [
 			'values' => [
 				'website' => __( 'This website', 'rrze-faq' ),
 				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
 			],
 			'default' => 'website',
 			'field_type' => 'select',
-			'label' => __( 'Data source', 'rrze-faq' ),
+			'label' => __( 'Domain', 'rrze-faq' ),
 			'type' => 'string'
 		],
         'glossary' => [

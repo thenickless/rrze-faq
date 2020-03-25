@@ -64,7 +64,7 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-metabox.php');
         include_once( __DIR__ . '/posttype/rrze-faq-admin.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
-        // include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
+        include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
         // include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
         // include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
         // include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
@@ -210,10 +210,6 @@ class Main {
     public function addDomain( $url, $name ) {
         $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
         $domains = get_option( 'registeredDomains' );
-
-        // echo '<pre>';
-        // var_dump($domains);
-        // exit;
 
         if ( !$domains || in_array( $url, $domains ) === FALSE ) {
             // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );

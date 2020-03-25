@@ -152,96 +152,94 @@ class Shortcode {
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
         }
 
-        $domain = ( $datasource != 'website' ? $domain : FALSE );
+        // $domain = ( $datasource != 'website' ? $domain : FALSE );
 
-        if( $category && !$id && $domain ) {
+        // if( $category && !$id && $domain ) {
+        if( $domain ) {
             // DOMAIN
-            $domains = get_option('registerDomain');
-            // if(in_array($domain, $domains )) {
-            //     if ( strpos( $domain, 'http' ) === 0 ) {
-            //         $domainurl = $domain;
-            //     } else {
-            //         $domainurl = 'https://' . $domain;
-            //     }
-                
-                // if ( $domain == 'otrs' ){
-                    $content = wp_remote_get( $domain );
-                // } else {
-                //     $content = wp_remote_get( $domainurl . '/wp-json/wp/v2/glossary?filter[faq_category]=' . $category . '&per_page=200', array( 'sslverify'   => false ) );
-                // }
+            $domains = get_option('registeredDomains');
 
-                // echo '<pre>';
-                // var_dump($content);
-                // echo '</pre>';
-                // exit;
-
-                $status_code = wp_remote_retrieve_response_code( $content );
-                if ( $status_code === 200 ) {
-                    $content = $content['body'];
-                } else {
-                    return __( 'request returns ' . $status_code, 'rrze-faq' );
-                }
-               
-                $data = json_decode( $content, true );
-               
-                for($i = 0; $i < sizeof($data); $i++) {
-                    $items[$i]['title']      = $data[$i]['title']['rendered'];
-                    $items[$i]['content']    = $data[$i]['content']['rendered'];
-                }
-                
-                $collator = new \Collator('de_DE');
-            
-                usort( $items, function ( array $a, array $b ) use ( $collator ) {
-                    $result = $collator->compare( $a['title'], $b['title'] );
-                    return $result;
-                });
-                
-                $aLetters = array();
-                $accordion = '[collapsibles]';
-                foreach ( $items as $item ) {
-                    $letter = $this->get_letter( $item['title'] );
-                    $aLetters[$letter] = TRUE; 
-                    $accordion .= '[collapse title="' . $item['title'] . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $item['content'] ) . '[/collapse]';
-                }
-        
-                $accordion .= '[/collapsibles]';
-                $content = $this->create_a_z( $aLetters );
-                $content .= do_shortcode( $accordion );
-            // } else {
-            //     return __( 'Domain is not registered', 'rrze-faq' );
-            // }
-        } elseif( intval( $id ) > 0 && $domain ) {
-            // DOMAIN
-            $domains = get_option('registerDomain');
-            if( in_array( $domain, $domains ) ) {
-                if ( strpos( $domain, 'http' ) === 0 ) {
-                    $domainurl = $domain;
-                } else {
-                    $domainurl = 'https://' . $domain;
-                }
-            
-                $content = wp_remote_get( $domainurl . '/wp-json/wp/v2/glossary/' . $id, array( 'sslverify'   => false ) );
-                $status_code = wp_remote_retrieve_response_code( $content );
-                if ( 200 === $status_code ) {
-                    $item = $content['body'];
-                } else {
-                    return __( 'request returns ' . $status_code, 'rrze-faq' );
-                }
-                
-                $list = json_decode( $item, true );
-                $title = get_the_title( $list['id'] );
-                $letter = $this->get_letter( $title );
-        
-                $content = str_replace( $list['content']['rendered'] );
-                if ( !isset( $content ) || ( mb_strlen($content) < 1 ) ) {
-                    $content = get_post_meta( $id, 'description', true );
-                }
-            
-                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
-                $content = do_shortcode( $accordion );
-            } else {
+            if ( !in_array( $domain, array_keys( $domains ) ) ){
                 return __( 'Domain is not registered', 'rrze-faq' );
             }
+
+            $items = array();
+            $page = 1;
+            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/
+            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_category]=cat1
+            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_category]=cat1&filter[faq_tag]=master
+            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_tag]=bewerbung
+
+            $domain = $domains[$domain];
+
+            $filter = '';
+            if ( $category ){
+                $filter = '&filter[faq_category]=' . $category;
+            } 
+            if ( $tag ) {
+                $filter .= '&filter[faq_tag]=' . $tag;
+            } 
+
+            do {
+                $request = wp_remote_get( $domain . '/wp-json/wp/v2/faq?page=' . $page . $filter );
+                $status_code = wp_remote_retrieve_response_code( $request );
+                if ( $status_code == 200 ){
+                    $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+                    if ( !empty( $entries ) ){
+                        foreach( $entries as $entry ){
+                            $items[$entry['title']['rendered']] = $entry['content']['rendered'];
+                        }
+                    }
+                }
+                $page++;   
+            } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+
+            ksort( $items );
+                            
+            $aLetters = array();
+            $accordion = '[collapsibles]';
+            foreach ( $items as $title => $content ) {
+                $letter = $this->get_letter( $title );
+                $aLetters[$letter] = TRUE; 
+                $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $content ) . '[/collapse]';
+            }
+    
+            $accordion .= '[/collapsibles]';
+            $content = $this->create_a_z( $aLetters );
+            $content .= do_shortcode( $accordion );
+
+        // } elseif( intval( $id ) > 0 && $domain ) {
+        //     // DOMAIN
+        //     $domains = get_option('registerDomain');
+        //     if( in_array( $domain, $domains ) ) {
+        //         if ( strpos( $domain, 'http' ) === 0 ) {
+        //             $domainurl = $domain;
+        //         } else {
+        //             $domainurl = 'https://' . $domain;
+        //         }
+            
+        //         $content = wp_remote_get( $domainurl . '/wp-json/wp/v2/glossary/' . $id, array( 'sslverify'   => false ) );
+        //         $status_code = wp_remote_retrieve_response_code( $content );
+        //         if ( 200 === $status_code ) {
+        //             $item = $content['body'];
+        //         } else {
+        //             return __( 'request returns ' . $status_code, 'rrze-faq' );
+        //         }
+                
+        //         $list = json_decode( $item, true );
+        //         $title = get_the_title( $list['id'] );
+        //         $letter = $this->get_letter( $title );
+        
+        //         $content = str_replace( $list['content']['rendered'] );
+        //         if ( !isset( $content ) || ( mb_strlen($content) < 1 ) ) {
+        //             $content = get_post_meta( $id, 'description', true );
+        //         }
+            
+        //         $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
+        //         $content = do_shortcode( $accordion );
+        //     } else {
+        //         return __( 'Domain is not registered', 'rrze-faq' );
+        //     }
         } elseif ( intval( $id ) > 0 ) {
             // return json_encode($atts);
             // SINGLE FAQ
@@ -374,7 +372,7 @@ class Shortcode {
         $domains = get_option( 'registeredDomains' );
         if ( $domains ){
             foreach ( $domains as $name => $url ){
-                $this->settings['datasource']['values'][$url] = $name;
+                $this->settings['domain']['values'][$url] = $name;
             }
         }
 

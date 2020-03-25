@@ -14,9 +14,9 @@ function rest_api_filter_add_filter_param( $args, $request ) {
             return $args;
     }
     $filter = $request['filter'];
-    if ( isset( $filter['posts_per_page'] ) && ( (int) $filter['posts_per_page'] >= 1 && (int) $filter['posts_per_page'] <= 150 ) ) {
-            $args['posts_per_page'] = $filter['posts_per_page'];
-    }
+//     if ( isset( $filter['posts_per_page'] ) && ( (int) $filter['posts_per_page'] >= 1 && (int) $filter['posts_per_page'] <= 150 ) ) {
+//             $args['posts_per_page'] = $filter['posts_per_page'];
+//     }
     global $wp;
     $vars = apply_filters( 'query_vars', $wp->public_query_vars );
     foreach ( $vars as $var ) {
@@ -29,9 +29,9 @@ function rest_api_filter_add_filter_param( $args, $request ) {
 
 add_action( 'rest_api_init', 'RRZE\FAQ\Server\rest_api_filter_add_filters' );
 
-add_filter( 'rest_endpoints', function( $endpoints ) {
-        if( isset( $endpoints['/wp/v2/faq'][0]['args']['per_page']['maximum'] ) )
-                $endpoints['/wp/v2/faq'][0]['args']['per_page']['maximum'] = 2000;
+// add_filter( 'rest_endpoints', function( $endpoints ) {
+//         if( isset( $endpoints['/wp/v2/faq'][0]['args']['per_page']['maximum'] ) )
+//                 $endpoints['/wp/v2/faq'][0]['args']['per_page']['maximum'] = 2000;
 
-    return $endpoints;  
-});
+//     return $endpoints;  
+// });
