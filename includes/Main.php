@@ -61,10 +61,10 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-posttype.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-taxonomy.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-manage-posts.php' );
-        // include_once( __DIR__ . '/posttype/rrze-faq-metabox.php');
+        include_once( __DIR__ . '/posttype/rrze-faq-metabox.php');
         include_once( __DIR__ . '/posttype/rrze-faq-admin.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
-        include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
+        // include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
         // include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
         // include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
         // include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
@@ -94,6 +94,15 @@ class Main {
      * self-written FAQ have to be editable
      */
     public function gutenberg_post_meta( $can_edit, $post)  {
+        // check settings from Plugin rrze-settings enable_classic_editor
+        $settings = (array) get_option( 'rrze_settings' );
+        if ( isset( $settings )){
+            $settings = (array) $settings['writing'];
+            if ( isset( $settings['enable_classic_editor'] ) && $settings['enable_classic_editor'] ) {
+                return FALSE;
+            }
+        }
+
         $ret = TRUE;
         $source = get_post_meta( $post->ID, 'source', TRUE );
         if ( $source && $source != 'website' ) {

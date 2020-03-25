@@ -75,13 +75,17 @@ function rrze_faq_taxonomy() {
         register_term_meta(
             $t['name'], 
             'source', 
-                [
+            array(
                 // 'object_subtype' => 'my_article',
+                'query_var' 	=> TRUE,
                 'type' => 'string',
                 'single' => TRUE,
-                'show_in_rest' => TRUE
-          ]);
+                'show_in_rest' => TRUE,
+                'rest_base'          => 'source',
+                'rest_controller_class' => 'WP_REST_Terms_Controller'
+          ));
     }
 }
+
 
 add_action( 'init', 'RRZE\FAQ\Server\rrze_faq_taxonomy');

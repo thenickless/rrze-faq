@@ -26,14 +26,13 @@ class Shortcode {
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
         add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
-        // add_action( 'enqueue_block_assets', [ $this, 'prefill' ] );
+        add_action( 'enqueue_block_assets', [ $this, 'prefill' ] ); 
+        // add_filter( 'block_editor_settings', [$this, 'prefill'], 10, 0 ); // feuert bei Beitrag erstellen
     }
 
     public function prefill(){
-        // if ( has_block( $this->settings['block']['blocktype'] ) ) {        
-            $editor_script = $this->settings['block']['blockname'] . '-blockJS';
-            wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->fill_gutenberg_options() );
-        // }
+        $editor_script = $this->settings['block']['blockname'] . '-blockJS';
+        wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->fill_gutenberg_options() );
     }
 
 
@@ -345,8 +344,7 @@ class Shortcode {
 
     public function sortIt( &$arr ){
         uasort( $arr, function($a, $b) {
-            // return strtolower( $a ) <=> strtolower( $b );
-            return strtolower( $b ) <=> strtolower( $a );
+            return strtolower( $a ) <=> strtolower( $b );
         } );
     }
 
@@ -355,7 +353,7 @@ class Shortcode {
         // echo 'fill';
         // exit;
 
-        // Skip if Gutenberg isnot enabled
+        // Skip if Gutenberg is not enabled
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
@@ -368,6 +366,7 @@ class Shortcode {
         }
 
         $options = get_option( 'rrze-faq' );
+
         // fill selects "category" and "tag"
         $fields = array( 'category', 'tag' );
         foreach ( $fields as $field ) {
@@ -381,22 +380,17 @@ class Shortcode {
             // get categories and tags from this website
             $terms = get_terms([
                 'taxonomy' => 'faq_' . $field,
-                'hide_empty' => TRUE,
-                // 'meta_query' => array(
-                //     array(
-                //         'key' => 'source',
-                //         'value' => 'OTRS',
-                //     )
-                // )
+                'hide_empty' => FALSE,
+                'meta_query' => array(
+                    array(
+                        'key' => 'source',
+                        'value' => 'website',
+                    )
+                )
             ]);
-
             foreach ( $terms as $term ){
                 $this->settings[$field]['values'][$term->id] = $term->name;
             }
-
-
-// next:
-// rest api filter methode nutzen, um alle cats, tags, faq ohne OTRS zu finden
 
             // get categories and tags from other domains
             if ( $domains ) {
@@ -418,33 +412,45 @@ class Shortcode {
                     } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
                 }
             }
+
+            $this->sortIt( $this->settings[$field]['values'] );
         }
+
+
         // https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-json/wp/v2/faq?faq_category=951,950&faq_tag=90
 
-        // get FAQ from this website
-        $all_post_ids = get_posts( array(
+        // get FAQ from this website and synced from OTRS
+        $faqs = get_posts( array(
             'posts_per_page'  => -1,
             'post_type' => 'faq',
             'order' => 'ASC',
-            'orderby' => 'title',
-            'fields' => 'ID',
-            'meta_query' => array(
-                array(
-                    'key' => 'source',
-                    'value' => 'website',
-                )
-            )
+            // 'orderby' => 'title',
+            // 'fields' => 'ids',
+            // 'meta_query' => array(
+            //     array(
+            //         'key' => 'source',
+            //         'value' => 'website',
+            //     )
+            // )
         ));
 
         $this->settings['id']['field_type'] = 'select';
         $this->settings['id']['type'] = 'string';
         $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
-        foreach ( $all_post_ids as $faq){
+        foreach ( $faqs as $faq){
             $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
         }
 
-        // get FAQ from other domains
 
+        // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?page=1
+
+        // https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?faq_category=5 funktioniert
+        // https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?faq_tag=1 funktioniert
+        // https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?faq_tag=8787,123 funktioniert : Werte sind OR
+        // Problem: filter nach post_meta_field source
+        https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?post_meta_field[source]=website
+
+        // get FAQ from other domains
         if ( $domains ) {
             foreach( $domains as $name => $url ){
                 $page = 1;
