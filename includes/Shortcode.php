@@ -152,9 +152,6 @@ class Shortcode {
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
         }
 
-        // $domain = ( $datasource != 'website' ? $domain : FALSE );
-
-        // if( $category && !$id && $domain ) {
         if( $domain ) {
             // DOMAIN
             $domains = get_option('registeredDomains');
@@ -170,92 +167,141 @@ class Shortcode {
             // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_category]=cat1&filter[faq_tag]=master
             // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_tag]=bewerbung
 
-            $domain = $domains[$domain] . '/wp-json/wp/v2/faq';
+            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq_category
+
+            $domain = $domains[$domain] . 'wp-json/wp/v2/faq';
 
             $filter = '';
             $single = FALSE;
 
-            if ( intval( $id ) > 0 ){
-                // single FAQ
-                $single = TRUE;
-                $domain .= '/' . $id . '/';
-            } else {
-                if ( $category ){
-                    $filter = '&filter[faq_category]=' . $category;
-                } 
-                if ( $tag ) {
-                    $filter .= '&filter[faq_tag]=' . $tag;
-                } 
-            }
+            if ( $glossary ){
+                // get all used tags or categories
+                $url = $domain . '_' . $glossary;
+                $tags_or_categories = array();
+                $page = 1;
+                $accordion = '[collapsibles]';
 
-            do {
-                $request = wp_remote_get( $domain . '?page=' . $page . $filter );
-                $status_code = wp_remote_retrieve_response_code( $request );
-                if ( $status_code == 200 ){
-                    $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                    if ( !empty( $entries ) && isset( $entries[0] )){
-                        foreach( $entries as $entry ){
-                            $items[$entry['title']['rendered']] = $entry['content']['rendered'];
-                        }
-                    } else {
-                        $items[$entries['title']['rendered']] = $entries['content']['rendered'];
-                    }
+                $slug = '';
+                if ( ( $category && ( $glossary == 'category' ) ) || ( $tag && ( $glossary == 'tag' ) ) ){
+                    $slug = '&slug=' . ( $category ? $category : $tag );
                 }
-                $page++;   
-            } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) && !$single );
 
-            ksort( $items );
-                            
-            $aLetters = array();
-            $accordion = '[collapsibles]';
-            foreach ( $items as $title => $txt ) {
-                $letter = $this->get_letter( $title );
-                $aLetters[$letter] = TRUE; 
-                $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $txt ) . '[/collapse]';
-            }
-    
-            $accordion .= '[/collapsibles]';
-            if ( !$single && $glossary ){
-                    $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
-            }
+                // echo $url . '?page=' . $page . $slug;
+                // exit;
 
-            // $content = $this->create_a_z( $aLetters );
-            $content .= do_shortcode( $accordion );
+                do {
+                    $request = wp_remote_get( $url . '?page=' . $page . $slug );
+                    $status_code = wp_remote_retrieve_response_code( $request );
+                    if ( $status_code == 200 ){
+                        $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+                        if ( !empty( $entries ) ){
+                            foreach( $entries as $entry ){
+                                if ( $entry['count'] > 0 ){
+                                    $tags_or_categories[$entry['slug']] = $entry['name'];
+                                }
+                            }
+                        }
+                    }
+                    $page++;   
+                } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
 
-        // } elseif( intval( $id ) > 0 && $domain ) {
-        //     // DOMAIN
-        //     $domains = get_option('registerDomain');
-        //     if( in_array( $domain, $domains ) ) {
-        //         if ( strpos( $domain, 'http' ) === 0 ) {
-        //             $domainurl = $domain;
-        //         } else {
-        //             $domainurl = 'https://' . $domain;
-        //         }
-            
-        //         $content = wp_remote_get( $domainurl . '/wp-json/wp/v2/glossary/' . $id, array( 'sslverify'   => false ) );
-        //         $status_code = wp_remote_retrieve_response_code( $content );
-        //         if ( 200 === $status_code ) {
-        //             $item = $content['body'];
-        //         } else {
-        //             return __( 'request returns ' . $status_code, 'rrze-faq' );
-        //         }
-                
-        //         $list = json_decode( $item, true );
-        //         $title = get_the_title( $list['id'] );
-        //         $letter = $this->get_letter( $title );
+                asort( $tags_or_categories );
+
+//faq_category = campusmanagementcampobewerbung-allgemein
+// faq_tag = bewerbung
+
+                $filter_term = ( $category ? 'category' : ( $tag ? 'tag' : $glossary ) );
+
+                // get all FAQ for each category or tag ( = $glossary )
+                foreach( $tags_or_categories as $slug => $name ){
+                    // $filter = '&filter[faq_' . $glossary . ']=' . $slug;
+                    $term_slug = ( $category ? $category : ( $tag ? $tag : $slug ) );
+                    $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
+                    // [faq domain="dev2" glossary="tag" tag="bewerbung"]
+                    // echo $domain . '?page=' . $page . $filter;
+                    // exit;
+                    
+                    $page = 1;
+                    do {
+                        $request = wp_remote_get( $domain . '?page=' . $page . $filter );
+                        $status_code = wp_remote_retrieve_response_code( $request );
+                        if ( $status_code == 200 ){
+                            $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+                            if ( !empty( $entries ) ){
+                                foreach( $entries as $entry ){
+                                    $items[$entry['title']['rendered']] = $entry['content']['rendered'];
+                                }
+                            }
+                        }
+                        $page++;   
+                    } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+                }
+
+                ksort( $items );
+
+                foreach( $tags_or_categories as $slug => $name ){
+                    $letter = $this->get_letter( $name );
+                    $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="letter-' . $letter . '"]';    
+                    foreach( $items as $title => $faqtxt ){
+                        $accordion .= '[accordion][accordion-item title="' . $title . '"]' . $faqtxt . '[/accordion-item][/accordion]';
+
+                    }
+                    $accordion .= '[/collapse]';
+                }
+                $accordion .= '[/collapsibles]';
+                $content .= do_shortcode( $accordion );
+            } else {
+                if ( intval( $id ) > 0 ){
+                    // single FAQ
+                    $single = TRUE;
+                    $domain .= '/' . $id . '/';
+                } else {
+                    if ( $category ){
+                        $filter = '&filter[faq_category]=' . $category;
+                    } 
+                    if ( $tag ) {
+                        $filter .= '&filter[faq_tag]=' . $tag;
+                    } 
+                }
+
+                do {
+                    $request = wp_remote_get( $domain . '?page=' . $page . $filter );
+                    $status_code = wp_remote_retrieve_response_code( $request );
+                    if ( $status_code == 200 ){
+                        $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+                        if ( !empty( $entries ) ){
+                            if ( isset( $entries[0] ) ){
+                                foreach( $entries as $entry ){
+                                    $items[$entry['title']['rendered']] = $entry['content']['rendered'];
+                                }
+                            } else {
+                                $items[$entries['title']['rendered']] = $entries['content']['rendered'];
+                            }
+                        }
+                    }
+                    $page++;   
+                } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) && !$single );
+
+                ksort( $items );
+                                
+                $aLetters = array();
+                $accordion = '[collapsibles]';
+                foreach ( $items as $title => $txt ) {
+                    $letter = $this->get_letter( $title );
+                    $aLetters[$letter] = TRUE; 
+                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $txt ) . '[/collapse]';
+                }
         
-        //         $content = str_replace( $list['content']['rendered'] );
-        //         if ( !isset( $content ) || ( mb_strlen($content) < 1 ) ) {
-        //             $content = get_post_meta( $id, 'description', true );
-        //         }
-            
-        //         $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
-        //         $content = do_shortcode( $accordion );
-        //     } else {
-        //         return __( 'Domain is not registered', 'rrze-faq' );
-        //     }
+                $accordion .= '[/collapsibles]';
+                if ( !$single && $glossary ){
+                        $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
+                }
+
+                // $content = $this->create_a_z( $aLetters );
+                $content .= do_shortcode( $accordion );
+
+            }
         } elseif ( intval( $id ) > 0 ) {
-            // return json_encode($atts);
             // SINGLE FAQ
             $title = get_the_title( $id );
             $letter = $this->get_letter( $title );
@@ -280,9 +326,7 @@ class Shortcode {
             foreach( $fields as $field ){
                 if ( $$field ){
                     if ( is_array( $$field ) ){
-                        echo 'array';
-                        exit;
-                            $aTax[$field] = $$field;    
+                        $aTax[$field] = $$field;    
                     }else{
                         $aTax[$field] = explode(',', trim( $$field ) );
                     }
@@ -293,22 +337,38 @@ class Shortcode {
                 $postQuery['tax_query'] = $tax_query;
             }
 
+            // echo '<pre>';
+            // var_dump($postQuery);
+            // exit;
+
             $posts = get_posts( $postQuery );
 
-            // if ( $glossary == 'tag' ){
             if ( $glossary ){
                 // get all used tags or categories
-                // $aUsedTags = array();
                 $aUsedTerms = array();
                 $aPostIDs = array();
+                $check_filter = FALSE;
                 foreach( $posts as $post ) {
                     // get all tags for each post
                     $aTermIds = array();
                     $aTerms = array();
-                    // $term = wp_get_post_terms( $post->ID, 'faq_tag' );
+
+                    if ( $glossary == 'tag' && $tag ){
+                        $check_filter = TRUE;
+                        $aTags = array_map( 'trim', explode( ',', $tag ) );                
+                        $valid_term_ids = array();
+                        foreach ( $aTags as $slug ){
+                            $filter_term = get_term_by( 'slug', $slug, 'faq_tag' );
+                            $valid_term_ids[] = $filter_term->term_id;
+                        }
+                    }            
+
                     $term = wp_get_post_terms( $post->ID, 'faq_' . $glossary );
                     if ( $term ){
                         foreach( $term as $t ){
+                            if ( $check_filter && in_array( $t->term_id, $valid_term_ids ) === FALSE ){
+                                continue;
+                            }
                             $aTermIds[] = $t->term_id;
                             $letter = $this->get_letter( $t->name );
                             // $aTerms = (array)$t;
@@ -327,10 +387,15 @@ class Shortcode {
                     $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
                 }
 
-                // asort( $aUsedTags );
                 asort( $aUsedTerms );
+
+
                 $accordion = '[collapsibles]';
-                // foreach ( $aUsedTags as $k => $aVal ){
+
+// echo '<pre>';
+// var_dump($aUsedTerms);
+// exit;
+
                 foreach ( $aUsedTerms as $k => $aVal ){
                     $letter = $this->get_letter( $k );
                     $accordion .= '[collapse title="' . $k . '" color="' . $color . '" name="letter-' . $letter . '"]';

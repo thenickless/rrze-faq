@@ -143,7 +143,7 @@ function getShortcodeSettings(){
 				'website' => __( 'This website', 'rrze-faq' ),
 				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
 			],
-			'default' => 'website',
+			'default' => '',
 			'field_type' => 'select',
 			'label' => __( 'Domain', 'rrze-faq' ),
 			'type' => 'string'
