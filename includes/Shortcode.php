@@ -162,19 +162,16 @@ class Shortcode {
 
             $items = array();
             $page = 1;
-            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/
-            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_category]=cat1
-            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_category]=cat1&filter[faq_tag]=master
-            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?filter[faq_tag]=bewerbung
-
-            // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq_category
-
             $domain = $domains[$domain] . 'wp-json/wp/v2/faq';
 
             $filter = '';
             $single = FALSE;
 
             if ( $glossary ){
+                if ( !$tag && !$category ){
+                    return __( 'There are too many entries expected. Please provide at least one tag or category.', 'rrze-faq' );
+                }
+
                 // get all used tags or categories
                 $url = $domain . '_' . $glossary;
                 $tags_or_categories = array();
@@ -188,6 +185,10 @@ class Shortcode {
 
                 // echo $url . '?page=' . $page . $slug;
                 // exit;
+
+                // 2DO: Knackpunkt ist die Reihenfolge: besser zuerst $category bzw $tag abrufen und dann erst glossary 
+                // umgekehrt: time-out Proxy-Error
+
 
                 do {
                     $request = wp_remote_get( $url . '?page=' . $page . $slug );
@@ -207,43 +208,52 @@ class Shortcode {
 
                 asort( $tags_or_categories );
 
-//faq_category = campusmanagementcampobewerbung-allgemein
-// faq_tag = bewerbung
-
                 $filter_term = ( $category ? 'category' : ( $tag ? 'tag' : $glossary ) );
+                $test = 0;
 
                 // get all FAQ for each category or tag ( = $glossary )
                 foreach( $tags_or_categories as $slug => $name ){
-                    // $filter = '&filter[faq_' . $glossary . ']=' . $slug;
-                    $term_slug = ( $category ? $category : ( $tag ? $tag : $slug ) );
-                    $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
-                    // [faq domain="dev2" glossary="tag" tag="bewerbung"]
-                    // echo $domain . '?page=' . $page . $filter;
-                    // exit;
-                    
-                    $page = 1;
-                    do {
-                        $request = wp_remote_get( $domain . '?page=' . $page . $filter );
-                        $status_code = wp_remote_retrieve_response_code( $request );
-                        if ( $status_code == 200 ){
-                            $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                            if ( !empty( $entries ) ){
-                                foreach( $entries as $entry ){
-                                    $items[$entry['title']['rendered']] = $entry['content']['rendered'];
+                    // $term_slug = ( $category ? $category : ( $tag ? $tag : $slug ) );
+                    $aTerm_slugs = array_map( 'trim', explode( ',', ( $category ? $category : ( $tag ? $tag : $slug ) ) ) );
+                    foreach( $aTerm_slugs as $term_slug ){
+                        $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
+                        
+                        $page = 1;
+
+                        do {
+                            $request = wp_remote_get( $domain . '?page=' . $page . $filter );
+                            $status_code = wp_remote_retrieve_response_code( $request );
+                            if ( $status_code == 200 ){
+                                $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+                                if ( !empty( $entries ) ){
+                                    if ( isset( $entries[0] ) ){
+                                        foreach( $entries as $entry ){
+                                            // $items[$entry['title']['rendered']] = $entry['content']['rendered'];
+                                            $items[$term_slug][$entry['title']['rendered']] = $entry['content']['rendered'];
+                                            $test++;
+                                        }
+                                    } else {
+                                        // $items[$entries['title']['rendered']] = $entries['content']['rendered'];
+                                        $items[$term_slug][$entries['title']['rendered']] = $entries['content']['rendered'];
+                                    }
                                 }
                             }
-                        }
-                        $page++;   
-                    } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+                            $page++;   
+                        } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+                    }
                 }
 
-                ksort( $items );
+                echo 'count=' . $test;
+                exit;
+
+                // ksort( $items );
 
                 foreach( $tags_or_categories as $slug => $name ){
                     $letter = $this->get_letter( $name );
                     $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="letter-' . $letter . '"]';    
-                    foreach( $items as $title => $faqtxt ){
-                        $accordion .= '[accordion][accordion-item title="' . $title . '"]' . $faqtxt . '[/accordion-item][/accordion]';
+                    // foreach( $items as $title => $faqtxt ){
+                    foreach( $items[$slug] as $title => $faqtxt ){
+                            $accordion .= '[accordion][accordion-item title="' . $title . '"]' . $faqtxt . '[/accordion-item][/accordion]';
 
                     }
                     $accordion .= '[/collapse]';
@@ -297,9 +307,7 @@ class Shortcode {
                         $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
                 }
 
-                // $content = $this->create_a_z( $aLetters );
                 $content .= do_shortcode( $accordion );
-
             }
         } elseif ( intval( $id ) > 0 ) {
             // SINGLE FAQ
@@ -389,12 +397,7 @@ class Shortcode {
 
                 asort( $aUsedTerms );
 
-
                 $accordion = '[collapsibles]';
-
-// echo '<pre>';
-// var_dump($aUsedTerms);
-// exit;
 
                 foreach ( $aUsedTerms as $k => $aVal ){
                     $letter = $this->get_letter( $k );
