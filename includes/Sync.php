@@ -15,20 +15,21 @@ class Sync {
         define( 'OTRS', getOTRS() );
 
         // delete all FAQ that came from OTRS
-        $iDel = 0;
+        // $iDel = 0;
         // $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => 'OTRS', 'numberposts' => -1 ) );
         // $allFAQ = get_posts( array( 'post_type' => 'faq', 'numberposts' => -1 ) );
         // foreach ( $allFAQ as $faq ) {
         //     wp_delete_post( $faq->ID, true );
         //     $iDel++;
-        // }   
-
+        // } 
         
+        $max_exec_time = ini_get('max_execution_time') - 40; // ini_get('max_execution_time') is not the correct value perhaps due to load-balancer or proxy or other fancy things I've no clue of. But this workaround works for now.
+
         // sync all FAQ for each selected category
         $iNew = 0;
-        $option = get_option( 'rrze-faq' );
+        $options = get_option( 'rrze-faq' );
 
-        foreach ( $option['otrs_categories'] as $catID ){
+        foreach ( $options['otrs_categories'] as $catID ){
             $last_faqID = $this->getLastFAQID( $catID );
             // echo $last_faqID;
             // exit;
@@ -37,6 +38,10 @@ class Sync {
             if ( $status_code === 200 ) {
                 $faqIDs = json_decode( $faqIDs['body'], true );
                 if ( !isset( $faqIDs['Error'] ) ) {
+                    if ( !is_array( $faqIDs['ID'] ) ){
+                        // single entry
+                        $faqIDs = array('ID' => $faqIDs);
+                    }
                     asort($faqIDs['ID']);
                     foreach ( $faqIDs['ID'] as $faqID ){
                         if ( $faqID <= $last_faqID ){
@@ -78,16 +83,34 @@ class Sync {
                             }
                         }
                         $this->setLastFAQID( $catID, $faqID );
+
+                        // echo $exec_time;
+                        // echo '<br>';
+                        // if ( $exec_time < $max_exec_time ){ 
+                        //     echo 'kleiner';
+                        // }
+                        // exit;
+
+                        // check execution time to avoid a 402 error
+                        $exec_time = (int) (microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"]);
+                        if ( $exec_time >= $max_exec_time ){
+                            $sync_msg = __( 'There are still FAQ to be fetched. ' . $iNew . ' FAQ added. Please click on "Synchronize now" again to fetch the rest ', 'rrze-faq' ) . ( isset( $options['otrs_auto_sync'] ) && $options['otrs_auto_sync'] == 'on' ? ' or wait for the automatically synchronization.' : '.' ) . ' Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+                            date_default_timezone_set('Europe/Berlin');
+                            add_settings_error( 'Synchronization not completed', 'syncnotcompleted', $sync_msg, 'error' );
+                            settings_errors();
+                            logIt( date("Y-m-d H:i:s") . ' | ' . $sync_msg . ' | ' . $mode );
+                            return;
+                        }
+
                     }
                 }
             }
         }
-
         date_default_timezone_set('Europe/Berlin');
-        $msg = $iNew . __( ' FAQ added', 'rrze-faq' ) . '. ' . $iDel . __( ' FAQ deleted', 'rrze-faq' ) . '. Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
-        add_settings_error( 'Synchronization completed', 'synccompleted', $msg );
+        $sync_msg = 'Synchronization completed. ' . $iNew . __( ' FAQ added', 'rrze-faq' ) . '. Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+        add_settings_error( 'Synchronization completed', 'synccompleted', $sync_msg, 'success' );
         settings_errors();
-        logIt( date("Y-m-d H:i:s") . ' | ' . $msg );
+        logIt( date("Y-m-d H:i:s") . ' | ' . $sync_msg . ' | ' . $mode );
         return;
     }
 

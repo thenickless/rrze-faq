@@ -36,7 +36,7 @@ class Main {
         add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
         // Auto-Sync
-        // add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
+        add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
         // Editable FAQ (if synced: non-editable / if self-written (source == 'website'): editable)
         add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
         add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
@@ -194,7 +194,7 @@ class Main {
 
     public function checkSync() {
         if ( isset( $_GET['sync'] ) ){
-            // $this->setCronjob();
+            $this->setCronjob();
             $sync = new Sync();
             $sync->doSync( 'manual' );
         }
@@ -237,22 +237,25 @@ class Main {
         $weekday = $today["wday"]; // 0=sunday
         $hour = $today["hours"]; // 0 - 23
 
-        if ( $weekday > 0 && $weekday < 6 ){
-            if ( in_array( $hour, $sync["workdays"] ) ) {
+
+        // Sync hourly for testing
+
+        // if ( $weekday > 0 && $weekday < 6 ){
+        //     if ( in_array( $hour, $sync["workdays"] ) ) {
                 $sync = new Sync();
                 $sync->doSync( 'automatic' );
-            }
-        } else {
-            if ( in_array( $hour, $sync["weekend"] ) ) {
+        //     }
+        // } else {
+        //     if ( in_array( $hour, $sync["weekend"] ) ) {
                 $sync = new Sync();
                 $sync->doSync( 'automatic' );
-            }
-        }
+        //     }
+        // }
     }
 
     public function setCronjob() {
         $options = get_option( 'rrze-faq' );
-        if ( isset( $options['otrs_sync_check'] ) && $options['otrs_sync_check'] != 'on' ) {
+        if ( isset( $options['otrs_auto_sync'] ) && $options['otrs_auto_sync'] != 'on' ) {
             if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
                 wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
             }

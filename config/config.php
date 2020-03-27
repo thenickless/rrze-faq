@@ -86,15 +86,22 @@ function getFields() {
 			[
 				'name' => 'categories',
 				'label' => __('Categories', 'rrze-faq' ),
-				'desc' => __('Please select all categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
+				'desc' => __('Please select the categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
 				'type' => 'multiselect',
 				'options' => []
 			],
 			[
-				'name' => 'sync_check',
+				'name' => 'auto_sync',
 				'label' => __('Synchronization', 'rrze-faq' ),
 				'desc' => __('Update FAQ automatically', 'rrze-faq' ),
 				'type' => 'checkbox'
+			],
+			[
+				'name' => 'timestamp',
+				'label' => '',
+				'desc' => '',
+				'type' => 'hidden',
+				'options' => time()
 			],
 		],
 		'doms' => [
