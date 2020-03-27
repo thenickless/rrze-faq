@@ -17,23 +17,32 @@ class Sync {
         // delete all FAQ that came from OTRS
         $iDel = 0;
         // $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => 'OTRS', 'numberposts' => -1 ) );
-        $allFAQ = get_posts( array( 'post_type' => 'faq', 'numberposts' => -1 ) );
-        foreach ( $allFAQ as $faq ) {
-            wp_delete_post( $faq->ID, true );
-            $iDel++;
-        }   
+        // $allFAQ = get_posts( array( 'post_type' => 'faq', 'numberposts' => -1 ) );
+        // foreach ( $allFAQ as $faq ) {
+        //     wp_delete_post( $faq->ID, true );
+        //     $iDel++;
+        // }   
+
         
         // sync all FAQ for each selected category
         $iNew = 0;
         $option = get_option( 'rrze-faq' );
 
         foreach ( $option['otrs_categories'] as $catID ){
+            $last_faqID = $this->getLastFAQID( $catID );
+            // echo $last_faqID;
+            // exit;
             $faqIDs = wp_remote_get( OTRS . '/FAQSearch?CategoryIDs=' . $catID );
             $status_code = wp_remote_retrieve_response_code( $faqIDs );
             if ( $status_code === 200 ) {
                 $faqIDs = json_decode( $faqIDs['body'], true );
                 if ( !isset( $faqIDs['Error'] ) ) {
+                    asort($faqIDs['ID']);
                     foreach ( $faqIDs['ID'] as $faqID ){
+                        if ( $faqID <= $last_faqID ){
+                            // no new FAQ for this category
+                            continue 2; 
+                        }
                         $faq = wp_remote_get( OTRS . '/FAQ?ItemID=' . $faqID );
                         $status_code = wp_remote_retrieve_response_code($faq );
                         if ( $status_code === 200 ) {
@@ -68,6 +77,7 @@ class Sync {
                                 $iNew++;
                             }
                         }
+                        $this->setLastFAQID( $catID, $faqID );
                     }
                 }
             }
@@ -79,5 +89,18 @@ class Sync {
         settings_errors();
         logIt( date("Y-m-d H:i:s") . ' | ' . $msg );
         return;
+    }
+
+
+    public function getLastFAQID( $catID ){
+        $lastSync = get_option( 'rrze-faq-lastSync' );
+        return ( isset( $lastSync['catID_' . $catID] ) ? $lastSync['catID_' . $catID] : 0 );
+    }
+
+    public function setLastFAQID( $catID, $faqID ){
+        // store last $faqID for each $catID
+        $lastSync = get_option( 'rrze-faq-lastSync' );
+        $lastSync['catID_'.$catID] = $faqID;
+        update_option( 'rrze-faq-lastSync', $lastSync );
     }
 }
