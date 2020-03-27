@@ -181,14 +181,11 @@ class Shortcode {
                 $slug = '';
                 if ( ( $category && ( $glossary == 'category' ) ) || ( $tag && ( $glossary == 'tag' ) ) ){
                     $slug = '&slug=' . ( $category ? $category : $tag );
+                } else {
+                    // 2DO: Knackpunkt ist die Reihenfolge: besser zuerst $category bzw $tag abrufen und dann erst glossary 
+                    // umgekehrt: time-out Proxy-Error
+                    return __( 'The combination of $glossary="category" + $tag and $glossary="tag" + $category is not implemented yet because it leads to time-outs (Proxy-Error).', 'rrze-faq' );
                 }
-
-                // echo $url . '?page=' . $page . $slug;
-                // exit;
-
-                // 2DO: Knackpunkt ist die Reihenfolge: besser zuerst $category bzw $tag abrufen und dann erst glossary 
-                // umgekehrt: time-out Proxy-Error
-
 
                 do {
                     $request = wp_remote_get( $url . '?page=' . $page . $slug );
@@ -209,7 +206,6 @@ class Shortcode {
                 asort( $tags_or_categories );
 
                 $filter_term = ( $category ? 'category' : ( $tag ? 'tag' : $glossary ) );
-                $test = 0;
 
                 // get all FAQ for each category or tag ( = $glossary )
                 foreach( $tags_or_categories as $slug => $name ){
@@ -217,7 +213,6 @@ class Shortcode {
                     $aTerm_slugs = array_map( 'trim', explode( ',', ( $category ? $category : ( $tag ? $tag : $slug ) ) ) );
                     foreach( $aTerm_slugs as $term_slug ){
                         $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
-                        
                         $page = 1;
 
                         do {
@@ -230,11 +225,18 @@ class Shortcode {
                                         foreach( $entries as $entry ){
                                             // $items[$entry['title']['rendered']] = $entry['content']['rendered'];
                                             $items[$term_slug][$entry['title']['rendered']] = $entry['content']['rendered'];
-                                            $test++;
+                                            // $items[$term_slug] = array(
+                                            //     'title' => $entry['title']['rendered'],
+                                            //     'content' => $entry['content']['rendered']
+                                            // );
                                         }
                                     } else {
                                         // $items[$entries['title']['rendered']] = $entries['content']['rendered'];
                                         $items[$term_slug][$entries['title']['rendered']] = $entries['content']['rendered'];
+                                        // $items[$term_slug] = array(
+                                        //     'title' => $entries['title']['rendered'],
+                                        //     'content' => $entries['content']['rendered']
+                                        // );
                                     }
                                 }
                             }
@@ -243,20 +245,18 @@ class Shortcode {
                     }
                 }
 
-                echo 'count=' . $test;
-                exit;
-
-                // ksort( $items );
-
                 foreach( $tags_or_categories as $slug => $name ){
-                    $letter = $this->get_letter( $name );
-                    $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="letter-' . $letter . '"]';    
-                    // foreach( $items as $title => $faqtxt ){
-                    foreach( $items[$slug] as $title => $faqtxt ){
-                            $accordion .= '[accordion][accordion-item title="' . $title . '"]' . $faqtxt . '[/accordion-item][/accordion]';
+                    if ( isset( $items[$slug] ) ){
+                        $letter = $this->get_letter( $name );
+                        $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="letter-' . $letter . '"]';    
 
+                        ksort( $items[$slug] );                        
+                        foreach( $items[$slug] as $faqtitle => $faqcontent ){
+                                $accordion .= '[accordion][accordion-item title="' . $faqtitle . '"]' . $faqcontent . '[/accordion-item][/accordion]';
+
+                        }
+                        $accordion .= '[/collapse]';
                     }
-                    $accordion .= '[/collapse]';
                 }
                 $accordion .= '[/collapsibles]';
                 $content .= do_shortcode( $accordion );
@@ -367,7 +367,9 @@ class Shortcode {
                         $valid_term_ids = array();
                         foreach ( $aTags as $slug ){
                             $filter_term = get_term_by( 'slug', $slug, 'faq_tag' );
-                            $valid_term_ids[] = $filter_term->term_id;
+                            if ( $filter_term ){
+                                $valid_term_ids[] = $filter_term->term_id;
+                            } 
                         }
                     }            
 
