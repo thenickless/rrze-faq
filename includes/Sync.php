@@ -54,6 +54,8 @@ class Sync {
                             $faq = json_decode( $faq['body'], true );
                             if ( !isset( $faq['Error'] ) && $faq['FAQItem'][0]['Valid'] == 'valid' ) {
                                 // add FAQ
+                                // create parent and child faq_category
+                                // $this_faq_category = split( $faq['FAQItem'][0]['CategoryName']
                                 $post_id = wp_insert_post( array(
                                     'post_title' => $faq['FAQItem'][0]['Title'],
                                     'post_content' => ( $faq['FAQItem'][0]['Field1'] ? '<h3>' . __( 'Symptom', 'rrze-faq' ) . '</h3><p>' . $faq['FAQItem'][0]['Field1'] . '<p/>' : '' ) . 
@@ -70,7 +72,8 @@ class Sync {
                                         'lang' => $faq['FAQItem'][0]['Language']
                                         ),
                                     'tax_input' => array(
-                                        'faq_category' => $faq['FAQItem'][0]['CategoryName'],
+                                        // 'faq_category' => $faq['FAQItem'][0]['CategoryName'],
+                                        'faq_category' => array( $faq['FAQItem'][0]['CategoryName'], 2 ), // 2
                                         'faq_tag' => str_replace( ' ', ',', $faq['FAQItem'][0]['Keywords'] )
                                         )
                                     ) );

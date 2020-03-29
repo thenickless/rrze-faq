@@ -228,8 +228,9 @@ class Main {
     public function runCronjob() {
         // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
         $sync = [
-                'workdays' => [ 2, 8, 11, 14, 17, 20 ],
-                'weekend' => [ 6, 12, 18, 0 ] 
+            'workdays' => [ 2, 8, 11, 14, 17, 20 ],
+            'weekend' => [ 2, 8, 11, 14, 17, 20 ]
+            // 'weekend' => [ 6, 12, 18, 0 ] 
         ];
 
         date_default_timezone_set('Europe/Berlin');
@@ -239,18 +240,17 @@ class Main {
 
 
         // Sync hourly for testing
-
-        // if ( $weekday > 0 && $weekday < 6 ){
-        //     if ( in_array( $hour, $sync["workdays"] ) ) {
+        if ( $weekday > 0 && $weekday < 6 ){
+            if ( in_array( $hour, $sync["workdays"] ) ) {
                 $sync = new Sync();
                 $sync->doSync( 'automatic' );
-        //     }
-        // } else {
-        //     if ( in_array( $hour, $sync["weekend"] ) ) {
+            }
+        } else {
+            if ( in_array( $hour, $sync["weekend"] ) ) {
                 $sync = new Sync();
                 $sync->doSync( 'automatic' );
-        //     }
-        // }
+            }
+        }
     }
 
     public function setCronjob() {

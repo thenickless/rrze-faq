@@ -9,6 +9,7 @@ $tax = [
         'label' => __('Category', 'rrze-faq'),
         'slug' => 'category',
         'rest_base' => 'faq_category',
+        'hierarchical' => TRUE,
         'labels' => array(
             'singular_name' => __('Category', 'rrze-faq'),
             'add_new' => __('Add new category', 'rrze-faq'),
@@ -30,6 +31,7 @@ $tax = [
         'label' => __('Tags', 'rrze-faq'),
         'slug' => 'tag',
         'rest_base' => 'faq_tag',
+        'hierarchical' => FALSE,
         'labels' => array(
             'singular_name' => __('Tag', 'rrze-faq'),
             'add_new' => __('Add new tag', 'rrze-faq'),
@@ -57,7 +59,7 @@ function rrze_faq_taxonomy() {
             $t['name'],  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
             'faq',   		 //post type name
             array(
-                'hierarchical'	=> FALSE,
+                'hierarchical'	=> $t['hierarchical'],
                 'label' 		=> $t['label'], //Display name
                 'labels'        => $t['labels'],
                 'show_ui'       => TRUE,
