@@ -54,8 +54,31 @@ class Sync {
                             $faq = json_decode( $faq['body'], true );
                             if ( !isset( $faq['Error'] ) && $faq['FAQItem'][0]['Valid'] == 'valid' ) {
                                 // add FAQ
-                                // create parent and child faq_category
-                                // $this_faq_category = split( $faq['FAQItem'][0]['CategoryName']
+                                $faq_categoryIDs = array();
+                                if ( strpos( $faq['FAQItem'][0]['CategoryName'], '::' ) !== FALSE ) {
+                                    // create parent and child resp children for faq_category
+                                    $aFaq_category = explode( '::', $faq['FAQItem'][0]['CategoryName']);
+                                    $i = 0;
+                                    foreach ( $aFaq_category as $cat ){
+                                        if ( $i == 0 ){
+                                            $parent = 0;
+                                        }else{
+                                            $parent = array( 'parent' => $term['term_taxonomy_id'] );
+                                        }
+                                        $term = term_exists( $cat, 'faq_category', $parent );
+                                        if ( !$term ) {
+                                            $term = wp_insert_term( $cat, 'faq_category', $parent );
+                                        }
+                                        $faq_categoryIDs[] = $term['term_taxonomy_id'];
+                                    $i++;
+                                    }
+                                }else{
+                                    $term = term_exists( $faq['FAQItem'][0]['CategoryName'], 'faq_category', 0 );
+                                    if ( !$term ) {
+                                        $term = wp_insert_term( $faq['FAQItem'][0]['CategoryName'], 'faq_category', 0 );
+                                    }
+                                    $faq_categoryIDs = $term['term_taxonomy_id'];
+                                }
                                 $post_id = wp_insert_post( array(
                                     'post_title' => $faq['FAQItem'][0]['Title'],
                                     'post_content' => ( $faq['FAQItem'][0]['Field1'] ? '<h3>' . __( 'Symptom', 'rrze-faq' ) . '</h3><p>' . $faq['FAQItem'][0]['Field1'] . '<p/>' : '' ) . 
@@ -72,8 +95,7 @@ class Sync {
                                         'lang' => $faq['FAQItem'][0]['Language']
                                         ),
                                     'tax_input' => array(
-                                        // 'faq_category' => $faq['FAQItem'][0]['CategoryName'],
-                                        'faq_category' => array( $faq['FAQItem'][0]['CategoryName'], 2 ), // 2
+                                        'faq_category' => $faq_categoryIDs,
                                         'faq_tag' => str_replace( ' ', ',', $faq['FAQItem'][0]['Keywords'] )
                                         )
                                     ) );
@@ -87,17 +109,10 @@ class Sync {
                         }
                         $this->setLastFAQID( $catID, $faqID );
 
-                        // echo $exec_time;
-                        // echo '<br>';
-                        // if ( $exec_time < $max_exec_time ){ 
-                        //     echo 'kleiner';
-                        // }
-                        // exit;
-
                         // check execution time to avoid a 402 error
                         $exec_time = (int) (microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"]);
                         if ( $exec_time >= $max_exec_time ){
-                            $sync_msg = __( 'There are still FAQ to be fetched. ' . $iNew . ' FAQ added. Please click on "Synchronize now" again to fetch the rest ', 'rrze-faq' ) . ( isset( $options['otrs_auto_sync'] ) && $options['otrs_auto_sync'] == 'on' ? ' or wait for the automatically synchronization.' : '.' ) . ' Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+                            $sync_msg = __( 'There are still FAQ to be fetched. ' . $iNew . ' FAQ added. Please click on "Synchronize now" again to fetch the rest', 'rrze-faq' ) . ( isset( $options['otrs_auto_sync'] ) && $options['otrs_auto_sync'] == 'on' ? ' or wait for the automatically synchronization.' : '.' ) . ' Required time: ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
                             date_default_timezone_set('Europe/Berlin');
                             add_settings_error( 'Synchronization not completed', 'syncnotcompleted', $sync_msg, 'error' );
                             settings_errors();
