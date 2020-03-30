@@ -4,7 +4,7 @@
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Description:       
-Version:         2.6.3
+Version:         2.6.4
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -27,7 +27,6 @@ was zu unerwartetem Verhalten führen kann.
 defined('ABSPATH') || exit;
 
 require_once 'config/config.php';
-
 use RRZE\FAQ\Main;
 
 const RRZE_PHP_VERSION = '7.3';

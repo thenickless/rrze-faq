@@ -49,11 +49,12 @@ function rrze_faq_post_type() {
 
 
     // UPDATE data from old RRZE-FAQ
-    global $wpdb;        
-    $result = $wpdb->query('UPDATE ' . $wpdb->prefix . 'posts SET post_type="faq" WHERE post_type="glossary"');
-    $wpdb->flush();
-    $result = $wpdb->query('UPDATE ' . $wpdb->prefix . 'term_taxonomy SET taxonomy="faq_category" WHERE taxonomy="glossary_category"');
-    $wpdb->flush();
+    // 2DO: source auf 'website' setzen 
+    // global $wpdb;        
+    // $result = $wpdb->query('UPDATE ' . $wpdb->prefix . 'posts SET post_type="faq" WHERE post_type="glossary"');
+    // $wpdb->flush();
+    // $result = $wpdb->query('UPDATE ' . $wpdb->prefix . 'term_taxonomy SET taxonomy="faq_category" WHERE taxonomy="glossary_category"');
+    // $wpdb->flush();
 }
 
 add_action( 'init', 'RRZE\FAQ\Server\rrze_faq_post_type', 0 );
