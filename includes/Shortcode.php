@@ -26,7 +26,7 @@ class Shortcode {
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
         add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
-        add_action( 'enqueue_block_assets', [ $this, 'prefill' ] ); 
+        // add_action( 'enqueue_block_assets', [ $this, 'prefill' ] ); 
         // add_filter( 'block_editor_settings', [$this, 'prefill'], 10, 0 ); // feuert bei Beitrag erstellen
     }
 

@@ -65,6 +65,9 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-admin.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
         include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
+
+        include_once( __DIR__ . '/posttype/rrze-update-data.php' );
+
         // include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
         // include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
         // include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
