@@ -44,7 +44,8 @@ class Shortcode {
         // wp_enqueue_style( 'theme-css' );
         wp_register_script( 'rrze-faq-js', plugins_url( '../assets/js/rrze-faq.js', __FILE__ ) );
         wp_enqueue_script( 'rrze-faq' );
-        wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/plugin.css', plugin_basename( __FILE__ ) ) );
+        // wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/plugin.css', plugin_basename( __FILE__ ) ) );
+        wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/rrze-faq.css', plugin_basename( __FILE__ ) ) );
         wp_enqueue_style( 'rrze-faq-css' );
     }
 
@@ -53,6 +54,7 @@ class Shortcode {
     }
 
     private function create_a_z( &$aSearch ){
+        // <div class="fau-glossar">
         $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
         foreach ( range( 'A', 'Z' ) as $a ) {
             if ( array_key_exists( $a, $aSearch ) ) {
@@ -62,6 +64,7 @@ class Shortcode {
             }
         }
         return $ret . '</ul></div>';
+        // </div>
     }
 
     private function create_tagcloud( &$tags ) {
@@ -433,7 +436,8 @@ class Shortcode {
                 $content .= do_shortcode( $accordion );
             }
        } 
-    //    $this->enqueueScripts();
+
+       $this->enqueueScripts();
        return $content;
     }
 
@@ -444,10 +448,6 @@ class Shortcode {
     }
 
     public function fill_gutenberg_options() {
-
-        // echo 'fill';
-        // exit;
-
         // Skip if Gutenberg is not enabled
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
@@ -512,8 +512,6 @@ class Shortcode {
         }
 
 
-        // https://www.nickless.test.rrze.fau.de/faq-gutenberg/wp-json/wp/v2/faq?faq_category=951,950&faq_tag=90
-
         // get FAQ from this website and synced from OTRS
         $faqs = get_posts( array(
             'posts_per_page'  => -1,
@@ -536,26 +534,13 @@ class Shortcode {
             $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
         }
 
-
-        // https://Benjamin:T3st!@www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?page=1
-
-        // https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?faq_category=5 funktioniert
-        // https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?faq_tag=1 funktioniert
-        // https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?faq_tag=8787,123 funktioniert : Werte sind OR
-        // Problem: filter nach post_meta_field source
-        https://www.nickless.test.rrze.fau.de/dev2/wp-json/wp/v2/faq?post_meta_field[source]=website
-
         // get FAQ from other domains
         if ( $domains ) {
             foreach( $domains as $name => $url ){
                 $page = 1;
                 do {
-                    // $request = wp_remote_get( $url . 'wp-json/wp/v2/glossary?page=' . $page );
                     $request = wp_remote_get( $url . 'wp-json/wp/v2/faq?page=' . $page );
                     $status_code = wp_remote_retrieve_response_code( $request );
-                    // echo '<pre>';
-                    // var_dump($request);
-                    // exit;
             
                     if ( $status_code == 200 ){
                         $body = json_decode( wp_remote_retrieve_body( $request ), true );
