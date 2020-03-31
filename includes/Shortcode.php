@@ -54,7 +54,6 @@ class Shortcode {
     }
 
     private function create_a_z( &$aSearch ){
-        // <div class="fau-glossar">
         $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
         foreach ( range( 'A', 'Z' ) as $a ) {
             if ( array_key_exists( $a, $aSearch ) ) {
@@ -64,12 +63,15 @@ class Shortcode {
             }
         }
         return $ret . '</ul></div>';
-        // </div>
     }
 
-    private function create_tagcloud( &$tags ) {
-        $ret = '';
-        // foreach()
+    private function create_tagcloud( &$aTerms, $aPostIDs ) {
+        $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
+        foreach( $aTerms as $name => $aDetails ){
+            $ret .= '<a href="#ID-' . $aDetails['ID'] . '">' . $name;
+            $ret .= ' (' . count( $aPostIDs[$aDetails['ID']]) . ')</a> | ';
+        }
+        return $ret . '</div>';
     }
 
     private function get_tax_query( &$aTax ){
@@ -226,20 +228,10 @@ class Shortcode {
                                 if ( !empty( $entries ) ){
                                     if ( isset( $entries[0] ) ){
                                         foreach( $entries as $entry ){
-                                            // $items[$entry['title']['rendered']] = $entry['content']['rendered'];
                                             $items[$term_slug][$entry['title']['rendered']] = $entry['content']['rendered'];
-                                            // $items[$term_slug] = array(
-                                            //     'title' => $entry['title']['rendered'],
-                                            //     'content' => $entry['content']['rendered']
-                                            // );
                                         }
                                     } else {
-                                        // $items[$entries['title']['rendered']] = $entries['content']['rendered'];
                                         $items[$term_slug][$entries['title']['rendered']] = $entries['content']['rendered'];
-                                        // $items[$term_slug] = array(
-                                        //     'title' => $entries['title']['rendered'],
-                                        //     'content' => $entries['content']['rendered']
-                                        // );
                                     }
                                 }
                             }
@@ -307,7 +299,8 @@ class Shortcode {
         
                 $accordion .= '[/collapsibles]';
                 if ( !$single && $glossary ){
-                        $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
+                    // $content = ( $glossarystyle == 'tagcloud' ? $this->create_tagcloud( $aUsedTerms, $aPostIDs ) : $this->create_a_z( $aLetters ) );
+                    $content = ( $glossarystyle == 'tagcloud' ? '' : $this->create_a_z( $aLetters ) );
                 }
 
                 $content .= do_shortcode( $accordion );
@@ -347,10 +340,6 @@ class Shortcode {
             if ( $tax_query ){
                 $postQuery['tax_query'] = $tax_query;
             }
-
-            // echo '<pre>';
-            // var_dump($postQuery);
-            // exit;
 
             $posts = get_posts( $postQuery );
 
@@ -394,19 +383,18 @@ class Shortcode {
                         $aTerms = (object)$aTerms;
                     }                    
                 }
-                if ( $aLetters ){
-                    // 2DO : links setzen -> #letter-b
-                    // https://wordpress.stackexchange.com/questions/225693/how-to-add-css-class-to-cloud-tag-anchors
-                    $content = ( $glossarystyle == 'tagcloud' ? wp_generate_tag_cloud( $term ) : $this->create_a_z( $aLetters ) );
-                }
 
                 asort( $aUsedTerms );
+
+                if ( $aLetters ){
+                    $content = ( $glossarystyle == 'tagcloud' ? $this->create_tagcloud( $aUsedTerms, $aPostIDs ) : $this->create_a_z( $aLetters ) );
+                }
+                $anchor = ( $glossarystyle == 'tagcloud' ? 'ID' : 'letter' );
 
                 $accordion = '[collapsibles]';
 
                 foreach ( $aUsedTerms as $k => $aVal ){
-                    $letter = $this->get_letter( $k );
-                    $accordion .= '[collapse title="' . $k . '" color="' . $color . '" name="letter-' . $letter . '"]';
+                    $accordion .= '[collapse title="' . $k . '" color="' . $color . '" name="' . $anchor . '-' . $aVal[$anchor] . '"]';
                     // find the postIDs to this tag
                     $aIDs = $this->search_array_by_key( $aVal['ID'], $aPostIDs );
                     foreach ( $aIDs as $ID ){
