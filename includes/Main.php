@@ -231,8 +231,7 @@ class Main {
         // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
         $sync = [
             'workdays' => [ 2, 8, 11, 14, 17, 20 ],
-            'weekend' => [ 2, 8, 11, 14, 17, 20 ]
-            // 'weekend' => [ 6, 12, 18, 0 ] 
+            'weekend' => [ 6, 12, 18, 0 ] 
         ];
 
         date_default_timezone_set('Europe/Berlin');
