@@ -37,7 +37,7 @@ Alle Attribute sind optional und können frei kombiniert werden mit folgenden Ei
 Unter "Einstellungen" -> "RRZE FAQ" -> Tab "OTRS" können die Kategorien ausgewählt werden, die synchronisiert werden sollen. Dauert die Synchronisierung länger, als der Server Skripte ausführen lässt, erscheint eine Meldung, die nächste Synchronisierung manuell anzustoßen. Die Synchronisierung kann auch automatisch erfolgen in folgenden Abständen: Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende alle 6 Stunden.
 
 
-## FAQ von anderen Domain
+## FAQ von anderer Domain
 
 Hierzu muss die gewünschte Domain über den Menüpunkt "Einstellungen" -> "RRZE FAQ" -> Tab "Domains" hinzugefügt werden.
 
