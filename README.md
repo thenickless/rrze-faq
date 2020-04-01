@@ -32,12 +32,12 @@ Alle Attribute sind optional und können frei kombiniert werden mit folgenden Ei
 - mit dem Attribut id wird nur eine FAQ ausgegeben, alle weiteren Attribute sind überflüssig
 - ist domain gesetzt, kann category nicht mit glossary="tag" bzw tag mit glossary="category" verwendet werden (dies wird noch gelöst werden)
 
-## FAQ`s von ORTS
+## FAQ von ORTS
 
 Unter "Einstellungen" -> "RRZE FAQ" -> Tab "OTRS" können die Kategorien ausgewählt werden, die synchronisiert werden sollen. Dauert die Synchronisierung länger, als der Server Skripte ausführen lässt, erscheint eine Meldung, die nächste Synchronisierung manuell anzustoßen. Die Synchronisierung kann auch automatisch erfolgen in folgenden Abständen: Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende alle 6 Stunden.
 
 
-## FAQ`s von anderen Domain
+## FAQ von anderen Domain
 
 Hierzu muss die gewünschte Domain über den Menüpunkt "Einstellungen" -> "RRZE FAQ" -> Tab "Domains" hinzugefügt werden.
 
