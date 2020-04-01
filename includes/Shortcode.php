@@ -157,6 +157,11 @@ class Shortcode {
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
         }
 
+        if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
+            return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
+        }
+
+
         if( $domain ) {
             // DOMAIN
             $domains = get_option('registeredDomains');
@@ -214,7 +219,6 @@ class Shortcode {
 
                 // get all FAQ for each category or tag ( = $glossary )
                 foreach( $tags_or_categories as $slug => $name ){
-                    // $term_slug = ( $category ? $category : ( $tag ? $tag : $slug ) );
                     $aTerm_slugs = array_map( 'trim', explode( ',', ( $category ? $category : ( $tag ? $tag : $slug ) ) ) );
                     foreach( $aTerm_slugs as $term_slug ){
                         $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
@@ -225,13 +229,22 @@ class Shortcode {
                             $status_code = wp_remote_retrieve_response_code( $request );
                             if ( $status_code == 200 ){
                                 $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+
                                 if ( !empty( $entries ) ){
                                     if ( isset( $entries[0] ) ){
                                         foreach( $entries as $entry ){
-                                            $items[$term_slug][$entry['title']['rendered']] = $entry['content']['rendered'];
+                                            // $items[$term_slug][$entry['title']['rendered']] = $entry['content']['rendered'];
+                                            $items[$term_slug][$entry['title']['rendered']] = array(
+                                                'id' => $entry['id'],
+                                                'content' => $entry['content']['rendered']
+                                            );
                                         }
                                     } else {
-                                        $items[$term_slug][$entries['title']['rendered']] = $entries['content']['rendered'];
+                                        // $items[$term_slug][$entries['title']['rendered']] = $entries['content']['rendered'];
+                                        $items[$term_slug][$entries['title']['rendered']] = array(
+                                            'id' => $entries['id'],
+                                            'content' => $entries['content']['rendered']
+                                        );
                                     }
                                 }
                             }
@@ -240,20 +253,36 @@ class Shortcode {
                     }
                 }
 
+                $aLetters = array();
+                $aUsedTerms = array();
+                $aPostIDs = array();
+                $anchor = ( $glossarystyle == 'tagcloud' ? 'ID' : 'letter' );
+
                 foreach( $tags_or_categories as $slug => $name ){
                     if ( isset( $items[$slug] ) ){
                         $letter = $this->get_letter( $name );
-                        $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="letter-' . $letter . '"]';    
+                        $aLetters[$letter] = TRUE; 
+                        $aUsedTerms[$name] = array( 'letter' => $letter, 'ID' => $slug );
+                        $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="' . $anchor . '-' . ( $glossarystyle == 'tagcloud' ? $slug : $letter ) . '"]';
 
-                        ksort( $items[$slug] );                        
-                        foreach( $items[$slug] as $faqtitle => $faqcontent ){
-                                $accordion .= '[accordion][accordion-item title="' . $faqtitle . '"]' . $faqcontent . '[/accordion-item][/accordion]';
+                        ksort( $items[$slug], SORT_NATURAL | SORT_FLAG_CASE);                                              
+                        foreach( $items[$slug] as $faqtitle => $aFaq ){
+                            $aPostIDs[$slug][] = $aFaq['id'];
+                            $accordion .= '[accordion][accordion-item title="' . $faqtitle . '"]' . $aFaq['content'] . '[/accordion-item][/accordion]';
 
                         }
                         $accordion .= '[/collapse]';
                     }
                 }
                 $accordion .= '[/collapsibles]';
+
+                asort( $aUsedTerms );
+
+                if ( $aLetters ){
+                    $content = ( $glossarystyle == 'tagcloud' ? $this->create_tagcloud( $aUsedTerms, $aPostIDs ) : $this->create_a_z( $aLetters ) );
+                }
+                $anchor = ( $glossarystyle == 'tagcloud' ? 'ID' : 'letter' );
+
                 $content .= do_shortcode( $accordion );
             } else {
                 if ( intval( $id ) > 0 ){
@@ -298,10 +327,6 @@ class Shortcode {
                 }
         
                 $accordion .= '[/collapsibles]';
-                if ( !$single && $glossary ){
-                    // $content = ( $glossarystyle == 'tagcloud' ? $this->create_tagcloud( $aUsedTerms, $aPostIDs ) : $this->create_a_z( $aLetters ) );
-                    $content = ( $glossarystyle == 'tagcloud' ? '' : $this->create_a_z( $aLetters ) );
-                }
 
                 $content .= do_shortcode( $accordion );
             }
@@ -351,7 +376,6 @@ class Shortcode {
                 foreach( $posts as $post ) {
                     // get all tags for each post
                     $aTermIds = array();
-                    $aTerms = array();
 
                     if ( $glossary == 'tag' && $tag ){
                         $check_filter = TRUE;
@@ -373,14 +397,10 @@ class Shortcode {
                             }
                             $aTermIds[] = $t->term_id;
                             $letter = $this->get_letter( $t->name );
-                            // $aTerms = (array)$t;
-                            // $aTerms['link'] = '#letter_' . $letter;
                             $aLetters[$letter] = TRUE; 
-                            // $aUsedTags[$t->name] = array( 'letter' => $letter, 'ID' => $t->term_id );
                             $aUsedTerms[$t->name] = array( 'letter' => $letter, 'ID' => $t->term_id );
                             $aPostIDs[$t->term_id][] = $post->ID;
                         }
-                        $aTerms = (object)$aTerms;
                     }                    
                 }
 

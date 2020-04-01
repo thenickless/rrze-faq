@@ -4,7 +4,7 @@ namespace RRZE\FAQ\Config;
 
 defined('ABSPATH') || exit;
 
-define( 'LOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
+define( 'FAQ_LOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
 
 
 
@@ -122,7 +122,7 @@ function getFields() {
         	[
           		'name' => 'logfile',
           		'type' => 'logfile',
-          		'default' => LOGFILE
+          		'default' => FAQ_LOGFILE
         	]
       	]
     ];
@@ -145,18 +145,15 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-        'domain' => [
-			'values' => [
-				'website' => __( 'This website', 'rrze-faq' ),
-				'otrs' => __( 'FAQ from Helpdesk (OTRS)', 'rrze-faq' ),
-			],
+		'domain' => [
 			'default' => '',
-			'field_type' => 'select',
+			'field_type' => 'text',
 			'label' => __( 'Domain', 'rrze-faq' ),
-			'type' => 'string'
-		],
+			'type' => 'text'
+        ],
         'glossary' => [
 			'values' => [
+				'' => __( 'none', 'rrze-faq' ),
 				'category' => __( 'Categories', 'rrze-faq' ),
 				'tag' => __( 'Tags', 'rrze-faq' )
 			],
@@ -207,29 +204,17 @@ function getShortcodeSettings(){
 			'field_type' => 'select',
 			'label' => __( 'Color', 'rrze-faq' ),
 			'type' => 'string'
-        ],
-		// 'domain' => [
-		// 	'default' => '',
-		// 	'field_type' => 'text',
-		// 	'label' => __( 'Domain', 'rrze-faq' ),
-		// 	'type' => 'text'
-        // ],
-        // 'rest' => [
-		// 	'default' => TRUE,
-        //     'field_type' => 'checkbox',
-        //     'label' => __( 'Rest', 'rrze-faq' ),
-        //     'type' => 'boolean'
-        // ]
+        ]
     ];
 }
 
 function logIt( $msg ){
-	$content = file_get_contents( LOGFILE );
-	file_put_contents( LOGFILE, $msg . "\n" . $content, LOCK_EX);
+	$content = file_get_contents( FAQ_LOGFILE );
+	file_put_contents( FAQ_LOGFILE, $msg . "\n" . $content, LOCK_EX);
 }
   
 function deleteLogfile(){
-	unlink( LOGFILE );
+	unlink( FAQ_LOGFILE );
 }
   
 
