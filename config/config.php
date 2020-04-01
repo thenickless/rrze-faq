@@ -166,7 +166,8 @@ function getShortcodeSettings(){
 			'values' => [
 				'' => __( '-- hidden --', 'rrze-faq' ),
 				'a-z' => __( 'A - Z', 'rrze-faq' ),
-				'tagcloud' => __( 'Tagcloud', 'rrze-faq' )
+				'tagcloud' => __( 'Tagcloud', 'rrze-faq' ),
+				'tabs' => __( 'Tabs', 'rrze-faq' )
 			],
 			'default' => '',
 			'field_type' => 'radio',

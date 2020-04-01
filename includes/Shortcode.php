@@ -65,13 +65,35 @@ class Shortcode {
         return $ret . '</ul></div>';
     }
 
-    private function create_tagcloud( &$aTerms, $aPostIDs ) {
+
+    private function create_tabs( &$aTerms, $aPostIDs ) {
         $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
         foreach( $aTerms as $name => $aDetails ){
-            $ret .= '<a href="#ID-' . $aDetails['ID'] . '">' . $name;
-            $ret .= ' (' . count( $aPostIDs[$aDetails['ID']]) . ')</a> | ';
+            $ret .= '<a href="#ID-' . $aDetails['ID'] . '">' . $name . '</a> | ';
         }
-        return $ret . '</div>';
+        return rtrim( $ret, ' | ' ) . '</div>';
+    }    
+
+
+    private function create_tagcloud( &$aTerms, $aPostIDs ) {
+        $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
+        $smallest = 12;
+        $largest = 22;
+        $aCounts = array();
+        foreach( $aTerms as $name => $aDetails ){
+            $aCounts[$aDetails['ID']] = count( $aPostIDs[$aDetails['ID']] );
+        }
+        $iMax = max( $aCounts );
+        $aSizes = array();
+        foreach ( $aCounts as $ID => $cnt ){
+            $aSizes[$ID] = round( ( $cnt / $iMax ) * $largest, 0 );
+            $aSizes[$ID] = ( $aSizes[$ID] < $smallest ? $smallest : $aSizes[$ID] );
+        }
+        foreach( $aTerms as $name => $aDetails ){
+            $ret .= '<a href="#ID-' . $aDetails['ID'] . '" style="font-size:'. $aSizes[$aDetails['ID']] .'px">' . $name . '</a> | ';
+        }
+
+        return rtrim( $ret, ' | ' ) . '</div>';
     }
 
     private function get_tax_query( &$aTax ){
@@ -132,22 +154,7 @@ class Shortcode {
         }
         $atts = shortcode_atts( $atts_default, $atts );
 
-        // echo '<pre>';
-        // return json_encode($atts);
-
         extract( $atts );
-
-        // $domain = 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST/CategoryList';
-        // $content = wp_remote_get( $domain );
-        // $status_code = wp_remote_retrieve_response_code( $content );
-
-
-        // echo '<pre>';
-        // var_dump($content);
-        // var_dump($status_code);
-        // echo '</pre>';
-        // exit;
-        
 
         $content = '';
         $glossarystyle  = ( isset( $glossarystyle ) ? $glossarystyle : '' );
@@ -233,14 +240,12 @@ class Shortcode {
                                 if ( !empty( $entries ) ){
                                     if ( isset( $entries[0] ) ){
                                         foreach( $entries as $entry ){
-                                            // $items[$term_slug][$entry['title']['rendered']] = $entry['content']['rendered'];
                                             $items[$term_slug][$entry['title']['rendered']] = array(
                                                 'id' => $entry['id'],
                                                 'content' => $entry['content']['rendered']
                                             );
                                         }
                                     } else {
-                                        // $items[$term_slug][$entries['title']['rendered']] = $entries['content']['rendered'];
                                         $items[$term_slug][$entries['title']['rendered']] = array(
                                             'id' => $entries['id'],
                                             'content' => $entries['content']['rendered']
@@ -256,14 +261,14 @@ class Shortcode {
                 $aLetters = array();
                 $aUsedTerms = array();
                 $aPostIDs = array();
-                $anchor = ( $glossarystyle == 'tagcloud' ? 'ID' : 'letter' );
+                $anchor = ( $glossarystyle == 'a-z' ? 'letter' : 'ID' );
 
                 foreach( $tags_or_categories as $slug => $name ){
                     if ( isset( $items[$slug] ) ){
                         $letter = $this->get_letter( $name );
                         $aLetters[$letter] = TRUE; 
                         $aUsedTerms[$name] = array( 'letter' => $letter, 'ID' => $slug );
-                        $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="' . $anchor . '-' . ( $glossarystyle == 'tagcloud' ? $slug : $letter ) . '"]';
+                        $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="' . $anchor . '-' . ( $glossarystyle == 'a-z' ? $letter : $slug ) . '"]';
 
                         ksort( $items[$slug], SORT_NATURAL | SORT_FLAG_CASE);                                              
                         foreach( $items[$slug] as $faqtitle => $aFaq ){
@@ -279,9 +284,21 @@ class Shortcode {
                 asort( $aUsedTerms );
 
                 if ( $aLetters ){
-                    $content = ( $glossarystyle == 'tagcloud' ? $this->create_tagcloud( $aUsedTerms, $aPostIDs ) : $this->create_a_z( $aLetters ) );
+                    switch( $glossarystyle ){
+                        case 'a-z': 
+                            $content = $this->create_a_z( $aLetters );
+                            $anchor = 'letter';
+                            break;
+                        case 'tabs': 
+                            $content = $this->create_tabs( $aUsedTerms, $aPostIDs ); // BUG
+                            $anchor = 'ID';
+                            break;
+                        case 'tagcloud': 
+                            $content = $this->create_tagcloud( $aUsedTerms, $aPostIDs );
+                            $anchor = 'ID';
+                            break;            
+                    }
                 }
-                $anchor = ( $glossarystyle == 'tagcloud' ? 'ID' : 'letter' );
 
                 $content .= do_shortcode( $accordion );
             } else {
@@ -407,9 +424,21 @@ class Shortcode {
                 asort( $aUsedTerms );
 
                 if ( $aLetters ){
-                    $content = ( $glossarystyle == 'tagcloud' ? $this->create_tagcloud( $aUsedTerms, $aPostIDs ) : $this->create_a_z( $aLetters ) );
+                    switch( $glossarystyle ){
+                        case 'a-z': 
+                            $content = $this->create_a_z( $aLetters );
+                            $anchor = 'letter';
+                            break;
+                        case 'tabs': 
+                            $content = $this->create_tabs( $aUsedTerms, $aPostIDs );
+                            $anchor = 'ID';
+                            break;
+                        case 'tagcloud': 
+                            $content = $this->create_tagcloud( $aUsedTerms, $aPostIDs );
+                            $anchor = 'ID';
+                            break;            
+                    }
                 }
-                $anchor = ( $glossarystyle == 'tagcloud' ? 'ID' : 'letter' );
 
                 $accordion = '[collapsibles]';
 
