@@ -1,5 +1,5 @@
 # RRZE-FAQ
-WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ's, von OTRS synchronisierten, sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
+WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ, von OTRS synchronisierten, sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
 
 ## Allgemeines
 
@@ -11,13 +11,21 @@ Das Plugin kann genutzt werden, um FAQ von OTRS zu speichern, FAQ zu erstellen u
 [faq id=123456"] 
 [faq category="titelform-der-kategorie, titelform-einer-weiteren-kategorie"]
 [faq tag="titelform-des-schlagworts, titelform-eines-weiteren-schlagworts"]
-[faq category="titelform-der-kategorie, titelform-einer-weiteren-kategorie" tag="titelform-des-schlagworts, titelform-eines-weiteren-schlagworts"]
+[faq category="titelform-der-kategorie, titelform-einer-weiteren-kategorie"
+ tag="titelform-des-schlagworts, titelform-eines-weiteren-schlagworts"]
 ```
 
 ## Alle Attribute des Shortcodes
 
 ```html
-[faq domain="kurzbezeichnung" glossary="category oder tag" category="beliebig-viele-kategorien-kommagetrennt"  category="beliebig-viele-schlagwoerter-kommagetrennt" glossarystyle="a-z oder tagcloud oder tabs" color="medfak oder natfak oder rwfak oder philfak oder techfak" id="123456"] 
+[faq 
+domain="kurzbezeichnung" 
+glossary="category oder tag" 
+category="beliebig-viele-kategorien-kommagetrennt"  
+category="beliebig-viele-schlagwoerter-kommagetrennt" 
+glossarystyle="a-z oder tagcloud oder tabs" 
+color="medfak oder natfak oder rwfak oder philfak oder techfak" 
+id="123456"] 
 ```
 
 Alle Attribute sind optional und können frei kombiniert werden mit folgenden Einschräkungen:
