@@ -7,7 +7,6 @@ defined('ABSPATH') || exit;
 define( 'FAQ_LOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
 
 
-
 /**
  * Gibt der Name der Option zurück.
  * @return array [description]
@@ -16,11 +15,6 @@ function getOptionName() {
     return 'rrze-faq';
 }
 
-
-function getOTRS(){
-// 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST';
-	return 'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST';
-}
 
 /**
  * Gibt die Einstellungen des Menus zurück.
@@ -59,7 +53,7 @@ function getHelpTab() {
  */
 
 function getSections() {
-	return [
+	return [ 
 		[
 			'id'    => 'otrs',
 			'title' => __('OTRS', 'rrze-faq' )
@@ -71,9 +65,9 @@ function getSections() {
 		[
 		  	'id' => 'log',
 		  	'title' => __('Logfile', 'rrze-faq' )
-		]    
-	  ];
-	}
+		]
+	];   
+}
 
 /**
  * Gibt die Einstellungen der Optionsfelder zurück.
@@ -81,8 +75,20 @@ function getSections() {
  */
 
 function getFields() {
-    return [
+	return [
 		'otrs' => [
+			[
+				'name' => 'otrs_url',
+				'label' => __('URL', 'rrze-faq' ),
+				'desc' => __('Please select weather to fetch from LIVE or DEV server.', 'rrze-faq' ),
+				'type' => 'select',
+				'options' => [
+					'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'Development server (otrs-dev.rrze.fau.de)',
+					// 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'LIVE server (helpdesk.rrze.fau.de)',
+					
+				],
+				'default' => 'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST'
+			],
 			[
 				'name' => 'categories',
 				'label' => __('Categories', 'rrze-faq' ),
@@ -102,8 +108,8 @@ function getFields() {
 				'desc' => '',
 				'type' => 'hidden',
 				'options' => time()
-			],
-		],
+			]
+		],		
 		'doms' => [
 			[
 				'name' => 'new_url',
@@ -125,7 +131,7 @@ function getFields() {
           		'default' => FAQ_LOGFILE
         	]
       	]
-    ];
+	];
 }
 
 

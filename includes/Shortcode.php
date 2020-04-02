@@ -583,9 +583,6 @@ class Shortcode {
                         $body = json_decode( wp_remote_retrieve_body( $request ), true );
                         if ( !empty( $body ) ){
                             foreach( $body as $entry ){
-                                // echo '<pre>';
-                                // var_dump($entry);
-                                // exit;
                                 $this->settings['id']['values'][$entry['id']] = $entry['title']['rendered'];
                             }
                         }

@@ -2,7 +2,6 @@
 
 namespace RRZE\FAQ;
 
-use function RRZE\FAQ\Config\getOTRS;
 use function RRZE\FAQ\Config\logIt;
 
 
@@ -11,8 +10,6 @@ defined('ABSPATH') || exit;
 
 class Sync {
     public function doSync( $mode ) {
-
-        define( 'OTRS', getOTRS() );
 
         // delete all FAQ that came from OTRS
         // $iDel = 0;
@@ -29,11 +26,11 @@ class Sync {
         $iNew = 0;
         $options = get_option( 'rrze-faq' );
 
+        $OTRS_url = $options['otrs_otrs_url'];
+
         foreach ( $options['otrs_categories'] as $catID ){
             $last_faqID = $this->getLastFAQID( $catID );
-            // echo $last_faqID;
-            // exit;
-            $faqIDs = wp_remote_get( OTRS . '/FAQSearch?CategoryIDs=' . $catID );
+            $faqIDs = wp_remote_get( $OTRS_url . '/FAQSearch?CategoryIDs=' . $catID );
             $status_code = wp_remote_retrieve_response_code( $faqIDs );
             if ( $status_code === 200 ) {
                 $faqIDs = json_decode( $faqIDs['body'], true );
@@ -48,7 +45,7 @@ class Sync {
                             // no new FAQ for this category
                             continue 2; 
                         }
-                        $faq = wp_remote_get( OTRS . '/FAQ?ItemID=' . $faqID );
+                        $faq = wp_remote_get( $OTRS_url . '/FAQ?ItemID=' . $faqID );
                         $status_code = wp_remote_retrieve_response_code($faq );
                         if ( $status_code === 200 ) {
                             $faq = json_decode( $faq['body'], true );

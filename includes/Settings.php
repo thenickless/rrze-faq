@@ -4,7 +4,6 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
-use function RRZE\FAQ\Config\getOTRS;
 use function RRZE\FAQ\Config\getOptionName;
 use function RRZE\FAQ\Config\getMenuSettings;
 use function RRZE\FAQ\Config\getHelpTab;
@@ -115,18 +114,28 @@ class Settings {
         $this->settingsSections[] = $section;
     }
 
-    
     /**
      * Einstellungsfelder einstellen.
      */
     protected function setFields() {
         $this->settingsFields = getFields();
 
+        $options = get_option( 'rrze-faq' );
+        if ( isset( $options['otrs_otrs_url'] ) ){
+            $OTRS_url = $options['otrs_otrs_url'];
+        } else {
+            foreach( $this->settingsFields['otrs'] as $field ) {
+                if ( $field['name'] == 'otrs_url' ){
+                    $OTRS_url = $field['default'];
+                }    
+            }    
+        }
+
         // fill "categories"
         $tmp = array();
         foreach( $this->settingsFields['otrs'] as $field ) {
             if ( $field['name'] == 'categories' ){
-                $cats = wp_remote_get( getOTRS() . '/CategoryList' );
+                $cats = wp_remote_get( $OTRS_url . '/CategoryList' );
                 $status_code = wp_remote_retrieve_response_code( $cats );
                 if ( 200 === $status_code ) {
                     $cats = json_decode( $cats['body'], true );
@@ -295,10 +304,17 @@ class Settings {
             }
             $btn_label = '';
             $get = '';
+            $disable_start = '';
+            $disable_end = '';
+
             switch ( $this->currentTab ) {
                 case 'otrs': 
                     $btn_label = __('Synchronize now', 'rrze-faq' );
                     $get = '?sync';
+                    if ( !is_super_admin() ){
+                        $disable_start = '<fieldset disabled="disabled">';
+                        $disable_end = '</fieldset>';
+                    }
                     break;
                 case 'doms': 
                     $btn_label = __('Add domain', 'rrze-faq' );
@@ -309,14 +325,17 @@ class Settings {
                     $get = '?del';
                     break;
             }
+
             echo '<div id="' . $section['id'] . '">';
             echo '<form method="post" action="options.php'. $get . '">';
+            echo $disable_start;
             settings_fields($section['id']);
             do_settings_sections($section['id']);
             submit_button( $btn_label );
             if ( $this->currentTab == 'doms' ){
                 $this->domainOutput();
             }            
+            echo $disable_end;
             echo '</form>';
             echo '</div>';
         }
@@ -334,21 +353,15 @@ class Settings {
 
     public function domainOutput(){
         $domains = get_option( 'registeredDomains' );
-        // echo '<pre>';
-        // var_dump($domains);
-        // exit;
         if ( $domains ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
-            // settings_fields( 'registeredDomains' );
-            // do_settings_sections( 'registeredDomains' );
             echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
 
             foreach ( $domains as $name => $url ){
                 echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $name . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
                 $i++;
             }
-            // echo '<input type="hidden" name="tmp_timestamp" value="' . time() . '">';
             echo '</tbody></table>';
             submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
         }
@@ -742,9 +755,6 @@ class Settings {
         );
 
         foreach ($args['options'] as $key => $label) {
-            // echo '<pre>';
-            // var_dump($value);
-            // exit;
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 $key,

@@ -195,10 +195,12 @@ class Main {
     }
 
     public function checkSync() {
-        if ( isset( $_GET['sync'] ) ){
-            $this->setCronjob();
-            $sync = new Sync();
-            $sync->doSync( 'manual' );
+        if ( is_super_admin() ){
+            if ( isset( $_GET['sync'] ) ){
+                $this->setCronjob();
+                $sync = new Sync();
+                $sync->doSync( 'manual' );
+            }
         }
     }
 
