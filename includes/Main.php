@@ -40,7 +40,7 @@ class Main {
         // Editable FAQ (if synced: non-editable / if self-written (source == 'website'): editable)
         add_action( 'add_meta_boxes', [$this, 'add_content_box'] );
         add_action( 'edit_form_after_title', [$this, 'toggle_editor'] );
-        add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
+        // add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
         // Table "All FAQ"
         add_filter( 'manage_edit-faq_columns', [$this, 'faq_table_head'] );
         add_action( 'manage_faq_posts_custom_column', [$this, 'faq_table_content'], 10, 2 );
@@ -96,23 +96,23 @@ class Main {
      * self-written FAQ have to be editable
      */
     public function gutenberg_post_meta( $can_edit, $post)  {
-        return FALSE;
-        // check settings from Plugin rrze-settings enable_classic_editor
+        // check settings from Plugin rrze-settings enable_block_editor instead of enable_classic_editor
+        $ret = FALSE;
         $settings = (array) get_option( 'rrze_settings' );
         if ( isset( $settings )){
             $settings = (array) $settings['writing'];
-            if ( isset( $settings['enable_classic_editor'] ) && $settings['enable_classic_editor'] ) {
-                return FALSE;
+            if ( isset( $settings['enable_block_editor'] ) && $settings['enable_block_editor'] ) {
+                return TRUE;
             }
         }
 
-        $ret = TRUE;
         $source = get_post_meta( $post->ID, 'source', TRUE );
-        if ( $source && $source != 'website' ) {
-            $ret = FALSE;
+        if ( $source && $source == 'website' ) {
+            $ret = TRUE;
         }
         return $ret;
     }
+
     public function toggle_editor( $post ) {
         if ( $post->post_type == 'faq' ) {
             $source = get_post_meta( $post->ID, "source", true );
