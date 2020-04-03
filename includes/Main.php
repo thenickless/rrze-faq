@@ -96,6 +96,7 @@ class Main {
      * self-written FAQ have to be editable
      */
     public function gutenberg_post_meta( $can_edit, $post)  {
+        return FALSE;
         // check settings from Plugin rrze-settings enable_classic_editor
         $settings = (array) get_option( 'rrze_settings' );
         if ( isset( $settings )){
