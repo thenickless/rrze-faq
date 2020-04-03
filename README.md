@@ -1,56 +1,69 @@
 # RRZE-FAQ
-WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ's sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
-Hierbei wurden die Funktionen vom früheren Glossar übernommen und erweitert.
+WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ, von OTRS synchronisierten, sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
 
-## Allgemeins
+## Allgemeines
 
-Die Möglichkeit eigene FAQ's (Glossare) zu definieren ist nun in ein eigenes Plugin ausgelagert worden.
-Weiterhin können Glossare wie gewohnt im Backend unter dem Menüpunkt FAQ's angelegt werden.
-Darüber hinaus können nun auch FAQ's von anderen Domains eingebunden werden.
+Das Plugin kann genutzt werden, um FAQ von OTRS zu speichern, FAQ zu erstellen und FAQ von Websites aus dem FAU-Netzwerk einzubinden. Es kann nach Kategorien und Schlagwörtern gefiltert werden. Das Layout lässt sich derart bestimmen, dass ein A-Z Register, die Kategorien bzw Schlagwörter als Links oder als Links, die sich nach Anzahl der gefundenen Treffer in der Größe unterscheiden ausgebeben werden kann. Kategorien und Schlagwörter werden in Akkordeons gruppiert. Es ist ebenso möglich, eine einzelne FAQ auszugeben.
 
-## Verwendung des Shortcodes (wie bisher)
+## Verwendung des Shortcodes
 
 ```html
-[glossary id="1156754"] 
-[glossary category="RW"]
-
-[faq id="1156754"] 
-[faq category="RW"]  
+[faq id=123456"] 
+[faq category="titelform-der-kategorie, titelform-einer-weiteren-kategorie"]
+[faq tag="titelform-des-schlagworts, titelform-eines-weiteren-schlagworts"]
+[faq category="titelform-der-kategorie, titelform-einer-weiteren-kategorie"
+ tag="titelform-des-schlagworts, titelform-eines-weiteren-schlagworts"]
 ```
 
-## Erweiterung des Shortcodes (FAQ`s von anderen Domains)
-
-Um diesen Dienst zu verwenden muss die gewünschte Domain hinzugefügt werden. __(Menüpunkt Neue Domain hinzufügen)__.
-Danach wird im Backend automatisch eine Liste der vorhandenen Einträge (FAQ's) dieser Domain erstellt. __(Menüpunkt Remote FAQ's)__
-Dieser Dienst ist nur möglich, wenn diese Domain das FAQ-Plugin aktiviert hat.
-
-Der Shortcode wurde um den Paramter rest und domain erweitert.<br/>
-Die Domain finden Sie unter dem Menüpunkt - __Domains anzeigen__.
-
-Die Kategorie und die jeweilige Id des FAQ's können Sie der Liste unter dem Menüpunkt - __Remote FAQ's__ - entnehmen.
-
-
-### Ausgabe aller FAQs einer entfernten Domain
+## Alle Attribute des Shortcodes
 
 ```html
-[faq  domain="www.wordpress.dev" ] 
+[faq 
+domain="kurzbezeichnung" 
+glossary="category oder tag" 
+category="beliebig-viele-kategorien-kommagetrennt"  
+category="beliebig-viele-schlagwoerter-kommagetrennt" 
+glossarystyle="a-z oder tagcloud oder tabs" 
+color="medfak oder natfak oder rwfak oder philfak oder techfak" 
+id="123456"] 
 ```
 
-Es wird per Default stets angenommen, daß die API via SSL erreichbar ist. Sollte eine Domain nicht via SSL erreichbar sein, ist das 
-Protokoll mit anzugeben:
+Alle Attribute sind optional und können frei kombiniert werden mit folgenden Einschräkungen:
+- mit dem Attribut id wird nur eine FAQ ausgegeben, alle weiteren Attribute sind überflüssig
+- ist domain gesetzt, kann category nicht mit glossary="tag" bzw tag mit glossary="category" verwendet werden (dies wird noch gelöst werden)
+
+## FAQ von ORTS synchronisieren
+
+Diese Funktionalität ist SuperAdmins vorbehalten.
+
+Unter "Einstellungen" -> "RRZE FAQ" -> Tab "OTRS" kann der OTRS-Server gewählt werden und die Kategorien ausgewählt werden, die synchronisiert werden sollen. Dauert die Synchronisierung länger, als der Server Skripte ausführen lässt, erscheint eine Meldung, die nächste Synchronisierung manuell anzustoßen. Die Synchronisierung kann auch automatisch erfolgen in folgenden Abständen: Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende alle 6 Stunden.
+
+
+## FAQ von anderer Domain
+
+Hierzu muss die gewünschte Domain über den Menüpunkt "Einstellungen" -> "RRZE FAQ" -> Tab "Domains" hinzugefügt werden.
+
+
+### Ausgabe aller FAQ einer entfernten Domain
 
 ```html
-[faq  domain="http://plain.wordpress.dev" ] 
+[faq  domain="kurzbezeichnung" ] 
 ```
 
-### Ausgabe der FAQs einer entfernten Domainmit einer Kategorie
+### Ausgabe der FAQ einer entfernten Domain mit einer Kategorie
 
 ```html
-[faq category="personen" domain="site1.wordpress.dev" ] 
+[faq  domain="kurzbezeichnung" category="titelform-der-kategorie"] 
 ```
 
-### Ausgabe einer speziellen FAQs einer entfernten Domainmit über ihre ID
+### Ausgabe der FAQ einer entfernten Domain mit Schlagwörtern
+
 ```html
-[faq id="2215763" domain="site1.wordpress.dev"] 
+[faq  domain="kurzbezeichnung" tag="titelform-des-schlagworts, titelform-eines-weiteren-schlagworts"] 
+```
+
+### Ausgabe einer speziellen FAQ einer entfernten Domain über ihre ID
+```html
+[faq  domain="kurzbezeichnung" id="123456"] 
 ```
 

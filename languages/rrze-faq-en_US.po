@@ -3,10 +3,10 @@ msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-24 17:04+0000\n"
-"PO-Revision-Date: 2020-02-26 09:12+0000\n"
+"PO-Revision-Date: 2020-02-24 17:04+0000\n"
 "Last-Translator: Benjamin <benjamin.klemencic@fau.de>\n"
-"Language-Team: Deutsch (Sie)\n"
-"Language: de_DE_formal\n"
+"Language-Team: \n"
+"Language: en_US\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,97 +20,95 @@ msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:20
 msgid "<p>Integration in pages and posts via: </p>"
-msgstr "<p>Einbindung in Seiten und Beiträge über:</p>"
+msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:29
 msgid "Accordion with all entries"
-msgstr "Akkordeon mit allen Einträgen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:27
 msgid "Accordion with category"
-msgstr "Akkordeon mit Kategorie"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:16
 #: includes/domain/rrze-faq-domain-add.php:17
 msgid "Add Domain"
-msgstr "Domain hinzufügen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:11
 msgid "Add FAQ"
-msgstr "FAQ hinzufügen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:14
 #: includes/posttype/rrze-faq-taxonomy.php:15
 msgid "Add new category"
-msgstr "Neue Kategorie hinzufügen"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:27
 msgid "Add new domain"
-msgstr "Neue Domain hinzufügen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:12
 msgid "Add new FAQ"
-msgstr "Neues FAQ hinzufügen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:35
 #: includes/posttype/rrze-faq-taxonomy.php:36
 msgid "Add new tag"
-msgstr "Neues Schlagwort hinzufügen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:21
 msgid "All categories"
-msgstr "Alle Kategorien"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:181
 #: includes/domain/rrze-faq-domain-list.php:182
 msgid "All Domains"
-msgstr "Alle Domains"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:14
 msgid "All FAQ"
-msgstr "Alle FAQ"
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:188
 msgid "All Remote FAQ"
-msgstr "Alle entfernten FAQ"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:42
 msgid "All tags"
-msgstr "Alle Schlagwörter"
+msgstr ""
 
 #: includes/Shortcode.php:135
 msgid ""
 "Attribute glossary is not correct. Please use either glossary=\"category\" "
 "or glossary=\"tag\"."
 msgstr ""
-"Das Attribut \"glossary\" ist nicht korrekt. Bitte benutzen Sie entweder "
-"glossary=\"category\" oder glossary=\"tag\"."
 
 #: config/config.php:202
 msgid "Categories"
-msgstr "Kategorien"
+msgstr ""
 
 #: config/config.php:213 includes/faq/rrze-faq-list-table.php:61
 #: includes/posttype/rrze-faq-taxonomy.php:9
 #: includes/posttype/rrze-faq-taxonomy.php:13
 msgid "Category"
-msgstr "Kategorie"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:23
 msgid "Choose from the most used categories"
-msgstr "Wählen Sie aus den meistverwendeten Kategorien"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:44
 msgid "Choose from the most used tags"
-msgstr "Wählen Sie aus den meistverwendeten Schlagwörtern"
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:62
 msgid "Content"
-msgstr "Inhalt"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:72
 msgid "Delete domains"
-msgstr "Domains löschen"
+msgstr ""
 
 #: config/config.php:237 includes/faq/rrze-faq-list-table.php:63
 #: includes/domain/rrze-faq-domain-list.php:54
@@ -119,23 +117,23 @@ msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:129
 msgid "Domain added. "
-msgstr "Domain hinzugefügt."
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:139
 msgid "Domain already registered. "
-msgstr "Domain ist bereits registriert."
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:154
 msgid "Domain deleted."
-msgstr "Domain gelöscht."
+msgstr ""
 
 #: includes/Shortcode.php:182 includes/Shortcode.php:214
 msgid "Domain is not registered"
-msgstr "Domain ist nicht registriert"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:195
 msgid "Domain list"
-msgstr "Domain Liste"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:56
 msgid "Domain:"
@@ -143,15 +141,15 @@ msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:24
 msgid "Edit category"
-msgstr "Kategorie editieren"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:13
 msgid "Edit FAQ"
-msgstr "FAQ editieren"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:45
 msgid "Edit tag"
-msgstr "Schlagwort editieren"
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:14
 #: includes/domain/rrze-faq-domain-list.php:22
@@ -162,7 +160,7 @@ msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:27
 msgid "FAQ informations"
-msgstr "FAQ Informationen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:8
 msgctxt "FAQ, synonym or glossary entries"
@@ -176,11 +174,11 @@ msgstr ""
 
 #: config/config.php:198
 msgid "Find the settings on the right side"
-msgstr "Nehmen Sie die Einstellungen auf der rechten Seite vor"
+msgstr ""
 
 #: config/config.php:207
 msgid "Glossary"
-msgstr "Glossar"
+msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:8
 msgid "How to"
@@ -200,54 +198,53 @@ msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:151
 msgid "List updated!"
-msgstr "Liste aktualisiert!"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:16
 msgid "New category"
-msgstr "Neue Kategorie"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:37
 msgid "New tag"
-msgstr "Neues Schlagwort"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:20
 msgid "No category found"
-msgstr "Keine Kategorie gefunden"
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:30
 msgid "No domains registered"
-msgstr "Keine Domain registriert"
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:33
 msgid "No entries"
-msgstr "Keine Einträge"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:41
 msgid "No tag found"
-msgstr "Kein Schlagwort gefunden"
+msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:25
 msgid ""
 "Notice: A single display of an entriy will not be displayed as accordion "
 "element."
 msgstr ""
-"Notiz: eine einzelner Eintrag wird nicht als Akkordeon Element angezeigt."
 
 #: includes/domain/rrze-faq-domain-add.php:149
 msgid "Please input a domain. "
-msgstr "Bitte Domain eingeben."
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:146
 msgid "Please selected a domain you want to delete."
-msgstr "Bitte wählen Sie die Domain aus, die Sie löschen möchten."
+msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:28
 msgid "Register domains which you want to get FAQ from."
-msgstr "Registrieren Sie die Domains, von denen Sie FAQ erhalten möchten."
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:197
 msgid "Remote Faq List"
-msgstr "Entfernte FAQ Liste"
+msgstr ""
 
 #: config/config.php:243
 msgid "Rest"
@@ -263,52 +260,52 @@ msgstr ""
 
 #: includes/domain/rrze-faq-domain-list.php:85
 msgid "Search"
-msgstr "Suche"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:19
 msgid "Search categories"
-msgstr "Kategorien suchen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:15
 msgid "Search FAQ"
-msgstr "FAQ suchen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:40
 msgid "Search tags"
-msgstr "Schlagwörter suchen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:22
 msgid "Separate categories with commas"
-msgstr "Trennen Sie Kategorien durch Kommata"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:43
 msgid "Separate tags with commas"
-msgstr "Trennen Sie Schlagwörter durch Kommata"
+msgstr ""
 
 #: includes/posttype/rrze-faq-manage-posts.php:14
 #, php-format
 msgid "Show all %s"
-msgstr "Alle %s anzeigen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:18
 msgid "Show categories"
-msgstr "Kategorien anzeigen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:17
 msgid "Show category"
-msgstr "Kategorie anzeigen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:38
 msgid "Show tag"
-msgstr "Schlagwort anzeigen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:39
 msgid "Show tags"
-msgstr "Schlagwörter anzeigen"
+msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:22
 msgid "Single entries"
-msgstr "Einzelner Eintrag"
+msgstr ""
 
 #: includes/posttype/rrze-faq-posttype.php:9
 msgctxt "Single FAQ, synonym or glossary "
@@ -317,11 +314,11 @@ msgstr ""
 
 #: config/config.php:219 includes/posttype/rrze-faq-taxonomy.php:34
 msgid "Tag"
-msgstr "Schlagwort"
+msgstr ""
 
 #: config/config.php:203 includes/posttype/rrze-faq-taxonomy.php:30
 msgid "Tags"
-msgstr "Schlagwörter"
+msgstr ""
 
 #: rrze-faq.php:79
 #, php-format
@@ -339,23 +336,23 @@ msgstr ""
 
 #: includes/domain/rrze-faq-domain-add.php:158
 msgid "This service is not available for this domain. "
-msgstr "Dieser Dienst steht für diese Domain nicht zur Verfügung."
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:60
 msgid "Title"
-msgstr "Titel"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:25
 msgid "Update category"
-msgstr "Kategorie aktualisieren"
+msgstr ""
 
 #: includes/faq/rrze-faq-list-table.php:82
 msgid "Update list"
-msgstr "Liste aktualisieren"
+msgstr ""
 
 #: includes/posttype/rrze-faq-taxonomy.php:46
 msgid "Update tag"
-msgstr "Schlagwort aktualisieren"
+msgstr ""
 
 #: includes/posttype/rrze-faq-metabox.php:24
 msgid ""
@@ -363,5 +360,3 @@ msgid ""
 "shortcut</em>\", where <em>faculty shortcut</em> could be: <code>tf</code>, "
 "<code>nat</code>, <code>rw</code>, <code>med</code>, <code>phil</code>."
 msgstr ""
-"Sie können auch Farbwerte für die Abteilungen hinzufügen: color=\"Abkürzung "
-"der Fakultät\" - mögliche Abkürzungen sind: tf, nat, rw, med, phil."
