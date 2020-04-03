@@ -175,7 +175,7 @@ function getShortcodeSettings(){
 				'tagcloud' => __( 'Tagcloud', 'rrze-faq' ),
 				'tabs' => __( 'Tabs', 'rrze-faq' )
 			],
-			'default' => '',
+			'default' => 'a-z',
 			'field_type' => 'radio',
 			'label' => __( 'Glossary style', 'rrze-faq' ),
 			'type' => 'string'

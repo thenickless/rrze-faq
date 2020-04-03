@@ -44,8 +44,7 @@ class Shortcode {
         // wp_enqueue_style( 'theme-css' );
         wp_register_script( 'rrze-faq-js', plugins_url( '../assets/js/rrze-faq.js', __FILE__ ) );
         wp_enqueue_script( 'rrze-faq' );
-        // wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/plugin.css', plugin_basename( __FILE__ ) ) );
-        wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/rrze-faq.css', plugin_basename( __FILE__ ) ) );
+        // wp_register_style( 'rrze-faq-css', plugins_url( '../assets/css/rrze-faq.css', plugin_basename( __FILE__ ) ) );
         wp_enqueue_style( 'rrze-faq-css' );
     }
 
@@ -54,6 +53,10 @@ class Shortcode {
     }
 
     private function create_a_z( &$aSearch ){
+        if ( count( $aSearch ) == 1 ){
+            return '';
+        }
+
         $ret = '<div class="fau-glossar"><ul class="letters" aria-hidden="true">';
         foreach ( range( 'A', 'Z' ) as $a ) {
             if ( array_key_exists( $a, $aSearch ) ) {
@@ -423,6 +426,7 @@ class Shortcode {
 
                 asort( $aUsedTerms );
 
+                $anchor = 'ID';
                 if ( $aLetters ){
                     switch( $glossarystyle ){
                         case 'a-z': 
@@ -431,19 +435,24 @@ class Shortcode {
                             break;
                         case 'tabs': 
                             $content = $this->create_tabs( $aUsedTerms, $aPostIDs );
-                            $anchor = 'ID';
                             break;
                         case 'tagcloud': 
                             $content = $this->create_tagcloud( $aUsedTerms, $aPostIDs );
-                            $anchor = 'ID';
                             break;            
                     }
                 }
 
                 $accordion = '[collapsibles]';
 
+                $last_anchor = '';
                 foreach ( $aUsedTerms as $k => $aVal ){
-                    $accordion .= '[collapse title="' . $k . '" color="' . $color . '" name="' . $anchor . '-' . $aVal[$anchor] . '"]';
+                    if ( $glossarystyle == 'a-z' && $content ){
+                        $accordion_anchor = '';
+                        $accordion .= ( $last_anchor != $aVal[$anchor] ? '<h2 id="' . $anchor . '-' . $aVal[$anchor] . '">' . $aVal[$anchor] . '</h2>' : '' );
+                    } else {
+                        $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
+                    }
+                    $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . ']';
                     // find the postIDs to this tag
                     $aIDs = $this->search_array_by_key( $aVal['ID'], $aPostIDs );
                     foreach ( $aIDs as $ID ){
@@ -454,11 +463,14 @@ class Shortcode {
                         $accordion .= '[accordion][accordion-item title="' . get_the_title( $ID ) . '"]' . $tmp . '[/accordion-item][/accordion]';
                     }
                     $accordion .= '[/collapse]';
+                    $last_anchor = $aVal[$anchor];
                 }
                 $accordion .= '[/collapsibles]';
                 $content .= do_shortcode( $accordion );
-            } else {
+            } else {                
                 $accordion = '[collapsibles]';
+                $last_anchor = '';
+
                 foreach( $posts as $post ) {
                     $title = get_the_title( $post->ID );
                     $letter = $this->get_letter( $title );
@@ -467,9 +479,25 @@ class Shortcode {
                     if ( !isset( $tmp ) || ( mb_strlen( $tmp ) < 1 ) ) {
                         $tmp = get_post_meta( $post->ID, 'description', true );
                     }
-                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $tmp . '[/collapse]';
+                    $accordion_anchor = '';
+                    if ( $glossarystyle == 'a-z' && count( $posts) > 1 ){
+                        $accordion .= ( $last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '' );
+                    }
+                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . ']' . $tmp . '[/collapse]';               
+                    $last_anchor = $letter;
                 }
                 $accordion .= '[/collapsibles]';
+
+                $anchor = 'ID';
+                if ( $aLetters ){
+                    switch( $glossarystyle ){
+                        case 'a-z': 
+                            $content = $this->create_a_z( $aLetters );
+                            $anchor = 'letter';
+                            break;
+                    }
+                }
+
                 $content .= do_shortcode( $accordion );
             }
        } 
