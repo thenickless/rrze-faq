@@ -9,7 +9,7 @@ defined('ABSPATH') || exit;
 
 
 class Sync {
-    public function doSync( $mode ) {
+    public function doSyncOTRS( $mode ) {
 
         // delete all FAQ that came from OTRS
         // $iDel = 0;

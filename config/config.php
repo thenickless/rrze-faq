@@ -63,6 +63,10 @@ function getSections() {
 			'title' => __('Domains', 'rrze-faq' )
 		],
 		[
+			'id'    => 'sync',
+			'title' => __('Synchronize', 'rrze-faq' )
+		],
+		[
 		  	'id' => 'log',
 		  	'title' => __('Logfile', 'rrze-faq' )
 		]
@@ -101,13 +105,6 @@ function getFields() {
 				'label' => __('Synchronization', 'rrze-faq' ),
 				'desc' => __('Update FAQ automatically', 'rrze-faq' ),
 				'type' => 'checkbox'
-			],
-			[
-				'name' => 'timestamp',
-				'label' => '',
-				'desc' => '',
-				'type' => 'hidden',
-				'options' => time()
 			]
 		],		
 		'doms' => [
@@ -116,14 +113,30 @@ function getFields() {
 				'label' => __('Add this domain', 'rrze-faq' ),
 				'desc' => __('Enter the domain\'s URL you want to receive FAQ from.', 'rrze-faq' ),
 				'type' => 'text'
+			]
+		],
+		'sync' => [
+			[
+				'name' => 'url',
+				'label' => __('URL', 'rrze-faq' ),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
 			],
 			[
-				'name' => 'new_name',
-				'label' => __('Shortcut', 'rrze-faq' ),
-				'desc' => __('Enter a short name for this domain.', 'rrze-faq' ),
-				'type' => 'text'
+				'name' => 'categories',
+				'label' => __('Categories', 'rrze-faq' ),
+				'desc' => __('Please select the categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
+				'type' => 'multiselect',
+				'options' => []
 			],
-		],
+			// [
+			// 	'name' => 'auto_sync',
+			// 	'label' => __('Synchronization', 'rrze-faq' ),
+			// 	'desc' => __('Update FAQ automatically', 'rrze-faq' ),
+			// 	'type' => 'checkbox'
+			// ]
+		],		
     	'log' => [
         	[
           		'name' => 'logfile',

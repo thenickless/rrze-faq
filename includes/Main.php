@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\FAQ\Settings;
 use RRZE\FAQ\Shortcode;
 use function RRZE\FAQ\Config\deleteLogfile;
+use RRZE\FAQ\API;
 
 
 /**
@@ -65,15 +66,6 @@ class Main {
         include_once( __DIR__ . '/posttype/rrze-faq-admin.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-helper.php' );
         include_once( __DIR__ . '/REST-API/rrze-faq-rest-filter.php' );
-
-        // include_once( __DIR__ . '/REST-API/rrze-faq-posttype-rest.php' );
-        // include_once( __DIR__ . '/faq/rrze-faq-list-table-helper.php' );
-        // include_once( __DIR__ . '/faq/rrze-faq-list-table.php' );
-        // include_once( __DIR__ . '/domain/rrze-faq-domain-get.php' );
-        // include_once( __DIR__ . '/domain/rrze-faq-domain-list.php' );
-        // new DOMAIN_FAQ();
-        // include_once( __DIR__ . '/domain/rrze-faq-domain-add.php' );
-        // new AddFaqDomain();
 
         // Shortcode wird eingebunden.
         include 'Shortcode.php';
@@ -178,14 +170,20 @@ class Main {
      */
     public function switchTask( $options ) {
         if ( isset( $_GET['doms'] ) ){
-            if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' && isset( $_POST['rrze-faq']['doms_new_name'] ) && $_POST['rrze-faq']['doms_new_name'] != '' ){
-                $this->addDomain( $_POST['rrze-faq']['doms_new_url'], $_POST['rrze-faq']['doms_new_name'] );
+            $api = new API();
+            if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
+                $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_url'] );
+                if ( $domains ){
+                    $options['registeredDomains'] = $domains;
+                }else{
+                    add_settings_error( 'doms_new_url', 'doms_new_error', $_POST['rrze-faq']['doms_new_url'] . ' is not valid.', 'error' );        
+                }
                 unset( $options['doms_new_url'] );
-                unset( $options['doms_new_name'] );
             } else {
                 foreach ( $_POST as $key => $val ){
                     if ( substr( $key, 0, 11 ) === "del_domain_" ){
-                        $this->deleteDomain( $val );
+                        $domains = $api->deleteDomain( $val );
+                        $options['registeredDomains'] = $domains;
                     }
                 }
             }
@@ -200,35 +198,37 @@ class Main {
             if ( isset( $_GET['sync'] ) ){
                 $this->setCronjob();
                 $sync = new Sync();
-                $sync->doSync( 'manual' );
+                $sync->doSyncOTRS( 'manual' );
             }
         }
     }
 
-    public function deleteDomain( $name ){
-        if ( $name ){
-            $domains = get_option( 'registeredDomains' );
-            update_option( 'registeredDomains', array_merge( array_diff_key( $domains, array( $name => '' ) ) ) );
-        }
-    }
+    // public function deleteDomain( $url ){
+    //     if ( $url ){
+    //         $options = get_option( 'rrze-faq' );
+    //         $domains = $options['registeredDomains'];
+    //         $domains = ( $domains ? $domains : array() );
+    //         update_option( 'registeredDomains', array_merge( array_diff_key( $domains, $url ) ) );
+    //     }
+    // }
 
-    public function addDomain( $url, $name ) {
-        $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
-        $domains = get_option( 'registeredDomains' );
+    // public function addDomain( $url, $name ) {
+    //     $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
+    //     $domains = get_option( 'registeredDomains' );
 
-        if ( !$domains || in_array( $url, $domains ) === FALSE ) {
-            // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );
-            $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
-            $status_code = wp_remote_retrieve_response_code( $content );
-            if ( $status_code != 200 ) {
-                add_settings_error( 'doms_new_url', 'doms_new_error', $url . ' is not valid.', 'error' );        
-            } else {
-                $domains = get_option( 'registeredDomains' );
-                $domains[$name] = $url;
-                update_option( 'registeredDomains', $domains );
-            }
-        }
-    }
+    //     if ( !$domains || in_array( $url, $domains ) === FALSE ) {
+    //         // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );
+    //         $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
+    //         $status_code = wp_remote_retrieve_response_code( $content );
+    //         if ( $status_code != 200 ) {
+    //             add_settings_error( 'doms_new_url', 'doms_new_error', $url . ' is not valid.', 'error' );        
+    //         } else {
+    //             $domains = get_option( 'registeredDomains' );
+    //             $domains[$name] = $url;
+    //             update_option( 'registeredDomains', $domains );
+    //         }
+    //     }
+    // }
 
     public function runCronjob() {
         // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
@@ -247,12 +247,12 @@ class Main {
         if ( $weekday > 0 && $weekday < 6 ){
             if ( in_array( $hour, $sync["workdays"] ) ) {
                 $sync = new Sync();
-                $sync->doSync( 'automatic' );
+                $sync->doSyncOTRS( 'automatic' );
             }
         } else {
             if ( in_array( $hour, $sync["weekend"] ) ) {
                 $sync = new Sync();
-                $sync->doSync( 'automatic' );
+                $sync->doSyncOTRS( 'automatic' );
             }
         }
     }

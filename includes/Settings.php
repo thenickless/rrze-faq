@@ -9,6 +9,8 @@ use function RRZE\FAQ\Config\getMenuSettings;
 use function RRZE\FAQ\Config\getHelpTab;
 use function RRZE\FAQ\Config\getSections;
 use function RRZE\FAQ\Config\getFields;
+use RRZE\FAQ\API;
+
 
 /**
  * Settings-Klasse
@@ -131,7 +133,7 @@ class Settings {
             }    
         }
 
-        // fill "categories"
+        // fill "categories" for OTRS
         $tmp = array();
         foreach( $this->settingsFields['otrs'] as $field ) {
             if ( $field['name'] == 'categories' ){
@@ -148,6 +150,13 @@ class Settings {
             $tmp[] = $field;
         }
         $this->settingsFields['otrs'] = $tmp;
+
+
+        // Add Sync fields for each domain
+        $this->settingsFields['sync'] = $this->setSettingsDomains();
+        // echo '<pre>';
+        // var_dump($this->settingsFields['sync']);
+        // exit;
     }
 
     /**
@@ -316,6 +325,8 @@ class Settings {
                         $disable_end = '</fieldset>';
                     }
                     break;
+                case 'sync':                    
+                    break;
                 case 'doms': 
                     $btn_label = __('Add domain', 'rrze-faq' );
                     $get = '?doms';
@@ -352,19 +363,53 @@ class Settings {
     }
 
     public function domainOutput(){
-        $domains = get_option( 'registeredDomains' );
+        $options = get_option( 'rrze-faq' );
+        $domains = ( isset( $options['registeredDomains'] ) ? $options['registeredDomains'] : FALSE );
         if ( $domains ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
+            // echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
 
-            foreach ( $domains as $name => $url ){
-                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $name . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
+            // foreach ( $domains as $name => $url ){
+            //     echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $name . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
+            //     $i++;
+            // }
+            foreach ( $domains as $url ){
+                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $url . '</td></tr>';
                 $i++;
             }
             echo '</tbody></table>';
             submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
         }
+    }
+
+    public function setSettingsDomains(){
+        $api = new API();
+        $domains = $api->getDomains();
+        $i = 1;
+        $newFields = array();
+        foreach ( $domains as $url ){
+            $categories = $api->getCategories( $url );            
+            foreach ( $this->settingsFields['sync'] as $field ){
+                switch ( $field['name'] ){
+                    case 'url': 
+                        $field['default'] = $url;
+                        break;
+                    case 'categories':
+                        foreach ( $categories as $cat ){
+                            $field['options'][$cat['slug']] = $cat['name'];
+                        }
+                        break;
+    
+                }
+                $field['name'] .= $i;
+                $newFields[] = $field;
+            }
+            $i++;
+        }
+
+        return $newFields;
     }
 
     /**
