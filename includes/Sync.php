@@ -11,27 +11,24 @@ defined('ABSPATH') || exit;
 
 class Sync {
 
-    private function getURLs(){
-        $options = get_option( 'rrze-faq' );
-
-
-
-    }
-
-    
-
     public function doSync( $mode ) {
-
-        // delete all FAQ
-        $iDel = 0;
-        $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => 'OTRS', 'numberposts' => -1 ) );
-        $allFAQ = get_posts( array( 'post_type' => 'faq', 'numberposts' => -1 ) );
-        foreach ( $allFAQ as $faq ) {
-            wp_delete_post( $faq->ID, true );
-            $iDel++;
-        } 
-        
         $max_exec_time = ini_get('max_execution_time') - 40; // ini_get('max_execution_time') is not the correct value perhaps due to load-balancer or proxy or other fancy things I've no clue of. But this workaround works for now.
+
+        $api = new API();
+        $domains = $api->getDomains();
+        foreach( $this->domains as $shortname => $url ){
+            $options = get_options( 'rrze-faq' );
+            if ( isset( $options['sync_manuell_sync_' . $shortname] ) ){
+                switch ( $options['sync_manuell_sync_' . $shortname] ){
+                    case 'auto':
+                        // set cronjob
+                    case 'manuell':
+                        $iDel = $api->deleteFAQ( $shortname );
+                        $faq = $api->setFAQ( $url, $categories, $shortname  );
+                    break;
+                }
+            }
+        }        
 
         // sync all FAQ for each selected category
         $iNew = 0;

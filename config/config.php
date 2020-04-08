@@ -115,7 +115,7 @@ function getFields() {
 				'options' => []
 			],
 			[
-				'name' => 'manuell_sync',
+				'name' => 'mode',
 				'label' => __('Synchronize', 'rrze-faq' ),
 				'desc' => '',
 				'default' => '',

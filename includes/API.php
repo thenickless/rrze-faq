@@ -6,6 +6,8 @@ namespace RRZE\FAQ;
 defined('ABSPATH') || exit;
 
 class API {
+
+
     protected function checkDomain( $url ){
         $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
         $status_code = wp_remote_retrieve_response_code( $content );
@@ -43,17 +45,6 @@ class API {
         return in_array( $url, $this->getDomains() );
     }
 
-    // public function deleteDomain( $url ){
-    //     $domains = $this->getDomains();
-
-    //     // echo '<pre>';
-    //     // $domains
-
-    //     if ( ( $key = array_search( $url, $domains ) ) !== false ) {
-    //         unset($domains[$key]);
-    //     }   
-    //     return $domains;
-    // }
 
     protected function getUrl( $url ){
         $ret = FALSE;
@@ -129,6 +120,22 @@ class API {
         }
         return TRUE;
     }
+
+    protected function deleteFAQ( $source ){
+        // deletes all FAQ by source
+        $iDel = 0;
+        $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'numberposts' => -1 ) );
+        foreach ( $allFAQ as $faq ) {
+            wp_delete_post( $faq->ID, true );
+            $iDel++;
+        } 
+        return $iDel;
+    }
+
+    protected function setFAQ( $url, $categories, $shortname ){
+
+    }
+
 
     protected function setLastFAQ( $url, $faqID, $categoryID ){
         $options = get_option( 'rrze-faq' );
