@@ -10,6 +10,8 @@ use function RRZE\FAQ\Config\getHelpTab;
 use function RRZE\FAQ\Config\getSections;
 use function RRZE\FAQ\Config\getFields;
 use RRZE\FAQ\API;
+use function RRZE\FAQ\Config\getDomains;
+
 
 
 /**
@@ -71,12 +73,19 @@ class Settings {
     protected $currentTab = '';
 
 
+     /**
+     * Registrierte Domains
+     * @var string
+     */
+    protected $domains = array();
+   
     /**
      * Variablen Werte zuweisen.
      * @param string $pluginFile [description]
      */
     public function __construct($pluginFile) {
         $this->pluginFile = $pluginFile;
+        $this->domains = getDomains();
     }
 
     /**
@@ -122,41 +131,8 @@ class Settings {
     protected function setFields() {
         $this->settingsFields = getFields();
 
-        $options = get_option( 'rrze-faq' );
-        if ( isset( $options['otrs_otrs_url'] ) ){
-            $OTRS_url = $options['otrs_otrs_url'];
-        } else {
-            foreach( $this->settingsFields['otrs'] as $field ) {
-                if ( $field['name'] == 'otrs_url' ){
-                    $OTRS_url = $field['default'];
-                }    
-            }    
-        }
-
-        // fill "categories" for OTRS
-        $tmp = array();
-        foreach( $this->settingsFields['otrs'] as $field ) {
-            if ( $field['name'] == 'categories' ){
-                $cats = wp_remote_get( $OTRS_url . '/CategoryList' );
-                $status_code = wp_remote_retrieve_response_code( $cats );
-                if ( 200 === $status_code ) {
-                    $cats = json_decode( $cats['body'], true );
-                    foreach ( $cats['Category'] as $cat ){
-                        $field['options'][$cat['ID']] = $cat['Name'];
-                    }
-                    asort( $field['options'] );
-                }
-            }
-            $tmp[] = $field;
-        }
-        $this->settingsFields['otrs'] = $tmp;
-
-
         // Add Sync fields for each domain
         $this->settingsFields['sync'] = $this->setSettingsDomains();
-        // echo '<pre>';
-        // var_dump($this->settingsFields['sync']);
-        // exit;
     }
 
     /**
@@ -317,15 +293,8 @@ class Settings {
             $disable_end = '';
 
             switch ( $this->currentTab ) {
-                case 'otrs': 
-                    $btn_label = __('Synchronize now', 'rrze-faq' );
-                    $get = '?sync';
-                    if ( !is_super_admin() ){
-                        $disable_start = '<fieldset disabled="disabled">';
-                        $disable_end = '</fieldset>';
-                    }
-                    break;
                 case 'sync':                    
+                    $get = '?sync';
                     break;
                 case 'doms': 
                     $btn_label = __('Add domain', 'rrze-faq' );
@@ -363,19 +332,11 @@ class Settings {
     }
 
     public function domainOutput(){
-        $options = get_option( 'rrze-faq' );
-        $domains = ( isset( $options['registeredDomains'] ) ? $options['registeredDomains'] : FALSE );
-        if ( $domains ){
+        if ( $this->domains ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
-            // echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
             echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
-
-            // foreach ( $domains as $name => $url ){
-            //     echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $name . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
-            //     $i++;
-            // }
-            foreach ( $domains as $url ){
+            foreach ( $this->domains as $url ){
                 echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $url . '</td></tr>';
                 $i++;
             }
@@ -384,12 +345,12 @@ class Settings {
         }
     }
 
+
     public function setSettingsDomains(){
-        $api = new API();
-        $domains = $api->getDomains();
         $i = 1;
         $newFields = array();
-        foreach ( $domains as $url ){
+        $api = new API();
+        foreach ( $this->domains as $url ){
             $categories = $api->getCategories( $url );            
             foreach ( $this->settingsFields['sync'] as $field ){
                 switch ( $field['name'] ){
@@ -400,15 +361,13 @@ class Settings {
                         foreach ( $categories as $cat ){
                             $field['options'][$cat['slug']] = $cat['name'];
                         }
-                        break;
-    
+                        break;    
                 }
                 $field['name'] .= $i;
                 $newFields[] = $field;
             }
             $i++;
         }
-
         return $newFields;
     }
 
@@ -499,8 +458,6 @@ class Settings {
         foreach ($this->settingsSections as $section) {
             register_setting($section['id'], $this->optionName, [$this, 'sanitizeOptions']);
         }
-        register_setting( 'registeredDomains', 'del_domain', [$this, 'sanitizeOptions']);
-
     }
 
     /**
@@ -978,5 +935,19 @@ class Settings {
             echo __( 'Logfile is empty.', 'rrze-faq' );
         }
     }
+
+    public function callbackPlaintext( $args ) {
+        echo '<strong>' . esc_attr($this->getOption($args['section'], $args['id'], $args['default'])) . '</strong>';
+    }
+
+    public function callbackLine() {
+        echo '<hr>';
+    }
+
+    public function callbackButton( $args ) {
+        echo submit_button( esc_attr($this->getOption($args['section'], $args['id'], $args['default'])) );
+    }
+
+
 
 }

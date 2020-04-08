@@ -2,6 +2,7 @@
 
 namespace RRZE\FAQ;
 
+use RRZE\FAQ\API;
 use function RRZE\FAQ\Config\logIt;
 
 
@@ -9,16 +10,26 @@ defined('ABSPATH') || exit;
 
 
 class Sync {
-    public function doSyncOTRS( $mode ) {
 
-        // delete all FAQ that came from OTRS
-        // $iDel = 0;
-        // $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => 'OTRS', 'numberposts' => -1 ) );
-        // $allFAQ = get_posts( array( 'post_type' => 'faq', 'numberposts' => -1 ) );
-        // foreach ( $allFAQ as $faq ) {
-        //     wp_delete_post( $faq->ID, true );
-        //     $iDel++;
-        // } 
+    private function getURLs(){
+        $options = get_option( 'rrze-faq' );
+
+
+
+    }
+
+    
+
+    public function doSync( $mode ) {
+
+        // delete all FAQ
+        $iDel = 0;
+        $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => 'OTRS', 'numberposts' => -1 ) );
+        $allFAQ = get_posts( array( 'post_type' => 'faq', 'numberposts' => -1 ) );
+        foreach ( $allFAQ as $faq ) {
+            wp_delete_post( $faq->ID, true );
+            $iDel++;
+        } 
         
         $max_exec_time = ini_get('max_execution_time') - 40; // ini_get('max_execution_time') is not the correct value perhaps due to load-balancer or proxy or other fancy things I've no clue of. But this workaround works for now.
 

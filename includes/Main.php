@@ -169,13 +169,14 @@ class Main {
      * Click on buttons "sync", "add domain", "delete domain" or "delete logfile"
      */
     public function switchTask( $options ) {
+
+        // var_dump($_GET);
+        // exit;
         if ( isset( $_GET['doms'] ) ){
             $api = new API();
             if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
                 $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_url'] );
-                if ( $domains ){
-                    $options['registeredDomains'] = $domains;
-                }else{
+                if ( !$domains ){
                     add_settings_error( 'doms_new_url', 'doms_new_error', $_POST['rrze-faq']['doms_new_url'] . ' is not valid.', 'error' );        
                 }
                 unset( $options['doms_new_url'] );
@@ -183,7 +184,6 @@ class Main {
                 foreach ( $_POST as $key => $val ){
                     if ( substr( $key, 0, 11 ) === "del_domain_" ){
                         $domains = $api->deleteDomain( $val );
-                        $options['registeredDomains'] = $domains;
                     }
                 }
             }
@@ -194,41 +194,12 @@ class Main {
     }
 
     public function checkSync() {
-        if ( is_super_admin() ){
-            if ( isset( $_GET['sync'] ) ){
-                $this->setCronjob();
-                $sync = new Sync();
-                $sync->doSyncOTRS( 'manual' );
-            }
+        if ( isset( $_GET['sync'] ) ){
+            $this->setCronjob();
+            $sync = new Sync();
+            $sync->doSync( 'manual' );
         }
     }
-
-    // public function deleteDomain( $url ){
-    //     if ( $url ){
-    //         $options = get_option( 'rrze-faq' );
-    //         $domains = $options['registeredDomains'];
-    //         $domains = ( $domains ? $domains : array() );
-    //         update_option( 'registeredDomains', array_merge( array_diff_key( $domains, $url ) ) );
-    //     }
-    // }
-
-    // public function addDomain( $url, $name ) {
-    //     $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
-    //     $domains = get_option( 'registeredDomains' );
-
-    //     if ( !$domains || in_array( $url, $domains ) === FALSE ) {
-    //         // $content = wp_remote_get( $domain . 'wp-json/wp/v2/glossary?per_page=1' );
-    //         $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
-    //         $status_code = wp_remote_retrieve_response_code( $content );
-    //         if ( $status_code != 200 ) {
-    //             add_settings_error( 'doms_new_url', 'doms_new_error', $url . ' is not valid.', 'error' );        
-    //         } else {
-    //             $domains = get_option( 'registeredDomains' );
-    //             $domains[$name] = $url;
-    //             update_option( 'registeredDomains', $domains );
-    //         }
-    //     }
-    // }
 
     public function runCronjob() {
         // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
@@ -247,12 +218,12 @@ class Main {
         if ( $weekday > 0 && $weekday < 6 ){
             if ( in_array( $hour, $sync["workdays"] ) ) {
                 $sync = new Sync();
-                $sync->doSyncOTRS( 'automatic' );
+                $sync->doSync( 'automatic' );
             }
         } else {
             if ( in_array( $hour, $sync["weekend"] ) ) {
                 $sync = new Sync();
-                $sync->doSyncOTRS( 'automatic' );
+                $sync->doSync( 'automatic' );
             }
         }
     }

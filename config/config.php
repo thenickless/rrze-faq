@@ -15,6 +15,18 @@ function getOptionName() {
     return 'rrze-faq';
 }
 
+function getDomains(){
+	$domains = array();
+	$options = get_option( 'rrze-faq' );
+	foreach ( $options as $field => $url ){
+		if ( stripos( $field, 'sync_url' ) === 0 ){
+			$domains[] = $url;
+		}
+	}
+	return $domains;
+}
+
+
 
 /**
  * Gibt die Einstellungen des Menus zurück.
@@ -54,10 +66,10 @@ function getHelpTab() {
 
 function getSections() {
 	return [ 
-		[
-			'id'    => 'otrs',
-			'title' => __('OTRS', 'rrze-faq' )
-		],
+		// [
+		// 	'id'    => 'otrs',
+		// 	'title' => __('OTRS', 'rrze-faq' )
+		// ],
 		[
 			'id'    => 'doms',
 			'title' => __('Domains', 'rrze-faq' )
@@ -80,33 +92,33 @@ function getSections() {
 
 function getFields() {
 	return [
-		'otrs' => [
-			[
-				'name' => 'otrs_url',
-				'label' => __('URL', 'rrze-faq' ),
-				'desc' => __('Please select weather to fetch from LIVE or DEV server.', 'rrze-faq' ),
-				'type' => 'select',
-				'options' => [
-					'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'Development server (otrs-dev.rrze.fau.de)',
-					// 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'LIVE server (helpdesk.rrze.fau.de)',
+		// 'otrs' => [
+		// 	[
+		// 		'name' => 'otrs_url',
+		// 		'label' => __('URL', 'rrze-faq' ),
+		// 		'desc' => __('Please select weather to fetch from LIVE or DEV server.', 'rrze-faq' ),
+		// 		'type' => 'select',
+		// 		'options' => [
+		// 			'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'Development server (otrs-dev.rrze.fau.de)',
+		// 			// 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'LIVE server (helpdesk.rrze.fau.de)',
 					
-				],
-				'default' => 'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST'
-			],
-			[
-				'name' => 'categories',
-				'label' => __('Categories', 'rrze-faq' ),
-				'desc' => __('Please select the categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
-				'type' => 'multiselect',
-				'options' => []
-			],
-			[
-				'name' => 'auto_sync',
-				'label' => __('Synchronization', 'rrze-faq' ),
-				'desc' => __('Update FAQ automatically', 'rrze-faq' ),
-				'type' => 'checkbox'
-			]
-		],		
+		// 		],
+		// 		'default' => 'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST'
+		// 	],
+		// 	[
+		// 		'name' => 'categories',
+		// 		'label' => __('Categories', 'rrze-faq' ),
+		// 		'desc' => __('Please select the categories you\'d like to fetch FAQ to.', 'rrze-faq' ),
+		// 		'type' => 'multiselect',
+		// 		'options' => []
+		// 	],
+		// 	[
+		// 		'name' => 'auto_sync',
+		// 		'label' => __('Synchronization', 'rrze-faq' ),
+		// 		'desc' => __('Update FAQ automatically', 'rrze-faq' ),
+		// 		'type' => 'checkbox'
+		// 	]
+		// ],		
 		'doms' => [
 			[
 				'name' => 'new_url',
@@ -120,7 +132,7 @@ function getFields() {
 				'name' => 'url',
 				'label' => __('URL', 'rrze-faq' ),
 				'desc' => '',
-				'type' => 'text',
+				'type' => 'plaintext',
 				'default' => ''
 			],
 			[
@@ -131,11 +143,29 @@ function getFields() {
 				'options' => []
 			],
 			// [
-			// 	'name' => 'auto_sync',
-			// 	'label' => __('Synchronization', 'rrze-faq' ),
-			// 	'desc' => __('Update FAQ automatically', 'rrze-faq' ),
-			// 	'type' => 'checkbox'
-			// ]
+			// 	'name' => 'sync',
+			// 	'label' => '',
+			// 	'default' => __('Synchronize FAQ from this URL', 'rrze-faq' ),
+			// 	'type' => 'button'
+			// ],
+			[
+				'name' => 'manuell_sync',
+				'label' => __('Synchronize', 'rrze-faq' ),
+				'desc' => '',
+				'default' => '',
+				'options' => [
+					'' => __('Do not synchronize.', 'rrze-faq' ),
+					'manuel' => __('Synchronize one time now.', 'rrze-faq' ),
+					'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
+				],
+				'type' => 'radio'
+			],
+			[
+				'name' => 'hr',
+				'label' => '',
+				'desc' => '',
+				'type' => 'line'
+			]
 		],		
     	'log' => [
         	[

@@ -1,21 +1,12 @@
 <?php
 
 namespace RRZE\FAQ;
+use function RRZE\FAQ\Config\getDomains;
+
 
 defined('ABSPATH') || exit;
 
 class API {
-
-    public function getDomains(){
-        $options = get_option( 'rrze-faq' );
-        if ( isset( $options['registeredDomains'] ) ){
-            $domains = $options['registeredDomains'];
-        }else{
-            $domains = array();
-        }
-        return $domains;
-    }
-
     protected function checkDomain( $url ){
         $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
         $status_code = wp_remote_retrieve_response_code( $content );
@@ -25,7 +16,7 @@ class API {
     public function setDomain( $url ){
         $ret = FALSE;
         $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
-        $domains = $this->getDomains();
+        $domains = getDomains();
         if ( in_array( $url, $domains ) === FALSE ) {
             if ( $this->checkDomain( $url ) ){
                 $domains[] = $url;
@@ -37,22 +28,22 @@ class API {
     }
 
     protected function isRegisteredDomain( $url ){
-        return in_array( $url, $this->getDomains() );
+        return in_array( $url, getDomains() );
     }
 
     public function deleteDomain( $url ){
-        $domains = $this->getDomains();
+        $domains = getDomains();
         if ( ( $key = array_search( $url, $domains ) ) !== false ) {
             unset($domains[$key]);
         }   
-        echo '<pre>';     
-        var_dump($domains);
+        // echo '<pre>';     
+        // var_dump($domains);
         return $domains;
     }
 
     protected function getUrl( $url ){
         $ret = FALSE;
-        $domains = $this->getDomains();
+        $domains = getDomains();
         if ( $this->isRegisteredDomain( $url ) ){
             $ret = $url . 'wp-json/wp/v2/faq';
         }
@@ -69,8 +60,6 @@ class API {
             $slug = ( $filter ? '&slug=' . $filter : '' );
             $page = 1;
 
-            // echo $url . '?page=' . $page . $slug;
-            // exit;
             do {
                 $request = wp_remote_get( $url . '?page=' . $page . $slug );
                 $status_code = wp_remote_retrieve_response_code( $request );

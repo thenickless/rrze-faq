@@ -4,6 +4,8 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 use function RRZE\FAQ\Config\getShortcodeSettings;
+use function RRZE\FAQ\Config\getDomains;
+
 
 $settings;
 
@@ -174,7 +176,7 @@ class Shortcode {
 
         if( $domain ) {
             // DOMAIN
-            $domains = get_option('registeredDomains');
+            $domains = getDomains();
 
             if ( !in_array( $domain, array_keys( $domains ) ) ){
                 return __( 'Domain is not registered', 'rrze-faq' );
@@ -518,7 +520,7 @@ class Shortcode {
             return;
         }
 
-        $domains = get_option( 'registeredDomains' );
+        $domains = getDomains();
         if ( $domains ){
             foreach ( $domains as $name => $url ){
                 $this->settings['domain']['values'][$url] = $name;
@@ -577,27 +579,27 @@ class Shortcode {
         }
 
 
-        // get FAQ from this website and synced from OTRS
-        $faqs = get_posts( array(
-            'posts_per_page'  => -1,
-            'post_type' => 'faq',
-            'order' => 'ASC',
-            // 'orderby' => 'title',
-            // 'fields' => 'ids',
-            // 'meta_query' => array(
-            //     array(
-            //         'key' => 'source',
-            //         'value' => 'website',
-            //     )
-            // )
-        ));
+        // // get FAQ from this website and synced from OTRS
+        // $faqs = get_posts( array(
+        //     'posts_per_page'  => -1,
+        //     'post_type' => 'faq',
+        //     'order' => 'ASC',
+        //     // 'orderby' => 'title',
+        //     // 'fields' => 'ids',
+        //     // 'meta_query' => array(
+        //     //     array(
+        //     //         'key' => 'source',
+        //     //         'value' => 'website',
+        //     //     )
+        //     // )
+        // ));
 
-        $this->settings['id']['field_type'] = 'select';
-        $this->settings['id']['type'] = 'string';
-        $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
-        foreach ( $faqs as $faq){
-            $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
-        }
+        // $this->settings['id']['field_type'] = 'select';
+        // $this->settings['id']['type'] = 'string';
+        // $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
+        // foreach ( $faqs as $faq){
+        //     $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
+        // }
 
         // get FAQ from other domains
         if ( $domains ) {
