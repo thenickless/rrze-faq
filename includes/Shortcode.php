@@ -4,7 +4,7 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 use function RRZE\FAQ\Config\getShortcodeSettings;
-use function RRZE\FAQ\Config\getDomains;
+use RRZE\FAQ\API;
 
 
 $settings;
@@ -176,7 +176,8 @@ class Shortcode {
 
         if( $domain ) {
             // DOMAIN
-            $domains = getDomains();
+            $api = new API();
+            $domains = $api->getDomains();
 
             if ( !in_array( $domain, array_keys( $domains ) ) ){
                 return __( 'Domain is not registered', 'rrze-faq' );
@@ -520,7 +521,8 @@ class Shortcode {
             return;
         }
 
-        $domains = getDomains();
+        $api = new API();
+        $domains = $api->getDomains();
         if ( $domains ){
             foreach ( $domains as $name => $url ){
                 $this->settings['domain']['values'][$url] = $name;

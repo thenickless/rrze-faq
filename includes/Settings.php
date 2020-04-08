@@ -10,7 +10,6 @@ use function RRZE\FAQ\Config\getHelpTab;
 use function RRZE\FAQ\Config\getSections;
 use function RRZE\FAQ\Config\getFields;
 use RRZE\FAQ\API;
-use function RRZE\FAQ\Config\getDomains;
 
 
 
@@ -85,7 +84,8 @@ class Settings {
      */
     public function __construct($pluginFile) {
         $this->pluginFile = $pluginFile;
-        $this->domains = getDomains();
+        $api = new API();
+        $this->domains = $api->getDomains();
     }
 
     /**
@@ -156,10 +156,8 @@ class Settings {
      * Gibt die Standardeinstellungen zurück.
      * @return array
      */
-    protected function defaultOptions()
-    {
+    protected function defaultOptions() {
         $options = [];
-
         foreach ($this->settingsFields as $section => $field) {
             foreach ($field as $option) {
                 $name = $option['name'];
@@ -175,8 +173,7 @@ class Settings {
      * Gibt die Einstellungen zurück.
      * @return array
      */
-    public function getOptions()
-    {
+    public function getOptions() {
         $defaults = $this->defaultOptions();
 
         $options = (array) get_option($this->optionName);
@@ -193,8 +190,7 @@ class Settings {
      * @param string  $default default text if it's not found
      * @return string
      */
-    public function getOption($section, $name, $default = '')
-    {
+    public function getOption($section, $name, $default = '') {
         $option = $section . '_' . $name;
 
         if (isset($this->options[$option])) {
@@ -335,9 +331,9 @@ class Settings {
         if ( $this->domains ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="2">Added domains:</th></tr></thead><tbody>';
-            foreach ( $this->domains as $url ){
-                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $url . '</td></tr>';
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
+            foreach ( $this->domains as $name => $url ){
+                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
                 $i++;
             }
             echo '</tbody></table>';
@@ -350,10 +346,13 @@ class Settings {
         $i = 1;
         $newFields = array();
         $api = new API();
-        foreach ( $this->domains as $url ){
+        foreach ( $this->domains as $shortname => $url ){
             $categories = $api->getCategories( $url );            
             foreach ( $this->settingsFields['sync'] as $field ){
                 switch ( $field['name'] ){
+                    case 'shortname':
+                        $field['default'] = $shortname;
+                        break;
                     case 'url': 
                         $field['default'] = $url;
                         break;
@@ -368,7 +367,7 @@ class Settings {
             }
             $i++;
         }
-        return $newFields;
+    return $newFields;
     }
 
     /**

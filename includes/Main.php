@@ -20,12 +20,18 @@ class Main {
      */
     protected $pluginFile;
 
+    protected $settings;
+
     /**
      * Variablen Werte zuweisen.
      * @param string $pluginFile Pfad- und Dateiname der Plugin-Datei
      */
     public function __construct($pluginFile) {
         $this->pluginFile = $pluginFile;
+        // Settings-Klasse wird instanziiert.
+        $this->settings = new Settings($this->pluginFile);
+        $this->settings->onLoaded();
+
     }
 
     /**
@@ -34,7 +40,7 @@ class Main {
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
         // Actions: sync, add domain, delete domain, delete logfile
-        add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
+        // add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
         // Auto-Sync
         add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
@@ -55,9 +61,6 @@ class Main {
         add_filter( 'manage_faq_tag_custom_column', [$this, 'faq_tax_table_content'], 10, 3 );
         add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'faq_tax_sortable_columns'] );
  
-        // Settings-Klasse wird instanziiert.
-        $settings = new Settings($this->pluginFile);
-        $settings->onLoaded();
 
         include_once( __DIR__ . '/posttype/rrze-faq-posttype.php' );
         include_once( __DIR__ . '/posttype/rrze-faq-taxonomy.php' );
@@ -172,22 +175,36 @@ class Main {
 
         // var_dump($_GET);
         // exit;
+        $api = new API();
         if ( isset( $_GET['doms'] ) ){
-            $api = new API();
             if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
-                $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_url'] );
+                $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_name'], $_POST['rrze-faq']['doms_new_url'] );
                 if ( !$domains ){
                     add_settings_error( 'doms_new_url', 'doms_new_error', $_POST['rrze-faq']['doms_new_url'] . ' is not valid.', 'error' );        
                 }
-                unset( $options['doms_new_url'] );
+                $options['doms_new_name'] = '';
+                $options['doms_new_url'] = '';
             } else {
-                foreach ( $_POST as $key => $val ){
+                foreach ( $_POST as $key => $url ){
                     if ( substr( $key, 0, 11 ) === "del_domain_" ){
-                        $domains = $api->deleteDomain( $val );
+                        $domains = $api->deleteDomain( $url );
+                        foreach( $options as $field => $val ){
+                            if ( ( stripos( $field, 'sync_url' ) === 0 ) && ( $val == $url ) ){
+                	            preg_match_all('/\d+/', $field, $nr);
+                	            unset( $options['sync_shortname' . $nr[0][0]] );
+                	            unset( $options['sync_url' . $nr[0][0]] );
+                	            unset( $options['sync_categories' . $nr[0][0]] );
+                	            unset( $options['sync_manuell_sync' . $nr[0][0]] );
+                	            unset( $options['sync_hr' . $nr[0][0]] );
+                            }
+                        }                        
                     }
                 }
             }
-        } elseif ( isset( $_GET['del'] ) ){
+            $options['registeredDomains'] = $domains;
+        } elseif ( isset( $_GET['sync'] ) ){
+            $options['registeredDomains'] = $api->getDomains();
+         }elseif ( isset( $_GET['del'] ) ){
             deleteLogfile();
         }
         return $options;

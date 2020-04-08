@@ -1,7 +1,6 @@
 <?php
 
 namespace RRZE\FAQ;
-use function RRZE\FAQ\Config\getDomains;
 
 
 defined('ABSPATH') || exit;
@@ -13,13 +12,25 @@ class API {
         return ( $status_code != 200 ? FALSE : TRUE );
     }
 
-    public function setDomain( $url ){
+    public function getDomains(){
+        $domains = array();
+        $options = get_option( 'rrze-faq' );
+        if ( isset( $options['registeredDomains'] ) ){
+            foreach( $options['registeredDomains'] as $shortname => $url ){
+                $domains[$shortname] = $url;
+            }	
+        }
+        return $domains;
+    }
+    
+    public function setDomain( $shortname, $url ){
         $ret = FALSE;
         $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
-        $domains = getDomains();
+        $domains = $this->getDomains();
+        $shortname = strtolower( preg_replace('/[^A-Za-z0-9\-]/', '', str_replace( ' ', '-', $shortname ) ) );
         if ( in_array( $url, $domains ) === FALSE ) {
             if ( $this->checkDomain( $url ) ){
-                $domains[] = $url;
+                $domains[$shortname] = $url;
             }else{
                 return FALSE;
             }
@@ -28,22 +39,20 @@ class API {
     }
 
     protected function isRegisteredDomain( $url ){
-        return in_array( $url, getDomains() );
+        return in_array( $url, $this->getDomains() );
     }
 
     public function deleteDomain( $url ){
-        $domains = getDomains();
+        $domains = $this->getDomains();
         if ( ( $key = array_search( $url, $domains ) ) !== false ) {
             unset($domains[$key]);
         }   
-        // echo '<pre>';     
-        // var_dump($domains);
         return $domains;
     }
 
     protected function getUrl( $url ){
         $ret = FALSE;
-        $domains = getDomains();
+        $domains = $this->getDomains();
         if ( $this->isRegisteredDomain( $url ) ){
             $ret = $url . 'wp-json/wp/v2/faq';
         }
