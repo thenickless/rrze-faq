@@ -172,41 +172,54 @@ class Main {
      * Click on buttons "sync", "add domain", "delete domain" or "delete logfile"
      */
     public function switchTask( $options ) {
-
-        // var_dump($_GET);
-        // exit;
         $api = new API();
-        if ( isset( $_GET['doms'] ) ){
-            if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
-                $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_name'], $_POST['rrze-faq']['doms_new_url'] );
-                if ( !$domains ){
-                    add_settings_error( 'doms_new_url', 'doms_new_error', $_POST['rrze-faq']['doms_new_url'] . ' is not valid.', 'error' );        
-                }
-                $options['doms_new_name'] = '';
-                $options['doms_new_url'] = '';
-            } else {
-                foreach ( $_POST as $key => $url ){
-                    if ( substr( $key, 0, 11 ) === "del_domain_" ){
-                        $domains = $api->deleteDomain( $url );
-                        foreach( $options as $field => $val ){
-                            if ( ( stripos( $field, 'sync_url' ) === 0 ) && ( $val == $url ) ){
-                	            preg_match_all('/\d+/', $field, $nr);
-                	            unset( $options['sync_shortname' . $nr[0][0]] );
-                	            unset( $options['sync_url' . $nr[0][0]] );
-                	            unset( $options['sync_categories' . $nr[0][0]] );
-                	            unset( $options['sync_manuell_sync' . $nr[0][0]] );
-                	            unset( $options['sync_hr' . $nr[0][0]] );
-                            }
-                        }                        
+        $domains = $api->getDomains();
+        $tab = ( isset($_GET['doms'] ) ? 'doms' : ( isset( $_GET['sync'] ) ? 'sync' : ( isset( $_GET['del'] ) ? 'del' : '' ) ) );
+        switch ( $tab ){
+            case 'doms':
+                if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
+                    // add domain
+                    $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_name'], $_POST['rrze-faq']['doms_new_url'] );
+                    if ( !$domains ){
+                        $domains = $api->getDomains();
+                        add_settings_error( 'doms_new_url', 'doms_new_error', $_POST['rrze-faq']['doms_new_url'] . ' is not valid.', 'error' );        
                     }
-                }
-            }
-            $options['registeredDomains'] = $domains;
-        } elseif ( isset( $_GET['sync'] ) ){
-            $options['registeredDomains'] = $api->getDomains();
-         }elseif ( isset( $_GET['del'] ) ){
-            deleteLogfile();
+                    $options['doms_new_name'] = '';
+                    $options['doms_new_url'] = '';
+                } else {
+                    // delete domain(s)
+                    foreach ( $_POST as $key => $url ){
+                        if ( substr( $key, 0, 11 ) === "del_domain_" ){
+                            foreach( $options as $field => $val ){
+                                if ( ( stripos( $field, 'sync_url' ) === 0 ) && ( $val == $url ) ){
+                                    $parts = explode( '_', $field );
+                                    unset( $options['sync_shortname_' . $parts[2]] );
+                                    unset( $options['sync_url_' . $parts[2]] );
+                                    unset( $options['sync_categories_' . $parts[2]] );
+                                    unset( $options['sync_manuell_sync_' . $parts[2]] );
+                                    unset( $options['sync_hr_' . $parts[2]] );
+                                    if ( ( $key = array_search( $url, $domains ) ) !== false) {
+                                        unset( $domains[$key] );
+                                    }                                    
+                            }
+                            }                        
+                        }
+                    }
+                }    
+            break;
+            case 'sync':
+            break;
+            case 'del':
+                deleteLogfile();
+            break;
         }
+
+        if ( !$domains ){
+            unset( $options['registeredDomains'] );
+        } else {
+            $options['registeredDomains'] = $domains;
+        }
+
         return $options;
     }
 

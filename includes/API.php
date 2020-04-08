@@ -20,6 +20,7 @@ class API {
                 $domains[$shortname] = $url;
             }	
         }
+        asort( $domains );
         return $domains;
     }
     
@@ -42,13 +43,17 @@ class API {
         return in_array( $url, $this->getDomains() );
     }
 
-    public function deleteDomain( $url ){
-        $domains = $this->getDomains();
-        if ( ( $key = array_search( $url, $domains ) ) !== false ) {
-            unset($domains[$key]);
-        }   
-        return $domains;
-    }
+    // public function deleteDomain( $url ){
+    //     $domains = $this->getDomains();
+
+    //     // echo '<pre>';
+    //     // $domains
+
+    //     if ( ( $key = array_search( $url, $domains ) ) !== false ) {
+    //         unset($domains[$key]);
+    //     }   
+    //     return $domains;
+    // }
 
     protected function getUrl( $url ){
         $ret = FALSE;

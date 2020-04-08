@@ -331,12 +331,13 @@ class Settings {
         if ( $this->domains ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Added domains:</th></tr></thead><tbody>';
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Domains:</th></tr></thead><tbody>';
             foreach ( $this->domains as $name => $url ){
                 echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
                 $i++;
             }
             echo '</tbody></table>';
+            echo '<p>' . __( 'Please note: "Delete selected domains" will NOT delete any FAQ, category or tag.', 'rrze-faq' ) . '</p>'; 
             submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
         }
     }
@@ -346,6 +347,7 @@ class Settings {
         $i = 1;
         $newFields = array();
         $api = new API();
+
         foreach ( $this->domains as $shortname => $url ){
             $categories = $api->getCategories( $url );            
             foreach ( $this->settingsFields['sync'] as $field ){
@@ -362,7 +364,7 @@ class Settings {
                         }
                         break;    
                 }
-                $field['name'] .= $i;
+                $field['name'] = $field['name'] . '_' . $shortname;
                 $newFields[] = $field;
             }
             $i++;
