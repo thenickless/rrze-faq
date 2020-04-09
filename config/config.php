@@ -121,7 +121,7 @@ function getFields() {
 				'default' => '',
 				'options' => [
 					'' => __('Do not synchronize.', 'rrze-faq' ),
-					'manuel' => __('Synchronize one time now.', 'rrze-faq' ),
+					'manual' => __('Synchronize one time now.', 'rrze-faq' ),
 					'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
 				],
 				'type' => 'radio'

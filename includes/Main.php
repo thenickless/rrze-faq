@@ -40,7 +40,7 @@ class Main {
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
         // Actions: sync, add domain, delete domain, delete logfile
-        // add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
+        add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
         // Auto-Sync
         add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
@@ -196,7 +196,7 @@ class Main {
                                     unset( $options['sync_shortname_' . $parts[2]] );
                                     unset( $options['sync_url_' . $parts[2]] );
                                     unset( $options['sync_categories_' . $parts[2]] );
-                                    unset( $options['sync_manuell_sync_' . $parts[2]] );
+                                    unset( $options['sync_mode_' . $parts[2]] );
                                     unset( $options['sync_hr_' . $parts[2]] );
                                     if ( ( $key = array_search( $url, $domains ) ) !== false) {
                                         unset( $domains[$key] );
@@ -206,8 +206,6 @@ class Main {
                         }
                     }
                 }    
-            break;
-            case 'sync':
             break;
             case 'del':
                 deleteLogfile();
@@ -225,7 +223,7 @@ class Main {
 
     public function checkSync() {
         if ( isset( $_GET['sync'] ) ){
-            $this->setCronjob();
+            // $this->setCronjob();
             $sync = new Sync();
             $sync->doSync( 'manual' );
         }

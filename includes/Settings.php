@@ -349,7 +349,11 @@ class Settings {
         $api = new API();
 
         foreach ( $this->domains as $shortname => $url ){
-            $categories = $api->getCategories( $url );            
+            $url = $api->getUrl( $url );
+            $categories = $api->getCategories( $url ); 
+            // echo '<pre> in set SettingsDomains' . $url;
+            // var_dump($categories);
+            // exit;           
             foreach ( $this->settingsFields['sync'] as $field ){
                 switch ( $field['name'] ){
                     case 'shortname':
