@@ -17,7 +17,6 @@ class Sync {
         $api = new API();
         $domains = $api->getDomains();
         foreach( $domains as $shortname => $url ){
-            $url = $api->getUrl( $url );
             $options = get_option( 'rrze-faq' );
             if ( isset( $options['sync_mode_' . $shortname] ) ){
                 $categories = ( isset( $options['sync_categories_' . $shortname] ) ? implode( ',', $options['sync_categories_' . $shortname] ) : '' );

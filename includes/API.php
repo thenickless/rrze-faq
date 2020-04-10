@@ -5,13 +5,22 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
+define ('ENDPOINT', 'wp-json/wp/v2/faq' );
+
 class API {
 
+    private $aRemoteCategoryIDs = array();
+    private $aRemoteTagIDs = array();
 
-    protected function checkDomain( $url ){
-        $content = wp_remote_get( $url . 'wp-json/wp/v2/faq?per_page=1' );
+
+    protected function checkDomain( &$url ){
+        $content = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
         $status_code = wp_remote_retrieve_response_code( $content );
         return ( $status_code != 200 ? FALSE : TRUE );
+    }
+
+    protected function isRegisteredDomain( &$url ){
+        return in_array( $url, $this->getDomains() );
     }
 
     public function getDomains(){
@@ -26,7 +35,7 @@ class API {
         return $domains;
     }
     
-    public function setDomain( $shortname, $url ){
+    public function setDomain( &$shortname, &$url ){
         $ret = FALSE;
         $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
         $domains = $this->getDomains();
@@ -41,153 +50,108 @@ class API {
         return $domains;
     }
 
-    protected function isRegisteredDomain( $url ){
-        return in_array( $url, $this->getDomains() );
-    }
+    protected function getTaxonomies( &$url, $field, &$filter ){
+        $items = array();    
+        $url .= ENDPOINT . '_' . $field;    
+        $slug = ( $filter ? '&slug=' . $filter : '' );
+        $page = 1;
 
-
-    public function getUrl( $url ){
-        $ret = FALSE;
-        $domains = $this->getDomains();
-        if ( $this->isRegisteredDomain( $url ) ){
-            $ret = $url . 'wp-json/wp/v2/faq';
-        }
-        return $ret;
-    }
-
-    protected function getTaxonomies( $url, $field, $filter ){
-        if ( !$url ){
-            return FALSE;
-        }else{
-            $items = array();    
-            $url .= '_' . $field;    
-            $slug = ( $filter ? '&slug=' . $filter : '' );
-            $page = 1;
-
-            do {
-                $request = wp_remote_get( $url . '?page=' . $page . $slug );
-                $status_code = wp_remote_retrieve_response_code( $request );
-                if ( $status_code == 200 ){
-                    $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                    if ( !empty( $entries ) ){
-                        foreach( $entries as $entry ){
-                            $items[$entry['id']] = array( 
-                                'slug' => $entry['slug'],
-                                'name' => $entry['name']
-                            );
-                            if ( isset( $entry['parent'] ) ){
-                                $items[$entry['id']]['remote_parentID'] = $entry['parent'];
-                            }
+        do {
+            $request = wp_remote_get( $url . '?page=' . $page . $slug );
+            $status_code = wp_remote_retrieve_response_code( $request );
+            if ( $status_code == 200 ){
+                $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+                if ( !empty( $entries ) ){
+                    foreach( $entries as $entry ){
+                        $items[$entry['id']] = array( 
+                            'slug' => $entry['slug'],
+                            'name' => $entry['name']
+                        );
+                        if ( isset( $entry['parent'] ) ){
+                            $items[$entry['id']]['remote_parentID'] = $entry['parent'];
                         }
                     }
                 }
-                $page++;   
-            } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
-                    
-            return $items;
-        } 
+            }
+            $page++;   
+        } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+
+        return $items;
     }
 
-    public function getCategories( $url, $categories = '' ){
+    public function getCategories( &$url, &$categories = '' ){
         return $this->getTaxonomies( $url, 'category', $categories );
     }
 
-    public function getTags( $url, $tags = '' ){
-        return $this->getTaxonomies( $url, 'tag', $tags );
-    }
+    // public function getTags( $url, $tags = '' ){
+    //     return $this->getTaxonomies( $url, 'tag', $tags );
+    // }
 
-    protected function getTaxonomyByID( $url, $ID, $field ){
+    protected function getTaxonomyByID( &$url, &$remoteID, $field ){
         $item = array();
-        $request = wp_remote_get( $url . '_' . $field . '/' . $ID );
+        $request = wp_remote_get( $url . ENDPOINT . '_' . $field . '/' . $remoteID . '/?_fields=name,parent' );
         $status_code = wp_remote_retrieve_response_code( $request );
         if ( $status_code == 200 ){
             $entry = json_decode( wp_remote_retrieve_body( $request ), true );
             if ( !empty( $entry ) ){
                 $item = array( 
-                    'remote_ID' => $ID,
-                    'slug' => $entry['slug'],
+                    'remoteParentID' => ( isset( $entry['parent'] ) ? $entry['parent'] : 0 ),
                     'name' => $entry['name']
                 );
-                if ( isset( $entry['parent'] ) ){
-                    $item['remote_parentID'] = $entry['parent']; 
-                } 
             }
         }
     return $item;
     }
 
-    private function getCategoryByID( $url, $ID ){
-        return $this->getTaxonomyByID( $url, $ID, 'category' );
+    protected function getCategoryByID( &$url, &$remoteID ){
+        return $this->getTaxonomyByID( $url, $remoteID, 'category' );
     }
 
-    private function getTagByID( $url, $ID ){
-        return $this->getTaxonomyByID( $url, $ID, 'tag' );
+    protected function getTagByID( &$url, &$remoteID ){
+        return $this->getTaxonomyByID( $url, $remoteID, 'tag' );
     }
 
 
-    protected function setCategories( $url, $aCategories, $shortname ){
+    protected function setCategories( &$aCategories, &$shortname ){
         $aRet = array();
-        $all_IDs = array();
-        
-        foreach ( $aCategories as $ID => $aDetails ){
-            $all_IDs[] = $ID;
-            $all_IDs[] = $aDetails['remote_parentID'];
-        }
-        $all_IDs = array_unique( $all_IDs );
-        sort($all_IDs);
-        if ( !$all_IDs[0] ){
-            unset( $all_IDs[0] );
-        }
-
-        // get parent and grandparent and greatgrandparent and ... of categories
-        foreach ( $all_IDs as $ID ){
-            $category = $this->getCategoryByID( $url, $ID );
-            $aCategories[$ID] = $category;
-            if ( $category['remote_parentID'] ){
-                $all_IDs[] = $category['remote_parentID'];
-                $all_IDs = array_unique( $all_IDs );
-            }
-        }
 
         ksort( $aCategories ); 
 
-        $map = array();
         // insert or update categories:
-        foreach ( $aCategories as $ID => $aDetails ){
-            $parent = ( isset( $aDetails['remote_parentID'] ) && isset( $map[$aDetails['remote_parentID']] ) ? $map[$aDetails['remote_parentID']] : 0 );
-            $term = term_exists( $aDetails['name'], 'faq_category', $parent );
+        foreach ( $aCategories as $remoteID => $aDetails ){
+            $term = term_exists( $aDetails['name'], 'faq_category' );
             if ( !$term ) {
-                $term = wp_insert_term( $aDetails['name'], 'faq_category', array( 'parent' => $parent), $aDetails['slug'] );
+                $term = wp_insert_term( $aDetails['name'], 'faq_category' );
             }
-            $map[$ID] = $term['term_id'];
             update_term_meta( $term['term_id'], 'source', $shortname );
 
-            $aRet[$ID] = array(
-                'term_id' => $term['term_id'],
-                'term_taxonomy_id' => $term['term_taxonomy_id'],
-                'remote_term_taxonomy_id' => $ID,
-                'slug' => $aDetails['slug'],
-                'parentID' => $parent,
-                'remote_parentID' => $aDetails['remote_parentID']                
+            $aRet[$remoteID] = array(
+                'term_id' => (int) $term['term_id'],
+                'term_taxonomy_id' => (int) $term['term_taxonomy_id'],
+                'remoteParentID' => $aDetails['remoteParentID']                
             );
         }
 
+        // set parent
+        foreach ( $aCategories as $remoteID => $aDetails ){
+            if ( $aDetails['remoteParentID'] ){
+                $term = wp_update_term( $aRet[$remoteID]['term_id'], 'faq_category', array( 'parent' => $aRet[$aDetails['remoteParentID']]['term_id'] ) );
+            }
+        }
         return $aRet;
     }
 
-    protected function setTags( $url, $aTags, $shortname ){
+    protected function setTags( &$aTags, &$shortname ){
         $aRet = array();
-        foreach ( $aTags as $ID => $aDetails ){
+        foreach ( $aTags as $remoteID => $aDetails ){
             $term = term_exists( $aDetails['name'], 'faq_tag' );
             if ( !$term ) {
                 $term = wp_insert_term( $aDetails['name'], 'faq_tag' );
-                update_term_meta( $term['term_taxonomy_id'], 'source', $shortname );
             }
-            $aRet = array(
-                'remote_term_taxonomy_id' => $ID,
-                'term_taxonomy_id' => $term['term_taxonomy_id'],
-                'slug' => $aDetails['slug']                
-            );
+            update_term_meta( $term['term_id'], 'source', $shortname );
+            $aRet[$remoteID] = array(
+                'name' => $aDetails['name']
+                );
         }
         return $aRet;
     }
@@ -203,25 +167,13 @@ class API {
         return $iDel;
     }
 
-    protected function getFAQ( $url, $categories ){
-        $items = array();
-        // $filter = '';
-        // foreach( $aCategories as $category ){
-        //     $filter .= $category['slug'] . ',';    
-        // }
-        // $filter = substr( $filter, 0, -1 );
+    protected function getFAQ( &$url, &$categories ){
+        $faqs = array();
         $filter = '&filter[faq_category]=' . $categories;
-
-        // echo '<br>getFAQ<br>';
-        // echo $filter;
-        // exit;
-        // echo '<pre>';
-
         $page = 1;
+
         do {
-            // echo $url . '?page=' . $page . $filter;
-            // echo '<br>';
-            $request = wp_remote_get( $url . '?page=' . $page . $filter );
+            $request = wp_remote_get( $url . ENDPOINT . '?_fields=title,content,faq_category,faq_tag,post-meta-fields&page=' . $page . $filter );
             $status_code = wp_remote_retrieve_response_code( $request );
             if ( $status_code == 200 ){
                 $entries = json_decode( wp_remote_retrieve_body( $request ), true );
@@ -229,82 +181,87 @@ class API {
                     if ( !isset( $entries[0] ) ){
                         $entries = array( $entries );
                     }
-
                     foreach( $entries as $entry ){
-                        $items[] = array(
-                            'faqID' => $entry['post-meta-fields']['faqID'],
+                        $faqs[] = array(
                             'title' => $entry['title']['rendered'],
                             'content' => $entry['content']['rendered'],
-                            'slug' => $entry['slug'],
                             'lang' => $entry['post-meta-fields']['lang'],
-                            'remote_category_ids' => $entry['faq_category'],
-                            'remote_tag_ids' => $entry['faq_tag']
+                            'faqID' => $entry['post-meta-fields']['faqID'],
+                            'aRemoteCategoryIDs' => $entry['faq_category'],
+                            'aRemoteTagIDs' => $entry['faq_tag']
                         );
+
+                        $this->aRemoteTagIDs = array_merge( $this->aRemoteTagIDs, $entry['faq_tag'] );
+                        $this->aRemoteCategoryIDs = array_merge( $this->aRemoteCategoryIDs, $entry['faq_category'] );
                     }
-                    // var_dump($entry);
-                }else{
-                    continue;
                 }
             }
             $page++;   
-        } while ( $status_code == 200 );
+        } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+        array_unique( $this->aRemoteCategoryIDs );
+        array_unique( $this->aRemoteTagIDs );
 
-        // echo 'page=' . $page;
-        // exit;
-
-        return $items;
+        return $faqs;
     }
 
-    public function setFAQ( $url, $categories, $shortname ){
+    protected function getRemoteCategories( &$url ){
+        $aCategories = array();
+        foreach( $this->aRemoteCategoryIDs as $remoteID ){
+            $cat = $this->getCategoryByID( $url, $remoteID );
+            if ( $cat['remoteParentID'] ){
+                $this->aRemoteCategoryIDs[] = $cat['remoteParentID'];
+            }
+            $aCategories[$remoteID] = $cat;
+        }
+        return $aCategories;
+    }
+
+    protected function getRemoteTags( &$url ){
+        $aTags = array();
+        foreach( $this->aRemoteTagIDs as $remoteID ){
+            $aTags[$remoteID] = $this->getTagByID( $url, $remoteID );
+        }
+        return $aTags;
+    }
+
+    protected function getTaxIDsAsString( &$aRemoteIDs, &$aMap ){
+        $ret = '';
+        foreach( $aRemoteIDs as $remoteID ){
+            $ret .= $aMap[$remoteID]['term_id'] . ',';
+        }
+        return substr( $ret, 0, -1 );
+    }
+
+    protected function getTaxNamesAsString( &$aRemoteIDs, &$aMap ){
+        $ret = '';
+        foreach( $aRemoteIDs as $remoteID ){
+            $ret .= $aMap[$remoteID]['name'] . ',';
+        }
+        return substr( $ret, 0, -1 );
+    }
+
+    public function setFAQ( &$url, &$categories, &$shortname ){
         $iCnt = 0;
-        $aCategories = $this->getCategories( $url, $categories );
-        $aCategories = $this->setCategories( $url, $aCategories, $shortname );
 
-        // echo '<pre>';
-        // echo 'setFAQ 1';
-        // var_dump($aCategories);
-        // exit;
-
-        // get FAQ
+        // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
 
-        // echo '<pre>';
-        // echo 'setFAQ 1 : ';
-        // echo count($aFaq);
-        // exit;
+        // get all categories as parent categories as well and set them
+        $aCategories = $this->getRemoteCategories( $url );
+        $aCatMap = $this->setCategories( $aCategories, $shortname );
 
-        // get Tags
-        $remote_tag_ids = array();
-        foreach ( $aFaq as $faq ){
-            foreach( $faq['remote_tag_ids'] as $ID ){
-                $remote_tag_ids[] = $ID;
-            }
-        }
-        $remote_tag_ids = array_unique( $remote_tag_ids );
-        $aTags = array();
-        foreach( $remote_tag_ids as $ID ){
-            $tag = $this->getTagByID( $url, $ID );
-            $aTags[$tag['remote_ID']] = $tag['slug'];
-        }
+        // get remote tags and set them
+        $aTags = $this->getRemoteTags( $url );
+        $aTagMap = $this->setTags( $aTags, $shortname );
 
         // set FAQ
         foreach ( $aFaq as $faq ){
-            $tags = '';
-            foreach( $faq['remote_tag_ids'] as $ID ){
-                $tags .= $aTags[$ID] . ',';
-            }
-            $tags = substr( $tags, 0, -1 );
 
-            $categories = array();
-            foreach( $faq['remote_category_ids'] as $ID ){
-                $categories[] = $aCategories[$ID]['term_taxonomy_id'];
-            }
-    
             $post_id = wp_insert_post( array(
+                'post_type' => 'faq',
+                'post_name' => sanitize_title( $faq['title'] ),
                 'post_title' => $faq['title'],
                 'post_content' => $faq['content'],
-                'post_name' => sanitize_title( $faq['title'] ),
-                'post_type' => 'faq',
                 'comment_status' => 'closed',
                 'ping_status' => 'closed',
                 'post_status' => 'publish',
@@ -314,8 +271,8 @@ class API {
                     'lang' => $faq['lang']
                     ),
                 'tax_input' => array(
-                    'faq_category' => $categories,
-                    'faq_tag' => $tags
+                    'faq_category' => $this->getTaxIDsAsString( $faq['aRemoteCategoryIDs'], $aCatMap ),
+                    'faq_tag' => $this->getTaxNamesAsString( $faq['aRemoteTagIDs'], $aTagMap )
                     )
                 ) );
             $iCnt++;

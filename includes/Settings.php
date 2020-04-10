@@ -349,7 +349,6 @@ class Settings {
         $api = new API();
 
         foreach ( $this->domains as $shortname => $url ){
-            $url = $api->getUrl( $url );
             $categories = $api->getCategories( $url ); 
             // echo '<pre> in set SettingsDomains' . $url;
             // var_dump($categories);
