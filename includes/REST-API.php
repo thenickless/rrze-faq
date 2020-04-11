@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class RESTAPI {
 
+
     public function __construct() {
         add_action( 'rest_api_init', [$this, 'createPostMeta'] );
         add_action( 'rest_api_init', [$this, 'createTaxDetails'] );
@@ -54,11 +55,17 @@ class RESTAPI {
     }
 
 
-    public function getCategories( $post ) {
-        return wp_get_post_terms( $post['id'], 'faq_category' );
+
+
+    public function getFaqCategories( $post ) {
+        $cats = wp_get_post_terms( $post['id'], 'faq_category' );
+        foreach ( $cats as $cat ){
+            $cat->parent = get_term_parents_list( $cat->term_id, 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => FALSE ) );
+        }
+        return $cats;
     }
 
-    public function getTags( $post ) {
+    public function getFaqTags( $post ) {
         return wp_get_post_terms( $post['id'], 'faq_tag' );
     }
 
@@ -67,7 +74,7 @@ class RESTAPI {
         register_rest_field( 'faq',
             'faq_category',
             array(
-                'get_callback'    => [$this, 'getCategories'],
+                'get_callback'    => [$this, 'getFaqCategories'],
                 'update_callback'   => null,
                 'schema'            => null,
              )
@@ -75,7 +82,7 @@ class RESTAPI {
         register_rest_field( 'faq',
             'faq_tag',
             array(
-                'get_callback'    => [$this, 'getTags'],
+                'get_callback'    => [$this, 'getFaqTags'],
                 'update_callback'   => null,
                 'schema'            => null,
              )

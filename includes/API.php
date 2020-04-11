@@ -191,13 +191,12 @@ class API {
                                 'title' => $entry['title']['rendered'],
                                 'content' => $entry['content']['rendered'],
                                 'lang' => $entry['post-meta-fields']['lang'],
-                                // 'faqID' => $entry['post-meta-fields']['faqID'],
-                                'aRemoteCategoryIDs' => $entry['faq_category'],
-                                'aRemoteTagIDs' => $entry['faq_tag']
+                                'aCategories' => $entry['faq_category'],
+                                'aTags' => $entry['faq_tag']
                             );
     
-                            $this->aRemoteTagIDs = array_merge( $this->aRemoteTagIDs, $entry['faq_tag'] );
-                            $this->aRemoteCategoryIDs = array_merge( $this->aRemoteCategoryIDs, $entry['faq_category'] );
+                            // $this->aRemoteTagIDs = array_merge( $this->aRemoteTagIDs, $entry['faq_tag'] );
+                            // $this->aRemoteCategoryIDs = array_merge( $this->aRemoteCategoryIDs, $entry['faq_category'] );
                         // }
                     }
                 }
@@ -251,6 +250,10 @@ class API {
 
         // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
+
+        echo '<pre>';
+        var_dump($aFaq);
+        exit;
 
         // get all categories as parent categories as well and set them
         $aCategories = $this->getRemoteCategories( $url );

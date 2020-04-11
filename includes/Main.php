@@ -47,7 +47,7 @@ class Main {
         $cpt = new CPT();
 
         include_once( __DIR__ . '/REST-API.php' );
-        $cpt = new RESTAPI();
+        $restAPI = new RESTAPI();
 
         include_once( __DIR__ . '/Layout.php' );
         $layout = new Layout();

@@ -127,8 +127,7 @@ class CPT {
                     ),
                     'show_in_rest'       => TRUE,
                     'rest_base'          => $t['rest_base'],
-                    // 'rest_controller_class' => 'WP_REST_Terms_Controller'
-                    'rest_controller_class' => 'WP_REST_Taxonomies_Controller'
+                    'rest_controller_class' => 'WP_REST_Terms_Controller'
                 )
             );
             register_term_meta(
