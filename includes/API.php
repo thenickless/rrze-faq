@@ -63,13 +63,15 @@ class API {
                 $entries = json_decode( wp_remote_retrieve_body( $request ), true );
                 if ( !empty( $entries ) ){
                     foreach( $entries as $entry ){
-                        $items[$entry['id']] = array( 
-                            'slug' => $entry['slug'],
-                            'name' => $entry['name']
-                        );
-                        if ( isset( $entry['parent'] ) ){
-                            $items[$entry['id']]['remote_parentID'] = $entry['parent'];
-                        }
+                        // if ( $entry['meta']['source'] == 'website' ){
+                            $items[$entry['id']] = array( 
+                                'slug' => $entry['slug'],
+                                'name' => $entry['name']
+                            );
+                            if ( isset( $entry['parent'] ) ){
+                                $items[$entry['id']]['remote_parentID'] = $entry['parent'];
+                            }    
+                        // }
                     }
                 }
             }
@@ -89,15 +91,17 @@ class API {
 
     protected function getTaxonomyByID( &$url, &$remoteID, $field ){
         $item = array();
-        $request = wp_remote_get( $url . ENDPOINT . '_' . $field . '/' . $remoteID . '/?_fields=name,parent' );
+        $request = wp_remote_get( $url . ENDPOINT . '_' . $field . '/' . $remoteID . '/?_fields=name,parent,meta' );
         $status_code = wp_remote_retrieve_response_code( $request );
         if ( $status_code == 200 ){
             $entry = json_decode( wp_remote_retrieve_body( $request ), true );
             if ( !empty( $entry ) ){
-                $item = array( 
-                    'remoteParentID' => ( isset( $entry['parent'] ) ? $entry['parent'] : 0 ),
-                    'name' => $entry['name']
-                );
+                // if ( $entry['meta']['source'] == 'website' ){
+                    $item = array( 
+                        'remoteParentID' => ( isset( $entry['parent'] ) ? $entry['parent'] : 0 ),
+                        'name' => $entry['name']
+                    );
+                // }
             }
         }
     return $item;
@@ -182,17 +186,19 @@ class API {
                         $entries = array( $entries );
                     }
                     foreach( $entries as $entry ){
-                        $faqs[] = array(
-                            'title' => $entry['title']['rendered'],
-                            'content' => $entry['content']['rendered'],
-                            'lang' => $entry['post-meta-fields']['lang'],
-                            'faqID' => $entry['post-meta-fields']['faqID'],
-                            'aRemoteCategoryIDs' => $entry['faq_category'],
-                            'aRemoteTagIDs' => $entry['faq_tag']
-                        );
-
-                        $this->aRemoteTagIDs = array_merge( $this->aRemoteTagIDs, $entry['faq_tag'] );
-                        $this->aRemoteCategoryIDs = array_merge( $this->aRemoteCategoryIDs, $entry['faq_category'] );
+                        // if ( $entry['post-meta-fields']['source'] == 'website' ){
+                            $faqs[] = array(
+                                'title' => $entry['title']['rendered'],
+                                'content' => $entry['content']['rendered'],
+                                'lang' => $entry['post-meta-fields']['lang'],
+                                // 'faqID' => $entry['post-meta-fields']['faqID'],
+                                'aRemoteCategoryIDs' => $entry['faq_category'],
+                                'aRemoteTagIDs' => $entry['faq_tag']
+                            );
+    
+                            $this->aRemoteTagIDs = array_merge( $this->aRemoteTagIDs, $entry['faq_tag'] );
+                            $this->aRemoteCategoryIDs = array_merge( $this->aRemoteCategoryIDs, $entry['faq_category'] );
+                        // }
                     }
                 }
             }
@@ -267,7 +273,7 @@ class API {
                 'post_status' => 'publish',
                 'meta_input' => array(
                     'source' => $shortname,
-                    'faqID' => $faq['faqID'],
+                    // 'faqID' => $faq['faqID'],
                     'lang' => $faq['lang']
                     ),
                 'tax_input' => array(

@@ -84,5 +84,3 @@ add_action('publish_faq', 'RRZE\FAQ\Server\set_source', 10, 1 );
 add_action('create_faq_category', 'RRZE\FAQ\Server\set_term_source', 10, 1 );
 add_action('create_faq_tag', 'RRZE\FAQ\Server\set_term_source', 10, 1 );
 
-
-

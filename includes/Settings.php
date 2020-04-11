@@ -362,6 +362,9 @@ class Settings {
                         $field['default'] = $url;
                         break;
                     case 'categories':
+                        if ( !$categories ){
+                            $field['options'][''] = __( 'no category with source = "website" found', 'rrze-faq' );
+                        }
                         foreach ( $categories as $cat ){
                             $field['options'][$cat['slug']] = $cat['name'];
                         }
