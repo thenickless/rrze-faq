@@ -9,8 +9,8 @@ define ('ENDPOINT', 'wp-json/wp/v2/faq' );
 
 class API {
 
-    private $aRemoteCategoryIDs = array();
-    private $aRemoteTagIDs = array();
+    private $aAllCategories = array();
+    private $aAllTags = array();
 
 
     protected function checkDomain( &$url ){
@@ -117,23 +117,21 @@ class API {
 
 
     protected function setCategories( &$aCategories, &$shortname ){
-        $aRet = array();
-
-        ksort( $aCategories ); 
-
         // insert or update categories:
-        foreach ( $aCategories as $remoteID => $aDetails ){
-            $term = term_exists( $aDetails['name'], 'faq_category' );
+        foreach ( $aCategories as $name => $aDetails ){
+            $term = term_exists( $name, 'faq_category' );
             if ( !$term ) {
-                $term = wp_insert_term( $aDetails['name'], 'faq_category' );
+                $term = wp_insert_term( $name, 'faq_category' );
+                update_term_meta( $term['term_id'], 'source', $shortname );    
+            }            
+            if ( $aDetails['child'] ){
+                $childterm = term_exists( $aDetails['child'], 'faq_category' );
+                if ( !$childterm ) {
+                    $childterm = wp_insert_term( $aDetails['child'], 'faq_category', array( 'parent' => $term['term_id'] ) );
+                    update_term_meta( $childterm['term_id'], 'source', $shortname );    
+                }
             }
-            update_term_meta( $term['term_id'], 'source', $shortname );
 
-            $aRet[$remoteID] = array(
-                'term_id' => (int) $term['term_id'],
-                'term_taxonomy_id' => (int) $term['term_taxonomy_id'],
-                'remoteParentID' => $aDetails['remoteParentID']                
-            );
         }
 
         // set parent
@@ -173,6 +171,7 @@ class API {
 
     protected function getFAQ( &$url, &$categories ){
         $faqs = array();
+        $aCategoryRelation = array();
         $filter = '&filter[faq_category]=' . $categories;
         $page = 1;
 
@@ -186,25 +185,38 @@ class API {
                         $entries = array( $entries );
                     }
                     foreach( $entries as $entry ){
-                        // if ( $entry['post-meta-fields']['source'] == 'website' ){
-                            $faqs[] = array(
-                                'title' => $entry['title']['rendered'],
-                                'content' => $entry['content']['rendered'],
-                                'lang' => $entry['post-meta-fields']['lang'],
-                                'aCategories' => $entry['faq_category'],
-                                'aTags' => $entry['faq_tag']
-                            );
-    
-                            // $this->aRemoteTagIDs = array_merge( $this->aRemoteTagIDs, $entry['faq_tag'] );
-                            // $this->aRemoteCategoryIDs = array_merge( $this->aRemoteCategoryIDs, $entry['faq_category'] );
-                        // }
+                        $faqs[$entry['id']] = array(
+                            'title' => $entry['title']['rendered'],
+                            'content' => $entry['content']['rendered'],
+                            'lang' => $entry['post-meta-fields']['lang']
+                        );
+                        $sCat = '';
+                        foreach ( $entry['faq_category'] as $cat ){
+                            $sCat .= $cat['name'] . ',';
+                            $aCategoryRelation[] = $cat['parent'];
+                        }
+                        $faqs[$entry['id']]['faq_category'] = trim( $sCat, ',' );
+                        $cTag = '';
+                        foreach ( $entry['faq_tag'] as $tag ){
+                            $sTag .= $tag['name'] . ',';
+                            $this->aAllTags[] = $tag['name'];
+                        }
+                        $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
                     }
                 }
             }
             $page++;   
         } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
-        array_unique( $this->aRemoteCategoryIDs );
-        array_unique( $this->aRemoteTagIDs );
+
+        $aCategoryRelation = array_unique( $aCategoryRelation );
+        foreach ( $aCategoryRelation as $catRel ){
+            $catRel = rtrim( $catRel, ',');
+            $aCatRel = explode( ',', $catRel );
+            $iCnt = count( $aCatRel );
+            for ( $i=0; $i < $iCnt; $i++ ){
+                $this->aAllCategories[$aCatRel[$i]] = array( 'child' => ( isset( $aCatRel[$i+1] ) ? $aCatRel[$i+1] : 0 ) );
+            }
+        }
 
         return $faqs;
     }
@@ -251,21 +263,11 @@ class API {
         // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
 
-        echo '<pre>';
-        var_dump($aFaq);
-        exit;
-
-        // get all categories as parent categories as well and set them
-        $aCategories = $this->getRemoteCategories( $url );
-        $aCatMap = $this->setCategories( $aCategories, $shortname );
-
-        // get remote tags and set them
-        $aTags = $this->getRemoteTags( $url );
-        $aTagMap = $this->setTags( $aTags, $shortname );
+        // set categories and their parents/children
+        $this->setCategories( $this->aAllCategories, $shortname );
 
         // set FAQ
         foreach ( $aFaq as $faq ){
-
             $post_id = wp_insert_post( array(
                 'post_type' => 'faq',
                 'post_name' => sanitize_title( $faq['title'] ),
@@ -276,12 +278,11 @@ class API {
                 'post_status' => 'publish',
                 'meta_input' => array(
                     'source' => $shortname,
-                    // 'faqID' => $faq['faqID'],
                     'lang' => $faq['lang']
                     ),
                 'tax_input' => array(
-                    'faq_category' => $this->getTaxIDsAsString( $faq['aRemoteCategoryIDs'], $aCatMap ),
-                    'faq_tag' => $this->getTaxNamesAsString( $faq['aRemoteTagIDs'], $aTagMap )
+                    'faq_category' => $faq['faq_category'],
+                    'faq_tag' => $faq['faq_tag']
                     )
                 ) );
             $iCnt++;

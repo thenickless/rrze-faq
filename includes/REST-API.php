@@ -60,7 +60,7 @@ class RESTAPI {
     public function getFaqCategories( $post ) {
         $cats = wp_get_post_terms( $post['id'], 'faq_category' );
         foreach ( $cats as $cat ){
-            $cat->parent = get_term_parents_list( $cat->term_id, 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => FALSE ) );
+            $cat->parent = get_term_parents_list( $cat->term_id, 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => TRUE ) );
         }
         return $cats;
     }
