@@ -13,10 +13,12 @@ class RESTAPI {
     public function __construct() {
         add_action( 'rest_api_init', [$this, 'createPostMeta'] );
         add_action( 'rest_api_init', [$this, 'createTaxDetails'] );
+        add_action( 'rest_api_init', [$this, 'createParents'] );
         add_action( 'rest_api_init', [$this, 'addFilters'] );
     }
 
     public function getPostMeta( $object ) {
+        // return get_post_meta( $object['id'], 'source', TRUE );
         return get_post_meta( $object['id'] );
     }
 
@@ -24,7 +26,7 @@ class RESTAPI {
     public function createPostMeta() {
         $fields = array( 'faq', 'faq_category', 'faq_tag' );
         foreach( $fields as $field ){
-            register_rest_field( $field, 'post-meta-fields', array(
+            register_rest_field( $field, 'meta', array(
                 'get_callback'    => [$this, 'getPostMeta'],
                 'schema'          => null,
             ));
@@ -55,18 +57,21 @@ class RESTAPI {
     }
 
 
+    public function getParentCategories( $term ) {
+        return get_term_parents_list( $term['id'], 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => TRUE ) );
+    }
 
 
     public function getFaqCategories( $post ) {
-        $cats = wp_get_post_terms( $post['id'], 'faq_category' );
-        foreach ( $cats as $cat ){
-            $cat->parent = get_term_parents_list( $cat->term_id, 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => TRUE ) );
-        }
+        $cats = wp_get_post_terms( $post['id'], 'faq_category', array( 'fields' => 'names') );
+        // foreach ( $cats as $cat ){
+        //     $cat->parent = get_term_parents_list( $cat->term_id, 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => TRUE ) );
+        // }
         return $cats;
     }
 
     public function getFaqTags( $post ) {
-        return wp_get_post_terms( $post['id'], 'faq_tag' );
+        return wp_get_post_terms( $post['id'], 'faq_tag', array( 'fields' => 'names')  );
     }
 
 
@@ -88,6 +93,16 @@ class RESTAPI {
              )
         );
     }
-        
+
+    public function createParents() {
+        register_rest_field( 'faq_category',
+            'parents',
+            array(
+                'get_callback'    => [$this, 'getParentCategories'],
+                'update_callback'   => null,
+                'schema'            => null,
+             )
+        );
+    }
 
 }

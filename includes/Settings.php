@@ -93,6 +93,21 @@ class Settings {
      * @return void
      */
     public function onLoaded() {
+        // $this->setMenu();
+        // $this->setSections();
+        // $this->setFields();
+        // $this->setTabs();
+
+        // $this->optionName = getOptionName();
+        // $this->options = $this->getOptions();
+        add_action('init', [$this, 'regularInit'], 1);
+
+        add_action('admin_init', [$this, 'adminInit']);
+        add_action('admin_menu', [$this, 'adminMenu']);
+        add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
+    }
+
+    public function regularInit(){
         $this->setMenu();
         $this->setSections();
         $this->setFields();
@@ -100,10 +115,6 @@ class Settings {
 
         $this->optionName = getOptionName();
         $this->options = $this->getOptions();
-
-        add_action('admin_init', [$this, 'adminInit']);
-        add_action('admin_menu', [$this, 'adminMenu']);
-        add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
     }
 
     protected function setMenu() {
@@ -349,10 +360,12 @@ class Settings {
         $api = new API();
 
         foreach ( $this->domains as $shortname => $url ){
-            $categories = $api->getCategories( $url ); 
-            // echo '<pre> in set SettingsDomains' . $url;
+            $categories = $api->getCategories( $url, $shortname ); 
+
+            // echo '<pre>asdf';
             // var_dump($categories);
-            // exit;           
+            // exit;
+
             foreach ( $this->settingsFields['sync'] as $field ){
                 switch ( $field['name'] ){
                     case 'shortname':
@@ -365,8 +378,17 @@ class Settings {
                         if ( !$categories ){
                             $field['options'][''] = __( 'no category with source = "website" found', 'rrze-faq' );
                         }
-                        foreach ( $categories as $cat ){
-                            $field['options'][$cat['slug']] = $cat['name'];
+                        foreach ( $categories as $name => $aDetails ){
+                            $field['options'][$aDetails['slug']] = $aDetails['name'];
+                            $children = ( isset( $aDetails['children'] ) ? $aDetails['children'] : 0 );
+                            $sep = '-';
+                            while ( $children  ){
+                                foreach ( $children as $child ){
+                                    $field['options'][$child['slug']] = $sep . ' ' . $child['name'];
+                                }
+                                $children = ( isset( $child['children'] ) ? $child['children'] : 0 );
+                                $sep .= '-';
+                            }
                         }
                         break;    
                 }

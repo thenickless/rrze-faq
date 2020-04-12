@@ -4,10 +4,14 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
-use RRZE\FAQ\Settings;
-use RRZE\FAQ\Shortcode;
 use function RRZE\FAQ\Config\deleteLogfile;
 use RRZE\FAQ\API;
+use RRZE\FAQ\CPT;
+use RRZE\FAQ\Cronjob;
+use RRZE\FAQ\Layout;
+use RRZE\FAQ\RESTAPI;
+use RRZE\FAQ\Settings;
+use RRZE\FAQ\Shortcode;
 
 
 /**
@@ -28,10 +32,6 @@ class Main {
      */
     public function __construct($pluginFile) {
         $this->pluginFile = $pluginFile;
-        // Settings-Klasse wird instanziiert.
-        $this->settings = new Settings($this->pluginFile);
-        $this->settings->onLoaded();
-
     }
 
     /**
@@ -42,20 +42,15 @@ class Main {
         // Actions: sync, add domain, delete domain, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
- 
-        include_once( __DIR__ . '/CPT.php' );
-        $cpt = new CPT();
 
-        include_once( __DIR__ . '/REST-API.php' );
+        $cpt = new CPT(); 
+
+        $this->settings = new Settings($this->pluginFile);
+        $this->settings->onLoaded();
+
         $restAPI = new RESTAPI();
-
-        include_once( __DIR__ . '/Layout.php' );
         $layout = new Layout();
-
-        include_once( __DIR__ . '/Cronjob.php' );
         $cronjob = new Cronjob();
-
-        include_once( __DIR__ . '/Shortcode.php' );
         $shortcode = new Shortcode();
     }
 
