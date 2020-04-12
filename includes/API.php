@@ -250,10 +250,12 @@ class API {
                         $entries = array( $entries );
                     }
                     foreach( $entries as $entry ){
+                        $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
+
                         $faqs[$entry['id']] = array(
                             'title' => $entry['title']['rendered'],
-                            'content' => $entry['content']['rendered'],
-                            'lang' => $entry['meta']['lang'],
+                            'content' => $content,
+                            'lang' => $entry['meta']['lang'][0],
                             'faq_category' => $entry['faq_category'],
                             // 'faq_tag' => $entry['faq_tag']
                         );

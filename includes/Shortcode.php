@@ -174,186 +174,188 @@ class Shortcode {
         }
 
 
-        if( $domain ) {
-            // DOMAIN
-            $api = new API();
-            $domains = $api->getDomains();
+        // if( $domain ) {
+        //     // DOMAIN
+        //     $api = new API();
+        //     $domains = $api->getDomains();
 
-            if ( !in_array( $domain, array_keys( $domains ) ) ){
-                return __( 'Domain is not registered', 'rrze-faq' );
-            }
+        //     if ( !in_array( $domain, array_keys( $domains ) ) ){
+        //         return __( 'Domain is not registered', 'rrze-faq' );
+        //     }
 
-            $items = array();
-            $page = 1;
-            $domain = $domains[$domain] . 'wp-json/wp/v2/faq';
+        //     $items = array();
+        //     $page = 1;
+        //     $domain = $domains[$domain] . 'wp-json/wp/v2/faq';
 
-            $filter = '';
-            $single = FALSE;
+        //     $filter = '';
+        //     $single = FALSE;
 
-            if ( $glossary ){
-                if ( !$tag && !$category ){
-                    return __( 'There are too many entries expected. Please provide at least one tag or category.', 'rrze-faq' );
-                }
+        //     if ( $glossary ){
+        //         if ( !$tag && !$category ){
+        //             return __( 'There are too many entries expected. Please provide at least one tag or category.', 'rrze-faq' );
+        //         }
 
-                // get all used tags or categories
-                $url = $domain . '_' . $glossary;
-                $tags_or_categories = array();
-                $page = 1;
-                $accordion = '[collapsibles]';
+        //         // get all used tags or categories
+        //         $url = $domain . '_' . $glossary;
+        //         $tags_or_categories = array();
+        //         $page = 1;
+        //         $accordion = '[collapsibles]';
 
-                $slug = '';
-                if ( ( $category && ( $glossary == 'category' ) ) || ( $tag && ( $glossary == 'tag' ) ) ){
-                    $slug = '&slug=' . ( $category ? $category : $tag );
-                } else {
-                    // 2DO: Knackpunkt ist die Reihenfolge: besser zuerst $category bzw $tag abrufen und dann erst glossary 
-                    // umgekehrt: time-out Proxy-Error
-                    return __( 'The combination of $glossary="category" + $tag and $glossary="tag" + $category is not implemented yet because it leads to time-outs (Proxy-Error).', 'rrze-faq' );
-                }
+        //         $slug = '';
+        //         if ( ( $category && ( $glossary == 'category' ) ) || ( $tag && ( $glossary == 'tag' ) ) ){
+        //             $slug = '&slug=' . ( $category ? $category : $tag );
+        //         } else {
+        //             // 2DO: Knackpunkt ist die Reihenfolge: besser zuerst $category bzw $tag abrufen und dann erst glossary 
+        //             // umgekehrt: time-out Proxy-Error
+        //             return __( 'The combination of $glossary="category" + $tag and $glossary="tag" + $category is not implemented yet because it leads to time-outs (Proxy-Error).', 'rrze-faq' );
+        //         }
 
-                do {
-                    $request = wp_remote_get( $url . '?page=' . $page . $slug );
-                    $status_code = wp_remote_retrieve_response_code( $request );
-                    if ( $status_code == 200 ){
-                        $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                        if ( !empty( $entries ) ){
-                            foreach( $entries as $entry ){
-                                if ( $entry['count'] > 0 ){
-                                    $tags_or_categories[$entry['slug']] = $entry['name'];
-                                }
-                            }
-                        }
-                    }
-                    $page++;   
-                } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+        //         do {
+        //             $request = wp_remote_get( $url . '?page=' . $page . $slug );
+        //             $status_code = wp_remote_retrieve_response_code( $request );
+        //             if ( $status_code == 200 ){
+        //                 $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+        //                 if ( !empty( $entries ) ){
+        //                     foreach( $entries as $entry ){
+        //                         if ( $entry['count'] > 0 ){
+        //                             $tags_or_categories[$entry['slug']] = $entry['name'];
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //             $page++;   
+        //         } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
 
-                asort( $tags_or_categories );
+        //         asort( $tags_or_categories );
 
-                $filter_term = ( $category ? 'category' : ( $tag ? 'tag' : $glossary ) );
+        //         $filter_term = ( $category ? 'category' : ( $tag ? 'tag' : $glossary ) );
 
-                // get all FAQ for each category or tag ( = $glossary )
-                foreach( $tags_or_categories as $slug => $name ){
-                    $aTerm_slugs = array_map( 'trim', explode( ',', ( $category ? $category : ( $tag ? $tag : $slug ) ) ) );
-                    foreach( $aTerm_slugs as $term_slug ){
-                        $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
-                        $page = 1;
+        //         // get all FAQ for each category or tag ( = $glossary )
+        //         foreach( $tags_or_categories as $slug => $name ){
+        //             $aTerm_slugs = array_map( 'trim', explode( ',', ( $category ? $category : ( $tag ? $tag : $slug ) ) ) );
+        //             foreach( $aTerm_slugs as $term_slug ){
+        //                 $filter = '&filter[faq_' . $filter_term . ']=' . $term_slug;
+        //                 $page = 1;
 
-                        do {
-                            $request = wp_remote_get( $domain . '?page=' . $page . $filter );
-                            $status_code = wp_remote_retrieve_response_code( $request );
-                            if ( $status_code == 200 ){
-                                $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+        //                 do {
+        //                     $request = wp_remote_get( $domain . '?page=' . $page . $filter );
+        //                     $status_code = wp_remote_retrieve_response_code( $request );
+        //                     if ( $status_code == 200 ){
+        //                         $entries = json_decode( wp_remote_retrieve_body( $request ), true );
 
-                                if ( !empty( $entries ) ){
-                                    if ( isset( $entries[0] ) ){
-                                        foreach( $entries as $entry ){
-                                            $items[$term_slug][$entry['title']['rendered']] = array(
-                                                'id' => $entry['id'],
-                                                'content' => $entry['content']['rendered']
-                                            );
-                                        }
-                                    } else {
-                                        $items[$term_slug][$entries['title']['rendered']] = array(
-                                            'id' => $entries['id'],
-                                            'content' => $entries['content']['rendered']
-                                        );
-                                    }
-                                }
-                            }
-                            $page++;   
-                        } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
-                    }
-                }
+        //                         if ( !empty( $entries ) ){
+        //                             if ( isset( $entries[0] ) ){
+        //                                 foreach( $entries as $entry ){
+        //                                     $items[$term_slug][$entry['title']['rendered']] = array(
+        //                                         'id' => $entry['id'],
+        //                                         'content' => $entry['content']['rendered']
+        //                                     );
+        //                                 }
+        //                             } else {
+        //                                 $items[$term_slug][$entries['title']['rendered']] = array(
+        //                                     'id' => $entries['id'],
+        //                                     'content' => $entries['content']['rendered']
+        //                                 );
+        //                             }
+        //                         }
+        //                     }
+        //                     $page++;   
+        //                 } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+        //             }
+        //         }
 
-                $aLetters = array();
-                $aUsedTerms = array();
-                $aPostIDs = array();
-                $anchor = ( $glossarystyle == 'a-z' ? 'letter' : 'ID' );
+        //         $aLetters = array();
+        //         $aUsedTerms = array();
+        //         $aPostIDs = array();
+        //         $anchor = ( $glossarystyle == 'a-z' ? 'letter' : 'ID' );
 
-                foreach( $tags_or_categories as $slug => $name ){
-                    if ( isset( $items[$slug] ) ){
-                        $letter = $this->get_letter( $name );
-                        $aLetters[$letter] = TRUE; 
-                        $aUsedTerms[$name] = array( 'letter' => $letter, 'ID' => $slug );
-                        $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="' . $anchor . '-' . ( $glossarystyle == 'a-z' ? $letter : $slug ) . '"]';
+        //         foreach( $tags_or_categories as $slug => $name ){
+        //             if ( isset( $items[$slug] ) ){
+        //                 $letter = $this->get_letter( $name );
+        //                 $aLetters[$letter] = TRUE; 
+        //                 $aUsedTerms[$name] = array( 'letter' => $letter, 'ID' => $slug );
+        //                 $accordion .= '[collapse title="' . $name . '" color="' . $color . '" name="' . $anchor . '-' . ( $glossarystyle == 'a-z' ? $letter : $slug ) . '"]';
 
-                        ksort( $items[$slug], SORT_NATURAL | SORT_FLAG_CASE);                                              
-                        foreach( $items[$slug] as $faqtitle => $aFaq ){
-                            $aPostIDs[$slug][] = $aFaq['id'];
-                            $accordion .= '[accordion][accordion-item title="' . $faqtitle . '"]' . $aFaq['content'] . '[/accordion-item][/accordion]';
+        //                 ksort( $items[$slug], SORT_NATURAL | SORT_FLAG_CASE);                                              
+        //                 foreach( $items[$slug] as $faqtitle => $aFaq ){
+        //                     $aPostIDs[$slug][] = $aFaq['id'];
+        //                     $accordion .= '[accordion][accordion-item title="' . $faqtitle . '"]' . $aFaq['content'] . '[/accordion-item][/accordion]';
 
-                        }
-                        $accordion .= '[/collapse]';
-                    }
-                }
-                $accordion .= '[/collapsibles]';
+        //                 }
+        //                 $accordion .= '[/collapse]';
+        //             }
+        //         }
+        //         $accordion .= '[/collapsibles]';
 
-                asort( $aUsedTerms );
+        //         asort( $aUsedTerms );
 
-                if ( $aLetters ){
-                    switch( $glossarystyle ){
-                        case 'a-z': 
-                            $content = $this->create_a_z( $aLetters );
-                            $anchor = 'letter';
-                            break;
-                        case 'tabs': 
-                            $content = $this->create_tabs( $aUsedTerms, $aPostIDs ); // BUG
-                            $anchor = 'ID';
-                            break;
-                        case 'tagcloud': 
-                            $content = $this->create_tagcloud( $aUsedTerms, $aPostIDs );
-                            $anchor = 'ID';
-                            break;            
-                    }
-                }
+        //         if ( $aLetters ){
+        //             switch( $glossarystyle ){
+        //                 case 'a-z': 
+        //                     $content = $this->create_a_z( $aLetters );
+        //                     $anchor = 'letter';
+        //                     break;
+        //                 case 'tabs': 
+        //                     $content = $this->create_tabs( $aUsedTerms, $aPostIDs ); // BUG
+        //                     $anchor = 'ID';
+        //                     break;
+        //                 case 'tagcloud': 
+        //                     $content = $this->create_tagcloud( $aUsedTerms, $aPostIDs );
+        //                     $anchor = 'ID';
+        //                     break;            
+        //             }
+        //         }
 
-                $content .= do_shortcode( $accordion );
-            } else {
-                if ( intval( $id ) > 0 ){
-                    // single FAQ
-                    $single = TRUE;
-                    $domain .= '/' . $id . '/';
-                } else {
-                    if ( $category ){
-                        $filter = '&filter[faq_category]=' . $category;
-                    } 
-                    if ( $tag ) {
-                        $filter .= '&filter[faq_tag]=' . $tag;
-                    } 
-                }
+        //         $content .= do_shortcode( $accordion );
+        //     } else {
+        //         if ( intval( $id ) > 0 ){
+        //             // single FAQ
+        //             $single = TRUE;
+        //             $domain .= '/' . $id . '/';
+        //         } else {
+        //             if ( $category ){
+        //                 $filter = '&filter[faq_category]=' . $category;
+        //             } 
+        //             if ( $tag ) {
+        //                 $filter .= '&filter[faq_tag]=' . $tag;
+        //             } 
+        //         }
 
-                do {
-                    $request = wp_remote_get( $domain . '?page=' . $page . $filter );
-                    $status_code = wp_remote_retrieve_response_code( $request );
-                    if ( $status_code == 200 ){
-                        $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                        if ( !empty( $entries ) ){
-                            if ( isset( $entries[0] ) ){
-                                foreach( $entries as $entry ){
-                                    $items[$entry['title']['rendered']] = $entry['content']['rendered'];
-                                }
-                            } else {
-                                $items[$entries['title']['rendered']] = $entries['content']['rendered'];
-                            }
-                        }
-                    }
-                    $page++;   
-                } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) && !$single );
+        //         do {
+        //             $request = wp_remote_get( $domain . '?page=' . $page . $filter );
+        //             $status_code = wp_remote_retrieve_response_code( $request );
+        //             if ( $status_code == 200 ){
+        //                 $entries = json_decode( wp_remote_retrieve_body( $request ), true );
+        //                 if ( !empty( $entries ) ){
+        //                     if ( isset( $entries[0] ) ){
+        //                         foreach( $entries as $entry ){
+        //                             $items[$entry['title']['rendered']] = $entry['content']['rendered'];
+        //                         }
+        //                     } else {
+        //                         $items[$entries['title']['rendered']] = $entries['content']['rendered'];
+        //                     }
+        //                 }
+        //             }
+        //             $page++;   
+        //         } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) && !$single );
 
-                ksort( $items );
+        //         ksort( $items );
                                 
-                $aLetters = array();
-                $accordion = '[collapsibles]';
-                foreach ( $items as $title => $txt ) {
-                    $letter = $this->get_letter( $title );
-                    $aLetters[$letter] = TRUE; 
-                    $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $txt ) . '[/collapse]';
-                }
+        //         $aLetters = array();
+        //         $accordion = '[collapsibles]';
+        //         foreach ( $items as $title => $txt ) {
+        //             $letter = $this->get_letter( $title );
+        //             $aLetters[$letter] = TRUE; 
+        //             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . str_replace( ']]>', ']]&gt;', $txt ) . '[/collapse]';
+        //         }
         
-                $accordion .= '[/collapsibles]';
+        //         $accordion .= '[/collapsibles]';
 
-                $content .= do_shortcode( $accordion );
-            }
-        } elseif ( intval( $id ) > 0 ) {
+        //         $content .= do_shortcode( $accordion );
+        //     }
+        // } else
+        
+        if ( intval( $id ) > 0 ) {
             // SINGLE FAQ
             $title = get_the_title( $id );
             $letter = $this->get_letter( $title );
@@ -545,85 +547,84 @@ class Shortcode {
             $terms = get_terms([
                 'taxonomy' => 'faq_' . $field,
                 'hide_empty' => FALSE,
-                'meta_query' => array(
-                    array(
+                // 'meta_query' => array(
+                //     array(
                         'key' => 'source',
-                        'value' => 'website',
-                    )
-                )
+                        // 'value' => 'website',
+                    // ) )
             ]);
             foreach ( $terms as $term ){
                 $this->settings[$field]['values'][$term->id] = $term->name;
             }
 
             // get categories and tags from other domains
-            if ( $domains ) {
-                foreach( $domains as $name => $url ){
-                    $page = 1;
-                    do {
-                        // $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
-                        $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?page=' . $page );
-                        $status_code = wp_remote_retrieve_response_code( $request );
-                        if ( $status_code == 200 ){
-                            $body = json_decode( wp_remote_retrieve_body( $request ), true );
-                            if ( !empty( $body ) ){
-                                foreach( $body as $entry ){
-                                    $this->settings[$field]['values'][$entry['id']] = $entry['name'];
-                                }
-                            }
-                        }
-                        $page++;   
-                    } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
-                }
-            }
+            // if ( $domains ) {
+            //     foreach( $domains as $name => $url ){
+            //         $page = 1;
+            //         do {
+            //             // $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?_fields=name,id&page=' . $page );
+            //             $request = wp_remote_get( $url . 'wp-json/wp/v2/faq_' . $field . '?page=' . $page );
+            //             $status_code = wp_remote_retrieve_response_code( $request );
+            //             if ( $status_code == 200 ){
+            //                 $body = json_decode( wp_remote_retrieve_body( $request ), true );
+            //                 if ( !empty( $body ) ){
+            //                     foreach( $body as $entry ){
+            //                         $this->settings[$field]['values'][$entry['id']] = $entry['name'];
+            //                     }
+            //                 }
+            //             }
+            //             $page++;   
+            //         } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
+            //     }
+            // }
 
             $this->sortIt( $this->settings[$field]['values'] );
         }
 
 
-        // // get FAQ from this website and synced from OTRS
-        // $faqs = get_posts( array(
-        //     'posts_per_page'  => -1,
-        //     'post_type' => 'faq',
-        //     'order' => 'ASC',
-        //     // 'orderby' => 'title',
-        //     // 'fields' => 'ids',
-        //     // 'meta_query' => array(
-        //     //     array(
-        //     //         'key' => 'source',
-        //     //         'value' => 'website',
-        //     //     )
-        //     // )
-        // ));
+        // get FAQ from this website
+        $faqs = get_posts( array(
+            'posts_per_page'  => -1,
+            'post_type' => 'faq',
+            'order' => 'ASC',
+            'orderby' => 'title',
+            // 'fields' => 'ids',
+            // 'meta_query' => array(
+            //     array(
+            //         'key' => 'source',
+            //         'value' => 'website',
+            //     )
+            // )
+        ));
 
-        // $this->settings['id']['field_type'] = 'select';
-        // $this->settings['id']['type'] = 'string';
-        // $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
-        // foreach ( $faqs as $faq){
-        //     $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
-        // }
+        $this->settings['id']['field_type'] = 'select';
+        $this->settings['id']['type'] = 'string';
+        $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
+        foreach ( $faqs as $faq){
+            $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
+        }
 
         // get FAQ from other domains
-        if ( $domains ) {
-            foreach( $domains as $name => $url ){
-                $page = 1;
-                do {
-                    $request = wp_remote_get( $url . 'wp-json/wp/v2/faq?page=' . $page );
-                    $status_code = wp_remote_retrieve_response_code( $request );
+        // if ( $domains ) {
+        //     foreach( $domains as $name => $url ){
+        //         $page = 1;
+        //         do {
+        //             $request = wp_remote_get( $url . 'wp-json/wp/v2/faq?page=' . $page );
+        //             $status_code = wp_remote_retrieve_response_code( $request );
             
-                    if ( $status_code == 200 ){
-                        $body = json_decode( wp_remote_retrieve_body( $request ), true );
-                        if ( !empty( $body ) ){
-                            foreach( $body as $entry ){
-                                $this->settings['id']['values'][$entry['id']] = $entry['title']['rendered'];
-                            }
-                        }
-                    }
-                    $page++;   
-                } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
-            }
-        }
-        $this->sortIt( $this->settings['id']['values'] );
+        //             if ( $status_code == 200 ){
+        //                 $body = json_decode( wp_remote_retrieve_body( $request ), true );
+        //                 if ( !empty( $body ) ){
+        //                     foreach( $body as $entry ){
+        //                         $this->settings['id']['values'][$entry['id']] = $entry['title']['rendered'];
+        //                     }
+        //                 }
+        //             }
+        //             $page++;   
+        //         } while ( ( $status_code == 200 ) && ( !empty( $body ) ) );
+        //     }
+        // }
+        // $this->sortIt( $this->settings['id']['values'] );
         return $this->settings;
     }
 
@@ -650,7 +651,6 @@ class Shortcode {
         );
         wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
-        $test = 'function() {alert("edit block")}';
 
         $css = '../assets/css/gutenberg.css';
         $editor_style = 'gutenberg-css';

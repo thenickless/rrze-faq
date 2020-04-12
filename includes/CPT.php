@@ -166,7 +166,7 @@ class CPT {
         global $post;
         $details = '';
         if ( $post->post_type == 'faq' ){
-            $details = '<code><small>&nbsp;'
+            $details = '<!-- rrze-faq --><code><small>&nbsp;'
             . 'id="' . $post->ID . '" '
             . 'category="' . $this->getTermsAsString( $post->ID, 'category' ) . '" '
             . 'tag="' . $this->getTermsAsString( $post->ID, 'tag' ) . '" '
