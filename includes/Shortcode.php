@@ -185,6 +185,7 @@ class Shortcode {
                 }    
             }
 
+
             $posts = get_posts( $postQuery );
 
             if ( $glossary ){
@@ -257,7 +258,7 @@ class Shortcode {
                 }
 
                 $accordion = '[collapsibles]';
-
+    
                 $last_anchor = '';
                 foreach ( $aUsedTerms as $k => $aVal ){
                     if ( $glossarystyle == 'a-z' && $content ){
@@ -303,16 +304,6 @@ class Shortcode {
                     $last_anchor = $letter;
                 }
                 $accordion .= '[/collapsibles]';
-
-                // $anchor = 'ID';
-                // if ( $aLetters ){
-                //     switch( $glossarystyle ){
-                //         case 'a-z': 
-                //             $content = $this->createAZ( $aLetters );
-                //             $anchor = 'letter';
-                //             break;
-                //     }
-                // }
 
                 $content .= do_shortcode( $accordion );
             }
