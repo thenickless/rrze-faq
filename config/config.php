@@ -16,6 +16,8 @@ function getOptionName() {
 }
 
 
+
+
 /**
  * Gibt die Einstellungen des Menus zurück.
  * @return array [description]
@@ -55,12 +57,12 @@ function getHelpTab() {
 function getSections() {
 	return [ 
 		[
-			'id'    => 'otrs',
-			'title' => __('OTRS', 'rrze-faq' )
-		],
-		[
 			'id'    => 'doms',
 			'title' => __('Domains', 'rrze-faq' )
+		],
+		[
+			'id'    => 'sync',
+			'title' => __('Synchronize', 'rrze-faq' )
 		],
 		[
 		  	'id' => 'log',
@@ -76,18 +78,34 @@ function getSections() {
 
 function getFields() {
 	return [
-		'otrs' => [
+		'doms' => [
 			[
-				'name' => 'otrs_url',
+				'name' => 'new_name',
+				'label' => __('Short name', 'rrze-faq' ),
+				'desc' => __('Enter a short name for this domain.', 'rrze-faq' ),
+				'type' => 'text'
+			],
+			[
+				'name' => 'new_url',
 				'label' => __('URL', 'rrze-faq' ),
-				'desc' => __('Please select weather to fetch from LIVE or DEV server.', 'rrze-faq' ),
-				'type' => 'select',
-				'options' => [
-					'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'Development server (otrs-dev.rrze.fau.de)',
-					// 'https://www.helpdesk.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST' => 'LIVE server (helpdesk.rrze.fau.de)',
-					
-				],
-				'default' => 'https://www.otrs-dev.rrze.fau.de/otrs/nph-genericinterface.pl/Webservice/RRZEPublicFAQConnectorREST'
+				'desc' => __('Enter the domain\'s URL you want to receive FAQ from.', 'rrze-faq' ),
+				'type' => 'text'
+			]
+		],
+		'sync' => [
+			[
+				'name' => 'shortname',
+				'label' => __('Short name', 'rrze-faq' ),
+				'desc' => __('Use this name as attribute \'domain\' in shortcode [faq]', 'rrze-faq' ),
+				'type' => 'plaintext',
+				'default' => ''
+			],
+			[
+				'name' => 'url',
+				'label' => __('URL', 'rrze-faq' ),
+				'desc' => '',
+				'type' => 'plaintext',
+				'default' => ''
 			],
 			[
 				'name' => 'categories',
@@ -97,33 +115,24 @@ function getFields() {
 				'options' => []
 			],
 			[
-				'name' => 'auto_sync',
-				'label' => __('Synchronization', 'rrze-faq' ),
-				'desc' => __('Update FAQ automatically', 'rrze-faq' ),
-				'type' => 'checkbox'
+				'name' => 'mode',
+				'label' => __('Synchronize', 'rrze-faq' ),
+				'desc' => '',
+				'default' => '',
+				'options' => [
+					'' => __('Do not synchronize.', 'rrze-faq' ),
+					'manual' => __('Synchronize one time now.', 'rrze-faq' ),
+					'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
+				],
+				'type' => 'radio'
 			],
 			[
-				'name' => 'timestamp',
+				'name' => 'hr',
 				'label' => '',
 				'desc' => '',
-				'type' => 'hidden',
-				'options' => time()
+				'type' => 'line'
 			]
 		],		
-		'doms' => [
-			[
-				'name' => 'new_url',
-				'label' => __('Add this domain', 'rrze-faq' ),
-				'desc' => __('Enter the domain\'s URL you want to receive FAQ from.', 'rrze-faq' ),
-				'type' => 'text'
-			],
-			[
-				'name' => 'new_name',
-				'label' => __('Shortcut', 'rrze-faq' ),
-				'desc' => __('Enter a short name for this domain.', 'rrze-faq' ),
-				'type' => 'text'
-			],
-		],
     	'log' => [
         	[
           		'name' => 'logfile',
@@ -151,12 +160,12 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-		'domain' => [
-			'default' => '',
-			'field_type' => 'text',
-			'label' => __( 'Domain', 'rrze-faq' ),
-			'type' => 'text'
-        ],
+		// 'domain' => [
+		// 	'default' => '',
+		// 	'field_type' => 'text',
+		// 	'label' => __( 'Domain', 'rrze-faq' ),
+		// 	'type' => 'text'
+        // ],
         'glossary' => [
 			'values' => [
 				'' => __( 'none', 'rrze-faq' ),

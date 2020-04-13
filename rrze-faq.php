@@ -4,7 +4,7 @@
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Description:       
-Version:         2.8.3
+Version:         4.3.6
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -16,14 +16,6 @@ Text Domain:     rrze-faq
 namespace RRZE\FAQ;
 
 
-/*
-Die Codezeile defined('ABSPATH') || exit;
-verhindert den direkten Zugriff auf die PHP-Dateien über URL und stellt sicher,
-dass die Plugin-Dateien nur innerhalb der WordPress-Umgebung ausgeführt werden.
-Denn wenn bspw. eine Datei I/O-Operationen enthält,
-kann sie schließlich kompromittiert werden (durch einen Angreifer),
-was zu unerwartetem Verhalten führen kann.
-*/
 defined('ABSPATH') || exit;
 
 require_once 'config/config.php';
