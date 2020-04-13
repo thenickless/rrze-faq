@@ -243,8 +243,7 @@ class API {
                         $entries = array( $entries );
                     }
                     foreach( $entries as $entry ){
-                        // echo $entry['meta']['source'][0];
-                        if ( $entry['meta']['source'][0] == 'website' ){
+                        // if ( $entry['meta']['source'][0] == 'website' ){
                             $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
 
                             $faqs[$entry['id']] = array(
@@ -258,9 +257,8 @@ class API {
                                 $sTag .= $tag . ',';
                             }
                             $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
-                        }
+                        // }
                     }
-                    // exit;
                 }
             }
             $page++;   
@@ -269,43 +267,8 @@ class API {
         return $faqs;
     }
 
-    protected function getRemoteCategories( &$url ){
-        $aCategories = array();
-        foreach( $this->aRemoteCategoryIDs as $remoteID ){
-            $cat = $this->getCategoryByID( $url, $remoteID );
-            if ( $cat['remoteParentID'] ){
-                $this->aRemoteCategoryIDs[] = $cat['remoteParentID'];
-            }
-            $aCategories[$remoteID] = $cat;
-        }
-        return $aCategories;
-    }
 
-    protected function getRemoteTags( &$url ){
-        $aTags = array();
-        foreach( $this->aRemoteTagIDs as $remoteID ){
-            $aTags[$remoteID] = $this->getTagByID( $url, $remoteID );
-        }
-        return $aTags;
-    }
-
-    protected function getTaxIDsAsString( &$aRemoteIDs, &$aMap ){
-        $ret = '';
-        foreach( $aRemoteIDs as $remoteID ){
-            $ret .= $aMap[$remoteID]['term_id'] . ',';
-        }
-        return substr( $ret, 0, -1 );
-    }
-
-    protected function getTaxNamesAsString( &$aRemoteIDs, &$aMap ){
-        $ret = '';
-        foreach( $aRemoteIDs as $remoteID ){
-            $ret .= $aMap[$remoteID]['name'] . ',';
-        }
-        return substr( $ret, 0, -1 );
-    }
-
-    public function setFAQ( &$url, &$categories, &$shortname ){
+    public function setFAQ( $url, $categories, $shortname ){
         $iCnt = 0;
 
         // get all FAQ
