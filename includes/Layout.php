@@ -17,17 +17,17 @@ class Layout {
         add_action( 'edit_form_after_title', [$this, 'toggleEditor'] );
         // add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
         // Table "All FAQ"
-        add_filter( 'manage_edit-faq_columns', [$this, 'addSource'] );
-        add_action( 'manage_faq_posts_custom_column', [$this, 'getSourceFaq'], 10, 2 );
+        add_filter( 'manage_edit-faq_columns', [$this, 'addFaqColumns'] );
+        add_action( 'manage_faq_posts_custom_column', [$this, 'getFaqColumnsValues'], 10, 2 );
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'addFaqColumns'] );
         // Table "Category"
-        add_filter( 'manage_edit-faq_category_columns', [$this, 'addSource'] );
-        add_filter( 'manage_faq_category_custom_column', [$this, 'getSourceTax'], 10, 3 );
-        add_filter( 'manage_edit-faq_category_sortable_columns', [$this, 'addSource'] );
+        add_filter( 'manage_edit-faq_category_columns', [$this, 'addTaxColumns'] );
+        add_filter( 'manage_faq_category_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
+        add_filter( 'manage_edit-faq_category_sortable_columns', [$this, 'addTaxColumns'] );
         // Table "Tags"
-        add_filter( 'manage_edit-faq_tag_columns', [$this, 'addSource'] );
-        add_filter( 'manage_faq_tag_custom_column', [$this, 'getSourceTax'], 10, 3 );
-        add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'addSource'] );
+        add_filter( 'manage_edit-faq_tag_columns', [$this, 'addTaxColumns'] );
+        add_filter( 'manage_faq_tag_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
+        add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'addTaxColumns'] );
     }
 
     public function makeFaqSortable( $wp_query ) {
@@ -96,22 +96,27 @@ class Layout {
     /**
      * Adds sortable column "source" to tables "All FAQ", "Category" and "Tags"
      */
-    public function addSource( $columns ) {
+    public function addFaqColumns( $columns ) {
+        $columns['taxonomy-faq_category'] = __( 'Category', 'rrze-faq' );
+        $columns['taxonomy-faq_tag'] = __( 'Tag', 'rrze-faq' );
+        $columns['source'] = __( 'Source', 'rrze-faq' );
+        $columns['id'] = __( 'ID', 'rrze-faq' );
+        return $columns;
+    }
+    public function addTaxColumns( $columns ) {
         $columns['source'] = __( 'Source', 'rrze-faq' );
         return $columns;
     }
-    public function addFaqColumns( $columns ) {
-        $columns['taxonomy-faq_category'] = 'taxonomy-faq_category';
-        $columns['source'] = __( 'Source', 'rrze-faq' );;
-        return $columns;
-    }
-    public function getSourceFaq( $column_name, $post_id ) {
+    public function getFaqColumnsValues( $column_name, $post_id ) {
+        if( $column_name == 'id' ) {
+            echo $post_id;
+        }
         if( $column_name == 'source' ) {
             $source = get_post_meta( $post_id, 'source', true );
             echo $source;
         }
     }
-    public function getSourceTax( $content, $column_name, $term_id ) {
+    public function getTaxColumnsValues( $content, $column_name, $term_id ) {
         if( $column_name == 'source' ) {
             $source = get_term_meta( $term_id, 'source', true );
             echo $source;

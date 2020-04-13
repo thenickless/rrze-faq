@@ -160,12 +160,12 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-		'domain' => [
-			'default' => '',
-			'field_type' => 'text',
-			'label' => __( 'Domain', 'rrze-faq' ),
-			'type' => 'text'
-        ],
+		// 'domain' => [
+		// 	'default' => '',
+		// 	'field_type' => 'text',
+		// 	'label' => __( 'Domain', 'rrze-faq' ),
+		// 	'type' => 'text'
+        // ],
         'glossary' => [
 			'values' => [
 				'' => __( 'none', 'rrze-faq' ),
