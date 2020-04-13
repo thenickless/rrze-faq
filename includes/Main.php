@@ -74,6 +74,7 @@ class Main {
         $api = new API();
         $domains = $api->getDomains();
         $tab = ( isset($_GET['doms'] ) ? 'doms' : ( isset( $_GET['sync'] ) ? 'sync' : ( isset( $_GET['del'] ) ? 'del' : '' ) ) );
+
         switch ( $tab ){
             case 'doms':
                 if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
@@ -100,8 +101,8 @@ class Main {
                                     if ( ( $key = array_search( $url, $domains ) ) !== false) {
                                         unset( $domains[$key] );
                                     }                                    
-                            }
-                            }                        
+                                }
+                            }   
                         }
                     }
                 }    

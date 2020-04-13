@@ -93,13 +93,6 @@ class Settings {
      * @return void
      */
     public function onLoaded() {
-        // $this->setMenu();
-        // $this->setSections();
-        // $this->setFields();
-        // $this->setTabs();
-
-        // $this->optionName = getOptionName();
-        // $this->options = $this->getOptions();
         add_action('init', [$this, 'regularInit'], 1);
 
         add_action('admin_init', [$this, 'adminInit']);
@@ -359,12 +352,9 @@ class Settings {
         $newFields = array();
         $api = new API();
 
+
         foreach ( $this->domains as $shortname => $url ){
             $categories = $api->getCategories( $url, $shortname ); 
-
-            // echo '<pre>asdf';
-            // var_dump($categories);
-            // exit;
 
             foreach ( $this->settingsFields['sync'] as $field ){
                 switch ( $field['name'] ){

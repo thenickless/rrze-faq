@@ -50,7 +50,7 @@ class API {
         return $domains;
     }
 
-    protected function getTaxonomies( &$url, $field, &$filter ){
+    protected function getTaxonomies( $url, $field, &$filter ){
         $items = array();    
         $url .= ENDPOINT . '_' . $field;    
         $slug = ( $filter ? '&slug=' . $filter : '' );
@@ -92,7 +92,7 @@ class API {
         } );
     }
     
-    public function getCategories( &$url, &$shortname, &$categories = '' ){
+    public function getCategories( $url, $shortname, $categories = '' ){
         $aCategories = $this->getTaxonomies( $url, 'category', $categories );
         $this->setCategories( $aCategories, $shortname );
         $cats = get_terms( array( 
@@ -100,7 +100,7 @@ class API {
             'hide_empty' => FALSE,
             'meta_query' => array( array(
                     'key' => 'source',
-                    'value' => 'dev1',
+                    'value' => $shortname,
             )),
             'orderby' => 'term_id',
             'order' => 'DESC'
@@ -128,7 +128,7 @@ class API {
              }            
          }
          $aOrdered = array(); 
-         foreach ( $aRet as $id => $aDetails ){             
+         foreach ( $aCats as $id => $aDetails ){             
             if ( isset( $aDetails['children'] )){
                 asort( $aDetails['children'] );
             }
@@ -154,10 +154,6 @@ class API {
     ksort( $aRet, SORT_STRING | SORT_FLAG_CASE );
     return $aRet;
     }
-
-    // public function getTags( $url, $tags = '' ){
-    //     return $this->getTaxonomies( $url, 'tag', $tags );
-    // }
 
     protected function getTaxonomyByID( &$url, &$remoteID, $field ){
         $item = array();
@@ -237,10 +233,7 @@ class API {
         $filter = '&filter[faq_category]=' . $categories;
         $page = 1;
 
-        // echo $url . ENDPOINT . '?_fields=id,title,content,faq_category,faq_tag,post-meta-fields&page=' . $page . $filter ;
-        // exit;
         do {
-            // $request = wp_remote_get( $url . ENDPOINT . '?_fields=id,title,content,faq_category,faq_tag,post-meta-fields&page=' . $page . $filter );
             $request = wp_remote_get( $url . ENDPOINT . '?page=' . $page . $filter );
             $status_code = wp_remote_retrieve_response_code( $request );
             if ( $status_code == 200 ){
@@ -250,41 +243,28 @@ class API {
                         $entries = array( $entries );
                     }
                     foreach( $entries as $entry ){
-                        $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
+                        // echo $entry['meta']['source'][0];
+                        if ( $entry['meta']['source'][0] == 'website' ){
+                            $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
 
-                        $faqs[$entry['id']] = array(
-                            'title' => $entry['title']['rendered'],
-                            'content' => $content,
-                            'lang' => $entry['meta']['lang'][0],
-                            'faq_category' => $entry['faq_category'],
-                            // 'faq_tag' => $entry['faq_tag']
-                        );
-                        // $sCat = '';
-                        // foreach ( $entry['faq_category'] as $cat ){
-                        //     $sCat .= $cat . ',';
-                        //     // $aCategoryRelation[] = $cat['parent'];
-                        // }
-                        // $faqs[$entry['id']]['faq_category'] = trim( $sCat, ',' );
-                        $sTag = '';
-                        foreach ( $entry['faq_tag'] as $tag ){
-                            $sTag .= $tag . ',';
+                            $faqs[$entry['id']] = array(
+                                'title' => $entry['title']['rendered'],
+                                'content' => $content,
+                                'lang' => $entry['meta']['lang'][0],
+                                'faq_category' => $entry['faq_category'],
+                            );
+                            $sTag = '';
+                            foreach ( $entry['faq_tag'] as $tag ){
+                                $sTag .= $tag . ',';
+                            }
+                            $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
                         }
-                        $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
                     }
+                    // exit;
                 }
             }
             $page++;   
         } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
-
-        // $aCategoryRelation = array_unique( $aCategoryRelation );
-        // foreach ( $aCategoryRelation as $catRel ){
-        //     $catRel = rtrim( $catRel, ',');
-        //     $aCatRel = explode( ',', $catRel );
-        //     $iCnt = count( $aCatRel );
-        //     for ( $i=0; $i < $iCnt; $i++ ){
-        //         $this->aAllCategories[$aCatRel[$i]] = array( 'child' => ( isset( $aCatRel[$i+1] ) ? $aCatRel[$i+1] : 0 ) );
-        //     }
-        // }
 
         return $faqs;
     }

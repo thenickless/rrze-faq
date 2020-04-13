@@ -274,7 +274,8 @@ class Shortcode {
                         if ( !isset( $tmp ) || (mb_strlen( $tmp ) < 1)) {
                             $tmp = get_post_meta( $ID, 'description', true );
                         }
-                        $accordion .= '[accordion][accordion-item title="' . get_the_title( $ID ) . '"]' . $tmp . '[/accordion-item][/accordion]';
+                        $title = get_the_title( $ID );
+                        $accordion .= '[accordion][accordion-item title="' . $title . '"]' . $tmp . '[/accordion-item][/accordion]';
                     }
                     $accordion .= '[/collapse]';
                     $last_anchor = $aVal[$anchor];
@@ -288,18 +289,18 @@ class Shortcode {
 
                 foreach( $posts as $post ) {
                     $title = get_the_title( $post->ID );
-                    // $letter = $this->getLetter( $title );
-                    // $aLetters[$letter] = TRUE; 
+                    $letter = $this->getLetter( $title );
+                    $aLetters[$letter] = TRUE; 
                     $tmp = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field( 'post_content', $post->ID ) ) );
                     if ( !isset( $tmp ) || ( mb_strlen( $tmp ) < 1 ) ) {
                         $tmp = get_post_meta( $post->ID, 'description', true );
                     }
                     $accordion_anchor = '';
-                    // if ( $glossarystyle == 'a-z' && count( $posts) > 1 ){
-                    //     $accordion .= ( $last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '' );
-                    // }
+                    if ( $glossarystyle == 'a-z' && count( $posts) > 1 ){
+                        $accordion .= ( $last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '' );
+                    }
                     $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . ']' . $tmp . '[/collapse]';               
-                    // $last_anchor = $letter;
+                    $last_anchor = $letter;
                 }
                 $accordion .= '[/collapsibles]';
 
@@ -374,7 +375,6 @@ class Shortcode {
     }
 
     public function initGutenberg() {
-        // echo 'initGutenberg<br>';
         if ( ! function_exists( 'register_block_type' ) ) {
             return;        
         }
