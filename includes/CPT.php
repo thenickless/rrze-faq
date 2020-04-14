@@ -192,8 +192,13 @@ class CPT {
 
     public function showDetails( $content ){
         global $post;
-        $details = '';
         if ( $post->post_type == 'faq' ){
+            // $schema = '<p style="display:none" itemscope itemtype="https://schema.org/FAQPage"></p>';
+            // $schema .= '<p style="display:none" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"></p>';
+            // $schema .= '<p style="display:none" itemprop="name">' . get_the_title( $post->ID ) . '</p>';
+            // $schema .= '<p style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"></p>';
+            // $schema .= '<div itemprop="text">';
+
             $cats = $this->getTermsAsString( $post->ID, 'category' );
             $tags = $this->getTermsAsString( $post->ID, 'tag' );
             
@@ -201,7 +206,10 @@ class CPT {
             . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
             . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
             . '</p>';
+            // $content = $schema . $content . '</div>' . $details;
+            $content .= $details;
         }
-        return $content . $details;
+
+        return $content;
     }
 }
