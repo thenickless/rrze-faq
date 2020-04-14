@@ -9,12 +9,15 @@ defined( 'ABSPATH' ) || exit;
  */
 class CPT {
 
+    private $lang = '';
+
     public function __construct() {
+        $this->lang = substr( get_locale(), 0, 2 );
         add_action( 'init', [$this, 'registerFaq'], 0 );
         add_action( 'init', [$this, 'registerFaqTaxonomy'], 0 );
-        add_action( 'publish_faq', [$this, 'setSourcePost'], 10, 1 );
-        add_action( 'create_faq_category', [$this, 'setSourceTerm'], 10, 1 );
-        add_action( 'create_faq_tag', [$this, 'setSourceTerm'], 10, 1 );
+        add_action( 'publish_faq', [$this, 'setPostMeta'], 10, 1 );
+        add_action( 'create_faq_category', [$this, 'setTermMeta'], 10, 1 );
+        add_action( 'create_faq_tag', [$this, 'setTermMeta'], 10, 1 );
         
         add_filter( 'the_content', [$this, 'showDetails'] );        
     }
@@ -140,24 +143,49 @@ class CPT {
                     'show_in_rest' => TRUE,
                     'rest_base'          => 'source',
                     'rest_controller_class' => 'WP_REST_Terms_Controller'
-              ));
+            ));
+            register_term_meta(
+                $t['name'], 
+                'sourceID', 
+                array(
+                    'query_var' 	=> TRUE,
+                    'type' => 'number',
+                    'single' => TRUE,
+                    'show_in_rest' => TRUE,
+                    'rest_base'          => 'sourceID',
+                    'rest_controller_class' => 'WP_REST_Terms_Controller'
+            ));
+            register_term_meta(
+                $t['name'], 
+                'lang', 
+                array(
+                    'query_var' 	=> TRUE,
+                    'type' => 'string',
+                    'single' => TRUE,
+                    'show_in_rest' => TRUE,
+                    'rest_base'          => 'lang',
+                    'rest_controller_class' => 'WP_REST_Terms_Controller'
+            ));
         }
     }
     
     
-    public function setSourcePost( $postID ){
+    public function setPostMeta( $postID ){
         add_post_meta( $postID, 'source', 'website', TRUE );
+        add_post_meta( $postID, 'sourceID', $postID, TRUE );
+        add_post_meta( $postID, 'lang', $this->lang, TRUE );
     }
     
-    public function setSourceTerm( $termID ){
+    public function setTermMeta( $termID ){
         add_term_meta( $termID, 'source', 'website', TRUE );
+        add_term_meta( $termID, 'lang', $this->lang, TRUE );
     }
     
     public function getTermsAsString( &$postID, $field ){
         $ret = '';
         $terms = wp_get_post_terms( $postID, 'faq_' . $field );
         foreach ( $terms as $term ){
-            $ret .= $term->slug . ', ';
+            $ret .= $term->name . ', ';
         }
         return substr( $ret, 0, -2 );
     }
@@ -166,13 +194,13 @@ class CPT {
         global $post;
         $details = '';
         if ( $post->post_type == 'faq' ){
-            $details = '<!-- rrze-faq --><code><small>&nbsp;'
-            . 'id="' . $post->ID . '" '
-            . 'category="' . $this->getTermsAsString( $post->ID, 'category' ) . '" '
-            . 'tag="' . $this->getTermsAsString( $post->ID, 'tag' ) . '" '
-            . 'lang="' . get_post_meta( $post->ID, 'lang', true ) . '"&nbsp;'
-            . 'domain="' . get_post_meta( $post->ID, 'source', true ) . '"&nbsp;'
-            . '</small></code>';
+            $cats = $this->getTermsAsString( $post->ID, 'category' );
+            $tags = $this->getTermsAsString( $post->ID, 'tag' );
+            
+            $details = '<!-- rrze-faq --><p id="rrze-faq" class="meta-footer">'
+            . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
+            . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
+            . '</p>';
         }
         return $content . $details;
     }

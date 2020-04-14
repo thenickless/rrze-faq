@@ -276,12 +276,15 @@ class Shortcode {
                             $tmp = get_post_meta( $ID, 'description', true );
                         }
                         $title = get_the_title( $ID );
-                        $accordion .= '[accordion][accordion-item title="' . $title . '"]' . $tmp . '[/accordion-item][/accordion]';
+                        $accordion .= '[accordion][accordion-item title="' . $title . '" name="innerID-' . $ID . '"]' . $tmp . '[/accordion-item][/accordion]';
                     }
                     $accordion .= '[/collapse]';
                     $last_anchor = $aVal[$anchor];
                 }
                 $accordion .= '[/collapsibles]';
+
+                // var_dump($accordion);
+                // exit;
                 $content .= do_shortcode( $accordion );
             } else {  
                 // attribut glossary is not given             

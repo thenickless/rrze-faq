@@ -14,6 +14,7 @@ class Layout {
         add_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
         // show content in box if not editable ( = source is not "website" )
         add_action( 'add_meta_boxes', [$this, 'addContentBox'] );
+        add_action( 'add_meta_boxes', [$this, 'addShortcodeBox'] );
         add_action( 'edit_form_after_title', [$this, 'toggleEditor'] );
         // add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
         // Table "All FAQ"
@@ -63,10 +64,48 @@ class Layout {
     }
     
     public function fillContentBox( $post ) {
-        $cats = implode( ', ', wp_get_post_terms( $post->ID,  'faq_category', array( 'fields' => 'names' ) ) );
-        $tags = implode( ', ', wp_get_post_terms( $post->ID,  'faq_tag', array( 'fields' => 'names' ) ) );
-        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content ) . '<hr>' . ( $cats ? '<h3>' . __('Category', 'rrze-faq' ) . '</h3><p>' . $cats . '</p>' : '' ) . ( $tags ? '<h3>' . __('Tags', 'rrze-faq' ) . '</h3><p>' . $tags .'</p>' : '' );
+        // $cats = implode( ', ', wp_get_post_terms( $post->ID,  'faq_category', array( 'fields' => 'names' ) ) );
+        // $tags = implode( ', ', wp_get_post_terms( $post->ID,  'faq_tag', array( 'fields' => 'names' ) ) );
+        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
+        //  . '<hr>' . ( $cats ? '<h3>' . __('Category', 'rrze-faq' ) . '</h3><p>' . $cats . '</p>' : '' ) . ( $tags ? '<h3>' . __('Tags', 'rrze-faq' ) . '</h3><p>' . $tags .'</p>' : '' );
     }
+
+    public function fillShortcodeBox( ) { 
+        global $post;
+        $ret = '';
+        $category = '';
+        $tag = '';
+        $fields = array( 'category', 'tag');
+        foreach ( $fields as $field ){
+            $terms = wp_get_post_terms( $post->ID, 'faq_' . $field );
+            foreach ( $terms as $term ){
+                $$field .= $term->slug . ', ';
+            }
+            $$field = rtrim( $$field, ', ' );
+        }
+
+        if ( $post->ID > 0 ) {
+            $ret .= '<h3 class="hndle">' . __('Single entries','rrze-faq') . '</h3>';
+            $ret .= '<pre>[faq id="' . $post->ID . '"]</pre>';
+            $ret .= ( $category ? '<h3 class="hndle">' . __( 'Accordion with category','rrze-faq') . '</h3><pre>[faq category="' . $category . '"]</pre><p>' . __( 'If there is more than one category listed, use at least one of them.', 'rrze-faq' ) . '</p>' : '' );
+            $ret .= ( $tag ? '<h3 class="hndle">' . __( 'Accordion with tag','rrze-faq' ) . '</h3><pre>[faq tag="' . $tag . '"]</pre><p>'. __( 'If there is more than one tag listed, use at least one of them.', 'rrze-faq' ) . '</p>' : '' );
+            $ret .= '<h3 class="hndle">' . __( 'Accordion with all entries','rrze-faq' ) . '</h3>';
+            $ret .= '<pre>[faq]</pre>';
+        }    
+        echo $ret;
+    }
+
+    public function addShortcodeBox() {
+        add_meta_box(
+            'shortcode_box', // id, used as the html id att
+            __( 'Integration in pages and posts', 'rrze-faq'), // meta box title
+            [$this, 'fillShortcodeBox'], // callback function, spits out the content
+            'faq', // post type or page. This adds to posts only
+            'normal', // context, where on the screen
+            'high' // priority, where should this go in the context
+        );        
+    }
+
 
     public function addContentBox() {
         add_meta_box(
@@ -76,7 +115,7 @@ class Layout {
             'faq', // post type or page. This adds to posts only
             'normal', // context, where on the screen
             'high' // priority, where should this go in the context
-        );
+        );        
     }
 
     public function toggleEditor( $post ) {
