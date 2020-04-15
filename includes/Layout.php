@@ -12,8 +12,7 @@ class Layout {
     public function __construct() {
         add_filter( 'pre_get_posts', [$this, 'makeFaqSortable'] );
         add_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
-        // add_action( 'add_meta_boxes', [$this, 'addContentBox'] );
-        // add_action( 'add_meta_boxes', [$this, 'addShortcodeBox'] );
+        add_filter( 'enter_title_here', [$this, 'changeTitleText'] );
         // show content in box if not editable ( = source is not "website" )
         add_action( 'admin_menu', [$this, 'toggleEditor'] );
         // add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
@@ -64,10 +63,7 @@ class Layout {
     }
     
     public function fillContentBox( $post ) {
-        // $cats = implode( ', ', wp_get_post_terms( $post->ID,  'faq_category', array( 'fields' => 'names' ) ) );
-        // $tags = implode( ', ', wp_get_post_terms( $post->ID,  'faq_tag', array( 'fields' => 'names' ) ) );
         echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
-        //  . '<hr>' . ( $cats ? '<h3>' . __('Category', 'rrze-faq' ) . '</h3><p>' . $cats . '</p>' : '' ) . ( $tags ? '<h3>' . __('Tags', 'rrze-faq' ) . '</h3><p>' . $tags .'</p>' : '' );
     }
 
     public function fillShortcodeBox( ) { 
@@ -93,27 +89,12 @@ class Layout {
         echo $ret;
     }
 
-    public function addShortcodeBox() {
-        add_meta_box(
-            'shortcode_box', // id, used as the html id att
-            __( 'Integration in pages and posts', 'rrze-faq'), // meta box title
-            [$this, 'fillShortcodeBox'], // callback function, spits out the content
-            'faq', // post type or page. This adds to posts only
-            'normal', // context, where on the screen
-            'high' // priority, where should this go in the context
-        );        
-    }
-
-
-    public function addContentBox() {
-        add_meta_box(
-            'read_only_content_box', // id, used as the html id att
-            __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq'), // meta box title
-            [$this, 'fillContentBox'], // callback function, spits out the content
-            'faq', // post type or page. This adds to posts only
-            'normal', // context, where on the screen
-            'high' // priority, where should this go in the context
-        );        
+    public function changeTitleText( $title ){
+        $screen = get_current_screen();
+        if  ( $screen->post_type == 'faq' ) {
+             $title = __( 'Enter question here', 'rrze-faq' );
+        }         
+        return $title;
     }
 
     public function toggleEditor(){
