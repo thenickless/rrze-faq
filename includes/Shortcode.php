@@ -7,6 +7,7 @@ use function RRZE\FAQ\Config\getShortcodeSettings;
 use RRZE\FAQ\API;
 
 
+
 $settings;
 
 /**
@@ -120,6 +121,17 @@ class Shortcode {
         return FALSE;
     }
 
+    private function getSchema( $postID, $question, $answer ){
+        $schema = '';
+        $source = get_post_meta( $postID, "source", TRUE );
+        $answer = wp_strip_all_tags( $answer, TRUE );
+        if ( $source == 'website' ){
+            $schema = RRZE_SCHEMA_QUESTION_START . $question . RRZE_SCHEMA_QUESTION_END;
+            $schema .= RRZE_SCHEMA_ANSWER_START . $answer . RRZE_SCHEMA_ANSWER_END ;
+        }
+        return $schema;
+    }
+
     /**
      * Generieren Sie die Shortcode-Ausgabe
      * @param  array   $atts Shortcode-Attribute
@@ -135,32 +147,29 @@ class Shortcode {
             }
         }
         $atts = shortcode_atts( $atts_default, $atts );
-
         extract( $atts );
-
         $content = '';
+        $schema = '';
         $glossarystyle  = ( isset( $glossarystyle ) ? $glossarystyle : '' );
         $color = ( isset( $color ) ? $color : '' );
-
         if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
             return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
         }
-
         if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
             return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
         }
-        
         if ( intval( $id ) > 0 ) {
             // SINGLE FAQ
             $title = get_the_title( $id );
             $letter = $this->getLetter( $title );
-            $content = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field('post_content',$id) ) );
-            if ( !isset( $content ) || ( mb_strlen( $content ) < 1)) {
-                $content = get_post_meta( $id, 'description', true );
+            $description = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field('post_content',$id) ) );
+            if ( !isset( $description ) || ( mb_strlen( $description ) < 1)) {
+                $description = get_post_meta( $id, 'description', true );
             }
-            if ( $content) {
-                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $content . '[/collapse][/collapsibles]';
+            if ( $description) {
+                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $description . '[/collapse][/collapsibles]';
                 $content = do_shortcode( $accordion );
+                $schema = $this->getSchema( $id, $title, $description );
             }
         } else {
             // attribute category or tag is given or none of them
@@ -169,7 +178,6 @@ class Shortcode {
             $aTax = array();
             $tax_query = '';
             $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => false);
-
             $fields = array( 'category', 'tag' );
             foreach( $fields as $field ){
                 if ( !is_array( $$field ) ){
@@ -184,10 +192,7 @@ class Shortcode {
                     $postQuery['tax_query'] = $tax_query;
                 }    
             }
-
-
             $posts = get_posts( $postQuery );
-
             if ( $glossary ){
                 // attribut glossary is given
                 // get all used tags or categories
@@ -197,7 +202,6 @@ class Shortcode {
                     // get all tags for each post
                     $aTermIds = array();
                     $valid_term_ids = array();
-
                     if ( $glossary == 'category' && $category ){
                         if ( !is_array( $category ) ){
                             $aCats = array_map( 'trim', explode( ',', $category ) );                
@@ -223,7 +227,6 @@ class Shortcode {
                             } 
                         }
                     }     
-
                     $terms = wp_get_post_terms( $post->ID, 'faq_' . $glossary );
                     if ( $terms ){
                         foreach( $terms as $t ){
@@ -238,9 +241,7 @@ class Shortcode {
                         }
                     }                    
                 }
-
                 asort( $aUsedTerms );
-
                 $anchor = 'ID';
                 if ( $aLetters ){
                     switch( $glossarystyle ){
@@ -256,9 +257,7 @@ class Shortcode {
                             break;            
                     }
                 }
-
                 $accordion = '[collapsibles]';
-    
                 $last_anchor = '';
                 foreach ( $aUsedTerms as $k => $aVal ){
                     if ( $glossarystyle == 'a-z' && $content ){
@@ -277,20 +276,17 @@ class Shortcode {
                         }
                         $title = get_the_title( $ID );
                         $accordion .= '[accordion][accordion-item title="' . $title . '" name="innerID-' . $ID . '"]' . $tmp . '[/accordion-item][/accordion]';
+                        $schema .= $this->getSchema( $ID, $title, $tmp );
                     }
                     $accordion .= '[/collapse]';
                     $last_anchor = $aVal[$anchor];
                 }
                 $accordion .= '[/collapsibles]';
-
-                // var_dump($accordion);
-                // exit;
                 $content .= do_shortcode( $accordion );
             } else {  
                 // attribut glossary is not given             
                 $accordion = '[collapsibles]';
                 $last_anchor = '';
-
                 foreach( $posts as $post ) {
                     $title = get_the_title( $post->ID );
                     $letter = $this->getLetter( $title );
@@ -304,16 +300,18 @@ class Shortcode {
                         $accordion .= ( $last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '' );
                     }
                     $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . ']' . $tmp . '[/collapse]';               
+                    $schema .= $this->getSchema( $post->ID, $title, $tmp );
                     $last_anchor = $letter;
                 }
                 $accordion .= '[/collapsibles]';
-
                 $content .= do_shortcode( $accordion );
             }
-       } 
-
-       $this->enqueueScripts();
-       return $content;
+        } 
+        $this->enqueueScripts();
+        if ( $schema ){
+           $content .= RRZE_SCHEMA_START . $schema . RRZE_SCHEMA_END;
+        }
+        return $content;
     }
 
     public function sortIt( &$arr ){
