@@ -192,13 +192,8 @@ class CPT {
 
     public function showDetails( $content ){
         global $post;
-        if ( $post->post_type == 'faq' ){
-            // $schema = '<p style="display:none" itemscope itemtype="https://schema.org/FAQPage"></p>';
-            // $schema .= '<p style="display:none" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"></p>';
-            // $schema .= '<p style="display:none" itemprop="name">' . get_the_title( $post->ID ) . '</p>';
-            // $schema .= '<p style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"></p>';
-            // $schema .= '<div itemprop="text">';
 
+        if ( $post->post_type == 'faq' ){
             $cats = $this->getTermsAsString( $post->ID, 'category' );
             $tags = $this->getTermsAsString( $post->ID, 'tag' );
             
@@ -206,8 +201,20 @@ class CPT {
             . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
             . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
             . '</p>';
-            // $content = $schema . $content . '</div>' . $details;
-            $content .= $details;
+
+            $schema = '';
+            $source = get_post_meta( $post->ID, "source", TRUE );
+            if ( $source == 'website' ){
+                $question = get_the_title( $post->ID );
+                $answer = wp_strip_all_tags( $content, TRUE );
+                $schema = '<div style="display:none" itemscope itemtype="https://schema.org/FAQPage">';
+                $schema .= '<div style="display:none" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">';
+                $schema .= '<div style="display:none" itemprop="name">' . $question . '</div>';
+                $schema .= '<div style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">';
+                $schema .= '<div style="display:none" itemprop="text">' . $answer . '</div></div></div></div>';
+            }
+
+            $content .= $details . $schema;
         }
 
         return $content;
