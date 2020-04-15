@@ -12,9 +12,9 @@ class Layout {
     public function __construct() {
         add_filter( 'pre_get_posts', [$this, 'makeFaqSortable'] );
         add_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
+        add_filter( 'enter_title_here', [$this, 'changeTitleText'] );
         // show content in box if not editable ( = source is not "website" )
-        add_action( 'add_meta_boxes', [$this, 'addContentBox'] );
-        add_action( 'edit_form_after_title', [$this, 'toggleEditor'] );
+        add_action( 'admin_menu', [$this, 'toggleEditor'] );
         // add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
         // Table "All FAQ"
         add_filter( 'manage_edit-faq_columns', [$this, 'addFaqColumns'] );
@@ -63,32 +63,73 @@ class Layout {
     }
     
     public function fillContentBox( $post ) {
-        $cats = implode( ', ', wp_get_post_terms( $post->ID,  'faq_category', array( 'fields' => 'names' ) ) );
-        $tags = implode( ', ', wp_get_post_terms( $post->ID,  'faq_tag', array( 'fields' => 'names' ) ) );
-        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content ) . '<hr>' . ( $cats ? '<h3>' . __('Category', 'rrze-faq' ) . '</h3><p>' . $cats . '</p>' : '' ) . ( $tags ? '<h3>' . __('Tags', 'rrze-faq' ) . '</h3><p>' . $tags .'</p>' : '' );
+        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
     }
 
-    public function addContentBox() {
-        add_meta_box(
-            'read_only_content_box', // id, used as the html id att
-            __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq'), // meta box title
-            [$this, 'fillContentBox'], // callback function, spits out the content
-            'faq', // post type or page. This adds to posts only
-            'normal', // context, where on the screen
-            'high' // priority, where should this go in the context
-        );
+    public function fillShortcodeBox( ) { 
+        global $post;
+        $ret = '';
+        $category = '';
+        $tag = '';
+        $fields = array( 'category', 'tag');
+        foreach ( $fields as $field ){
+            $terms = wp_get_post_terms( $post->ID, 'faq_' . $field );
+            foreach ( $terms as $term ){
+                $$field .= $term->slug . ', ';
+            }
+            $$field = rtrim( $$field, ', ' );
+        }
+
+        if ( $post->ID > 0 ) {
+            $ret .= '<h3 class="hndle">' . __('Single entries','rrze-faq') . ':</h3><p>[faq id="' . $post->ID . '"]</p>';
+            $ret .= ( $category ? '<h3 class="hndle">' . __( 'Accordion with category','rrze-faq') . ':</h3><p>[faq category="' . $category . '"]</p><p>' . __( 'If there is more than one category listed, use at least one of them.', 'rrze-faq' ) . '</p>' : '' );
+            $ret .= ( $tag ? '<h3 class="hndle">' . __( 'Accordion with tag','rrze-faq' ) . ':</h3><p>[faq tag="' . $tag . '"]</p><p>'. __( 'If there is more than one tag listed, use at least one of them.', 'rrze-faq' ) . '</p>' : '' );
+            $ret .= '<h3 class="hndle">' . __( 'Accordion with all entries','rrze-faq' ) . ':</h3><p>[faq]</p>';
+        }    
+        echo $ret;
     }
 
-    public function toggleEditor( $post ) {
-        if ( $post->post_type == 'faq' ) {
-            $source = get_post_meta( $post->ID, "source", true );
-            if ( $source && $source != 'website' ){
-                remove_post_type_support( 'faq', 'title' );
-                remove_post_type_support( 'faq', 'editor' );
-                remove_meta_box( 'tagsdiv-faq_category', 'faq', 'side' );
-                remove_meta_box( 'tagsdiv-faq_tag', 'faq', 'side' );
-            } else {
-                remove_meta_box( 'read_only_content_box', 'faq', 'normal' );
+    public function changeTitleText( $title ){
+        $screen = get_current_screen();
+        if  ( $screen->post_type == 'faq' ) {
+             $title = __( 'Enter question here', 'rrze-faq' );
+        }         
+        return $title;
+    }
+
+    public function toggleEditor(){
+        $post_id = ( isset( $_GET['post'] ) ? $_GET['post'] : ( isset ( $_POST['post_ID'] ) ? $_POST['post_ID'] : 0 ) ) ;
+
+        if ( $post_id ){            
+            if ( get_post_type( $post_id ) == 'faq' ) {
+                $source = get_post_meta( $post_id, "source", TRUE );
+                if ( $source ){
+                    $position = 'normal';
+                    if ( $source != 'website' ){
+                        remove_post_type_support( 'faq', 'title' );
+                        remove_post_type_support( 'faq', 'editor' );
+                        remove_meta_box( 'faq_categorydiv', 'faq', 'side' );
+                        remove_meta_box( 'tagsdiv-faq_tag', 'faq', 'side' );
+                        remove_meta_box( 'submitdiv', 'faq', 'side' );            
+                        add_meta_box(
+                            'read_only_content_box', // id, used as the html id att
+                            __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq'), // meta box title
+                            [$this, 'fillContentBox'], // callback function, spits out the content
+                            'faq', // post type or page. This adds to posts only
+                            'normal', // context, where on the screen
+                            'high' // priority, where should this go in the context
+                        );
+                        $position = 'side';    
+                    }
+                    add_meta_box(
+                        'shortcode_box', // id, used as the html id att
+                        __( 'Integration in pages and posts', 'rrze-faq'), // meta box title
+                        [$this, 'fillShortcodeBox'], // callback function, spits out the content
+                        'faq', // post type or page. This adds to posts only
+                        $position, // context, where on the screen
+                        'high' // priority, where should this go in the context
+                    );        
+                }
             }
         }
     }

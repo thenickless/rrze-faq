@@ -4,7 +4,7 @@
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Description:       
-Version:         4.3.6
+Version:         4.7.0
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -23,8 +23,15 @@ use RRZE\FAQ\Main;
 
 const RRZE_PHP_VERSION = '7.3';
 const RRZE_WP_VERSION = '5.2';
-
 const RRZE_PLUGIN_FILE = __FILE__;
+const RRZE_SCHEMA_START = '<div style="display:none" itemscope itemtype="https://schema.org/FAQPage">';
+const RRZE_SCHEMA_END = '</div>';
+const RRZE_SCHEMA_QUESTION_START = '<div style="display:none" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"><div style="display:none" itemprop="name">';
+const RRZE_SCHEMA_QUESTION_END = '</div>';
+const RRZE_SCHEMA_ANSWER_START = '<div style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><div style="display:none" itemprop="text">';
+const RRZE_SCHEMA_ANSWER_END = '</div></div></div>';
+
+
 
 // Automatische Laden von Klassen.
 spl_autoload_register(function ($class) {
