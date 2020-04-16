@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  * Custom Post Type "faq"
  */
 class CPT {
-
+    
     private $lang = '';
 
     public function __construct() {
@@ -144,17 +144,6 @@ class CPT {
             ));
             register_term_meta(
                 $t['name'], 
-                'sourceID', 
-                array(
-                    'query_var' 	=> TRUE,
-                    'type' => 'number',
-                    'single' => TRUE,
-                    'show_in_rest' => TRUE,
-                    'rest_base'          => 'sourceID',
-                    'rest_controller_class' => 'WP_REST_Terms_Controller'
-            ));
-            register_term_meta(
-                $t['name'], 
                 'lang', 
                 array(
                     'query_var' 	=> TRUE,
@@ -169,7 +158,6 @@ class CPT {
         
     public function setPostMeta( $postID ){
         add_post_meta( $postID, 'source', 'website', TRUE );
-        add_post_meta( $postID, 'sourceID', $postID, TRUE );
         add_post_meta( $postID, 'lang', $this->lang, TRUE );
     }
     

@@ -289,8 +289,6 @@ class Settings {
             }
             $btn_label = '';
             $get = '';
-            $disable_start = '';
-            $disable_end = '';
 
             switch ( $this->currentTab ) {
                 case 'sync':                    
@@ -308,14 +306,13 @@ class Settings {
 
             echo '<div id="' . $section['id'] . '">';
             echo '<form method="post" action="options.php'. $get . '">';
-            echo $disable_start;
             settings_fields($section['id']);
             do_settings_sections($section['id']);
+            // <input type="checkbox" name="auto_sync" value='" . $url . "'>
             submit_button( $btn_label );
             if ( $this->currentTab == 'doms' ){
                 $this->domainOutput();
             }            
-            echo $disable_end;
             echo '</form>';
             echo '</div>';
         }
@@ -341,17 +338,15 @@ class Settings {
                 $i++;
             }
             echo '</tbody></table>';
-            echo '<p>' . __( 'Please note: "Delete selected domains" will NOT delete any FAQ, category or tag.', 'rrze-faq' ) . '</p>'; 
+            echo '<p>' . __( 'Please note: "Delete selected domains" will DELETE every FAQ, category and tag that has been fetched from the selected domains.', 'rrze-faq' ) . '</p>'; 
             submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
         }
     }
-
 
     public function setSettingsDomains(){
         $i = 1;
         $newFields = array();
         $api = new API();
-
 
         foreach ( $this->domains as $shortname => $url ){
             $categories = $api->getCategories( $url, $shortname ); 
@@ -368,18 +363,17 @@ class Settings {
                         if ( !$categories ){
                             $field['options'][''] = __( 'no category with source = "website" found', 'rrze-faq' );
                         }
-                        foreach ( $categories as $name => $aDetails ){
-                            $field['options'][$aDetails['slug']] = $aDetails['name'];
-                            $children = ( isset( $aDetails['children'] ) ? $aDetails['children'] : 0 );
-                            $sep = '-';
-                            while ( $children  ){
-                                foreach ( $children as $child ){
-                                    $field['options'][$child['slug']] = $sep . ' ' . $child['name'];
-                                }
-                                $children = ( isset( $child['children'] ) ? $child['children'] : 0 );
-                                $sep .= '-';
-                            }
-                        }
+                        // foreach ( $categories as $name => $aDetails ){
+                        //     $field['options'][$aDetails['slug']] = $aDetails['name'];
+                        //     $sep = '-';
+                        //     while ( $children  ){
+                        //         foreach ( $children as $child ){
+                        //             $field['options'][$child['slug']] = $sep . ' ' . $child['name'];
+                        //         }
+                        //         $children = ( isset( $child['children'] ) ? $child['children'] : 0 );
+                        //         $sep .= '-';
+                        //     }
+                        // }
                         break;    
                 }
                 $field['name'] = $field['name'] . '_' . $shortname;

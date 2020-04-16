@@ -25,6 +25,7 @@ class Sync {
                         // set cronjob
                     case 'manual':
                         $iDel = $api->deleteFAQ( $shortname );
+                        $api->deleteTags( $shortname );
                         $iCnt = $api->setFAQ( $url, $categories, $shortname  );
                     break;
                 }
