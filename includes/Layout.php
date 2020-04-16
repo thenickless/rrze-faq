@@ -28,6 +28,8 @@ class Layout {
         add_filter( 'manage_edit-faq_tag_columns', [$this, 'addTaxColumns'] );
         add_filter( 'manage_faq_tag_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
         add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'addTaxColumns'] );
+        // show categories and tags under content
+        add_filter( 'the_content', [$this, 'showDetails'] );        
     }
 
     public function makeFaqSortable( $wp_query ) {
@@ -162,6 +164,40 @@ class Layout {
             $source = get_term_meta( $term_id, 'source', true );
             echo $source;
         }
+    }
+
+    public function getTermsAsString( &$postID, $field ){
+        $ret = '';
+        $terms = wp_get_post_terms( $postID, 'faq_' . $field );
+        foreach ( $terms as $term ){
+            $ret .= $term->name . ', ';
+        }
+        return substr( $ret, 0, -2 );
+    }
+
+    public function showDetails( $content ){
+        global $post;
+        if ( $post->post_type == 'faq' ){
+            $cats = $this->getTermsAsString( $post->ID, 'category' );
+            $tags = $this->getTermsAsString( $post->ID, 'tag' );            
+            $details = '<!-- rrze-faq --><p id="rrze-faq" class="meta-footer">'
+            . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
+            . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
+            . '</p>';
+            $schema = '';
+            $source = get_post_meta( $post->ID, "source", TRUE );
+            if ( $source == 'website' ){
+                $question = get_the_title( $post->ID );
+                $answer = wp_strip_all_tags( $content, TRUE );
+                $schema = '<div style="display:none" itemscope itemtype="https://schema.org/FAQPage">';
+                $schema .= '<div style="display:none" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">';
+                $schema .= '<div style="display:none" itemprop="name">' . $question . '</div>';
+                $schema .= '<div style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">';
+                $schema .= '<div style="display:none" itemprop="text">' . $answer . '</div></div></div></div>';
+            }
+            $content .= $details . $schema;
+        }
+        return $content;
     }
 
     /**
