@@ -58,7 +58,11 @@ class RESTAPI {
     }
 
     public function getChildrenCategories( $term ) {
-        $children = get_terms( 'faq_category', array( 'parent' => $term['id'] ) );
+        $children = get_terms( 
+            array(
+                'taxonomy' => 'faq_category',
+                'parent' => $term['id'] 
+            ));
         $aRet = array();
         foreach ( $children as $child ){
             $aRet[] = $child->name;

@@ -349,7 +349,7 @@ class Settings {
         $api = new API();
 
         foreach ( $this->domains as $shortname => $url ){
-            $categories = $api->getCategories( $url, $shortname ); 
+            $aCategories = $api->getCategories( $url, $shortname ); 
 
             foreach ( $this->settingsFields['sync'] as $field ){
                 switch ( $field['name'] ){
@@ -360,20 +360,12 @@ class Settings {
                         $field['default'] = $url;
                         break;
                     case 'categories':
-                        if ( !$categories ){
+                        if ( !$aCategories ){
                             $field['options'][''] = __( 'no category with source = "website" found', 'rrze-faq' );
                         }
-                        // foreach ( $categories as $name => $aDetails ){
-                        //     $field['options'][$aDetails['slug']] = $aDetails['name'];
-                        //     $sep = '-';
-                        //     while ( $children  ){
-                        //         foreach ( $children as $child ){
-                        //             $field['options'][$child['slug']] = $sep . ' ' . $child['name'];
-                        //         }
-                        //         $children = ( isset( $child['children'] ) ? $child['children'] : 0 );
-                        //         $sep .= '-';
-                        //     }
-                        // }
+                        foreach ( $aCategories as $slug => $name ){
+                            $field['options'][$slug] = $name;
+                        }
                         break;    
                 }
                 $field['name'] = $field['name'] . '_' . $shortname;
