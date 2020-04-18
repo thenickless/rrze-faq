@@ -166,37 +166,69 @@ class API {
         // return $aRet;
     }
 
-    private $aC = array();
     
-    public function sortCats(Array &$cats, Array &$into, $parentId = 0, $prefix = '' ) {
-        if ( !$parentId ){
-            $prefix = '';
-            $iTmp = 0;
-        } else {
-            $prefix .= '-';
-            $iTmp = $parentId;
-        }
+    public function sortAllCats( &$cats, &$into ) {
+        foreach ($cats as $ID => $aDetails) {
+            $into[$ID]['slug'] = $aDetails['slug'];
+            $into[$ID]['name'] = $aDetails['name'];            
+            if ( $aDetails['parentID'] ) {
+                $parentID = $aDetails['parentID'];
+                $into[$parentID][$ID]['slug'] = $aDetails['slug'];
+                $into[$parentID][$ID]['name'] = $aDetails['name'];
+            }
+            unset( $cats[$parentID] );
+        }    
+        $this->sortAllCats( $cats, $into );
+    }
 
+
+    public function sortCats(Array &$cats, Array &$into, $parentID = 0, $prefix = '' ) {
+        $prefix .= ( $parentID ? '-' : '' );
         foreach ($cats as $i => $cat) {
-            if ($cat->parent == $parentId) {
-                $into[$cat->term_id] = $cat;
-                $this->aAllCats[$cat->term_id]['parentID'] = $parentId;
-                $this->aAllCats[$cat->term_id]['slug'] = $cat->slug;
-                $this->aAllCats[$cat->term_id]['name'] = ltrim( $prefix . ' ' . $cat->name );
+            if ( $cat->parent == $parentID ) {
+                $into[$cat->term_id] = $cat;                
                 unset( $cats[$i] );
             }
+            $this->aAllCats[$cat->term_id]['parentID'] = $cat->parent;
+            $this->aAllCats[$cat->term_id]['slug'] = $cat->slug;
+            $this->aAllCats[$cat->term_id]['name'] = ltrim( $prefix . ' ' . $cat->name );
         }    
         foreach ($into as $topCat) {
             $topCat->children = array();
             $this->sortCats($cats, $topCat->children, $topCat->term_id, $prefix );
         }
+        if ( !$cats ){
+            foreach ( $this->aAllCats as $ID => $aDetails ){
+                if ( $aDetails['parentID'] ){
+                    $this->aAllCats[$aDetails['parentID']]['children'][$ID] = $this->aAllCats[$ID];
+                }
+            }
+        } 
+    }
+
+    public function cleanCats(){
+        foreach ( $this->aAllCats as $ID => $aDetails ){
+            if ( $aDetails['parentID'] ){
+                unset( $this->aAllCats[$ID] );
+            }
+        }
+    }
+
+    public function getSlugNameCats(&$cats, &$into ){
+        foreach ( $cats as $i => $cat ){
+            $into[$cat['slug']] = $cat['name'];
+            if ( isset( $cat['children'] ) ){
+                $this->getSlugNameCats($cat['children'], $into );
+            }
+            unset( $cats[$i] );
+        }
     }
 
     public function getCategories( $url, $shortname, $categories = '' ){
+        $aRet = array();
         $this->deleteCategories( $shortname );
         $aCategories = $this->getTaxonomies( $url, 'category', $categories );
         $this->setCategories( $aCategories, $shortname );
-
         $categories = get_terms( array(
             'taxonomy' => 'faq_category',
             'meta_query' => array( array(
@@ -208,12 +240,9 @@ class API {
             ) );
         $categoryHierarchy = array();
         $this->sortCats($categories, $categoryHierarchy);
-
-        echo '<pre>';
-        var_dump($this->aAllCats);
-        exit;
-
-        return $this->aAllCats;
+        $this->cleanCats();
+        $this->getSlugNameCats( $this->aAllCats, $aRet );
+        return $aRet;
     }
 
 
