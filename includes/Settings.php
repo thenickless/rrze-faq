@@ -94,7 +94,6 @@ class Settings {
      */
     public function onLoaded() {
         add_action('init', [$this, 'regularInit'], 1);
-
         add_action('admin_init', [$this, 'adminInit']);
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
@@ -308,7 +307,7 @@ class Settings {
             echo '<form method="post" action="options.php'. $get . '">';
             settings_fields($section['id']);
             do_settings_sections($section['id']);
-            // <input type="checkbox" name="auto_sync" value='" . $url . "'>
+            // echo '<input type="checkbox" name="auto_sync" value="">';
             submit_button( $btn_label );
             if ( $this->currentTab == 'doms' ){
                 $this->domainOutput();

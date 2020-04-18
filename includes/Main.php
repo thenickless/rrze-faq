@@ -50,7 +50,6 @@ class Main {
 
         $restAPI = new RESTAPI();
         $layout = new Layout();
-        $cronjob = new Cronjob();
         $shortcode = new Shortcode();
     }
 
@@ -108,6 +107,17 @@ class Main {
                         }
                     }
                 }    
+            break;
+            case 'sync':
+                $activateCronjob = FALSE;
+                foreach( $domains as $shortname => $url ){
+                    if ( isset( $options['sync_mode_' . $shortname ] ) && $options['sync_mode_' . $shortname ] == 'auto' ){
+                        $activateCronjob = TRUE;
+                    } 
+                }
+                $cronjob = new Cronjob();
+                $cronjob->setCronjob( $activateCronjob );
+                $options['timestamp'] = time();
             break;
             case 'del':
                 deleteLogfile();

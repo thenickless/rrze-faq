@@ -2,11 +2,9 @@
 
 namespace RRZE\FAQ;
 
-
 defined('ABSPATH') || exit;
 
 define ('ENDPOINT', 'wp-json/wp/v2/faq' );
-use function RRZE\FAQ\Config\logIt;
 
 class API {
 
@@ -55,14 +53,6 @@ class API {
         $this->deleteTags( $shortname );
     }
 
-    // public function debug_to_console($data) {
-    //     $output = $data;
-    //     if (is_array($output))
-    //         $output = implode(',', $output);
-    
-    //     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-    // }    
-
     protected function getTaxonomies( $url, $field, &$filter ){
         $aRet = array();    
         $url .= ENDPOINT . '_' . $field;    
@@ -97,9 +87,6 @@ class API {
             }
             $page++;   
         } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
-
-// logIt( '$aRet = ' . print_r($aRet,TRUE));
-
         return $aRet;
     }
 
@@ -147,23 +134,17 @@ class API {
                 $term = wp_insert_term( $name, 'faq_category' );
                 update_term_meta( $term['term_id'], 'source', $shortname );    
             }
-            // $parent = get_term( $term['term_id'] );
-            // $aRet[$name]['slug'] = $parent->slug;
             foreach ( $aDetails as $childname => $tmp ) {
                 $childterm = term_exists( $childname, 'faq_category' );
                 if ( !$childterm ) {
                     $childterm = wp_insert_term( $childname, 'faq_category', array( 'parent' => $term['term_id'] ) );
                     update_term_meta( $childterm['term_id'], 'source', $shortname );    
                 }
-                // $child = get_term( $childterm['term_id'] );
-                // $aRet[$name]['children'][$childname] = $child->slug;
             }
             if ( $aDetails ){
                 $aTmp = $aDetails;
             }
         }
-// logIt( '$aTmp = ' . print_r($aTmp,TRUE));
-        // return $aRet;
     }
 
     
@@ -226,7 +207,7 @@ class API {
 
     public function getCategories( $url, $shortname, $categories = '' ){
         $aRet = array();
-        $this->deleteCategories( $shortname );
+        // $this->deleteCategories( $shortname );
         $aCategories = $this->getTaxonomies( $url, 'category', $categories );
         $this->setCategories( $aCategories, $shortname );
         $categories = get_terms( array(
@@ -235,7 +216,6 @@ class API {
                 'key' => 'source',
                 'value' => $shortname
             ) ),
-            'output_type' => 'ARRAY_N',
             'hide_empty' => FALSE
             ) );
         $categoryHierarchy = array();
@@ -297,19 +277,36 @@ class API {
         return $faqs;
     }
 
+    public function setTags( $terms, $shortname ){
+        $aTerms = explode( ',', $terms );
+        foreach( $aTerms as $name ){
+            $term = term_exists( $name, 'faq_tag' );
+            if ( !$term ) {
+                $term = wp_insert_term( $name, 'faq_tag' );
+                update_term_meta( $term['term_id'], 'source', $shortname );    
+            }
+        }
+    }
 
     public function setFAQ( $url, $categories, $shortname ){
         $iCnt = 0;
+
+        $this->deleteFAQ( $shortname );
+        $this->deleteTags( $shortname );
+        $this->deleteCategories( $shortname );
+        $this->getCategories( $url, $shortname );
 
         // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
 
         // set FAQ
         foreach ( $aFaq as $faq ){
+            $this->setTags( $faq['faq_tag'], $shortname );
+
             $aCategoryIDs = array();
             foreach ( $faq['faq_category'] as $name ){
                 $term = get_term_by( 'name', $name, 'faq_category' );
-                $aCategoryIDs[] = $term->term_taxonomy_id;
+                $aCategoryIDs[] = $term->term_id;
             }
 
             $post_id = wp_insert_post( array(
