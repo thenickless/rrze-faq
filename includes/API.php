@@ -278,12 +278,16 @@ class API {
     }
 
     public function setTags( $terms, $shortname ){
-        $aTerms = explode( ',', $terms );
-        foreach( $aTerms as $name ){
-            $term = term_exists( $name, 'faq_tag' );
-            if ( !$term ) {
-                $term = wp_insert_term( $name, 'faq_tag' );
-                update_term_meta( $term['term_id'], 'source', $shortname );    
+        if ( $terms ){
+            $aTerms = explode( ',', $terms );
+            foreach( $aTerms as $name ){
+                if ( $name ){
+                    $term = term_exists( $name, 'faq_tag' );
+                    if ( !$term ) {
+                        $term = wp_insert_term( $name, 'faq_tag' );
+                        update_term_meta( $term['term_id'], 'source', $shortname );    
+                    }
+                }
             }
         }
     }
