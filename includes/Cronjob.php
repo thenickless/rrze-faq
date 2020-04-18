@@ -40,9 +40,8 @@ class Cronjob {
         }
     }
 
-    public function setCronjob() {
-        $options = get_option( 'rrze-faq' );
-        if ( isset( $options['otrs_auto_sync'] ) && $options['otrs_auto_sync'] != 'on' ) {
+    public function setCronjob( $activate ) {
+        if ( !$activate ) {
             if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
                 wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
             }

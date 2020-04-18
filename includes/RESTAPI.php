@@ -8,32 +8,33 @@ defined( 'ABSPATH' ) || exit;
  * REST API for "faq"
  */
 class RESTAPI {
-
-
     public function __construct() {
         add_action( 'rest_api_init', [$this, 'createPostMeta'] );
         add_action( 'rest_api_init', [$this, 'createTaxDetails'] );
-        add_action( 'rest_api_init', [$this, 'createParents'] );
+        add_action( 'rest_api_init', [$this, 'createChildren'] );
         add_action( 'rest_api_init', [$this, 'addFilters'] );
     }
 
-    public function getPostMeta( $object ) {
-        // return get_post_meta( $object['id'], 'source', TRUE );
-        return get_post_meta( $object['id'] );
+    public function getPostSource( $object ) {
+        return get_post_meta( $object['id'], 'source', TRUE );
+    }
+
+    public function getPostLang( $object ) {
+        return get_post_meta( $object['id'], 'lang', TRUE );
     }
 
     // make API deliver source and lang for FAQ
     public function createPostMeta() {
-        $fields = array( 'faq', 'faq_category', 'faq_tag' );
-        foreach( $fields as $field ){
-            register_rest_field( $field, 'meta', array(
-                'get_callback'    => [$this, 'getPostMeta'],
-                'schema'          => null,
-            ));
-        }        
+        register_rest_field( 'faq', 'source', array(
+            'get_callback'    => [$this, 'getPostSource'],
+            'schema'          => null,
+        ));
+        register_rest_field( 'faq', 'lang', array(
+            'get_callback'    => [$this, 'getPostLang'],
+            'schema'          => null,
+        ));
     }
-
-    
+   
     public function addFilterParam( $args, $request ) {
         if ( empty( $request['filter'] ) || ! is_array( $request['filter'] ) ) {
                 return $args;
@@ -56,17 +57,22 @@ class RESTAPI {
         add_filter( 'rest_faq_tag_query', [$this, 'addFilterParam'], 10, 2 );
     }
 
-
-    public function getParentCategories( $term ) {
-        return get_term_parents_list( $term['id'], 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => TRUE ) );
+    public function getChildrenCategories( $term ) {
+        $children = get_terms( 
+            array(
+                'taxonomy' => 'faq_category',
+                'parent' => $term['id'] 
+            ));
+        $aRet = array();
+        foreach ( $children as $child ){
+            $aRet[] = $child->name;
+        }
+        return $aRet;
     }
 
 
     public function getFaqCategories( $post ) {
         $cats = wp_get_post_terms( $post['id'], 'faq_category', array( 'fields' => 'names') );
-        // foreach ( $cats as $cat ){
-        //     $cat->parent = get_term_parents_list( $cat->term_id, 'faq_category', array( 'format' => 'name', 'link' => FALSE, 'separator' => ',', 'inclusive' => TRUE ) );
-        // }
         return $cats;
     }
 
@@ -74,6 +80,13 @@ class RESTAPI {
         return wp_get_post_terms( $post['id'], 'faq_tag', array( 'fields' => 'names')  );
     }
 
+    public function getTaxSource( $object ) {
+        return get_term_meta( $object['id'], 'source', TRUE );
+    }
+
+    public function getTaxLang( $object ) {
+        return get_term_meta( $object['id'], 'lang', TRUE );
+    }
 
     public function createTaxDetails() {
         register_rest_field( 'faq',
@@ -92,17 +105,28 @@ class RESTAPI {
                 'schema'            => null,
              )
         );
+
+        $fields = array( 'faq_category', 'faq_tag' );
+        foreach( $fields as $field ){
+            register_rest_field( $field, 'source', array(
+                'get_callback'    => [$this, 'getTaxSource'],
+                'schema'          => null,
+            ));
+            register_rest_field( $field, 'lang', array(
+                'get_callback'    => [$this, 'getTaxLang'],
+                'schema'          => null,
+            ));
+        }            
     }
 
-    public function createParents() {
+    public function createChildren() {
         register_rest_field( 'faq_category',
-            'parents',
+            'children',
             array(
-                'get_callback'    => [$this, 'getParentCategories'],
+                'get_callback'    => [$this, 'getChildrenCategories'],
                 'update_callback'   => null,
                 'schema'            => null,
              )
         );
     }
-
 }

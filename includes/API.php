@@ -2,16 +2,13 @@
 
 namespace RRZE\FAQ;
 
-
 defined('ABSPATH') || exit;
 
 define ('ENDPOINT', 'wp-json/wp/v2/faq' );
 
 class API {
 
-    private $aAllCategories = array();
-    private $aAllTags = array();
-
+    private $aAllCats = array();
 
     protected function checkDomain( &$url ){
         $content = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
@@ -40,7 +37,7 @@ class API {
         $url = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
         $domains = $this->getDomains();
         $shortname = strtolower( preg_replace('/[^A-Za-z0-9\-]/', '', str_replace( ' ', '-', $shortname ) ) );
-        if ( in_array( $url, $domains ) === FALSE ) {
+        if ( ( in_array( $url, $domains ) === FALSE ) && ( array_key_exists( $shortname, $domains ) === FALSE ) ) {
             if ( $this->checkDomain( $url ) ){
                 $domains[$shortname] = $url;
             }else{
@@ -50,8 +47,14 @@ class API {
         return $domains;
     }
 
+    public function deleteDomain( &$shortname ){
+        $this->deleteFAQ( $shortname );
+        $this->deleteCategories( $shortname );
+        $this->deleteTags( $shortname );
+    }
+
     protected function getTaxonomies( $url, $field, &$filter ){
-        $items = array();    
+        $aRet = array();    
         $url .= ENDPOINT . '_' . $field;    
         $slug = ( $filter ? '&slug=' . $filter : '' );
         $page = 1;
@@ -63,165 +66,172 @@ class API {
                 $entries = json_decode( wp_remote_retrieve_body( $request ), true );
                 if ( !empty( $entries ) ){
                     foreach( $entries as $entry ){
-                        if ( !isset( $items[$entry['name']] ) ){
-                            $items[$entry['name']] = array( 'children' => '' );
-                        }
-                        if ( isset( $entry['parent'] ) && $entry['parent'] ){
-                            $entry['parents'] = rtrim( $entry['parents'], ',' );
-                            $aRel = explode( ',', $entry['parents'] );                                                    
-                            $iCnt = count( $aRel );                
-                            for ( $i = 0; $i < $iCnt; $i++ ){
-                                $y = $i + 1;
-                                if ( $y < $iCnt ){
-                                    $items[$aRel[$i]]['children'][$aRel[$y]] = $aRel[$y];
-                                } 
+                        if ( $entry['source'] == 'website' ){                            
+                            if ( $entry['children'] ) {
+                                foreach( $entry['children'] as $childname ){
+                                    $aRet[$entry['name']][$childname] = array();        
+                                }
+                            }else{
+                                $aRet[$entry['name']] = array();
                             }
-                        }    
+                        }
+                    }
+                    foreach( $aRet as $name => $aChildren ){
+                        foreach ( $aChildren as $childname => $val ){
+                            if ( isset( $aRet[$childname] ) ){
+                                $aRet[$name][$childname] = $aRet[$childname];
+                            }
+                        }
                     }
                 }
             }
             $page++;   
         } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
-
-        return $items;
+        return $aRet;
     }
 
+    
     public function sortIt( &$arr ){
         uasort( $arr, function($a, $b) {
             return strtolower( $a ) <=> strtolower( $b );
         } );
     }
     
-    public function getCategories( $url, $shortname, $categories = '' ){
-        $aCategories = $this->getTaxonomies( $url, 'category', $categories );
-        $this->setCategories( $aCategories, $shortname );
-        $cats = get_terms( array( 
-            'taxonomy' => 'faq_category',
+    public function deleteTaxonomies( $source, $field ){
+        $args = array(
             'hide_empty' => FALSE,
-            'meta_query' => array( array(
-                    'key' => 'source',
-                    'value' => $shortname,
-            )),
-            'orderby' => 'term_id',
-            'order' => 'DESC'
-         ) );  
-         
-         $aCats = array();
-         foreach ( $cats as $cat ){
-             $aCats[$cat->term_id] = array(
-                 'id' => $cat->term_id,
-                 'name' => $cat->name,
-                 'slug' => $cat->slug,
-                 'parentID' => $cat->parent,
-             );
-         }
-         foreach ( $aCats as $cat ){
-            if ( $cat['parentID'] ){
-                $aRet[$cat['parentID']]['children'][$cat['name']] = $cat;
-                $aRet[$cat['parentID']]['id'] = $aCats[$cat['parentID']]['id'];
-                $aRet[$cat['parentID']]['name'] = $aCats[$cat['parentID']]['name'];                
-                $aRet[$cat['parentID']]['slug'] = $aCats[$cat['parentID']]['slug'];                
-             } else {
-                $aRet[$cat['id']]['id'] = $cat['id'];
-                $aRet[$cat['id']]['name'] = $cat['name'];
-                $aRet[$cat['id']]['slug'] = $cat['slug'];
-             }            
-         }
-         $aOrdered = array(); 
-         foreach ( $aCats as $id => $aDetails ){             
-            if ( isset( $aDetails['children'] )){
-                asort( $aDetails['children'] );
-            }
-            $aOrdered[$aDetails['name']] = $aDetails;
+            'meta_query' => array(
+                array(
+                   'key'       => 'source',
+                   'value'     => $source,
+                   'compare'   => '='
+                )
+            ),
+            'taxonomy'  => 'faq_' . $field,
+            'fields' => 'ids'
+            );
+        $terms = get_terms( $args );
+        foreach( $terms as $ID  ){
+            wp_delete_term( $ID, 'faq_' . $field );
         }
-
-        $aRet = array();
-        $aUsed = array();
-        foreach ( $aOrdered as $name => $cat ){             
-            if ( isset( $cat['children'] ) ){
-                foreach ( $cat['children'] as $childname => $child ){
-                    if ( isset( $aOrdered[$childname] ) ){
-                        $cat['children'][$childname] = $aOrdered[$childname];
-                        $aUsed[] = $childname;
-                    }
-                }
-            }
-            $aRet[$name] = $cat;
-        }
-        foreach( $aUsed as $name ){
-            unset( $aRet[$name] );
-        }
-    ksort( $aRet, SORT_STRING | SORT_FLAG_CASE );
-    return $aRet;
     }
 
-    protected function getTaxonomyByID( &$url, &$remoteID, $field ){
-        $item = array();
-        $request = wp_remote_get( $url . ENDPOINT . '_' . $field . '/' . $remoteID . '/?_fields=name,parent,meta' );
-        $status_code = wp_remote_retrieve_response_code( $request );
-        if ( $status_code == 200 ){
-            $entry = json_decode( wp_remote_retrieve_body( $request ), true );
-            if ( !empty( $entry ) ){
-                // if ( $entry['meta']['source'] == 'website' ){
-                    $item = array( 
-                        'remoteParentID' => ( isset( $entry['parent'] ) ? $entry['parent'] : 0 ),
-                        'name' => $entry['name']
-                    );
-                // }
-            }
-        }
-    return $item;
+
+    public function deleteCategories( $source ){
+        $this->deleteTaxonomies( $source, 'category');
     }
 
-    protected function getCategoryByID( &$url, &$remoteID ){
-        return $this->getTaxonomyByID( $url, $remoteID, 'category' );
+    public function deleteTags( $source ){
+        $this->deleteTaxonomies( $source, 'tag');
     }
-
-    protected function getTagByID( &$url, &$remoteID ){
-        return $this->getTaxonomyByID( $url, $remoteID, 'tag' );
-    }
-
 
     protected function setCategories( &$aCategories, &$shortname ){
-        foreach ( $aCategories as $name => $aDetails ){
+        $aTmp = $aCategories;
+        // $aRet = array();
+        foreach ( $aTmp as $name => $aDetails ){
             $term = term_exists( $name, 'faq_category' );
             if ( !$term ) {
                 $term = wp_insert_term( $name, 'faq_category' );
                 update_term_meta( $term['term_id'], 'source', $shortname );    
-            }    
-            if ( $aDetails['children'] ){
-                foreach ( $aDetails['children'] as $child ) {
-                    $childterm = term_exists( $child, 'faq_category' );
-                    if ( !$childterm ) {
-                        $childterm = wp_insert_term( $child, 'faq_category', array( 'parent' => $term['term_id'] ) );
-                        update_term_meta( $childterm['term_id'], 'source', $shortname );    
-                    }
+            }
+            foreach ( $aDetails as $childname => $tmp ) {
+                $childterm = term_exists( $childname, 'faq_category' );
+                if ( !$childterm ) {
+                    $childterm = wp_insert_term( $childname, 'faq_category', array( 'parent' => $term['term_id'] ) );
+                    update_term_meta( $childterm['term_id'], 'source', $shortname );    
                 }
+            }
+            if ( $aDetails ){
+                $aTmp = $aDetails;
             }
         }
     }
 
-    protected function setTags( &$aTags, &$shortname ){
-        $aRet = array();
-        foreach ( $aTags as $remoteID => $aDetails ){
-            $term = term_exists( $aDetails['name'], 'faq_tag' );
-            if ( !$term ) {
-                $term = wp_insert_term( $aDetails['name'], 'faq_tag' );
+    
+    public function sortAllCats( &$cats, &$into ) {
+        foreach ($cats as $ID => $aDetails) {
+            $into[$ID]['slug'] = $aDetails['slug'];
+            $into[$ID]['name'] = $aDetails['name'];            
+            if ( $aDetails['parentID'] ) {
+                $parentID = $aDetails['parentID'];
+                $into[$parentID][$ID]['slug'] = $aDetails['slug'];
+                $into[$parentID][$ID]['name'] = $aDetails['name'];
             }
-            update_term_meta( $term['term_id'], 'source', $shortname );
-            $aRet[$remoteID] = array(
-                'name' => $aDetails['name']
-                );
+            unset( $cats[$parentID] );
+        }    
+        $this->sortAllCats( $cats, $into );
+    }
+
+
+    public function sortCats(Array &$cats, Array &$into, $parentID = 0, $prefix = '' ) {
+        $prefix .= ( $parentID ? '-' : '' );
+        foreach ($cats as $i => $cat) {
+            if ( $cat->parent == $parentID ) {
+                $into[$cat->term_id] = $cat;                
+                unset( $cats[$i] );
+            }
+            $this->aAllCats[$cat->term_id]['parentID'] = $cat->parent;
+            $this->aAllCats[$cat->term_id]['slug'] = $cat->slug;
+            $this->aAllCats[$cat->term_id]['name'] = ltrim( $prefix . ' ' . $cat->name );
+        }    
+        foreach ($into as $topCat) {
+            $topCat->children = array();
+            $this->sortCats($cats, $topCat->children, $topCat->term_id, $prefix );
         }
+        if ( !$cats ){
+            foreach ( $this->aAllCats as $ID => $aDetails ){
+                if ( $aDetails['parentID'] ){
+                    $this->aAllCats[$aDetails['parentID']]['children'][$ID] = $this->aAllCats[$ID];
+                }
+            }
+        } 
+    }
+
+    public function cleanCats(){
+        foreach ( $this->aAllCats as $ID => $aDetails ){
+            if ( $aDetails['parentID'] ){
+                unset( $this->aAllCats[$ID] );
+            }
+        }
+    }
+
+    public function getSlugNameCats(&$cats, &$into ){
+        foreach ( $cats as $i => $cat ){
+            $into[$cat['slug']] = $cat['name'];
+            if ( isset( $cat['children'] ) ){
+                $this->getSlugNameCats($cat['children'], $into );
+            }
+            unset( $cats[$i] );
+        }
+    }
+
+    public function getCategories( $url, $shortname, $categories = '' ){
+        $aRet = array();
+        // $this->deleteCategories( $shortname );
+        $aCategories = $this->getTaxonomies( $url, 'category', $categories );
+        $this->setCategories( $aCategories, $shortname );
+        $categories = get_terms( array(
+            'taxonomy' => 'faq_category',
+            'meta_query' => array( array(
+                'key' => 'source',
+                'value' => $shortname
+            ) ),
+            'hide_empty' => FALSE
+            ) );
+        $categoryHierarchy = array();
+        $this->sortCats($categories, $categoryHierarchy);
+        $this->cleanCats();
+        $this->getSlugNameCats( $this->aAllCats, $aRet );
         return $aRet;
     }
+
 
     public function deleteFAQ( $source ){
         // deletes all FAQ by source
         $iDel = 0;
         $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'numberposts' => -1 ) );
         foreach ( $allFAQ as $faq ) {
-            wp_delete_post( $faq->ID, true );
+            wp_delete_post( $faq->ID, TRUE );
             $iDel++;
         } 
         return $iDel;
@@ -243,13 +253,13 @@ class API {
                         $entries = array( $entries );
                     }
                     foreach( $entries as $entry ){
-                        // if ( $entry['meta']['source'][0] == 'website' ){
+                        if ( $entry['source'] == 'website' ){
                             $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
 
                             $faqs[$entry['id']] = array(
                                 'title' => $entry['title']['rendered'],
                                 'content' => $content,
-                                'lang' => $entry['meta']['lang'][0],
+                                'lang' => $entry['lang'],
                                 'faq_category' => $entry['faq_category'],
                             );
                             $sTag = '';
@@ -257,7 +267,7 @@ class API {
                                 $sTag .= $tag . ',';
                             }
                             $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
-                        // }
+                        }
                     }
                 }
             }
@@ -267,19 +277,36 @@ class API {
         return $faqs;
     }
 
+    public function setTags( $terms, $shortname ){
+        $aTerms = explode( ',', $terms );
+        foreach( $aTerms as $name ){
+            $term = term_exists( $name, 'faq_tag' );
+            if ( !$term ) {
+                $term = wp_insert_term( $name, 'faq_tag' );
+                update_term_meta( $term['term_id'], 'source', $shortname );    
+            }
+        }
+    }
 
     public function setFAQ( $url, $categories, $shortname ){
         $iCnt = 0;
+
+        $this->deleteFAQ( $shortname );
+        $this->deleteTags( $shortname );
+        $this->deleteCategories( $shortname );
+        $this->getCategories( $url, $shortname );
 
         // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
 
         // set FAQ
         foreach ( $aFaq as $faq ){
+            $this->setTags( $faq['faq_tag'], $shortname );
+
             $aCategoryIDs = array();
             foreach ( $faq['faq_category'] as $name ){
                 $term = get_term_by( 'name', $name, 'faq_category' );
-                $aCategoryIDs[] = $term->term_taxonomy_id;
+                $aCategoryIDs[] = $term->term_id;
             }
 
             $post_id = wp_insert_post( array(

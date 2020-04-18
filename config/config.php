@@ -115,9 +115,9 @@ function getFields() {
 				'options' => []
 			],
 			[
-				'name' => 'mode',
+				'name' => 'mode', // mode
 				'label' => __('Synchronize', 'rrze-faq' ),
-				'desc' => '',
+				'desc' => __( 'All FAQ that match to the selected categories will be inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too. Categories which are not selected but already stored on this website will be deleted.', 'rrze-faq' ),
 				'default' => '',
 				'options' => [
 					'' => __('Do not synchronize.', 'rrze-faq' ),
@@ -225,8 +225,13 @@ function getShortcodeSettings(){
 }
 
 function logIt( $msg ){
-	$content = file_get_contents( FAQ_LOGFILE );
-	file_put_contents( FAQ_LOGFILE, $msg . "\n" . $content, LOCK_EX);
+	if ( file_exists( FAQ_LOGFILE ) ){
+		$content = file_get_contents( FAQ_LOGFILE );
+		$content = $msg . "\n" . $content;
+	}else {
+		$content = $msg;
+	}
+	file_put_contents( FAQ_LOGFILE, $content, LOCK_EX);
 }
   
 function deleteLogfile(){

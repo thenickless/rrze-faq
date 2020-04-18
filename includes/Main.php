@@ -50,7 +50,6 @@ class Main {
 
         $restAPI = new RESTAPI();
         $layout = new Layout();
-        $cronjob = new Cronjob();
         $shortcode = new Shortcode();
     }
 
@@ -93,11 +92,13 @@ class Main {
                             foreach( $options as $field => $val ){
                                 if ( ( stripos( $field, 'sync_url' ) === 0 ) && ( $val == $url ) ){
                                     $parts = explode( '_', $field );
-                                    unset( $options['sync_shortname_' . $parts[2]] );
-                                    unset( $options['sync_url_' . $parts[2]] );
-                                    unset( $options['sync_categories_' . $parts[2]] );
-                                    unset( $options['sync_mode_' . $parts[2]] );
-                                    unset( $options['sync_hr_' . $parts[2]] );
+                                    $shortname = $parts[2];
+                                    $api->deleteDomain( $shortname );
+                                    unset( $options['sync_shortname_' . $shortname] );
+                                    unset( $options['sync_url_' . $shortname] );
+                                    unset( $options['sync_categories_' . $shortname] );
+                                    unset( $options['sync_syncthis_' . $shortname] );
+                                    unset( $options['sync_hr_' . $shortname] );
                                     if ( ( $key = array_search( $url, $domains ) ) !== false) {
                                         unset( $domains[$key] );
                                     }                                    
@@ -106,6 +107,17 @@ class Main {
                         }
                     }
                 }    
+            break;
+            case 'sync':
+                $activateCronjob = FALSE;
+                foreach( $domains as $shortname => $url ){
+                    if ( isset( $options['sync_mode_' . $shortname ] ) && $options['sync_mode_' . $shortname ] == 'auto' ){
+                        $activateCronjob = TRUE;
+                    } 
+                }
+                $cronjob = new Cronjob();
+                $cronjob->setCronjob( $activateCronjob );
+                $options['timestamp'] = time();
             break;
             case 'del':
                 deleteLogfile();
