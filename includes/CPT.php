@@ -155,10 +155,11 @@ class CPT {
             ));
         }
     }
-        
+       
     public function setPostMeta( $postID ){
         add_post_meta( $postID, 'source', 'website', TRUE );
         add_post_meta( $postID, 'lang', $this->lang, TRUE );
+        add_post_meta( $postID, 'remoteID', $postID, TRUE );
     }
     
     public function setTermMeta( $termID ){

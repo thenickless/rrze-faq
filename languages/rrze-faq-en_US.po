@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-19 09:44+0000\n"
-"PO-Revision-Date: 2020-04-19 09:48+0000\n"
+"POT-Creation-Date: 2020-04-19 16:54+0000\n"
+"PO-Revision-Date: 2020-04-19 16:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -322,19 +322,35 @@ msgstr ""
 msgid "Update tag"
 msgstr ""
 
-#: includes/Sync.php:33
+#: includes/Sync.php:29
 msgid "Synchronization completed."
 msgstr ""
 
-#: includes/Sync.php:33
-msgid " FAQ fetched"
+#: includes/Sync.php:29
+msgid "new"
 msgstr ""
 
-#: includes/Sync.php:33
+#: includes/Sync.php:29
+msgid " updated"
+msgstr ""
+
+#: includes/Sync.php:29
+msgid "and"
+msgstr ""
+
+#: includes/Sync.php:29
+msgid "deleted"
+msgstr ""
+
+#: includes/Sync.php:38
+msgid "All synchronizations completed"
+msgstr ""
+
+#: includes/Sync.php:38
 msgid "Required time:"
 msgstr ""
 
-#: includes/Sync.php:33
+#: includes/Sync.php:38
 msgid "seconds"
 msgstr ""
 

@@ -23,6 +23,10 @@ class RESTAPI {
         return get_post_meta( $object['id'], 'lang', TRUE );
     }
 
+    public function getPostRemoteID( $object ) {
+        return get_post_meta( $object['id'], 'remoteID', TRUE );
+    }
+
     // make API deliver source and lang for FAQ
     public function createPostMeta() {
         register_rest_field( 'faq', 'source', array(
@@ -31,6 +35,10 @@ class RESTAPI {
         ));
         register_rest_field( 'faq', 'lang', array(
             'get_callback'    => [$this, 'getPostLang'],
+            'schema'          => null,
+        ));
+        register_rest_field( 'faq', 'remoteID', array(
+            'get_callback'    => [$this, 'getPostRemoteID'],
             'schema'          => null,
         ));
     }

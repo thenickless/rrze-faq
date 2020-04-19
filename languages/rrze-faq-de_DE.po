@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-19 09:44+0000\n"
-"PO-Revision-Date: 2020-04-19 09:45+0000\n"
+"POT-Creation-Date: 2020-04-19 16:54+0000\n"
+"PO-Revision-Date: 2020-04-19 16:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -328,19 +328,35 @@ msgstr "Schlagwort editieren"
 msgid "Update tag"
 msgstr "Schlagwort aktualisieren"
 
-#: includes/Sync.php:33
+#: includes/Sync.php:29
 msgid "Synchronization completed."
 msgstr "Synchronisierung abgeschlossen."
 
-#: includes/Sync.php:33
-msgid " FAQ fetched"
-msgstr "FAQ geholt"
+#: includes/Sync.php:29
+msgid "new"
+msgstr "neu"
 
-#: includes/Sync.php:33
+#: includes/Sync.php:29
+msgid " updated"
+msgstr "aktualisiert"
+
+#: includes/Sync.php:29
+msgid "and"
+msgstr "und"
+
+#: includes/Sync.php:29
+msgid "deleted"
+msgstr "gelöscht"
+
+#: includes/Sync.php:38
+msgid "All synchronizations completed"
+msgstr "Alle Synchronisierungen abgeschlossen"
+
+#: includes/Sync.php:38
 msgid "Required time:"
 msgstr "Benötigte Zeit:"
 
-#: includes/Sync.php:33
+#: includes/Sync.php:38
 msgid "seconds"
 msgstr "Sekunden"
 

@@ -230,6 +230,7 @@ class API {
         // deletes all FAQ by source
         $iDel = 0;
         $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'numberposts' => -1 ) );
+
         foreach ( $allFAQ as $faq ) {
             wp_delete_post( $faq->ID, TRUE );
             $iDel++;
@@ -292,17 +293,31 @@ class API {
         }
     }
 
-    public function setFAQ( $url, $categories, $shortname ){
-        $iCnt = 0;
+    public function getFAQRemoteIDs( $source ){
+        $aRet = array();
+        $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'fields' => 'ids', 'numberposts' => -1 ) );
+        foreach ( $allFAQ as $postID ){
+            $remoteID = get_post_meta( $postID, 'remoteID', TRUE );
+            $aRet[$remoteID] = $postID;
+        }
+        return $aRet;
+    }
 
-        $this->deleteFAQ( $shortname );
+    public function setFAQ( $url, $categories, $shortname ){
+        $iNew = 0;
+        $iUpdated = 0;
+        $iDeleted = 0;
+
+        // get all remoteIDs of stored FAQ to this source ( key = remoteID, value = postID )
+        $aRemoteIDs = $this->getFAQRemoteIDs( $shortname );
+
         $this->deleteTags( $shortname );
         $this->deleteCategories( $shortname );
         $this->getCategories( $url, $shortname );
 
         // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
-
+        
         // set FAQ
         foreach ( $aFaq as $faq ){
             $this->setTags( $faq['faq_tag'], $shortname );
@@ -313,26 +328,60 @@ class API {
                 $aCategoryIDs[] = $term->term_id;
             }
 
-            $post_id = wp_insert_post( array(
-                'post_type' => 'faq',
-                'post_name' => sanitize_title( $faq['title'] ),
-                'post_title' => $faq['title'],
-                'post_content' => $faq['content'],
-                'comment_status' => 'closed',
-                'ping_status' => 'closed',
-                'post_status' => 'publish',
-                'meta_input' => array(
-                    'source' => $shortname,
-                    'lang' => $faq['lang']
-                    ),
-                'tax_input' => array(
-                    'faq_category' => $aCategoryIDs,
-                    'faq_tag' => $faq['faq_tag']
-                    )
-                ) );
-            $iCnt++;
+            if ( isset( $aRemoteIDs[$faq['remoteID']] ) ){
+                // update FAQ
+                $post_id = wp_update_post( array(
+                    'ID' => $aRemoteIDs[$faq['remoteID']],
+                    'post_name' => sanitize_title( $faq['title'] ),
+                    'post_title' => $faq['title'],
+                    'post_content' => $faq['content'],
+                    'meta_input' => array(
+                        'source' => $shortname,
+                        'lang' => $faq['lang'],
+                        'remoteID' => $faq['id']
+                        ),
+                    'tax_input' => array(
+                        'faq_category' => $aCategoryIDs,
+                        'faq_tag' => $faq['faq_tag']
+                        )
+                    ) ); 
+                unset( $aRemoteIDs[$faq['remoteID']] );
+                $iUpdated++;
+            } else {
+                // insert FAQ
+                $post_id = wp_insert_post( array(
+                    'post_type' => 'faq',
+                    'post_name' => sanitize_title( $faq['title'] ),
+                    'post_title' => $faq['title'],
+                    'post_content' => $faq['content'],
+                    'comment_status' => 'closed',
+                    'ping_status' => 'closed',
+                    'post_status' => 'publish',
+                    'meta_input' => array(
+                        'source' => $shortname,
+                        'lang' => $faq['lang'],
+                        'remoteID' => $faq['id']
+                        ),
+                    'tax_input' => array(
+                        'faq_category' => $aCategoryIDs,
+                        'faq_tag' => $faq['faq_tag']
+                        )
+                    ) );
+                $iNew++;
+            }
         }
-        return $iCnt;
+
+        // delete all other FAQ to this source
+        foreach( $aRemoteIDs as $postID ){
+            wp_delete_post( $postID, TRUE );
+            $iDeleted++;
+        }
+
+        return array( 
+            'iNew' => $iNew,
+            'iUpdated' => $iUpdated,
+            'iDeleted' => $iDeleted
+        );
     }
 }    
 
