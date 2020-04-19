@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-19 09:10+0000\n"
+"POT-Creation-Date: 2020-04-19 09:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -324,7 +324,15 @@ msgid "Update tag"
 msgstr ""
 
 #: includes/Sync.php:33
+msgid "Synchronization completed."
+msgstr ""
+
+#: includes/Sync.php:33
 msgid " FAQ fetched"
+msgstr ""
+
+#: includes/Sync.php:33
+msgid "Required time:"
 msgstr ""
 
 #: includes/Sync.php:33
