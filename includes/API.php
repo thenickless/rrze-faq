@@ -258,6 +258,7 @@ class API {
                             $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
 
                             $faqs[$entry['id']] = array(
+                                'id' => $entry['id'],
                                 'title' => $entry['title']['rendered'],
                                 'content' => $content,
                                 'lang' => $entry['lang'],
@@ -337,7 +338,8 @@ class API {
                     'post_content' => $faq['content'],
                     'meta_input' => array(
                         'source' => $shortname,
-                        'lang' => $faq['lang']
+                        'lang' => $faq['lang'],
+                        'remoteID' => $faq['remoteID']
                         ),
                     'tax_input' => array(
                         'faq_category' => $aCategoryIDs,
