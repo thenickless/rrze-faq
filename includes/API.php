@@ -337,8 +337,7 @@ class API {
                     'post_content' => $faq['content'],
                     'meta_input' => array(
                         'source' => $shortname,
-                        'lang' => $faq['lang'],
-                        'remoteID' => $aRemoteIDs[$faq['remoteID']]
+                        'lang' => $faq['lang']
                         ),
                     'tax_input' => array(
                         'faq_category' => $aCategoryIDs,
