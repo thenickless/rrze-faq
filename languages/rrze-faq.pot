@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-24 17:04+0000\n"
+"POT-Creation-Date: 2020-04-19 09:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,349 +15,431 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.1; wp-5.3.2"
 
-#: includes/Shortcode.php:328 includes/Shortcode.php:342
-msgid "-- all --"
-msgstr ""
-
-#: includes/posttype/rrze-faq-metabox.php:20
-msgid "<p>Integration in pages and posts via: </p>"
-msgstr ""
-
-#: includes/posttype/rrze-faq-metabox.php:29
-msgid "Accordion with all entries"
-msgstr ""
-
-#: includes/posttype/rrze-faq-metabox.php:27
-msgid "Accordion with category"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:16
-#: includes/domain/rrze-faq-domain-add.php:17
-msgid "Add Domain"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:11
-msgid "Add FAQ"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:14
-#: includes/posttype/rrze-faq-taxonomy.php:15
-msgid "Add new category"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:27
-msgid "Add new domain"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:12
-msgid "Add new FAQ"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:35
-#: includes/posttype/rrze-faq-taxonomy.php:36
-msgid "Add new tag"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:21
-msgid "All categories"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:181
-#: includes/domain/rrze-faq-domain-list.php:182
-msgid "All Domains"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:14
-msgid "All FAQ"
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:188
-msgid "All Remote FAQ"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:42
-msgid "All tags"
-msgstr ""
-
-#: includes/Shortcode.php:135
-msgid ""
-"Attribute glossary is not correct. Please use either glossary=\"category\" "
-"or glossary=\"tag\"."
-msgstr ""
-
-#: config/config.php:202
-msgid "Categories"
-msgstr ""
-
-#: config/config.php:213 includes/faq/rrze-faq-list-table.php:61
-#: includes/posttype/rrze-faq-taxonomy.php:9
-#: includes/posttype/rrze-faq-taxonomy.php:13
-msgid "Category"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:23
-msgid "Choose from the most used categories"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:44
-msgid "Choose from the most used tags"
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:62
-msgid "Content"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:72
-msgid "Delete domains"
-msgstr ""
-
-#: config/config.php:237 includes/faq/rrze-faq-list-table.php:63
-#: includes/domain/rrze-faq-domain-list.php:54
-msgid "Domain"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:129
-msgid "Domain added. "
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:139
-msgid "Domain already registered. "
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:154
-msgid "Domain deleted."
-msgstr ""
-
-#: includes/Shortcode.php:182 includes/Shortcode.php:214
-msgid "Domain is not registered"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:195
-msgid "Domain list"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:56
-msgid "Domain:"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:24
-msgid "Edit category"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:13
-msgid "Edit FAQ"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:45
-msgid "Edit tag"
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:14
-#: includes/domain/rrze-faq-domain-list.php:22
-#: includes/posttype/rrze-faq-posttype.php:10
-#: includes/posttype/rrze-faq-posttype.php:26
-msgid "FAQ"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:27
-msgid "FAQ informations"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:8
-msgctxt "FAQ, synonym or glossary entries"
-msgid "FAQ"
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:15
-#: includes/domain/rrze-faq-domain-list.php:23
-msgid "FAQs"
-msgstr ""
-
-#: config/config.php:198
-msgid "Find the settings on the right side"
-msgstr ""
-
-#: config/config.php:207
-msgid "Glossary"
-msgstr ""
-
-#: includes/posttype/rrze-faq-metabox.php:8
-msgid "How to"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://blogs.fau.de/webworking/"
-msgstr ""
-
-#. URI of the plugin
-msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
-msgstr ""
-
-#: config/config.php:225 includes/faq/rrze-faq-list-table.php:59
-msgid "ID"
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:151
-msgid "List updated!"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:16
-msgid "New category"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:37
-msgid "New tag"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:20
-msgid "No category found"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:30
-msgid "No domains registered"
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:33
-msgid "No entries"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:41
-msgid "No tag found"
-msgstr ""
-
-#: includes/posttype/rrze-faq-metabox.php:25
-msgid ""
-"Notice: A single display of an entriy will not be displayed as accordion "
-"element."
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:149
-msgid "Please input a domain. "
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:146
-msgid "Please selected a domain you want to delete."
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-add.php:28
-msgid "Register domains which you want to get FAQ from."
-msgstr ""
-
-#: includes/faq/rrze-faq-list-table.php:197
-msgid "Remote Faq List"
-msgstr ""
-
-#: config/config.php:243
-msgid "Rest"
-msgstr ""
-
-#. Name of the plugin
-msgid "RRZE FAQ"
-msgstr ""
-
-#. Author of the plugin
-msgid "RRZE Webteam"
-msgstr ""
-
-#: includes/domain/rrze-faq-domain-list.php:85
-msgid "Search"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:19
-msgid "Search categories"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:15
-msgid "Search FAQ"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:40
-msgid "Search tags"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:22
-msgid "Separate categories with commas"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:43
-msgid "Separate tags with commas"
-msgstr ""
-
-#: includes/posttype/rrze-faq-manage-posts.php:14
-#, php-format
-msgid "Show all %s"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:18
-msgid "Show categories"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:17
-msgid "Show category"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:38
-msgid "Show tag"
-msgstr ""
-
-#: includes/posttype/rrze-faq-taxonomy.php:39
-msgid "Show tags"
-msgstr ""
-
-#: includes/posttype/rrze-faq-metabox.php:22
-msgid "Single entries"
-msgstr ""
-
-#: includes/posttype/rrze-faq-posttype.php:9
-msgctxt "Single FAQ, synonym or glossary "
-msgid "FAQ"
-msgstr ""
-
-#: config/config.php:219 includes/posttype/rrze-faq-taxonomy.php:34
-msgid "Tag"
-msgstr ""
-
-#: config/config.php:203 includes/posttype/rrze-faq-taxonomy.php:30
-msgid "Tags"
-msgstr ""
-
-#: rrze-faq.php:79
+#: rrze-faq.php:77
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
 msgstr ""
 
-#: rrze-faq.php:82
+#: rrze-faq.php:80
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
 msgstr ""
 
-#: includes/domain/rrze-faq-domain-add.php:158
-msgid "This service is not available for this domain. "
+#. Name of the plugin
+#: config/config.php:27 config/config.php:28
+msgid "RRZE FAQ"
 msgstr ""
 
-#: includes/faq/rrze-faq-list-table.php:60
-msgid "Title"
+#: config/config.php:31
+msgid "RRZE FAQ Settings"
 msgstr ""
 
-#: includes/posttype/rrze-faq-taxonomy.php:25
+#: config/config.php:44
+msgid "Here comes the Context Help content."
+msgstr ""
+
+#: config/config.php:46
+msgid "Overview"
+msgstr ""
+
+#: config/config.php:47
+msgid "For more information"
+msgstr ""
+
+#: config/config.php:47
+msgid "RRZE Webteam on Github"
+msgstr ""
+
+#: config/config.php:61
+msgid "Domains"
+msgstr ""
+
+#: config/config.php:65 config/config.php:119
+msgid "Synchronize"
+msgstr ""
+
+#: config/config.php:69
+msgid "Logfile"
+msgstr ""
+
+#: config/config.php:84 config/config.php:98
+msgid "Short name"
+msgstr ""
+
+#: config/config.php:85
+msgid "Enter a short name for this domain."
+msgstr ""
+
+#: config/config.php:90 config/config.php:105
+msgid "URL"
+msgstr ""
+
+#: config/config.php:91
+msgid "Enter the domain's URL you want to receive FAQ from."
+msgstr ""
+
+#: config/config.php:99
+msgid "Use this name as attribute 'domain' in shortcode [faq]"
+msgstr ""
+
+#: config/config.php:112 config/config.php:172 config/config.php:195
+#: includes/Layout.php:184
+msgid "Categories"
+msgstr ""
+
+#: config/config.php:113
+msgid "Please select the categories you'd like to fetch FAQ to."
+msgstr ""
+
+#: config/config.php:120
+msgid ""
+"All FAQ that match to the selected categories will be inserted. Already "
+"synchronized FAQ that refer to categories which are not selected will be "
+"deleted. FAQ that have been deleted at the remote website will be deleted on "
+"this website, too. Categories which are not selected but already stored on "
+"this website will be deleted."
+msgstr ""
+
+#: config/config.php:123
+msgid "Do not synchronize."
+msgstr ""
+
+#: config/config.php:124
+msgid "Synchronize one time now."
+msgstr ""
+
+#: config/config.php:125
+msgid "Synchronize now and then automatically."
+msgstr ""
+
+#: config/config.php:161
+msgid "Find the settings on the right side"
+msgstr ""
+
+#: config/config.php:171
+msgid "none"
+msgstr ""
+
+#: config/config.php:173 config/config.php:201 includes/CPT.php:92
+#: includes/Layout.php:185
+msgid "Tags"
+msgstr ""
+
+#: config/config.php:177
+msgid "Glossary content"
+msgstr ""
+
+#: config/config.php:182
+msgid "-- hidden --"
+msgstr ""
+
+#: config/config.php:183
+msgid "A - Z"
+msgstr ""
+
+#: config/config.php:184
+msgid "Tagcloud"
+msgstr ""
+
+#: config/config.php:185
+msgid "Tabs"
+msgstr ""
+
+#: config/config.php:189
+msgid "Glossary style"
+msgstr ""
+
+#: config/config.php:207 includes/CPT.php:28 includes/CPT.php:42
+msgid "FAQ"
+msgstr ""
+
+#: config/config.php:212
+msgid "Buttered Rum (medfak)"
+msgstr ""
+
+#: config/config.php:213
+msgid "Eastern Blue (natfak)"
+msgstr ""
+
+#: config/config.php:214
+msgid "Flame Red (rwfak)"
+msgstr ""
+
+#: config/config.php:215
+msgid "Observatory (philfak)"
+msgstr ""
+
+#: config/config.php:216
+msgid "Prussian Blue"
+msgstr ""
+
+#: config/config.php:217
+msgid "Raven (techfak)"
+msgstr ""
+
+#: config/config.php:221
+msgid "Color"
+msgstr ""
+
+#: includes/Cronjob.php:57
+msgid "Settings saved"
+msgstr ""
+
+#: includes/Cronjob.php:59
+msgid "Next automatically synchronization:"
+msgstr ""
+
+#: includes/CPT.php:26
+msgctxt "FAQ, synonym or glossary entries"
+msgid "FAQ"
+msgstr ""
+
+#: includes/CPT.php:27
+msgctxt "Single FAQ, synonym or glossary "
+msgid "FAQ"
+msgstr ""
+
+#: includes/CPT.php:29
+msgid "Add FAQ"
+msgstr ""
+
+#: includes/CPT.php:30
+msgid "Add new FAQ"
+msgstr ""
+
+#: includes/CPT.php:31
+msgid "Edit FAQ"
+msgstr ""
+
+#: includes/CPT.php:32
+msgid "All FAQ"
+msgstr ""
+
+#: includes/CPT.php:33
+msgid "Search FAQ"
+msgstr ""
+
+#: includes/CPT.php:43
+msgid "FAQ informations"
+msgstr ""
+
+#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:143
+msgid "Category"
+msgstr ""
+
+#: includes/CPT.php:76 includes/CPT.php:77
+msgid "Add new category"
+msgstr ""
+
+#: includes/CPT.php:78
+msgid "New category"
+msgstr ""
+
+#: includes/CPT.php:79
+msgid "Show category"
+msgstr ""
+
+#: includes/CPT.php:80
+msgid "Show categories"
+msgstr ""
+
+#: includes/CPT.php:81
+msgid "Search categories"
+msgstr ""
+
+#: includes/CPT.php:82
+msgid "No category found"
+msgstr ""
+
+#: includes/CPT.php:83
+msgid "All categories"
+msgstr ""
+
+#: includes/CPT.php:84
+msgid "Separate categories with commas"
+msgstr ""
+
+#: includes/CPT.php:85
+msgid "Choose from the most used categories"
+msgstr ""
+
+#: includes/CPT.php:86
+msgid "Edit category"
+msgstr ""
+
+#: includes/CPT.php:87
 msgid "Update category"
 msgstr ""
 
-#: includes/faq/rrze-faq-list-table.php:82
-msgid "Update list"
+#: includes/CPT.php:97 includes/Layout.php:144
+msgid "Tag"
 msgstr ""
 
-#: includes/posttype/rrze-faq-taxonomy.php:46
+#: includes/CPT.php:98 includes/CPT.php:99
+msgid "Add new tag"
+msgstr ""
+
+#: includes/CPT.php:100
+msgid "New tag"
+msgstr ""
+
+#: includes/CPT.php:101
+msgid "Show tag"
+msgstr ""
+
+#: includes/CPT.php:102
+msgid "Show tags"
+msgstr ""
+
+#: includes/CPT.php:103
+msgid "Search tags"
+msgstr ""
+
+#: includes/CPT.php:104
+msgid "No tag found"
+msgstr ""
+
+#: includes/CPT.php:105
+msgid "All tags"
+msgstr ""
+
+#: includes/CPT.php:106
+msgid "Separate tags with commas"
+msgstr ""
+
+#: includes/CPT.php:107
+msgid "Choose from the most used tags"
+msgstr ""
+
+#: includes/CPT.php:108
+msgid "Edit tag"
+msgstr ""
+
+#: includes/CPT.php:109
 msgid "Update tag"
 msgstr ""
 
-#: includes/posttype/rrze-faq-metabox.php:24
+#: includes/Sync.php:33
+msgid "Synchronization completed."
+msgstr ""
+
+#: includes/Sync.php:33
+msgid " FAQ fetched"
+msgstr ""
+
+#: includes/Sync.php:33
+msgid "Required time:"
+msgstr ""
+
+#: includes/Sync.php:33
+msgid "seconds"
+msgstr ""
+
+#: includes/Shortcode.php:156
 msgid ""
-"You can also add color codes for the departments: color=\"<em>faculty "
-"shortcut</em>\", where <em>faculty shortcut</em> could be: <code>tf</code>, "
-"<code>nat</code>, <code>rw</code>, <code>med</code>, <code>phil</code>."
+"Attribute glossary is not correct. Please use either glossary=\"category\" "
+"or glossary=\"tag\"."
+msgstr ""
+
+#: includes/Shortcode.php:159
+msgid ""
+"Attribute color is not correct. Please use either 'medfak', 'natfak', "
+"'rwfak', 'philfak' or 'techfak'"
+msgstr ""
+
+#: includes/Shortcode.php:335 includes/Shortcode.php:361
+msgid "-- all --"
+msgstr ""
+
+#: includes/Layout.php:54
+#, php-format
+msgid "Show all %s"
+msgstr ""
+
+#: includes/Layout.php:86
+msgid "Single entries"
+msgstr ""
+
+#: includes/Layout.php:87
+msgid "Accordion with category"
+msgstr ""
+
+#: includes/Layout.php:87
+msgid "If there is more than one category listed, use at least one of them."
+msgstr ""
+
+#: includes/Layout.php:88
+msgid "Accordion with tag"
+msgstr ""
+
+#: includes/Layout.php:88
+msgid "If there is more than one tag listed, use at least one of them."
+msgstr ""
+
+#: includes/Layout.php:89
+msgid "Accordion with all entries"
+msgstr ""
+
+#: includes/Layout.php:97
+msgid "Enter question here"
+msgstr ""
+
+#. id, used as the html id att
+#: includes/Layout.php:118
+msgid "This FAQ cannot be edited because it is sychronized"
+msgstr ""
+
+#. id, used as the html id att
+#: includes/Layout.php:128
+msgid "Integration in pages and posts"
+msgstr ""
+
+#: includes/Layout.php:145 includes/Layout.php:150
+msgid "Source"
+msgstr ""
+
+#: includes/Layout.php:146
+msgid "ID"
+msgstr ""
+
+#: includes/Settings.php:297
+msgid "Add domain"
+msgstr ""
+
+#: includes/Settings.php:301
+msgid "Delete logfile"
+msgstr ""
+
+#: includes/Settings.php:340
+msgid ""
+"Please note: \"Delete selected domains\" will DELETE every FAQ, category and "
+"tag that has been fetched from the selected domains."
+msgstr ""
+
+#: includes/Settings.php:341
+msgid "Delete selected domains"
+msgstr ""
+
+#: includes/Settings.php:363
+msgid "no category with source = \"website\" found"
+msgstr ""
+
+#: includes/Settings.php:936 includes/Settings.php:939
+msgid "Logfile is empty."
+msgstr ""
+
+#. URI of the plugin
+msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
+msgstr ""
+
+#. Author of the plugin
+msgid "RRZE Webteam"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://blogs.fau.de/webworking/"
 msgstr ""
