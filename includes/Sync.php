@@ -30,7 +30,7 @@ class Sync {
         }        
 
         date_default_timezone_set('Europe/Berlin');
-        $sync_msg = __( 'Synchronization completed.', 'rrze-faq' ) . ' ' . $iCnt . __( ' FAQ fetched', 'rrze-faq' ) . '. ' . __('Required time:', 'rrze-faq') . ' ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+        $sync_msg = __( 'Synchronization completed.', 'rrze-faq' ) . ' ' . $iCnt . ' ' . __( ' FAQ fetched', 'rrze-faq' ) . '. ' . __('Required time:', 'rrze-faq') . ' ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
         add_settings_error( 'Synchronization completed', 'synccompleted', $sync_msg, 'success' );
         settings_errors();
         logIt( date("Y-m-d H:i:s") . ' | ' . $sync_msg . ' | ' . $mode );
