@@ -299,7 +299,7 @@ class API {
         $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'fields' => 'ids', 'numberposts' => -1 ) );
         foreach ( $allFAQ as $postID ){
             $remoteID = get_post_meta( $postID, 'remoteID', TRUE );
-            $aRet[$remoteID] = $postID;
+            $aRet[$remoteID] = '"' . $postID . '"';
         }
         return $aRet;
     }
