@@ -49,8 +49,6 @@ class API {
 
     public function deleteDomain( &$shortname ){
         $this->deleteFAQ( $shortname );
-        $this->deleteCategories( $shortname );
-        $this->deleteTags( $shortname );
     }
 
     protected function getTaxonomies( $url, $field, &$filter ){
@@ -207,7 +205,6 @@ class API {
 
     public function getCategories( $url, $shortname, $categories = '' ){
         $aRet = array();
-        // $this->deleteCategories( $shortname );
         $aCategories = $this->getTaxonomies( $url, 'category', $categories );
         $this->setCategories( $aCategories, $shortname );
         $categories = get_terms( array(
@@ -313,9 +310,9 @@ class API {
         // get all remoteIDs of stored FAQ to this source ( key = remoteID, value = postID )
         $aRemoteIDs = $this->getFAQRemoteIDs( $shortname );
 
-        $this->deleteTags( $shortname );
-        $this->deleteCategories( $shortname );
-        $this->getCategories( $url, $shortname );
+        // $this->deleteTags( $shortname );
+        // $this->deleteCategories( $shortname );
+        // $this->getCategories( $url, $shortname );
 
         // get all FAQ
         $aFaq = $this->getFAQ( $url, $categories );
