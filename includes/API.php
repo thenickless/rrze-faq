@@ -170,7 +170,8 @@ class API {
             }
             $this->aAllCats[$cat->term_id]['parentID'] = $cat->parent;
             $this->aAllCats[$cat->term_id]['slug'] = $cat->slug;
-            $this->aAllCats[$cat->term_id]['name'] = ltrim( $prefix . ' ' . $cat->name );
+            // $this->aAllCats[$cat->term_id]['name'] = ltrim( $prefix . ' ' . $cat->name );
+            $this->aAllCats[$cat->term_id]['name'] = str_replace( '~', '&nbsp;', str_pad( ltrim( $prefix . ' ' . $cat->name ), 100, '~') );
         }    
         foreach ($into as $topCat) {
             $topCat->children = array();
