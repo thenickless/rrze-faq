@@ -117,7 +117,7 @@ function getFields() {
 			[
 				'name' => 'mode', // mode
 				'label' => __('Synchronize', 'rrze-faq' ),
-				'desc' => __( 'All FAQ that match to the selected categories will be inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too. Categories which are not selected but already stored on this website will be deleted.', 'rrze-faq' ),
+				'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
 				'default' => '',
 				'options' => [
 					'' => __('Do not synchronize.', 'rrze-faq' ),

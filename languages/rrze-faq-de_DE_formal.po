@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-19 16:54+0000\n"
-"PO-Revision-Date: 2020-04-19 16:55+0000\n"
+"POT-Creation-Date: 2020-04-20 12:20+0000\n"
+"PO-Revision-Date: 2020-04-20 12:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: German (Formal)\n"
 "Language: de_DE_formal\n"
@@ -87,7 +87,7 @@ msgstr ""
 "Verwenden Sie diesen Namen als Attribut für 'domain' im Shortcode [faq]"
 
 #: config/config.php:112 config/config.php:172 config/config.php:195
-#: includes/Layout.php:184
+#: includes/Layout.php:206
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -98,16 +98,15 @@ msgstr ""
 
 #: config/config.php:120
 msgid ""
-"All FAQ that match to the selected categories will be inserted. Already "
-"synchronized FAQ that refer to categories which are not selected will be "
-"deleted. FAQ that have been deleted at the remote website will be deleted on "
-"this website, too. Categories which are not selected but already stored on "
-"this website will be deleted."
+"All FAQ that match to the selected categories will be updated or inserted. "
+"Already synchronized FAQ that refer to categories which are not selected "
+"will be deleted. FAQ that have been deleted at the remote website will be "
+"deleted on this website, too."
 msgstr ""
 "Alle FAQ, die zu den ausgewählten Kategorien passen, werden gespeichert. "
 "Bereits gespeicherte FAQ, die zu Kategorien gehören, die nicht ausgewählt "
-"sind, werden gelöscht. FAQ, Kategorien und Schlagwörter, die auf dem "
-"Fremdsystem gelöscht wurden, werden auf dieser Website ebenfalls gelöscht."
+"sind, werden gelöscht. FAQ, die auf dem Fremdsystem gelöscht wurden, werden "
+"auf dieser Website ebenfalls gelöscht."
 
 #: config/config.php:123
 msgid "Do not synchronize."
@@ -130,7 +129,7 @@ msgid "none"
 msgstr "keine"
 
 #: config/config.php:173 config/config.php:201 includes/CPT.php:92
-#: includes/Layout.php:185
+#: includes/Layout.php:207
 msgid "Tags"
 msgstr "Schlagwörter"
 
@@ -232,7 +231,7 @@ msgstr "FAQ suchen"
 msgid "FAQ informations"
 msgstr "FAQ Informationen"
 
-#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:143
+#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:165
 msgid "Category"
 msgstr "Kategorie"
 
@@ -280,7 +279,7 @@ msgstr "Kategorie editieren"
 msgid "Update category"
 msgstr "Kategorie aktualisieren"
 
-#: includes/CPT.php:97 includes/Layout.php:144
+#: includes/CPT.php:97 includes/Layout.php:166
 msgid "Tag"
 msgstr "Schlagwort"
 
@@ -380,58 +379,62 @@ msgstr ""
 msgid "-- all --"
 msgstr "-- alle --"
 
-#: includes/Layout.php:54
+#: includes/Layout.php:71
 #, php-format
 msgid "Show all %s"
 msgstr "Alle %s anzeigen"
 
-#: includes/Layout.php:86
+#: includes/Layout.php:103
 msgid "Single entries"
 msgstr "Einzelner Eintrag"
 
-#: includes/Layout.php:87
+#: includes/Layout.php:104
 msgid "Accordion with category"
 msgstr "Akkordeon mit Kategorie"
 
-#: includes/Layout.php:87
+#: includes/Layout.php:104
 msgid "If there is more than one category listed, use at least one of them."
 msgstr ""
 "Wenn mehrere Kategorien aufgeführt sind, nutzen Sie bitte mindestens eine "
 "davon."
 
-#: includes/Layout.php:88
+#: includes/Layout.php:105
 msgid "Accordion with tag"
 msgstr "Akkordeon mit Schlagwort"
 
-#: includes/Layout.php:88
+#: includes/Layout.php:105
 msgid "If there is more than one tag listed, use at least one of them."
 msgstr ""
 "Wenn mehrere Schlagwörter aufgeführt sind, nutzen Sie bitte mindestens eines "
 "davon."
 
-#: includes/Layout.php:89
+#: includes/Layout.php:106
 msgid "Accordion with all entries"
 msgstr "Akkordeon mit allen Einträgen"
 
-#: includes/Layout.php:97
+#: includes/Layout.php:114
 msgid "Enter question here"
 msgstr "Geben Sie hier die Frage ein"
 
 #. id, used as the html id att
-#: includes/Layout.php:118
+#: includes/Layout.php:140
 msgid "This FAQ cannot be edited because it is sychronized"
 msgstr "Diese FAQ kann nicht editiert werden, weil Sie synchronisiert wurde"
 
+#: includes/Layout.php:140
+msgid "You can edit it at the source"
+msgstr "Sie können es auf der Quelle editieren"
+
 #. id, used as the html id att
-#: includes/Layout.php:128
+#: includes/Layout.php:150
 msgid "Integration in pages and posts"
 msgstr "Einfügen in Seiten und Beiträge"
 
-#: includes/Layout.php:145 includes/Layout.php:150
+#: includes/Layout.php:167 includes/Layout.php:172
 msgid "Source"
 msgstr "Quelle"
 
-#: includes/Layout.php:146
+#: includes/Layout.php:168
 msgid "ID"
 msgstr ""
 
@@ -445,11 +448,11 @@ msgstr "Logfile löschen"
 
 #: includes/Settings.php:340
 msgid ""
-"Please note: \"Delete selected domains\" will DELETE every FAQ, category and "
-"tag that has been fetched from the selected domains."
+"Please note: \"Delete selected domains\" will DELETE every FAQ that has been "
+"fetched from the selected domains."
 msgstr ""
-"Bitte beachten: \"Ausgewählte Domains löschen\" wird alle FAQ, Kategorien "
-"und Schlagwörter LÖSCHEN, die von den ausgewählten Domains bezogen wurden."
+"Bitte beachten: \"Ausgewählte Domains löschen\" wird alle FAQ LÖSCHEN, die "
+"von den ausgewählten Domains bezogen wurden."
 
 #: includes/Settings.php:341
 msgid "Delete selected domains"

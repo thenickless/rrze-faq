@@ -4,12 +4,17 @@ namespace RRZE\FAQ;
 
 defined( 'ABSPATH' ) || exit;
 
+// use function RRZE\FAQ\API\getDomains;
+use RRZE\FAQ\API;
+
+
 /**
  * Layout settings for "faq"
  */
 class Layout {
 
     public function __construct() {
+
         add_filter( 'pre_get_posts', [$this, 'makeFaqSortable'] );
         add_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
         add_filter( 'enter_title_here', [$this, 'changeTitleText'] );
@@ -31,6 +36,18 @@ class Layout {
         // show categories and tags under content
         add_filter( 'the_content', [$this, 'showDetails'] );        
     }
+
+
+    // public function print_filters_for( $hook = '' ) {
+    //     global $wp_filter;
+    //     if( empty( $hook ) || !isset( $wp_filter[$hook] ) )
+    //         return;
+    
+    //     print '<pre>';
+    //     print_r( $wp_filter[$hook] );
+    //     print '</pre>';
+    // }
+
 
     public function makeFaqSortable( $wp_query ) {
         if ( is_admin() ) {    
@@ -65,7 +82,9 @@ class Layout {
     }
     
     public function fillContentBox( $post ) {
-        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
+        $mycontent = apply_filters( 'the_content', $post->post_content );
+        $mycontent = substr( $mycontent, 0, strpos( $mycontent, '<!-- rrze-faq -->' ));
+        echo '<h1>' . $post->post_title . '</h1><br>' . $mycontent;
     }
 
     public function fillShortcodeBox( ) { 
@@ -108,6 +127,11 @@ class Layout {
                 if ( $source ){
                     $position = 'normal';
                     if ( $source != 'website' ){
+                        $api = new API();
+                        $domains = $api->getDomains();
+                        $source = get_post_meta( $post_id, "source", TRUE );
+                        $remoteID = get_post_meta( $post_id, "remoteID", TRUE );
+                        $link = $domains[$source] . 'wp-admin/post.php?post=' . $remoteID . '&action=edit';
                         remove_post_type_support( 'faq', 'title' );
                         remove_post_type_support( 'faq', 'editor' );
                         remove_meta_box( 'faq_categorydiv', 'faq', 'side' );
@@ -115,7 +139,7 @@ class Layout {
                         remove_meta_box( 'submitdiv', 'faq', 'side' );            
                         add_meta_box(
                             'read_only_content_box', // id, used as the html id att
-                            __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq'), // meta box title
+                            __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq') . '. <a href="' . $link . '" target="_blank">' . __('You can edit it at the source', 'rrze-faq') . '</a>',
                             [$this, 'fillContentBox'], // callback function, spits out the content
                             'faq', // post type or page. This adds to posts only
                             'normal', // context, where on the screen
