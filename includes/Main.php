@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 use function RRZE\FAQ\Config\deleteLogfile;
 use RRZE\FAQ\API;
 use RRZE\FAQ\CPT;
-use RRZE\FAQ\Cronjob;
+use RRZE\FAQ\FAQCronjob;
 use RRZE\FAQ\Layout;
 use RRZE\FAQ\RESTAPI;
 use RRZE\FAQ\Settings;
@@ -115,8 +115,8 @@ class Main {
                         $activateCronjob = TRUE;
                     } 
                 }
-                $cronjob = new Cronjob();
-                $cronjob->setCronjob( $activateCronjob );
+                $mycronjob = new FAQCronjob();
+                $mycronjob->setFAQCronjob( $activateCronjob );
                 $options['timestamp'] = time();
             break;
             case 'del':
@@ -135,7 +135,6 @@ class Main {
 
     public function checkSync() {
         if ( isset( $_GET['sync'] ) ){
-            // $this->setCronjob();
             $sync = new Sync();
             $sync->doSync( 'manual' );
         }
