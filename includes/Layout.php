@@ -82,7 +82,9 @@ class Layout {
     }
     
     public function fillContentBox( $post ) {
-        echo '<h1>' . $post->post_title . '</h1><br>' . apply_filters( 'the_content', $post->post_content );
+        $mycontent = apply_filters( 'the_content', $post->post_content );
+        $mycontent = substr( $mycontent, 0, strpos( $mycontent, '<!-- rrze-faq -->' ));
+        echo '<h1>' . $post->post_title . '</h1><br>' . $mycontent;
     }
 
     public function fillShortcodeBox( ) { 
