@@ -241,7 +241,7 @@ class Shortcode {
                         }
                     }                    
                 }
-                asort( $aUsedTerms );
+                ksort( $aUsedTerms );
                 $anchor = 'ID';
                 if ( $aLetters ){
                     switch( $glossarystyle ){
@@ -269,6 +269,7 @@ class Shortcode {
                     $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . ']';
                     // find the postIDs to this tag
                     $aIDs = $this->searchArrayByKey( $aVal['ID'], $aPostIDs );
+
                     foreach ( $aIDs as $ID ){
                         $tmp = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field('post_content', $ID) ) );
                         if ( !isset( $tmp ) || (mb_strlen( $tmp ) < 1)) {
@@ -296,6 +297,7 @@ class Shortcode {
                         $tmp = get_post_meta( $post->ID, 'description', true );
                     }
                     $accordion_anchor = '';
+                    $accordion_anchor = 'name="ID-' . $post->ID . '"';
                     if ( $glossarystyle == 'a-z' && count( $posts) > 1 ){
                         $accordion .= ( $last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '' );
                     }
