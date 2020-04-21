@@ -7,14 +7,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Cronjob for "faq"
  */
-class Cronjob {
+class FAQCronjob {
 
     public function __construct() {
         // Auto-Sync
-        add_action( 'rrze_faq_auto_update', [$this, 'runCronjob'] );
+        add_action( 'rrze_faq_auto_sync', [$this, 'runFAQCronjob'] );
     }
 
-    public function runCronjob() {
+    public function runFAQCronjob() {
         // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
         $sync = [
             'workdays' => [ 2, 8, 11, 14, 17, 20 ],
@@ -31,7 +31,7 @@ class Cronjob {
             if ( in_array( $hour, $sync["workdays"] ) ) {
                 $sync = new Sync();
                 $sync->doSync( 'automatic' );
-            }
+                    }
         } else {
             if ( in_array( $hour, $sync["weekend"] ) ) {
                 $sync = new Sync();
@@ -40,19 +40,19 @@ class Cronjob {
         }
     }
 
-    public function setCronjob( $activate ) {
+    public function setFAQCronjob( $activate ) {
         if ( !$activate ) {
-            if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
-                wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
+            if ( wp_next_scheduled( 'rrze_faq_auto_sync' ) ) {
+                wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
             }
             return;
         }
 
         //Use wp_next_scheduled to check if the event is already scheduled*/
-        if( !wp_next_scheduled( 'rrze_faq_auto_update' )) {
+        if( !wp_next_scheduled( 'rrze_faq_auto_sync' )) {
             date_default_timezone_set( 'Europe/Berlin' );
-            wp_schedule_event( strtotime( 'today 13:00' ), 'hourly', 'rrze_faq_auto_update' );
-            $timestamp = wp_next_scheduled( 'rrze_faq_auto_update' );
+            wp_schedule_event( strtotime( 'today 13:00' ), 'hourly', 'rrze_faq_auto_sync' );
+            $timestamp = wp_next_scheduled( 'rrze_faq_auto_sync' );
             if ($timestamp) {
                 $message = __( 'Settings saved', 'rrze-faq' )
                     . '<br />'

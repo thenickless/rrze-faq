@@ -4,7 +4,7 @@ namespace RRZE\FAQ\Config;
 
 defined('ABSPATH') || exit;
 
-define( 'FAQ_LOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
+define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
 
 
 /**
@@ -135,9 +135,9 @@ function getFields() {
 		],		
     	'log' => [
         	[
-          		'name' => 'logfile',
+          		'name' => 'faqlogfile',
           		'type' => 'logfile',
-          		'default' => FAQ_LOGFILE
+          		'default' => FAQLOGFILE
         	]
       	]
 	];
@@ -225,17 +225,17 @@ function getShortcodeSettings(){
 }
 
 function logIt( $msg ){
-	if ( file_exists( FAQ_LOGFILE ) ){
-		$content = file_get_contents( FAQ_LOGFILE );
+	if ( file_exists( FAQLOGFILE ) ){
+		$content = file_get_contents( FAQLOGFILE );
 		$content = $msg . "\n" . $content;
 	}else {
 		$content = $msg;
 	}
-	file_put_contents( FAQ_LOGFILE, $content, LOCK_EX);
+	file_put_contents( FAQLOGFILE, $content, LOCK_EX);
 }
   
 function deleteLogfile(){
-	unlink( FAQ_LOGFILE );
+	unlink( FAQLOGFILE );
 }
   
 
