@@ -14,17 +14,16 @@ use RRZE\FAQ\API;
 class Layout {
 
     public function __construct() {
-
+        
         add_filter( 'pre_get_posts', [$this, 'makeFaqSortable'] );
-        add_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
         add_filter( 'enter_title_here', [$this, 'changeTitleText'] );
         // show content in box if not editable ( = source is not "website" )
         add_action( 'admin_menu', [$this, 'toggleEditor'] );
-        // add_filter( 'use_block_editor_for_post', [$this, 'gutenberg_post_meta'], 10, 2 );
         // Table "All FAQ"
-        add_filter( 'manage_edit-faq_columns', [$this, 'addFaqColumns'] );
+        add_filter( 'manage_faq_posts_columns', [$this, 'addFaqColumns'] );        
         add_action( 'manage_faq_posts_custom_column', [$this, 'getFaqColumnsValues'], 10, 2 );
-        add_filter( 'manage_edit-faq_sortable_columns', [$this, 'addFaqColumns'] );
+        add_filter( 'manage_edit-faq_sortable_columns', [$this, 'addFaqSortableColumns'] );
+        add_action( 'restrict_manage_posts', [$this, 'addFaqFilters'], 10, 1 );
         // Table "Category"
         add_filter( 'manage_edit-faq_category_columns', [$this, 'addTaxColumns'] );
         add_filter( 'manage_faq_category_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
@@ -36,17 +35,6 @@ class Layout {
         // show categories and tags under content
         add_filter( 'the_content', [$this, 'showDetails'] );        
     }
-
-
-    // public function print_filters_for( $hook = '' ) {
-    //     global $wp_filter;
-    //     if( empty( $hook ) || !isset( $wp_filter[$hook] ) )
-    //         return;
-    
-    //     print '<pre>';
-    //     print_r( $wp_filter[$hook] );
-    //     print '</pre>';
-    // }
 
 
     public function makeFaqSortable( $wp_query ) {
@@ -61,26 +49,6 @@ class Layout {
         }
     }
 
-    public function addTaxPostTable() {
-        global $typenow;    
-        if( $typenow == "faq" ){
-            $filters = get_object_taxonomies( $typenow );    
-            foreach ( $filters as $tax_slug ) {
-                $tax_obj = get_taxonomy( $tax_slug );
-                wp_dropdown_categories( array(
-                    'show_option_all' => sprintf(__('Show all %s', 'rrze-faq'), $tax_obj->label),
-                    'taxonomy' => $tax_slug,
-                    'name' => $tax_obj->name,
-                    'orderby' => 'name',
-                    'selected' => isset($_GET[$tax_slug]) ? $_GET[$tax_slug] : '',
-                    'hierarchical' => $tax_obj->hierarchical,
-                    'show_count' => true,
-                    'hide_if_empty' => true
-                ));
-            }
-        }
-    }
-    
     public function fillContentBox( $post ) {
         $mycontent = apply_filters( 'the_content', $post->post_content );
         $mycontent = substr( $mycontent, 0, strpos( $mycontent, '<!-- rrze-faq -->' ));
@@ -160,16 +128,45 @@ class Layout {
         }
     }
 
-    /**
-     * Adds sortable column "source" to tables "All FAQ", "Category" and "Tags"
-     */
     public function addFaqColumns( $columns ) {
+        $columns['source'] = __( 'Source', 'rrze-faq' );
+        $columns['id'] = __( 'ID', 'rrze-faq' );
+        return $columns;
+    }
+
+    public function addFaqSortableColumns( $columns ) {
         $columns['taxonomy-faq_category'] = __( 'Category', 'rrze-faq' );
         $columns['taxonomy-faq_tag'] = __( 'Tag', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
         return $columns;
     }
+
+
+    public function addFaqFilters( $post_type ){
+        if( $post_type !== 'faq' ){
+            return;
+        }
+        $taxonomies_slugs = array(
+            'faq_category',
+            'faq_tag'
+        );
+        foreach( $taxonomies_slugs as $slug ){
+            $taxonomy = get_taxonomy( $slug );
+            $selected = ( isset( $_REQUEST[ $slug ] ) ? $_REQUEST[ $slug ] : '' );
+            wp_dropdown_categories( array(
+                'show_option_all' =>  $taxonomy->labels->all_items,
+                'taxonomy'        =>  $slug,
+                'name'            =>  $slug,
+                'orderby'         =>  'name',
+                'value_field'     =>  'slug',
+                'selected'        =>  $selected,
+                'hierarchical'    =>  TRUE,
+                'show_count'      => TRUE
+            ) );
+        }
+    }    
+
     public function addTaxColumns( $columns ) {
         $columns['source'] = __( 'Source', 'rrze-faq' );
         return $columns;
@@ -223,27 +220,4 @@ class Layout {
         }
         return $content;
     }
-
-    /**
-     * Trigger editable of CPT faq: 
-     * synced FAQ should not be editable
-     * self-written FAQ have to be editable
-     */
-    // public function gutenberg_post_meta( $can_edit, $post)  {
-    //     // check settings from Plugin rrze-settings enable_block_editor instead of enable_classic_editor
-    //     $ret = FALSE;
-    //     $settings = (array) get_option( 'rrze_settings' );
-    //     if ( isset( $settings )){
-    //         $settings = (array) $settings['writing'];
-    //         if ( isset( $settings['enable_block_editor'] ) && $settings['enable_block_editor'] ) {
-    //             return TRUE;
-    //         }
-    //     }
-
-    //     $source = get_post_meta( $post->ID, 'source', TRUE );
-    //     if ( $source && $source == 'website' ) {
-    //         $ret = TRUE;
-    //     }
-    //     return $ret;
-    // }
 }
