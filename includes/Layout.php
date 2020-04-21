@@ -24,6 +24,9 @@ class Layout {
         add_action( 'manage_faq_posts_custom_column', [$this, 'getFaqColumnsValues'], 10, 2 );
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'addFaqSortableColumns'] );
         add_action( 'restrict_manage_posts', [$this, 'addFaqFilters'], 10, 1 );
+
+        remove_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
+
         // Table "Category"
         add_filter( 'manage_edit-faq_category_columns', [$this, 'addTaxColumns'] );
         add_filter( 'manage_faq_category_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
