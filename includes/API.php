@@ -350,7 +350,7 @@ class API {
                             'faq_tag' => $faq['faq_tag']
                             )
                         ) ); 
-                        $iUpdated++;
+                    $iUpdated++;
                 }
                 unset( $aRemoteIDs[$faq['remoteID']] );
             } else {
