@@ -332,25 +332,27 @@ class API {
                 $aCategoryIDs[] = $term->term_id;
             }
 
-            if ( isset( $aRemoteIDs[$faq['remoteID']] ) && $aRemoteIDs[$faq['remoteID']]['remoteChanged'] <  $faq['remoteChanged'] ){
-                // update FAQ
-                $post_id = wp_update_post( array(
-                    'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
-                    'post_name' => sanitize_title( $faq['title'] ),
-                    'post_title' => $faq['title'],
-                    'post_content' => $faq['content'],
-                    'meta_input' => array(
-                        'source' => $shortname,
-                        'lang' => $faq['lang'],
-                        'remoteID' => $faq['remoteID']
-                        ),
-                    'tax_input' => array(
-                        'faq_category' => $aCategoryIDs,
-                        'faq_tag' => $faq['faq_tag']
-                        )
-                    ) ); 
+            if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
+                if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
+                    // update FAQ
+                    $post_id = wp_update_post( array(
+                        'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
+                        'post_name' => sanitize_title( $faq['title'] ),
+                        'post_title' => $faq['title'],
+                        'post_content' => $faq['content'],
+                        'meta_input' => array(
+                            'source' => $shortname,
+                            'lang' => $faq['lang'],
+                            'remoteID' => $faq['remoteID']
+                            ),
+                        'tax_input' => array(
+                            'faq_category' => $aCategoryIDs,
+                            'faq_tag' => $faq['faq_tag']
+                            )
+                        ) ); 
+                        $iUpdated++;
+                }
                 unset( $aRemoteIDs[$faq['remoteID']] );
-                $iUpdated++;
             } else {
                 // insert FAQ
                 $post_id = wp_insert_post( array(
