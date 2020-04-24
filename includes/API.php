@@ -125,7 +125,6 @@ class API {
 
     protected function setCategories( &$aCategories, &$shortname ){
         $aTmp = $aCategories;
-        // $aRet = array();
         foreach ( $aTmp as $name => $aDetails ){
             $term = term_exists( $name, 'faq_category' );
             if ( !$term ) {
