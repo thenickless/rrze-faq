@@ -125,7 +125,6 @@ class API {
 
     protected function setCategories( &$aCategories, &$shortname ){
         $aTmp = $aCategories;
-        // $aRet = array();
         foreach ( $aTmp as $name => $aDetails ){
             $term = term_exists( $name, 'faq_category' );
             if ( !$term ) {
@@ -261,7 +260,8 @@ class API {
                                 'content' => $content,
                                 'lang' => $entry['lang'],
                                 'faq_category' => $entry['faq_category'],
-                                'remoteID' => $entry['remoteID']
+                                'remoteID' => $entry['remoteID'],
+                                'remoteChanged' => $entry['remoteChanged']
                             );
                             $sTag = '';
                             foreach ( $entry['faq_tag'] as $tag ){
@@ -298,7 +298,11 @@ class API {
         $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'fields' => 'ids', 'numberposts' => -1 ) );
         foreach ( $allFAQ as $postID ){
             $remoteID = get_post_meta( $postID, 'remoteID', TRUE );
-            $aRet[$remoteID] = $postID;
+            $remoteChanged = get_post_meta( $postID, 'remoteChanged', TRUE );
+            $aRet[$remoteID] = array(
+                'postID' => $postID,
+                'remoteChanged' => $remoteChanged
+                );
         }
         return $aRet;
     }
@@ -328,25 +332,27 @@ class API {
                 $aCategoryIDs[] = $term->term_id;
             }
 
-            if ( isset( $aRemoteIDs[$faq['remoteID']] ) ){
-                // update FAQ
-                $post_id = wp_update_post( array(
-                    'ID' => $aRemoteIDs[$faq['remoteID']],
-                    'post_name' => sanitize_title( $faq['title'] ),
-                    'post_title' => $faq['title'],
-                    'post_content' => $faq['content'],
-                    'meta_input' => array(
-                        'source' => $shortname,
-                        'lang' => $faq['lang'],
-                        'remoteID' => $faq['remoteID']
-                        ),
-                    'tax_input' => array(
-                        'faq_category' => $aCategoryIDs,
-                        'faq_tag' => $faq['faq_tag']
-                        )
-                    ) ); 
+            if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
+                if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
+                    // update FAQ
+                    $post_id = wp_update_post( array(
+                        'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
+                        'post_name' => sanitize_title( $faq['title'] ),
+                        'post_title' => $faq['title'],
+                        'post_content' => $faq['content'],
+                        'meta_input' => array(
+                            'source' => $shortname,
+                            'lang' => $faq['lang'],
+                            'remoteID' => $faq['remoteID']
+                            ),
+                        'tax_input' => array(
+                            'faq_category' => $aCategoryIDs,
+                            'faq_tag' => $faq['faq_tag']
+                            )
+                        ) ); 
+                    $iUpdated++;
+                }
                 unset( $aRemoteIDs[$faq['remoteID']] );
-                $iUpdated++;
             } else {
                 // insert FAQ
                 $post_id = wp_insert_post( array(
@@ -360,7 +366,8 @@ class API {
                     'meta_input' => array(
                         'source' => $shortname,
                         'lang' => $faq['lang'],
-                        'remoteID' => $faq['id']
+                        'remoteID' => $faq['id'],
+                        'remoteChanged' => $faq['remoteChanged']
                         ),
                     'tax_input' => array(
                         'faq_category' => $aCategoryIDs,
@@ -372,8 +379,8 @@ class API {
         }
 
         // delete all other FAQ to this source
-        foreach( $aRemoteIDs as $postID ){
-            wp_delete_post( $postID, TRUE );
+        foreach( $aRemoteIDs as $remoteID => $aDetails ){
+            wp_delete_post( $aDetails['postID'], TRUE );
             $iDeleted++;
         }
 
