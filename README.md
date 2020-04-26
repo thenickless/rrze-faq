@@ -21,7 +21,7 @@ Das Plugin kann genutzt werden, um FAQ zu erstellen und FAQ von Websites aus dem
 [faq 
 glossary="category oder tag" 
 category="beliebig-viele-kategorien-kommagetrennt"  
-category="beliebig-viele-schlagwoerter-kommagetrennt" 
+tag="beliebig-viele-schlagwoerter-kommagetrennt" 
 glossarystyle="a-z oder tagcloud oder tabs" 
 color="medfak oder natfak oder rwfak oder philfak oder techfak" 
 id="123456"] 
