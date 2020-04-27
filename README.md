@@ -46,6 +46,7 @@ glossarystyle : dieses Attribut bestimmt, wie das Glossar oberhalb der FAQ ausse
 Mögliche Werte sind 
  - "a-z" für ein alphabetisches Register von A bis Z
  - "tagcloud" um die Begriffe, nach denen gruppiert wird anhand der Anzahl an gefundenen Treffer unterschiedlich groß darzustellen. Gruppiert wird nach Kategorien oder nach Schlagwörtern. Siehe "glossary". Aus Gründen der Abwärtskompatibilität ist es nötig, dass Sie glossarystyle="" verwenden müssen, wenn Sie kein Glossar anzeigen lassen möchten.
+ - "tabs" um die Begriffe, nach denen gruppiert wird, im Glosar darzustellen.
 
  color : bestimmt, in welcher Farbe die Accordeons erscheinen sollen. Verweden Sie dazu die Kennungen der Fakultäten: medfak oder natfak oder rwfak oder philfak oder techfak
 
