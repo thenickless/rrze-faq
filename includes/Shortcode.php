@@ -158,18 +158,40 @@ class Shortcode {
         if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
             return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
         }
-        if ( intval( $id ) > 0 ) {
-            // SINGLE FAQ
-            $title = get_the_title( $id );
-            $letter = $this->getLetter( $title );
-            $description = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field('post_content',$id) ) );
-            if ( !isset( $description ) || ( mb_strlen( $description ) < 1)) {
-                $description = get_post_meta( $id, 'description', true );
+        if ( $id ) {
+            // SINGLE FAQ(s)
+            if ( is_array( $id ) ){
+                // Gutenberg 
+                $aIDs = $id;
+            } else {
+                // classic editor
+                $aIDs = explode( ',', $id );
             }
-            if ( $description) {
-                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $description . '[/collapse][/collapsibles]';
-                $content = do_shortcode( $accordion );
-                $schema = $this->getSchema( $id, $title, $description );
+            $found = FALSE;
+            $accordion = '[collapsibles]';
+            foreach ( $aIDs as $faqID ){
+                $faqID = trim( $faqID );
+                if ( $faqID ){
+                    $title = get_the_title( $faqID );
+                    $description = str_replace( ']]>', ']]&gt;', apply_filters( 'the_content',  get_post_field( 'post_content', $faqID ) ) );
+                    if ( !isset( $description ) || ( mb_strlen( $description ) < 1)) {
+                        $description = get_post_meta( $id, 'description', true );
+                    }
+                    // new attribute hideaccordeon
+                    if ( $hideaccordeon ){
+                        $content .= '<h2>' . $title . '</h2>' . ( $description ? '<p>' . $description . '</p>' : '' );
+                    } else {
+                        if ( $description) {
+                            $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="ID-' . $faqID . '"]' . $description . '[/collapse]';
+                            $schema .= $this->getSchema( $faqID, $title, $description );
+                        }    
+                    }        
+                    $found = TRUE;
+                }
+            }
+            if ( $found && !$hideaccordeon ){
+                $accordion .= '[/collapsibles]';
+                $content = do_shortcode( $accordion );    
             }
         } else {
             // attribute category or tag is given or none of them
@@ -358,8 +380,10 @@ class Shortcode {
             'order' => 'ASC'
         ));
 
-        $this->settings['id']['field_type'] = 'select';
-        $this->settings['id']['type'] = 'string';
+        $this->settings['id']['field_type'] = 'multi_select';
+        $this->settings['id']['default'] = array('');
+        $this->settings['id']['type'] = 'array';
+        $this->settings['id']['items'] = array( 'type' => 'number' );
         $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
         foreach ( $faqs as $faq){
             $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
