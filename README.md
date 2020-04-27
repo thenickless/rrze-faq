@@ -49,7 +49,7 @@ Mögliche Werte sind
 
  color : bestimmt, in welcher Farbe die Accordeons erscheinen sollen. Verweden Sie dazu die Kennungen der Fakultäten: medfak oder natfak oder rwfak oder philfak oder techfak
 
- id : mit diesem Attribut erfolgt die Ausgabe einer einzigen FAQ, sofern diese vorhanden ist. Sie finden die ID in der rechten Spalte unter "FAQ"->"Alle FAQ" sowie in der Informationsbox "Einfügen in Seiten und Beiträgen" bei jeder FAQ im Bearbeitungsmodus.
+ id : mit diesem Attribut erfolgt die Ausgabe eines oder mehrerer FAQ. Sie finden die ID in der rechten Spalte unter "FAQ"->"Alle FAQ" sowie in der Informationsbox "Einfügen in Seiten und Beiträgen" bei jeder FAQ im Bearbeitungsmodus. Sie können damit auch die Reihenfolge der FAQ in der Ausgabe bestimmen. 
 
  hideaccordeon : ist das Attribut "id" gesetzt, können Sie mit hideaccordeon bestimmen, dass die Ausgabe nicht in einem Accordeon erfolgen soll.
 
