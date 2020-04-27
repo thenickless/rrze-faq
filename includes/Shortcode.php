@@ -166,10 +166,15 @@ class Shortcode {
             if ( !isset( $description ) || ( mb_strlen( $description ) < 1)) {
                 $description = get_post_meta( $id, 'description', true );
             }
-            if ( $description) {
-                $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $description . '[/collapse][/collapsibles]';
-                $content = do_shortcode( $accordion );
-                $schema = $this->getSchema( $id, $title, $description );
+            // new attribute hideaccordeon
+            if ( $hideaccordeon ){
+                $content = '<h2>' . $title . '</h2>' . ( $description ? '<p>' . $description . '</p>' : '' );
+            } else {
+                if ( $description) {
+                    $accordion = '[collapsibles][collapse title="' . $title . '" color="' . $color . '" name="letter-' . $letter . '"]' . $description . '[/collapse][/collapsibles]';
+                    $content = do_shortcode( $accordion );
+                    $schema = $this->getSchema( $id, $title, $description );
+                }    
             }
         } else {
             // attribute category or tag is given or none of them

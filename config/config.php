@@ -207,6 +207,13 @@ function getShortcodeSettings(){
 			'label' => __( 'FAQ', 'rrze-faq' ),
 			'type' => 'number'
 		],
+		'hideaccordeon' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Hide accordeon for single FAQ', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
 		'color' => [
 			'values' => [
 				'medfak' => __( 'Buttered Rum (medfak)', 'rrze-faq' ),
