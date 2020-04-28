@@ -4,7 +4,7 @@
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Description:       
-Version:         4.12.2
+Version:         4.13.0
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -111,7 +111,6 @@ function deactivation() {
 
     // delete_option(Options::get_option_name());
     wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
-    wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
 }
 
 /**
