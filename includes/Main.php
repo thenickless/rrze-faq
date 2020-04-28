@@ -4,7 +4,6 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
-use function RRZE\FAQ\Config\logIt;
 use function RRZE\FAQ\Config\deleteLogfile;
 use RRZE\FAQ\API;
 use RRZE\FAQ\CPT;
@@ -42,8 +41,6 @@ class Main {
         // Actions: sync, add domain, delete domain, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
-        // Auto-Sync
-        add_action( 'rrze_faq_auto_update', [$this, 'runFAQCronjob'], 10 );
 
         $cpt = new CPT(); 
 
@@ -53,6 +50,9 @@ class Main {
         $restAPI = new RESTAPI();
         $layout = new Layout();
         $shortcode = new Shortcode();
+
+        // Auto-Sync
+        add_action( 'rrze_faq_auto_update', [$this, 'runFAQCronjob'] );
     }
 
 
@@ -60,7 +60,6 @@ class Main {
      * Enqueue der globale Skripte.
      */
     public function enqueueScripts() {
-        // wp_register_style('rrze-faq', plugins_url('assets/css/plugin.css', plugin_basename($this->pluginFile)));
         wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.css', plugin_basename($this->pluginFile)));
     }
 
@@ -142,38 +141,13 @@ class Main {
     }
 
     public function runFAQCronjob() {
-        logIt( date("Y-m-d H:i:s") . ' in runFAQCronjob() START' );
-
-        // sync hourly for testing
-
-        // // Wochentags, tagsüber 8-18 Uhr alle 3 Stunden, danach und am Wochenende: Alle 6 Stunden
-        // $sync = [
-        //     'workdays' => [ 2, 8, 11, 14, 17, 20 ],
-        //     'weekend' => [ 6, 12, 18, 0 ] 
-        // ];
-
-        // date_default_timezone_set('Europe/Berlin');
-        // $today = getdate();
-        // $weekday = $today["wday"]; // 0=sunday
-        // $hour = $today["hours"]; // 0 - 23
-
-        // if ( $weekday > 0 && $weekday < 6 ){
-        //     if ( in_array( $hour, $sync["workdays"] ) ) {
-                $sync = new Sync();
-                $sync->doSync( 'automatic' );
-        //             }
-        // } else {
-        //     if ( in_array( $hour, $sync["weekend"] ) ) {
-        //         $sync = new Sync();
-        //         $sync->doSync( 'automatic' );
-        //     }
-        // }
-        logIt( date("Y-m-d H:i:s") . ' in runFAQCronjob() END' );
+        // sync hourly
+        $sync = new Sync();
+        $sync->doSync( 'automatic' );
     }
 
     public function setFAQCronjob( $activate ) {
         date_default_timezone_set( 'Europe/Berlin' );
-        logIt( date("Y-m-d H:i:s") . ' in setFAQCronjob() START $activate = ' . ( $activate ? 'TRUE' : 'FALSE') );
 
         if ( !$activate ) {
             if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
@@ -197,7 +171,6 @@ class Main {
             add_settings_error( 'AutoSyncComplete', 'autosynccomplete', $message , 'updated' );
             settings_errors();
         }
-        logIt( date("Y-m-d H:i:s") . ' in setFAQCronjob() END' );
     }
 
 
