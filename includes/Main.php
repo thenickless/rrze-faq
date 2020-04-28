@@ -52,7 +52,7 @@ class Main {
         $shortcode = new Shortcode();
 
         // Auto-Sync
-        add_action( 'rrze_faq_auto_update', [$this, 'runFAQCronjob'] );
+        add_action( 'rrze_faq_auto_sync', [$this, 'runFAQCronjob'] );
     }
 
 
@@ -150,18 +150,18 @@ class Main {
         date_default_timezone_set( 'Europe/Berlin' );
 
         if ( !$activate ) {
-            if ( wp_next_scheduled( 'rrze_faq_auto_update' ) ) {
-                wp_clear_scheduled_hook( 'rrze_faq_auto_update' );
+            if ( wp_next_scheduled( 'rrze_faq_auto_sync' ) ) {
+                wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
             }
             return;
         }
 
         //Use wp_next_scheduled to check if the event is already scheduled*/
-        if( !wp_next_scheduled( 'rrze_faq_auto_update' )) {
-            wp_schedule_event( time() + 120, 'hourly', 'rrze_faq_auto_update' );
+        if( !wp_next_scheduled( 'rrze_faq_auto_sync' )) {
+            wp_schedule_event( time() + 120, 'hourly', 'rrze_faq_auto_sync' );
         }
 
-        $timestamp = wp_next_scheduled( 'rrze_faq_auto_update' );
+        $timestamp = wp_next_scheduled( 'rrze_faq_auto_sync' );
         if ($timestamp) {
             $message = __( 'Settings saved', 'rrze-faq' )
                 . '<br />'
