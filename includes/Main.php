@@ -91,15 +91,15 @@ class Main {
                     foreach ( $_POST as $key => $url ){
                         if ( substr( $key, 0, 11 ) === "del_domain_" ){
                             foreach( $options as $field => $val ){
-                                if ( ( stripos( $field, 'sync_url' ) === 0 ) && ( $val == $url ) ){
+                                if ( ( stripos( $field, 'faqsync_url' ) === 0 ) && ( $val == $url ) ){
                                     $parts = explode( '_', $field );
                                     $shortname = $parts[2];
                                     $api->deleteDomain( $shortname );
-                                    unset( $options['sync_shortname_' . $shortname] );
-                                    unset( $options['sync_url_' . $shortname] );
-                                    unset( $options['sync_categories_' . $shortname] );
-                                    unset( $options['sync_syncthis_' . $shortname] );
-                                    unset( $options['sync_hr_' . $shortname] );
+                                    unset( $options['faqsync_shortname_' . $shortname] );
+                                    unset( $options['faqsync_url_' . $shortname] );
+                                    unset( $options['faqsync_categories_' . $shortname] );
+                                    unset( $options['faqsync_syncthis_' . $shortname] );
+                                    unset( $options['faqsync_hr_' . $shortname] );
                                     if ( ( $key = array_search( $url, $domains ) ) !== false) {
                                         unset( $domains[$key] );
                                     }                                    
@@ -112,7 +112,7 @@ class Main {
             case 'sync':
                 $activateCronjob = FALSE;
                 foreach( $domains as $shortname => $url ){
-                    if ( isset( $options['sync_mode_' . $shortname ] ) && $options['sync_mode_' . $shortname ] == 'auto' ){
+                    if ( isset( $options['faqsync_mode_' . $shortname ] ) && $options['faqsync_mode_' . $shortname ] == 'auto' ){
                         $activateCronjob = TRUE;
                     } 
                 }

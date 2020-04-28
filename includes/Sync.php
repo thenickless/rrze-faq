@@ -20,8 +20,8 @@ class Sync {
         $options = get_option( 'rrze-faq' );
         $allowSettingsError = TRUE;
         foreach( $domains as $shortname => $url ){
-            if ( isset( $options['sync_mode_' . $shortname] ) ){
-                $categories = ( isset( $options['sync_categories_' . $shortname] ) ? implode( ',', $options['sync_categories_' . $shortname] ) : '' );
+            if ( isset( $options['faqsync_mode_' . $shortname] ) ){
+                $categories = ( isset( $options['faqsync_categories_' . $shortname] ) ? implode( ',', $options['faqsync_categories_' . $shortname] ) : '' );
                 switch ( $options['sync_mode_' . $shortname] ){
                     case 'auto':
                         $allowSettingsError = FALSE;

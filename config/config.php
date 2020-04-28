@@ -61,11 +61,11 @@ function getSections() {
 			'title' => __('Domains', 'rrze-faq' )
 		],
 		[
-			'id'    => 'sync',
+			'id'    => 'faqsync',
 			'title' => __('Synchronize', 'rrze-faq' )
 		],
 		[
-		  	'id' => 'log',
+		  	'id' => 'faqlog',
 		  	'title' => __('Logfile', 'rrze-faq' )
 		]
 	];   
@@ -92,7 +92,7 @@ function getFields() {
 				'type' => 'text'
 			]
 		],
-		'sync' => [
+		'faqsync' => [
 			[
 				'name' => 'shortname',
 				'label' => __('Short name', 'rrze-faq' ),
@@ -133,7 +133,7 @@ function getFields() {
 				'type' => 'line'
 			]
 		],		
-    	'log' => [
+    	'faqlog' => [
         	[
           		'name' => 'faqlogfile',
           		'type' => 'logfile',

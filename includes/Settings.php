@@ -135,7 +135,7 @@ class Settings {
         $this->settingsFields = getFields();
 
         // Add Sync fields for each domain
-        $this->settingsFields['sync'] = $this->setSettingsDomains();
+        $this->settingsFields['faqsync'] = $this->setSettingsDomains();
     }
 
     /**
@@ -290,14 +290,14 @@ class Settings {
             $get = '';
 
             switch ( $this->currentTab ) {
-                case 'sync':                    
+                case 'faqsync':                    
                     $get = '?sync';
                     break;
                 case 'doms': 
                     $btn_label = __('Add domain', 'rrze-faq' );
                     $get = '?doms';
                     break;
-                case 'log': 
+                case 'faqlog': 
                     $btn_label = __('Delete logfile', 'rrze-faq' );
                     $get = '?del';
                     break;
@@ -307,7 +307,6 @@ class Settings {
             echo '<form method="post" action="options.php'. $get . '">';
             settings_fields($section['id']);
             do_settings_sections($section['id']);
-            // echo '<input type="checkbox" name="auto_sync" value="">';
             submit_button( $btn_label );
             if ( $this->currentTab == 'doms' ){
                 $this->domainOutput();
@@ -350,7 +349,7 @@ class Settings {
         foreach ( $this->domains as $shortname => $url ){
             $aCategories = $api->getCategories( $url, $shortname ); 
 
-            foreach ( $this->settingsFields['sync'] as $field ){
+            foreach ( $this->settingsFields['faqsync'] as $field ){
                 switch ( $field['name'] ){
                     case 'shortname':
                         $field['default'] = $shortname;
@@ -922,7 +921,7 @@ class Settings {
         if ( file_exists( $args['default'] ) ) {
             $lines = file( $args['default'] );
             if ( $lines !== false ) {
-                echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><tbody>';
+                echo '<style> .settings_page_rrze-faq #faqlog .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><tbody>';
                 foreach ( $lines as $line ){
                     $parts = explode( ',', $line);
                     if ( count( $parts ) > 8 ){
