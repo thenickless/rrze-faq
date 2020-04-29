@@ -348,7 +348,6 @@ class Settings {
 
         foreach ( $this->domains as $shortname => $url ){
             $aCategories = $api->getCategories( $url, $shortname ); 
-
             foreach ( $this->settingsFields['faqsync'] as $field ){
                 switch ( $field['name'] ){
                     case 'shortname':

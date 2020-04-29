@@ -131,6 +131,12 @@ function getFields() {
 				'label' => '',
 				'desc' => '',
 				'type' => 'line'
+			],
+			[
+				'name' => 'autosync',
+				'label' => __('Automatic', 'rrze-faq' ),
+				'desc' => __('Sync automatically', 'rrze-faq' ),
+				'type' => 'checkbox',
 			]
 		],		
     	'faqlog' => [
@@ -232,6 +238,8 @@ function getShortcodeSettings(){
 }
 
 function logIt( $msg ){
+	date_default_timezone_set('Europe/Berlin');
+	$msg = date("Y-m-d H:i:s") . ' | ' . $msg;
 	if ( file_exists( FAQLOGFILE ) ){
 		$content = file_get_contents( FAQLOGFILE );
 		$content = $msg . "\n" . $content;

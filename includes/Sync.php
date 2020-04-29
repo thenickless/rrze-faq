@@ -18,33 +18,38 @@ class Sync {
         $api = new API();
         $domains = $api->getDomains();
         $options = get_option( 'rrze-faq' );
-        $allowSettingsError = TRUE;
+        $allowSettingsError = ( $mode == 'manual' ? TRUE : FALSE );
+        $syncRan = FALSE;
         foreach( $domains as $shortname => $url ){
             if ( isset( $options['faqsync_mode_' . $shortname] ) ){
                 $categories = ( isset( $options['faqsync_categories_' . $shortname] ) ? implode( ',', $options['faqsync_categories_' . $shortname] ) : '' );
-                switch ( $options['sync_mode_' . $shortname] ){
+                switch ( $options['faqsync_mode_' . $shortname] ){
                     case 'auto':
-                        $allowSettingsError = FALSE;
                     case 'manual':
                         $tStart = microtime( TRUE );
                         $aCnt = $api->setFAQ( $url, $categories, $shortname  );
+                        $syncRan = TRUE;
                         $tEND = microtime( TRUE );
-                        $sync_msg = $shortname . ': ' . __( 'Synchronization completed.', 'rrze-faq' ) . ' ' . $aCnt['iNew'] . ' ' . __( 'new', 'rrze-faq' ) . ', ' . $aCnt['iUpdated'] . ' ' . __( ' updated', 'rrze-faq' ) . ' ' . __( 'and', 'rrze-faq' ) . ' ' . $aCnt['iDeleted'] . ' ' . __( 'deleted', 'rrze-faq' ) . '.';
+                        $sync_msg = __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '": ' . __( 'Synchronization completed.', 'rrze-faq' ) . ' ' . $aCnt['iNew'] . ' ' . __( 'new', 'rrze-faq' ) . ', ' . $aCnt['iUpdated'] . ' ' . __( ' updated', 'rrze-faq' ) . ' ' . __( 'and', 'rrze-faq' ) . ' ' . $aCnt['iDeleted'] . ' ' . __( 'deleted', 'rrze-faq' ) . '.';
                         if ( $allowSettingsError ){
                             add_settings_error( 'Synchronization completed', 'synccompleted', $sync_msg, 'success' );
                         }
-                        logIt( date("Y-m-d H:i:s") . ' | ' . $sync_msg . ' | ' . $mode );
+                        logIt( $sync_msg . ' | ' . $mode );
                     break;
                 }
             }
         }        
 
-        $sync_msg = __( 'All synchronizations completed', 'rrze-faq' ) . '. ' . __('Required time:', 'rrze-faq') . ' ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+        if ( $syncRan ){
+            $sync_msg = __( 'All synchronizations completed', 'rrze-faq' ) . '. ' . __('Required time:', 'rrze-faq') . ' ' . sprintf( '%.1f ', microtime( true ) - $_SERVER["REQUEST_TIME_FLOAT"] ) . __( 'seconds', 'rrze-faq' );
+        } else {
+            $sync_msg = __( 'TEST Settings updated', 'rrze-faq' );
+        }
         if ( $allowSettingsError ){
             add_settings_error( 'Synchronization completed', 'synccompleted', $sync_msg, 'success' );
             settings_errors();
         }
-        logIt( date("Y-m-d H:i:s") . ' | ' . $sync_msg . ' | ' . $mode );
+        logIt( $sync_msg . ' | ' . $mode );
         return;
     }
 }
