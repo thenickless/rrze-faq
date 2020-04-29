@@ -115,17 +115,23 @@ function getFields() {
 				'options' => []
 			],
 			[
-				'name' => 'mode', // mode
+				'name' => 'donotsync',
 				'label' => __('Synchronize', 'rrze-faq' ),
-				'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
-				'default' => '',
-				'options' => [
-					'' => __('Do not synchronize.', 'rrze-faq' ),
-					'manual' => __('Synchronize one time now.', 'rrze-faq' ),
-					'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
-				],
-				'type' => 'radio'
+				'desc' => __('Do not synchronize', 'rrze-faq' ),
+				'type' => 'checkbox',
 			],
+			// [
+			// 	'name' => 'mode',
+			// 	'label' => __('Synchronize', 'rrze-faq' ),
+			// 	'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
+			// 	'default' => '',
+			// 	'options' => [
+			// 		'' => __('Do not synchronize.', 'rrze-faq' ),
+			// 		'manual' => __('Synchronize one time now.', 'rrze-faq' ),
+			// 		'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
+			// 	],
+			// 	'type' => 'radio'
+			// ],
 			[
 				'name' => 'hr',
 				'label' => '',
@@ -133,11 +139,29 @@ function getFields() {
 				'type' => 'line'
 			],
 			[
+				'name' => 'info',
+				'label' => __('Info', 'rrze-faq' ),
+				'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
+				'type' => 'plaintext',
+				'default' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
+			],
+			[
 				'name' => 'autosync',
-				'label' => __('Automatic', 'rrze-faq' ),
-				'desc' => __('Sync automatically', 'rrze-faq' ),
+				'label' => __('Mode', 'rrze-faq' ),
+				'desc' => __('Synchronize automatically', 'rrze-faq' ),
 				'type' => 'checkbox',
-			]
+			],
+			[
+				'name' => 'frequency',
+				'label' => __('Frequency', 'rrze-faq' ),
+				'desc' => '',
+				'default' => 'daily',
+				'options' => [
+					'daily' => __('daily', 'rrze-faq' ),
+					'twicedaily' => __('twicedaily', 'rrze-faq' )
+				],
+				'type' => 'select'
+			],
 		],		
     	'faqlog' => [
         	[

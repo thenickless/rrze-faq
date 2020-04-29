@@ -345,10 +345,17 @@ class Settings {
         $i = 1;
         $newFields = array();
         $api = new API();
+        $additionalfields = array();
 
         foreach ( $this->domains as $shortname => $url ){
             $aCategories = $api->getCategories( $url, $shortname ); 
             foreach ( $this->settingsFields['faqsync'] as $field ){
+                if ( $field['name'] == 'autosync' || $field['name'] == 'frequency' || $field['name'] == 'info' ){
+                    if ( $i == 1 ){
+                        $additionalfields[] = $field;
+                    }
+                    continue;
+                } 
                 switch ( $field['name'] ){
                     case 'shortname':
                         $field['default'] = $shortname;
@@ -370,7 +377,10 @@ class Settings {
             }
             $i++;
         }
-    return $newFields;
+        foreach ( $additionalfields as $addfield ){
+            $newFields[] = $addfield;    
+        }
+        return $newFields;
     }
 
     /**
@@ -922,12 +932,7 @@ class Settings {
             if ( $lines !== false ) {
                 echo '<style> .settings_page_rrze-faq #faqlog .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><tbody>';
                 foreach ( $lines as $line ){
-                    $parts = explode( ',', $line);
-                    if ( count( $parts ) > 8 ){
-                        echo '<tr><td>' . $parts[0] . ' | ' . ' job offers: ' . $parts[1] . ' (new: ' . $parts[2] . ', updated: ' . $parts[3] . ', deleted: ' . $parts[4] . ') Execution time: ' . $parts[5] . ' s / mode: ' . $parts[6] . ' / Providers: ' . $parts[7] . ' / prio: ' . $parts[8] . ' / ' . ( $parts[9] == 1 ? 'with' : 'without' ) . ' internal job offers' . '</td></tr>';
-                    }else{
-                        echo '<tr><td>' . $line . '</td></tr>';
-                    }
+                    echo '<tr><td>' . $line . '</td></tr>';
                 }
                 echo '</tbody></table>';
             }else{

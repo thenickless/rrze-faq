@@ -99,7 +99,7 @@ class Main {
                                     unset( $options['faqsync_shortname_' . $shortname] );
                                     unset( $options['faqsync_url_' . $shortname] );
                                     unset( $options['faqsync_categories_' . $shortname] );
-                                    unset( $options['faqsync_mode_' . $shortname] );
+                                    // unset( $options['faqsync_mode_' . $shortname] );
                                     unset( $options['faqsync_hr_' . $shortname] );
                                     if ( ( $key = array_search( $url, $domains ) ) !== false) {
                                         unset( $domains[$key] );
@@ -147,36 +147,28 @@ class Main {
     public function setFAQCronjob() {
         date_default_timezone_set( 'Europe/Berlin' );
 
-        $api = new API();
-        $domains = $api->getDomains();
         $options = get_option( 'rrze-faq' );
 
-        $activate = FALSE;
-        foreach( $domains as $shortname => $url ){
-            if ( isset( $options['faqsync_mode_' . $shortname ] ) && $options['faqsync_mode_' . $shortname ] == 'auto' ){
-                $activate = TRUE;
-            } 
-        }
-
-        if ( !$activate ) {
-            if ( wp_next_scheduled( 'rrze_faq_auto_sync' ) ) {
-                wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
-            }
+        if ( $options['faqsync_autosync'] != 'on' ) {
+            wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
             return;
         }
 
-        //Use wp_next_scheduled to check if the event is already scheduled*/
-        if( !wp_next_scheduled( 'rrze_faq_auto_sync' )) {
-            wp_schedule_event( time() + 120, 'hourly', 'rrze_faq_auto_sync' );
+        $nextcron = 0;
+        switch( $options['faqsync_frequency'] ){
+            case 'daily' : $nextcron = 86400;
+                break;
+            case 'twicedaily' : $nextcron = 43200;
+                break;
         }
 
+        $nextcron += time();
+        wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
+        wp_schedule_event( $nextcron, $options['faqsync_frequency'], 'rrze_faq_auto_sync' );
+
         $timestamp = wp_next_scheduled( 'rrze_faq_auto_sync' );
-        if ($timestamp) {
-            $message = __( 'Next automatically synchronization:', 'rrze-faq' ) . ' '
-                // . get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'd.m.Y - H:i' );
-                . date( 'd.m.Y H:i:s', $timestamp );
-            add_settings_error( 'AutoSyncComplete', 'autosynccomplete', $message , 'updated' );
-            settings_errors();
-        }
+        $message = __( 'Next automatically synchronization:', 'rrze-faq' ) . ' ' . date( 'd.m.Y H:i:s', $timestamp );
+        add_settings_error( 'AutoSyncComplete', 'autosynccomplete', $message , 'updated' );
+        settings_errors();
     }
 }
