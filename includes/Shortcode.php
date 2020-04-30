@@ -24,7 +24,6 @@ class Shortcode {
     public function __construct() {
         $this->settings = getShortcodeSettings();
         add_action( 'init',  [$this, 'initGutenberg'] );
-        add_action( 'init', [$this, 'enqueueScripts'] );
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
         add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
@@ -33,11 +32,6 @@ class Shortcode {
     /**
      * Enqueue der Skripte.
      */
-    public function enqueueScripts() {
-        wp_register_script( 'rrze-faq-js', plugins_url( '../assets/js/rrze-faq.min.js', __FILE__ ) );
-        wp_enqueue_script( 'rrze-faq' );
-    }
-
     private function getLetter( &$txt ) {
         return mb_strtoupper( mb_substr( remove_accents( $txt ), 0, 1 ), 'UTF-8');
     }
@@ -429,7 +423,6 @@ class Shortcode {
                 }
             }
         } 
-        $this->enqueueScripts();
         if ( $schema ){
            $content .= RRZE_SCHEMA_START . $schema . RRZE_SCHEMA_END;
         }
