@@ -61,7 +61,7 @@ class Main {
      * Enqueue der globale Skripte.
      */
     public function enqueueScripts() {
-        wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.css', plugin_basename($this->pluginFile)));
+        wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.min.css', plugin_basename($this->pluginFile)));
     }
 
 

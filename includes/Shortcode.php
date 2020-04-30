@@ -34,7 +34,7 @@ class Shortcode {
      * Enqueue der Skripte.
      */
     public function enqueueScripts() {
-        wp_register_script( 'rrze-faq-js', plugins_url( '../assets/js/rrze-faq.js', __FILE__ ) );
+        wp_register_script( 'rrze-faq-js', plugins_url( '../assets/js/rrze-faq.min.js', __FILE__ ) );
         wp_enqueue_script( 'rrze-faq' );
     }
 
@@ -506,7 +506,7 @@ class Shortcode {
 
         $this->settings = $this->fillGutenbergOptions();
 
-        $js = '../assets/js/gutenberg.js';
+        $js = '../assets/js/gutenberg.min.js';
         $editor_script = $this->settings['block']['blockname'] . '-blockJS';
         wp_register_script(
             $editor_script,
@@ -522,7 +522,7 @@ class Shortcode {
         );
         wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
-        $css = '../assets/css/gutenberg.css';
+        $css = '../assets/css/gutenberg.min.css';
         $editor_style = 'gutenberg-css';
         wp_register_style( $editor_style, plugins_url( $css, __FILE__ ) );
         register_block_type( $this->settings['block']['blocktype'], array(
