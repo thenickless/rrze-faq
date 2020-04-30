@@ -336,7 +336,7 @@ class Settings {
                 $i++;
             }
             echo '</tbody></table>';
-            echo '<p>' . __( 'Please note: "Delete selected domains" will DELETE every FAQ that has been fetched from the selected domains.', 'rrze-faq' ) . '</p>'; 
+            echo '<p>' . __( 'Please note: "Delete selected domains" will DELETE every FAQ on this website that has been fetched from the selected domains.', 'rrze-faq' ) . '</p>'; 
             submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
         }
     }

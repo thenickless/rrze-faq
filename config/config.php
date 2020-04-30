@@ -190,12 +190,6 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-		// 'domain' => [
-		// 	'default' => '',
-		// 	'field_type' => 'text',
-		// 	'label' => __( 'Domain', 'rrze-faq' ),
-		// 	'type' => 'text'
-        // ],
         'glossary' => [
 			'values' => [
 				'' => __( 'none', 'rrze-faq' ),
@@ -215,7 +209,7 @@ function getShortcodeSettings(){
 				'tabs' => __( 'Tabs', 'rrze-faq' )
 			],
 			'default' => 'a-z',
-			'field_type' => 'radio',
+			'field_type' => 'select',
 			'label' => __( 'Glossary style', 'rrze-faq' ),
 			'type' => 'string'
 		],
@@ -237,27 +231,73 @@ function getShortcodeSettings(){
 			'label' => __( 'FAQ', 'rrze-faq' ),
 			'type' => 'number'
 		],
-		'hideaccordeon' => [
+		'hide_accordeon' => [
 			'field_type' => 'toggle',
 			'label' => __( 'Hide accordeon', 'rrze-faq' ),
 			'type' => 'boolean',
 			'default' => FALSE,
 			'checked'   => FALSE
 		],	  
+		'hide_title' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Hide title', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
+		'expand_all_link' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Show "expand all" button', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
+		'load_open' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Load website with opened accordeons', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
 		'color' => [
 			'values' => [
-				'medfak' => __( 'Buttered Rum (medfak)', 'rrze-faq' ),
-				'natfak' => __( 'Eastern Blue (natfak)', 'rrze-faq' ),
-				'rwfak' => __( 'Flame Red (rwfak)', 'rrze-faq' ),
-				'philfak' => __( 'Observatory (philfak)', 'rrze-faq' ),
-				'' => __( 'Prussian Blue', 'rrze-faq' ),
-				'techfak' => __( 'Raven (techfak)', 'rrze-faq' )
+				'med' => 'med',
+				'nat' => 'nat',
+				'rw' => 'rw',
+				'phil' => 'phil',
+				'tk' => 'tk'
 			],
-			'default' => '',
+			'default' => 'tk',
 			'field_type' => 'select',
 			'label' => __( 'Color', 'rrze-faq' ),
 			'type' => 'string'
-        ]
+		],
+		'additional_class' => [
+			'default' => '',
+			'field_type' => 'text',
+			'label' => __( 'Additonal CSS-class(es) for sourrounding DIV', 'rrze-faq' ),
+			'type' => 'text'
+		],
+        'sort' => [
+			'values' => [
+				'title' => __( 'Title', 'rrze-faq' ),
+				'id' => __( 'ID', 'rrze-faq' )
+			],
+			'default' => 'title',
+			'field_type' => 'select',
+			'label' => __( 'Sort', 'rrze-faq' ),
+			'type' => 'string'
+		],
+        'order' => [
+			'values' => [
+				'ASC' => __( 'ASC', 'rrze-faq' ),
+				'DESC' => __( 'DESC', 'rrze-faq' )
+			],
+			'default' => 'ASC',
+			'field_type' => 'select',
+			'label' => __( 'Order', 'rrze-faq' ),
+			'type' => 'string'
+		]				
     ];
 }
 
