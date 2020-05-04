@@ -501,6 +501,7 @@ class Shortcode {
 
         $js = '../assets/js/gutenberg.min.js';
         $editor_script = $this->settings['block']['blockname'] . '-blockJS';
+
         wp_register_script(
             $editor_script,
             plugins_url( $js, __FILE__ ),

@@ -11,9 +11,16 @@ class API {
     private $aAllCats = array();
 
     protected function checkDomain( &$url ){
-        $content = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
-        $status_code = wp_remote_retrieve_response_code( $content );
-        return ( $status_code != 200 ? FALSE : TRUE );
+        // checks if ENDPOINT exists at $url, if HTTP-status is 200
+        // returns (redirected) URL or FALSE  
+        $ret = FALSE;
+        $request = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
+        $status_code = wp_remote_retrieve_response_code( $request );
+        if ( $status_code == '200' ){
+            $content = json_decode( wp_remote_retrieve_body( $request ), TRUE );
+            $ret = substr( $content[0]['guid']["rendered"], 0 , strpos( $content[0]['guid']["rendered"], '?' ) );
+        }
+        return $ret;
     }
 
     protected function isRegisteredDomain( &$url ){
@@ -38,7 +45,8 @@ class API {
         $domains = $this->getDomains();
         $shortname = strtolower( preg_replace('/[^A-Za-z0-9\-]/', '', str_replace( ' ', '-', $shortname ) ) );
         if ( ( in_array( $url, $domains ) === FALSE ) && ( array_key_exists( $shortname, $domains ) === FALSE ) ) {
-            if ( $this->checkDomain( $url ) ){
+            $url = $this->checkDomain( $url );
+            if ( $url ){
                 $domains[$shortname] = $url;
             }else{
                 return FALSE;
@@ -234,6 +242,56 @@ class API {
         return $iDel;
     }
 
+    protected function cleanContent( $txt ){
+        // returns content without info below '<!-- rrze-faq -->'
+        $txt = substr( $txt, 0, strpos( $txt, '<!-- rrze-faq -->' ));
+        return $txt;
+    }
+
+    protected function absoluteUrl( $txt, $baseUrl ){
+        // converts relative URLs to absolute ones
+        $needles = array('href="', 'src="', 'srcset="', 'background="');
+        $newTxt = '';
+        if (substr( $baseUrl, -1 ) != '/' ){
+            $baseUrl .= '/';
+        } 
+        $newBaseUrl = $baseUrl;
+        $baseUrlParts = parse_url( $baseUrl );
+        foreach ( $needles as $needle ){
+            while( $pos = strpos( $txt, $needle ) ){
+                $pos += strlen($needle);
+                if ( substr( $txt, $pos, 7 ) != 'http://' && substr( $txt, $pos, 8) != 'https://' && substr( $txt, $pos, 6) != 'ftp://' && substr( $txt, $pos, 9 ) != 'mailto://' ){
+                    if ( substr( $txt, $pos, 1 ) == '/' ){
+                        $newBaseUrl = $baseUrlParts['scheme'] . '://' . $baseUrlParts['host'];
+                        if ( $needle == 'srcset="' ){
+                            // convert all elements of srcset, too
+                            $len = ( strpos( $txt, '"', $pos ) ? strpos( $txt, '"', $pos ) : strpos( $txt, "'", $pos ) ) - $pos;
+                            $srcset = substr( $txt, $pos, $len );
+                            $aSrcset = explode( ',', $srcset );
+                            unset( $aSrcset[0] );
+                            $aNewSrcset = array();
+                            foreach( $aSrcset as $src ){
+                                $src = trim( $src );
+                                if ( substr( $src, 0, 1 ) == '/' ){
+                                    $aNewSrcset[] = $newBaseUrl . $src;
+                                }                                
+                            }
+                            $newSrcset = implode( ', ', $aNewSrcset );
+                            $txt = str_replace( $srcset, $newSrcset, $txt );
+                            }
+                        }
+                      $newTxt .= substr( $txt, 0, $pos ).$newBaseUrl;
+                    } else {
+                    $newTxt .= substr( $txt, 0, $pos );
+                }
+                $txt = substr( $txt, $pos );
+              }
+          $txt = $newTxt . $txt;
+          $newTxt = '';
+        }
+        return $txt;
+      }
+
     protected function getFAQ( &$url, &$categories ){
         $faqs = array();
         $aCategoryRelation = array();
@@ -251,7 +309,9 @@ class API {
                     }
                     foreach( $entries as $entry ){
                         if ( $entry['source'] == 'website' ){
-                            $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
+                            // $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
+                            $content = $this->cleanContent( $entry['content']['rendered'] );
+                            $content = $this->absoluteUrl( $content, $url );
 
                             $faqs[$entry['id']] = array(
                                 'id' => $entry['id'],
