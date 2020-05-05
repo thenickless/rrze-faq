@@ -250,7 +250,7 @@ class API {
 
     protected function absoluteUrl( $txt, $baseUrl ){
         // converts relative URLs to absolute ones
-        $needles = array('href="', 'src="', 'srcset="', 'background="');
+        $needles = array('href="', 'src="', 'background="');
         $newTxt = '';
         if (substr( $baseUrl, -1 ) != '/' ){
             $baseUrl .= '/';
@@ -259,35 +259,36 @@ class API {
         $baseUrlParts = parse_url( $baseUrl );
         foreach ( $needles as $needle ){
             while( $pos = strpos( $txt, $needle ) ){
-                $pos += strlen($needle);
+                $pos += strlen( $needle );
                 if ( substr( $txt, $pos, 7 ) != 'http://' && substr( $txt, $pos, 8) != 'https://' && substr( $txt, $pos, 6) != 'ftp://' && substr( $txt, $pos, 9 ) != 'mailto://' ){
                     if ( substr( $txt, $pos, 1 ) == '/' ){
                         $newBaseUrl = $baseUrlParts['scheme'] . '://' . $baseUrlParts['host'];
-                        if ( $needle == 'srcset="' ){
-                            // convert all elements of srcset, too
-                            $len = ( strpos( $txt, '"', $pos ) ? strpos( $txt, '"', $pos ) : strpos( $txt, "'", $pos ) ) - $pos;
-                            $srcset = substr( $txt, $pos, $len );
-                            $aSrcset = explode( ',', $srcset );
-                            unset( $aSrcset[0] );
-                            $aNewSrcset = array();
-                            foreach( $aSrcset as $src ){
-                                $src = trim( $src );
-                                if ( substr( $src, 0, 1 ) == '/' ){
-                                    $aNewSrcset[] = $newBaseUrl . $src;
-                                }                                
-                            }
-                            $newSrcset = implode( ', ', $aNewSrcset );
-                            $txt = str_replace( $srcset, $newSrcset, $txt );
-                            }
-                        }
-                      $newTxt .= substr( $txt, 0, $pos ).$newBaseUrl;
-                    } else {
+                    }
+                    $newTxt .= substr( $txt, 0, $pos ).$newBaseUrl;
+                } else {
                     $newTxt .= substr( $txt, 0, $pos );
                 }
                 $txt = substr( $txt, $pos );
-              }
-          $txt = $newTxt . $txt;
-          $newTxt = '';
+            }
+            $txt = $newTxt . $txt;
+            $newTxt = '';
+        }
+        // convert all elements of srcset, too
+        $needle = 'srcset="';
+        while( $pos = strpos( $txt, $needle, $pos ) ){
+            $pos += strlen( $needle );
+            $len = strpos( $txt, '"', $pos ) - $pos;
+            $srcset = substr( $txt, $pos, $len );
+            $aSrcset = explode( ',', $srcset );
+            $aNewSrcset = array();
+            foreach( $aSrcset as $src ){
+                $src = trim( $src );
+                if ( substr( $src, 0, 1 ) == '/' ){
+                    $aNewSrcset[] = $newBaseUrl . $src;
+                }                                
+            }
+            $newSrcset = implode( ', ', $aNewSrcset );
+            $txt = str_replace( $srcset, $newSrcset, $txt );
         }
         return $txt;
       }
