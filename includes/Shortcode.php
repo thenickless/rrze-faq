@@ -426,6 +426,12 @@ class Shortcode {
         if ( $schema ){
            $content .= RRZE_SCHEMA_START . $schema . RRZE_SCHEMA_END;
         }
+
+        // check if theme 'FAU-Einrichtungen' and [gallery ...] is in use
+        if ( ( wp_get_theme()->Name == 'FAU-Einrichtungen' ) && ( strpos( $content, 'slider') !== false ) ) {
+            wp_enqueue_script('fau-js-heroslider');
+        }
+
         return '<div class="fau-faq' . ( $color ? ' ' . $color . ' ' : '' ) . ( isset( $additional_class) ? $additional_class : '' ) . '">' . $content . '</div>';
     }
 
