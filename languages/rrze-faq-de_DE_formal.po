@@ -2,11 +2,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-30 15:09+0000\n"
-"PO-Revision-Date: 2020-04-30 15:14+0000\n"
+"POT-Creation-Date: 2020-05-12 17:33+0000\n"
+"PO-Revision-Date: 2020-05-12 17:34+0000\n"
 "Last-Translator: \n"
-"Language-Team: German\n"
-"Language: de_DE\n"
+"Language-Team: German (Formal)\n"
+"Language: de_DE_formal\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -225,11 +225,11 @@ msgstr "absteigend"
 msgid "Order"
 msgstr "Reihenfolge"
 
-#: includes/Main.php:107 includes/Sync.php:30
+#: includes/Main.php:107 includes/Sync.php:31 includes/Sync.php:37
 msgid "Domain"
 msgstr ""
 
-#: includes/Main.php:107 includes/Sync.php:30
+#: includes/Main.php:107 includes/Sync.php:37
 msgid "deleted"
 msgstr "gelöscht"
 
@@ -367,39 +367,47 @@ msgstr "Schlagwort editieren"
 msgid "Update tag"
 msgstr "Schlagwort aktualisieren"
 
-#: includes/Sync.php:30
+#: includes/Sync.php:31
+msgid ""
+"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
+"synchronized:"
+msgstr ""
+"Sychronisierungsfehler. Dieses FAQ enthält sliders ([gallery]) und kann "
+"nicht synchronisiert werden: "
+
+#: includes/Sync.php:37
 msgid "Synchronization completed."
 msgstr "Synchronisierung abgeschlossen."
 
-#: includes/Sync.php:30
+#: includes/Sync.php:37
 msgid "new"
 msgstr "neu"
 
-#: includes/Sync.php:30
+#: includes/Sync.php:37
 msgid " updated"
 msgstr "aktualisiert"
 
-#: includes/Sync.php:30
+#: includes/Sync.php:37
 msgid "and"
 msgstr "und"
 
-#: includes/Sync.php:30 includes/Sync.php:39
+#: includes/Sync.php:37 includes/Sync.php:46
 msgid "Required time:"
 msgstr "Benötigte Zeit:"
 
-#: includes/Sync.php:30 includes/Sync.php:39
+#: includes/Sync.php:37 includes/Sync.php:46
 msgid "seconds"
 msgstr "Sekunden"
 
-#: includes/Sync.php:39
+#: includes/Sync.php:46
 msgid "All synchronizations completed"
 msgstr "Alle Synchronisierungen abgeschlossen"
 
-#: includes/Sync.php:41
+#: includes/Sync.php:48
 msgid "Settings updated"
 msgstr "Einstellungen aktualisiert"
 
-#: includes/Shortcode.php:238
+#: includes/Shortcode.php:232
 msgid ""
 "Attribute glossary is not correct. Please use either glossary=\"category\" "
 "or glossary=\"tag\"."
@@ -407,7 +415,7 @@ msgstr ""
 "Das Attribut \"glossary\" ist nicht korrekt. Bitte benutzen Sie entweder "
 "glossary=\"category\" oder glossary=\"tag\"."
 
-#: includes/Shortcode.php:241
+#: includes/Shortcode.php:235
 msgid ""
 "Attribute color is not correct. Please use either 'medfak', 'natfak', "
 "'rwfak', 'philfak' or 'techfak'"
@@ -415,7 +423,7 @@ msgstr ""
 "Attribut color ist nicht richtig. Bitte verwenden Sie entweder 'medfak', "
 "'natfak', 'rwfak', 'philfak' oder 'techfak'"
 
-#: includes/Shortcode.php:457 includes/Shortcode.php:485
+#: includes/Shortcode.php:468 includes/Shortcode.php:496
 msgid "-- all --"
 msgstr "-- alle --"
 
