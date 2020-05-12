@@ -328,6 +328,7 @@ class API {
                                 $sTag .= $tag . ',';
                             }
                             $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
+                            $faqs[$entry['id']]['URLhasSlider'] = ( ( strpos( $content, 'slider') !== false ) ? $entry['link'] : FALSE ); // we cannot handle sliders, see note in Shortcode.php shortcodeOutput()
                         }
                     }
                 }
@@ -371,6 +372,7 @@ class API {
         $iNew = 0;
         $iUpdated = 0;
         $iDeleted = 0;
+        $aURLhasSlider = array();
 
         // get all remoteIDs of stored FAQ to this source ( key = remoteID, value = postID )
         $aRemoteIDs = $this->getFAQRemoteIDs( $shortname );
@@ -392,49 +394,53 @@ class API {
                 $aCategoryIDs[] = $term->term_id;
             }
 
-            if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
-                if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
-                    // update FAQ
-                    $post_id = wp_update_post( array(
-                        'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
+            if ( $faq['URLhasSlider'] ) {
+                $aURLhasSlider[] = $faq['URLhasSlider'];
+            } else {
+                if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
+                    if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
+                        // update FAQ
+                        $post_id = wp_update_post( array(
+                            'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
+                            'post_name' => sanitize_title( $faq['title'] ),
+                            'post_title' => $faq['title'],
+                            'post_content' => $faq['content'],
+                            'meta_input' => array(
+                                'source' => $shortname,
+                                'lang' => $faq['lang'],
+                                'remoteID' => $faq['remoteID']
+                                ),
+                            'tax_input' => array(
+                                'faq_category' => $aCategoryIDs,
+                                'faq_tag' => $faq['faq_tag']
+                                )
+                            ) ); 
+                        $iUpdated++;
+                    }
+                    unset( $aRemoteIDs[$faq['remoteID']] );
+                } else {
+                    // insert FAQ
+                    $post_id = wp_insert_post( array(
+                        'post_type' => 'faq',
                         'post_name' => sanitize_title( $faq['title'] ),
                         'post_title' => $faq['title'],
                         'post_content' => $faq['content'],
+                        'comment_status' => 'closed',
+                        'ping_status' => 'closed',
+                        'post_status' => 'publish',
                         'meta_input' => array(
                             'source' => $shortname,
                             'lang' => $faq['lang'],
-                            'remoteID' => $faq['remoteID']
+                            'remoteID' => $faq['id'],
+                            'remoteChanged' => $faq['remoteChanged']
                             ),
                         'tax_input' => array(
                             'faq_category' => $aCategoryIDs,
                             'faq_tag' => $faq['faq_tag']
                             )
-                        ) ); 
-                    $iUpdated++;
+                        ) );
+                    $iNew++;
                 }
-                unset( $aRemoteIDs[$faq['remoteID']] );
-            } else {
-                // insert FAQ
-                $post_id = wp_insert_post( array(
-                    'post_type' => 'faq',
-                    'post_name' => sanitize_title( $faq['title'] ),
-                    'post_title' => $faq['title'],
-                    'post_content' => $faq['content'],
-                    'comment_status' => 'closed',
-                    'ping_status' => 'closed',
-                    'post_status' => 'publish',
-                    'meta_input' => array(
-                        'source' => $shortname,
-                        'lang' => $faq['lang'],
-                        'remoteID' => $faq['id'],
-                        'remoteChanged' => $faq['remoteChanged']
-                        ),
-                    'tax_input' => array(
-                        'faq_category' => $aCategoryIDs,
-                        'faq_tag' => $faq['faq_tag']
-                        )
-                    ) );
-                $iNew++;
             }
         }
 
@@ -447,7 +453,8 @@ class API {
         return array( 
             'iNew' => $iNew,
             'iUpdated' => $iUpdated,
-            'iDeleted' => $iDeleted
+            'iDeleted' => $iDeleted,
+            'URLhasSlider' => $aURLhasSlider
         );
     }
 }    

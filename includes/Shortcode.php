@@ -369,7 +369,16 @@ class Shortcode {
                         } else {
                             $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
                         }
+
+                        // BK TEST START
+                        $accordion .= '';
+                        $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
+
+                        // BK TEST END
+
+
                         $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']';
+
                         // find the postIDs to this tag
                         $aIDs = $this->searchArrayByKey( $aVal['ID'], $aPostIDs );
 
@@ -386,6 +395,14 @@ class Shortcode {
                         $last_anchor = $aVal[$anchor];
                     }
                     $accordion .= '[/collapsibles]';
+
+
+                    // echo 'here we are ';
+
+                    // echo '$accordion = ' . $accordion;
+                    
+                    // exit;
+
                     $content .= do_shortcode( $accordion );
                 } else {  
                     // attribut glossary is not given  
@@ -427,10 +444,12 @@ class Shortcode {
            $content .= RRZE_SCHEMA_START . $schema . RRZE_SCHEMA_END;
         }
 
+        // 2020-05-12 THIS IS NOT IN USE because f.e. [faq glossary="category"] led to errors ("TypeError: e.$slides is null slick.min.js" and "TypeError: can't access property "add"" ) as FAQ can have >1 category and so equal sliders would be returned in output which leads to JS errors that avoid accordeons to work properly
+        // => sliders are not syncable / this info is provided to the user during Sync and in Logfile
         // check if theme 'FAU-Einrichtungen' and [gallery ...] is in use
-        if ( ( wp_get_theme()->Name == 'FAU-Einrichtungen' ) && ( strpos( $content, 'slider') !== false ) ) {
-            wp_enqueue_script('fau-js-heroslider');
-        }
+        // if ( ( wp_get_theme()->Name == 'FAU-Einrichtungen' ) && ( strpos( $content, 'slider') !== false ) ) {
+        //     wp_enqueue_script( 'fau-js-heroslider' );
+        // }
 
         return '<div class="fau-faq' . ( $color ? ' ' . $color . ' ' : '' ) . ( isset( $additional_class) ? $additional_class : '' ) . '">' . $content . '</div>';
     }
