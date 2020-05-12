@@ -370,13 +370,6 @@ class Shortcode {
                             $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
                         }
 
-                        // BK TEST START
-                        $accordion .= '';
-                        $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
-
-                        // BK TEST END
-
-
                         $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']';
 
                         // find the postIDs to this tag
