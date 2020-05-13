@@ -4,10 +4,10 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
+use function RRZE\FAQ\Config\logIt;
 use function RRZE\FAQ\Config\deleteLogfile;
 use RRZE\FAQ\API;
 use RRZE\FAQ\CPT;
-use RRZE\FAQ\FAQCronjob;
 use RRZE\FAQ\Layout;
 use RRZE\FAQ\RESTAPI;
 use RRZE\FAQ\Settings;
@@ -51,6 +51,9 @@ class Main {
         $restAPI = new RESTAPI();
         $layout = new Layout();
         $shortcode = new Shortcode();
+
+        // Auto-Sync
+        add_action( 'rrze_faq_auto_sync', [$this, 'runFAQCronjob'] );
     }
 
 
@@ -58,8 +61,7 @@ class Main {
      * Enqueue der globale Skripte.
      */
     public function enqueueScripts() {
-        // wp_register_style('rrze-faq', plugins_url('assets/css/plugin.css', plugin_basename($this->pluginFile)));
-        wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.css', plugin_basename($this->pluginFile)));
+        wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.min.css', plugin_basename($this->pluginFile)));
     }
 
 
@@ -90,18 +92,19 @@ class Main {
                     foreach ( $_POST as $key => $url ){
                         if ( substr( $key, 0, 11 ) === "del_domain_" ){
                             foreach( $options as $field => $val ){
-                                if ( ( stripos( $field, 'sync_url' ) === 0 ) && ( $val == $url ) ){
+                                if ( ( stripos( $field, 'faqsync_url' ) === 0 ) && ( $val == $url ) ){
                                     $parts = explode( '_', $field );
                                     $shortname = $parts[2];
                                     $api->deleteDomain( $shortname );
-                                    unset( $options['sync_shortname_' . $shortname] );
-                                    unset( $options['sync_url_' . $shortname] );
-                                    unset( $options['sync_categories_' . $shortname] );
-                                    unset( $options['sync_syncthis_' . $shortname] );
-                                    unset( $options['sync_hr_' . $shortname] );
+                                    unset( $options['faqsync_shortname_' . $shortname] );
+                                    unset( $options['faqsync_url_' . $shortname] );
+                                    unset( $options['faqsync_categories_' . $shortname] );
+                                    // unset( $options['faqsync_mode_' . $shortname] );
+                                    unset( $options['faqsync_hr_' . $shortname] );
                                     if ( ( $key = array_search( $url, $domains ) ) !== false) {
                                         unset( $domains[$key] );
-                                    }                                    
+                                    }           
+                                    logIt( __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '" ' . __( 'deleted', 'rrze-faq') );
                                 }
                             }   
                         }
@@ -109,14 +112,6 @@ class Main {
                 }    
             break;
             case 'sync':
-                $activateCronjob = FALSE;
-                foreach( $domains as $shortname => $url ){
-                    if ( isset( $options['sync_mode_' . $shortname ] ) && $options['sync_mode_' . $shortname ] == 'auto' ){
-                        $activateCronjob = TRUE;
-                    } 
-                }
-                $mycronjob = new FAQCronjob();
-                $mycronjob->setFAQCronjob( $activateCronjob );
                 $options['timestamp'] = time();
             break;
             case 'del':
@@ -133,11 +128,47 @@ class Main {
         return $options;
     }
 
+
     public function checkSync() {
         if ( isset( $_GET['sync'] ) ){
             $sync = new Sync();
             $sync->doSync( 'manual' );
+
+            $this->setFAQCronjob();
         }
     }
 
+    public function runFAQCronjob() {
+        // sync hourly
+        $sync = new Sync();
+        $sync->doSync( 'automatic' );
+    }
+
+    public function setFAQCronjob() {
+        date_default_timezone_set( 'Europe/Berlin' );
+
+        $options = get_option( 'rrze-faq' );
+
+        if ( $options['faqsync_autosync'] != 'on' ) {
+            wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
+            return;
+        }
+
+        $nextcron = 0;
+        switch( $options['faqsync_frequency'] ){
+            case 'daily' : $nextcron = 86400;
+                break;
+            case 'twicedaily' : $nextcron = 43200;
+                break;
+        }
+
+        $nextcron += time();
+        wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
+        wp_schedule_event( $nextcron, $options['faqsync_frequency'], 'rrze_faq_auto_sync' );
+
+        $timestamp = wp_next_scheduled( 'rrze_faq_auto_sync' );
+        $message = __( 'Next automatically synchronization:', 'rrze-faq' ) . ' ' . date( 'd.m.Y H:i:s', $timestamp );
+        add_settings_error( 'AutoSyncComplete', 'autosynccomplete', $message , 'updated' );
+        settings_errors();
+    }
 }

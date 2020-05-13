@@ -11,9 +11,16 @@ class API {
     private $aAllCats = array();
 
     protected function checkDomain( &$url ){
-        $content = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
-        $status_code = wp_remote_retrieve_response_code( $content );
-        return ( $status_code != 200 ? FALSE : TRUE );
+        // checks if ENDPOINT exists at $url, if HTTP-status is 200
+        // returns (redirected) URL or FALSE  
+        $ret = FALSE;
+        $request = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
+        $status_code = wp_remote_retrieve_response_code( $request );
+        if ( $status_code == '200' ){
+            $content = json_decode( wp_remote_retrieve_body( $request ), TRUE );
+            $ret = substr( $content[0]['guid']["rendered"], 0 , strpos( $content[0]['guid']["rendered"], '?' ) );
+        }
+        return $ret;
     }
 
     protected function isRegisteredDomain( &$url ){
@@ -38,7 +45,8 @@ class API {
         $domains = $this->getDomains();
         $shortname = strtolower( preg_replace('/[^A-Za-z0-9\-]/', '', str_replace( ' ', '-', $shortname ) ) );
         if ( ( in_array( $url, $domains ) === FALSE ) && ( array_key_exists( $shortname, $domains ) === FALSE ) ) {
-            if ( $this->checkDomain( $url ) ){
+            $url = $this->checkDomain( $url );
+            if ( $url ){
                 $domains[$shortname] = $url;
             }else{
                 return FALSE;
@@ -169,7 +177,6 @@ class API {
             }
             $this->aAllCats[$cat->term_id]['parentID'] = $cat->parent;
             $this->aAllCats[$cat->term_id]['slug'] = $cat->slug;
-            // $this->aAllCats[$cat->term_id]['name'] = ltrim( $prefix . ' ' . $cat->name );
             $this->aAllCats[$cat->term_id]['name'] = str_replace( '~', '&nbsp;', str_pad( ltrim( $prefix . ' ' . $cat->name ), 100, '~') );
         }    
         foreach ($into as $topCat) {
@@ -235,6 +242,57 @@ class API {
         return $iDel;
     }
 
+    protected function cleanContent( $txt ){
+        // returns content without info below '<!-- rrze-faq -->'
+        $txt = substr( $txt, 0, strpos( $txt, '<!-- rrze-faq -->' ));
+        return $txt;
+    }
+
+    protected function absoluteUrl( $txt, $baseUrl ){
+        // converts relative URLs to absolute ones
+        $needles = array('href="', 'src="', 'background="');
+        $newTxt = '';
+        if (substr( $baseUrl, -1 ) != '/' ){
+            $baseUrl .= '/';
+        } 
+        $newBaseUrl = $baseUrl;
+        $baseUrlParts = parse_url( $baseUrl );
+        foreach ( $needles as $needle ){
+            while( $pos = strpos( $txt, $needle ) ){
+                $pos += strlen( $needle );
+                if ( substr( $txt, $pos, 7 ) != 'http://' && substr( $txt, $pos, 8) != 'https://' && substr( $txt, $pos, 6) != 'ftp://' && substr( $txt, $pos, 9 ) != 'mailto://' ){
+                    if ( substr( $txt, $pos, 1 ) == '/' ){
+                        $newBaseUrl = $baseUrlParts['scheme'] . '://' . $baseUrlParts['host'];
+                    }
+                    $newTxt .= substr( $txt, 0, $pos ).$newBaseUrl;
+                } else {
+                    $newTxt .= substr( $txt, 0, $pos );
+                }
+                $txt = substr( $txt, $pos );
+            }
+            $txt = $newTxt . $txt;
+            $newTxt = '';
+        }
+        // convert all elements of srcset, too
+        $needle = 'srcset="';
+        while( $pos = strpos( $txt, $needle, $pos ) ){
+            $pos += strlen( $needle );
+            $len = strpos( $txt, '"', $pos ) - $pos;
+            $srcset = substr( $txt, $pos, $len );
+            $aSrcset = explode( ',', $srcset );
+            $aNewSrcset = array();
+            foreach( $aSrcset as $src ){
+                $src = trim( $src );
+                if ( substr( $src, 0, 1 ) == '/' ){
+                    $aNewSrcset[] = $newBaseUrl . $src;
+                }                                
+            }
+            $newSrcset = implode( ', ', $aNewSrcset );
+            $txt = str_replace( $srcset, $newSrcset, $txt );
+        }
+        return $txt;
+      }
+
     protected function getFAQ( &$url, &$categories ){
         $faqs = array();
         $aCategoryRelation = array();
@@ -252,7 +310,9 @@ class API {
                     }
                     foreach( $entries as $entry ){
                         if ( $entry['source'] == 'website' ){
-                            $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
+                            // $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
+                            $content = $this->cleanContent( $entry['content']['rendered'] );
+                            $content = $this->absoluteUrl( $content, $url );
 
                             $faqs[$entry['id']] = array(
                                 'id' => $entry['id'],
@@ -268,6 +328,7 @@ class API {
                                 $sTag .= $tag . ',';
                             }
                             $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
+                            $faqs[$entry['id']]['URLhasSlider'] = ( ( strpos( $content, 'slider') !== false ) ? $entry['link'] : FALSE ); // we cannot handle sliders, see note in Shortcode.php shortcodeOutput()
                         }
                     }
                 }
@@ -311,6 +372,7 @@ class API {
         $iNew = 0;
         $iUpdated = 0;
         $iDeleted = 0;
+        $aURLhasSlider = array();
 
         // get all remoteIDs of stored FAQ to this source ( key = remoteID, value = postID )
         $aRemoteIDs = $this->getFAQRemoteIDs( $shortname );
@@ -332,49 +394,53 @@ class API {
                 $aCategoryIDs[] = $term->term_id;
             }
 
-            if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
-                if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
-                    // update FAQ
-                    $post_id = wp_update_post( array(
-                        'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
+            if ( $faq['URLhasSlider'] ) {
+                $aURLhasSlider[] = $faq['URLhasSlider'];
+            } else {
+                if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
+                    if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
+                        // update FAQ
+                        $post_id = wp_update_post( array(
+                            'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
+                            'post_name' => sanitize_title( $faq['title'] ),
+                            'post_title' => $faq['title'],
+                            'post_content' => $faq['content'],
+                            'meta_input' => array(
+                                'source' => $shortname,
+                                'lang' => $faq['lang'],
+                                'remoteID' => $faq['remoteID']
+                                ),
+                            'tax_input' => array(
+                                'faq_category' => $aCategoryIDs,
+                                'faq_tag' => $faq['faq_tag']
+                                )
+                            ) ); 
+                        $iUpdated++;
+                    }
+                    unset( $aRemoteIDs[$faq['remoteID']] );
+                } else {
+                    // insert FAQ
+                    $post_id = wp_insert_post( array(
+                        'post_type' => 'faq',
                         'post_name' => sanitize_title( $faq['title'] ),
                         'post_title' => $faq['title'],
                         'post_content' => $faq['content'],
+                        'comment_status' => 'closed',
+                        'ping_status' => 'closed',
+                        'post_status' => 'publish',
                         'meta_input' => array(
                             'source' => $shortname,
                             'lang' => $faq['lang'],
-                            'remoteID' => $faq['remoteID']
+                            'remoteID' => $faq['id'],
+                            'remoteChanged' => $faq['remoteChanged']
                             ),
                         'tax_input' => array(
                             'faq_category' => $aCategoryIDs,
                             'faq_tag' => $faq['faq_tag']
                             )
-                        ) ); 
-                    $iUpdated++;
+                        ) );
+                    $iNew++;
                 }
-                unset( $aRemoteIDs[$faq['remoteID']] );
-            } else {
-                // insert FAQ
-                $post_id = wp_insert_post( array(
-                    'post_type' => 'faq',
-                    'post_name' => sanitize_title( $faq['title'] ),
-                    'post_title' => $faq['title'],
-                    'post_content' => $faq['content'],
-                    'comment_status' => 'closed',
-                    'ping_status' => 'closed',
-                    'post_status' => 'publish',
-                    'meta_input' => array(
-                        'source' => $shortname,
-                        'lang' => $faq['lang'],
-                        'remoteID' => $faq['id'],
-                        'remoteChanged' => $faq['remoteChanged']
-                        ),
-                    'tax_input' => array(
-                        'faq_category' => $aCategoryIDs,
-                        'faq_tag' => $faq['faq_tag']
-                        )
-                    ) );
-                $iNew++;
             }
         }
 
@@ -387,7 +453,8 @@ class API {
         return array( 
             'iNew' => $iNew,
             'iUpdated' => $iUpdated,
-            'iDeleted' => $iDeleted
+            'iDeleted' => $iDeleted,
+            'URLhasSlider' => $aURLhasSlider
         );
     }
 }    

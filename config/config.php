@@ -61,11 +61,11 @@ function getSections() {
 			'title' => __('Domains', 'rrze-faq' )
 		],
 		[
-			'id'    => 'sync',
+			'id'    => 'faqsync',
 			'title' => __('Synchronize', 'rrze-faq' )
 		],
 		[
-		  	'id' => 'log',
+		  	'id' => 'faqlog',
 		  	'title' => __('Logfile', 'rrze-faq' )
 		]
 	];   
@@ -92,7 +92,7 @@ function getFields() {
 				'type' => 'text'
 			]
 		],
-		'sync' => [
+		'faqsync' => [
 			[
 				'name' => 'shortname',
 				'label' => __('Short name', 'rrze-faq' ),
@@ -115,25 +115,55 @@ function getFields() {
 				'options' => []
 			],
 			[
-				'name' => 'mode', // mode
+				'name' => 'donotsync',
 				'label' => __('Synchronize', 'rrze-faq' ),
-				'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
-				'default' => '',
-				'options' => [
-					'' => __('Do not synchronize.', 'rrze-faq' ),
-					'manual' => __('Synchronize one time now.', 'rrze-faq' ),
-					'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
-				],
-				'type' => 'radio'
+				'desc' => __('Do not synchronize', 'rrze-faq' ),
+				'type' => 'checkbox',
 			],
+			// [
+			// 	'name' => 'mode',
+			// 	'label' => __('Synchronize', 'rrze-faq' ),
+			// 	'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
+			// 	'default' => '',
+			// 	'options' => [
+			// 		'' => __('Do not synchronize.', 'rrze-faq' ),
+			// 		'manual' => __('Synchronize one time now.', 'rrze-faq' ),
+			// 		'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
+			// 	],
+			// 	'type' => 'radio'
+			// ],
 			[
 				'name' => 'hr',
 				'label' => '',
 				'desc' => '',
 				'type' => 'line'
-			]
+			],
+			[
+				'name' => 'info',
+				'label' => __('Info', 'rrze-faq' ),
+				'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
+				'type' => 'plaintext',
+				'default' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
+			],
+			[
+				'name' => 'autosync',
+				'label' => __('Mode', 'rrze-faq' ),
+				'desc' => __('Synchronize automatically', 'rrze-faq' ),
+				'type' => 'checkbox',
+			],
+			[
+				'name' => 'frequency',
+				'label' => __('Frequency', 'rrze-faq' ),
+				'desc' => '',
+				'default' => 'daily',
+				'options' => [
+					'daily' => __('daily', 'rrze-faq' ),
+					'twicedaily' => __('twicedaily', 'rrze-faq' )
+				],
+				'type' => 'select'
+			],
 		],		
-    	'log' => [
+    	'faqlog' => [
         	[
           		'name' => 'faqlogfile',
           		'type' => 'logfile',
@@ -160,12 +190,6 @@ function getShortcodeSettings(){
             'show_block' => 'content',
 			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
 		],
-		// 'domain' => [
-		// 	'default' => '',
-		// 	'field_type' => 'text',
-		// 	'label' => __( 'Domain', 'rrze-faq' ),
-		// 	'type' => 'text'
-        // ],
         'glossary' => [
 			'values' => [
 				'' => __( 'none', 'rrze-faq' ),
@@ -185,7 +209,7 @@ function getShortcodeSettings(){
 				'tabs' => __( 'Tabs', 'rrze-faq' )
 			],
 			'default' => 'a-z',
-			'field_type' => 'radio',
+			'field_type' => 'select',
 			'label' => __( 'Glossary style', 'rrze-faq' ),
 			'type' => 'string'
 		],
@@ -207,31 +231,79 @@ function getShortcodeSettings(){
 			'label' => __( 'FAQ', 'rrze-faq' ),
 			'type' => 'number'
 		],
-		'hideaccordeon' => [
+		'hide_accordeon' => [
 			'field_type' => 'toggle',
 			'label' => __( 'Hide accordeon', 'rrze-faq' ),
 			'type' => 'boolean',
 			'default' => FALSE,
 			'checked'   => FALSE
 		],	  
+		'hide_title' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Hide title', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
+		'expand_all_link' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Show "expand all" button', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
+		'load_open' => [
+			'field_type' => 'toggle',
+			'label' => __( 'Load website with opened accordeons', 'rrze-faq' ),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked'   => FALSE
+		],	  
 		'color' => [
 			'values' => [
-				'medfak' => __( 'Buttered Rum (medfak)', 'rrze-faq' ),
-				'natfak' => __( 'Eastern Blue (natfak)', 'rrze-faq' ),
-				'rwfak' => __( 'Flame Red (rwfak)', 'rrze-faq' ),
-				'philfak' => __( 'Observatory (philfak)', 'rrze-faq' ),
-				'' => __( 'Prussian Blue', 'rrze-faq' ),
-				'techfak' => __( 'Raven (techfak)', 'rrze-faq' )
+				'med' => 'med',
+				'nat' => 'nat',
+				'rw' => 'rw',
+				'phil' => 'phil',
+				'tk' => 'tk'
 			],
-			'default' => '',
+			'default' => 'tk',
 			'field_type' => 'select',
 			'label' => __( 'Color', 'rrze-faq' ),
 			'type' => 'string'
-        ]
+		],
+		'additional_class' => [
+			'default' => '',
+			'field_type' => 'text',
+			'label' => __( 'Additonal CSS-class(es) for sourrounding DIV', 'rrze-faq' ),
+			'type' => 'text'
+		],
+        'sort' => [
+			'values' => [
+				'title' => __( 'Title', 'rrze-faq' ),
+				'id' => __( 'ID', 'rrze-faq' )
+			],
+			'default' => 'title',
+			'field_type' => 'select',
+			'label' => __( 'Sort', 'rrze-faq' ),
+			'type' => 'string'
+		],
+        'order' => [
+			'values' => [
+				'ASC' => __( 'ASC', 'rrze-faq' ),
+				'DESC' => __( 'DESC', 'rrze-faq' )
+			],
+			'default' => 'ASC',
+			'field_type' => 'select',
+			'label' => __( 'Order', 'rrze-faq' ),
+			'type' => 'string'
+		]				
     ];
 }
 
 function logIt( $msg ){
+	date_default_timezone_set('Europe/Berlin');
+	$msg = date("Y-m-d H:i:s") . ' | ' . $msg;
 	if ( file_exists( FAQLOGFILE ) ){
 		$content = file_get_contents( FAQLOGFILE );
 		$content = $msg . "\n" . $content;
