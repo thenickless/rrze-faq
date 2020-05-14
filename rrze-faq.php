@@ -4,7 +4,7 @@
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Description:       
-Version:         4.18.5
+Version:         4.18.6
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -21,7 +21,21 @@ defined('ABSPATH') || exit;
 require_once 'config/config.php';
 use RRZE\FAQ\Main;
 
-define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . 'rrze-faq-' . preg_replace('/[^A-Za-z0-9\-]/', '-', str_replace( '/', '-', preg_replace( "/^((http|https):\/\/)?(www.)+/i", '', get_bloginfo( 'url' ) ) ) ) . '.log' );
+// define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . 'rrze-faq-' . preg_replace('/[^A-Za-z0-9\-]/', '-', str_replace( '/', '-', preg_replace( "/^((http|https):\/\/)?(www.)+/i", '', get_bloginfo( 'url' ) ) ) ) . '.log' );
+
+$s = array(
+    '/^((http|https):\/\/)?(www.)+/i',
+    '/\//',
+    '/[^A-Za-z0-9\-]/'
+);
+$r = array(
+    '',
+    '-',
+    '-'
+);
+
+define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . 'rrze-faq-' . preg_replace( $s, $r,  get_bloginfo( 'url' ) ) . '.log' );
+
 
 const RRZE_PHP_VERSION = '7.3';
 const RRZE_WP_VERSION = '5.2';
