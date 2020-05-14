@@ -61,10 +61,10 @@ order : legt fest, in welcher Reihenfolge sortiert werden soll. "asc" aufsteigen
 [faq glossary="tag tagcloud"] 
 Oberhalb der Ausgabe aller FAQ wird ein Glossar angezeigt, bei dem die Schlagwörter unterschiedlich groß dargestellt werden. Die FAQ sind nach Schlagwörter gruppiert. Das Glossar verlinkt auf die Schlagwörter
 
-[faq categorie="Titelform-der-Kategorie"] 
+[faq category="Titelform-der-Kategorie"] 
 Alle FAQ, die zu dieser Kategorie gehören, werden als Akkordeons ausgegeben. Darüber befindet sich das Glossar von A-Z.
 
-[faq categorie="Titelform-der-Kategorie" tag="Titelform-des-Schlagworts-1, Titelform-des-Schlagworts-2"] 
+[faq category="Titelform-der-Kategorie" tag="Titelform-des-Schlagworts-1, Titelform-des-Schlagworts-2"] 
 Alle FAQ, die zu dieser Kategorie gehören und die beiden Schlagwörter enthalten, werden als Akkordeons ausgegeben. Darüber befindet sich das Glossar von A-Z.
 
 [faq id="456, 987, 123" hide="glossary"] 

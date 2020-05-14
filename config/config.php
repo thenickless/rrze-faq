@@ -4,9 +4,6 @@ namespace RRZE\FAQ\Config;
 
 defined('ABSPATH') || exit;
 
-define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
-
-
 /**
  * Gibt der Name der Option zurück.
  * @return array [description]
@@ -14,8 +11,6 @@ define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . '../../rrze-faq.log' );
 function getOptionName() {
     return 'rrze-faq';
 }
-
-
 
 
 /**
