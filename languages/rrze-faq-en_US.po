@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-30 15:09+0000\n"
-"PO-Revision-Date: 2020-04-30 15:15+0000\n"
+"POT-Creation-Date: 2020-05-12 17:33+0000\n"
+"PO-Revision-Date: 2020-05-18 11:07+0000\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.3.3; wp-5.4.1"
+"X-Loco-Version: 2.3.4; wp-5.4.1"
 
 #: rrze-faq.php:77
 #, php-format
@@ -219,11 +219,11 @@ msgstr ""
 msgid "Order"
 msgstr ""
 
-#: includes/Main.php:107 includes/Sync.php:30
+#: includes/Main.php:107 includes/Sync.php:31 includes/Sync.php:37
 msgid "Domain"
 msgstr ""
 
-#: includes/Main.php:107 includes/Sync.php:30
+#: includes/Main.php:107 includes/Sync.php:37
 msgid "deleted"
 msgstr ""
 
@@ -361,51 +361,57 @@ msgstr ""
 msgid "Update tag"
 msgstr ""
 
-#: includes/Sync.php:30
+#: includes/Sync.php:31
+msgid ""
+"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
+"synchronized:"
+msgstr ""
+
+#: includes/Sync.php:37
 msgid "Synchronization completed."
 msgstr ""
 
-#: includes/Sync.php:30
+#: includes/Sync.php:37
 msgid "new"
 msgstr ""
 
-#: includes/Sync.php:30
+#: includes/Sync.php:37
 msgid " updated"
 msgstr ""
 
-#: includes/Sync.php:30
+#: includes/Sync.php:37
 msgid "and"
 msgstr ""
 
-#: includes/Sync.php:30 includes/Sync.php:39
+#: includes/Sync.php:37 includes/Sync.php:46
 msgid "Required time:"
 msgstr ""
 
-#: includes/Sync.php:30 includes/Sync.php:39
+#: includes/Sync.php:37 includes/Sync.php:46
 msgid "seconds"
 msgstr ""
 
-#: includes/Sync.php:39
+#: includes/Sync.php:46
 msgid "All synchronizations completed"
 msgstr ""
 
-#: includes/Sync.php:41
+#: includes/Sync.php:48
 msgid "Settings updated"
 msgstr ""
 
-#: includes/Shortcode.php:238
+#: includes/Shortcode.php:232
 msgid ""
 "Attribute glossary is not correct. Please use either glossary=\"category\" "
 "or glossary=\"tag\"."
 msgstr ""
 
-#: includes/Shortcode.php:241
+#: includes/Shortcode.php:235
 msgid ""
 "Attribute color is not correct. Please use either 'medfak', 'natfak', "
 "'rwfak', 'philfak' or 'techfak'"
 msgstr ""
 
-#: includes/Shortcode.php:457 includes/Shortcode.php:485
+#: includes/Shortcode.php:468 includes/Shortcode.php:496
 msgid "-- all --"
 msgstr ""
 
