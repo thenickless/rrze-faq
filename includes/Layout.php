@@ -36,7 +36,10 @@ class Layout {
         add_filter( 'manage_faq_tag_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
         add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'addTaxColumns'] );
         // show categories and tags under content
-        add_filter( 'the_content', [$this, 'showDetails'] );        
+        add_filter( 'the_content', [$this, 'showDetails'] );  
+        
+        // metabox for sort criterion 
+        add_action( 'save_post_faq', [$this, 'saveSort'] );        
     }
 
 
@@ -51,6 +54,24 @@ class Layout {
             }
         }
     }
+
+
+    public function saveSort( $post_id ){
+        if ( ! current_user_can( 'edit_post', $post_id ) || ! isset( $_POST['sort_criterion'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
+            return $post_id;
+        }
+ 
+        update_post_meta( $post_id, 'sort_criterion', sanitize_text_field( $_POST['sort_criterion'] ) );        
+    }
+
+    public function sortboxCallback( $meta_id ) {
+        $sort_criterion = get_post_meta( $meta_id->ID, 'sort_criterion', TRUE );
+        // $output = '<label for="sort_criterion">'. esc_html__('Sort criterion', 'rrze-faq') .'</label>';
+        $output = '<input type="text" name="sort_criterion" id="sort_criterion" class="sort_criterion" value="'. esc_attr($sort_criterion) .'">';
+        $output .= '<p class="description">' . __( 'Kriterium für die Sortierung der Shortcode-Ausgabe', 'rrze-faq' ) . '</p>';
+        echo $output;
+    }
+
 
     public function fillContentBox( $post ) {
         $mycontent = apply_filters( 'the_content', $post->post_content );
@@ -96,7 +117,6 @@ class Layout {
             if ( get_post_type( $post_id ) == 'faq' ) {
                 $source = get_post_meta( $post_id, "source", TRUE );
                 if ( $source ){
-                    $position = 'normal';
                     if ( $source != 'website' ){
                         $api = new API();
                         $domains = $api->getDomains();
@@ -107,7 +127,7 @@ class Layout {
                         remove_post_type_support( 'faq', 'editor' );
                         remove_meta_box( 'faq_categorydiv', 'faq', 'side' );
                         remove_meta_box( 'tagsdiv-faq_tag', 'faq', 'side' );
-                        remove_meta_box( 'submitdiv', 'faq', 'side' );            
+                        // remove_meta_box( 'submitdiv', 'faq', 'side' ); 2020-25-05 : we need submitdiv because of sortbox            
                         add_meta_box(
                             'read_only_content_box', // id, used as the html id att
                             __( 'This FAQ cannot be edited because it is sychronized', 'rrze-faq') . '. <a href="' . $link . '" target="_blank">' . __('You can edit it at the source', 'rrze-faq') . '</a>',
@@ -116,22 +136,29 @@ class Layout {
                             'normal', // context, where on the screen
                             'high' // priority, where should this go in the context
                         );
-                        $position = 'side';    
                     }
-                    add_meta_box(
-                        'shortcode_box', // id, used as the html id att
-                        __( 'Integration in pages and posts', 'rrze-faq'), // meta box title
-                        [$this, 'fillShortcodeBox'], // callback function, spits out the content
-                        'faq', // post type or page. This adds to posts only
-                        $position, // context, where on the screen
-                        'high' // priority, where should this go in the context
-                    );        
                 }
+                add_meta_box(
+                    'shortcode_box', // id, used as the html id att
+                    __( 'Integration in pages and posts', 'rrze-faq'), // meta box title
+                    [$this, 'fillShortcodeBox'], // callback function, spits out the content
+                    'faq', // post type or page. This adds to posts only
+                    'normal'
+                );            
             }
         }
+        add_meta_box(
+            'sortbox', // id, used as the html id att
+            __( 'Sort', 'rrze-faq'), // meta box title
+            [$this, 'sortboxCallback'], // callback function, spits out the content
+            'faq', // post type or page. This adds to posts only
+            'side'
+            // 'high' // priority, where should this go in the context
+        );    
     }
 
     public function addFaqColumns( $columns ) {
+        $columns['sort_criterion'] = __( 'Sort criterion', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
         return $columns;
@@ -140,6 +167,7 @@ class Layout {
     public function addFaqSortableColumns( $columns ) {
         $columns['taxonomy-faq_category'] = __( 'Category', 'rrze-faq' );
         $columns['taxonomy-faq_tag'] = __( 'Tag', 'rrze-faq' );
+        $columns['sort_criterion'] = __( 'Sort criterion', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
         return $columns;
@@ -174,15 +202,19 @@ class Layout {
         $columns['source'] = __( 'Source', 'rrze-faq' );
         return $columns;
     }
+
     public function getFaqColumnsValues( $column_name, $post_id ) {
         if( $column_name == 'id' ) {
             echo $post_id;
         }
         if( $column_name == 'source' ) {
-            $source = get_post_meta( $post_id, 'source', true );
-            echo $source;
+            echo get_post_meta( $post_id, 'source', true );
+        }
+        if( $column_name == 'sort_criterion' ) {
+            echo get_post_meta( $post_id, 'sort_criterion', true );
         }
     }
+
     public function getTaxColumnsValues( $content, $column_name, $term_id ) {
         if( $column_name == 'source' ) {
             $source = get_term_meta( $term_id, 'source', true );

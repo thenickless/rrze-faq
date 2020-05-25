@@ -276,7 +276,8 @@ function getShortcodeSettings(){
         'sort' => [
 			'values' => [
 				'title' => __( 'Title', 'rrze-faq' ),
-				'id' => __( 'ID', 'rrze-faq' )
+				'id' => __( 'ID', 'rrze-faq' ),
+				'sort_criterion' => __( 'Sort criterion', 'rrze-faq' )
 			],
 			'default' => 'title',
 			'field_type' => 'select',

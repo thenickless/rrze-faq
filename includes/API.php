@@ -321,7 +321,8 @@ class API {
                                 'lang' => $entry['lang'],
                                 'faq_category' => $entry['faq_category'],
                                 'remoteID' => $entry['remoteID'],
-                                'remoteChanged' => $entry['remoteChanged']
+                                'remoteChanged' => $entry['remoteChanged'],
+                                'sort_criterion' => $entry['sort_criterion']
                             );
                             $sTag = '';
                             foreach ( $entry['faq_tag'] as $tag ){
@@ -408,7 +409,8 @@ class API {
                             'meta_input' => array(
                                 'source' => $shortname,
                                 'lang' => $faq['lang'],
-                                'remoteID' => $faq['remoteID']
+                                'remoteID' => $faq['remoteID'],
+                                'sort_criterion' => $faq['sort_criterion']
                                 ),
                             'tax_input' => array(
                                 'faq_category' => $aCategoryIDs,
@@ -432,7 +434,8 @@ class API {
                             'source' => $shortname,
                             'lang' => $faq['lang'],
                             'remoteID' => $faq['id'],
-                            'remoteChanged' => $faq['remoteChanged']
+                            'remoteChanged' => $faq['remoteChanged'],
+                            'sort_criterion' => $faq['sort_criterion']
                             ),
                         'tax_input' => array(
                             'faq_category' => $aCategoryIDs,
