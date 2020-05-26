@@ -435,7 +435,7 @@ class API {
                             'lang' => $faq['lang'],
                             'remoteID' => $faq['id'],
                             'remoteChanged' => $faq['remoteChanged'],
-                            'sort_criterion' => ''
+                            'sortfield' => ''
                             ),
                         'tax_input' => array(
                             'faq_category' => $aCategoryIDs,

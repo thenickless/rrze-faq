@@ -57,17 +57,16 @@ class Layout {
 
 
     public function saveSort( $post_id ){
-        if ( ! current_user_can( 'edit_post', $post_id ) || ! isset( $_POST['sort_criterion'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
+        if ( ! current_user_can( 'edit_post', $post_id ) || ! isset( $_POST['sortfield'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
             return $post_id;
         }
  
-        update_post_meta( $post_id, 'sort_criterion', sanitize_text_field( $_POST['sort_criterion'] ) );        
+        update_post_meta( $post_id, 'sortfield', sanitize_text_field( $_POST['sortfield'] ) );        
     }
 
     public function sortboxCallback( $meta_id ) {
-        $sort_criterion = get_post_meta( $meta_id->ID, 'sort_criterion', TRUE );
-        // $output = '<label for="sort_criterion">'. esc_html__('Sort criterion', 'rrze-faq') .'</label>';
-        $output = '<input type="text" name="sort_criterion" id="sort_criterion" class="sort_criterion" value="'. esc_attr($sort_criterion) .'">';
+        $sortfield = get_post_meta( $meta_id->ID, 'sortfield', TRUE );
+        $output = '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr($sortfield) .'">';
         $output .= '<p class="description">' . __( 'Criterion for sorting the output of the shortcode', 'rrze-faq' ) . '</p>';
         echo $output;
     }
@@ -158,7 +157,7 @@ class Layout {
     }
 
     public function addFaqColumns( $columns ) {
-        $columns['sort_criterion'] = __( 'Sort criterion', 'rrze-faq' );
+        $columns['sortfield'] = __( 'Sort criterion', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
         return $columns;
@@ -167,7 +166,7 @@ class Layout {
     public function addFaqSortableColumns( $columns ) {
         $columns['taxonomy-faq_category'] = __( 'Category', 'rrze-faq' );
         $columns['taxonomy-faq_tag'] = __( 'Tag', 'rrze-faq' );
-        $columns['sort_criterion'] = __( 'Sort criterion', 'rrze-faq' );
+        $columns['sortfield'] = __( 'Sort criterion', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
         return $columns;
@@ -210,8 +209,8 @@ class Layout {
         if( $column_name == 'source' ) {
             echo get_post_meta( $post_id, 'source', true );
         }
-        if( $column_name == 'sort_criterion' ) {
-            echo get_post_meta( $post_id, 'sort_criterion', true );
+        if( $column_name == 'sortfield' ) {
+            echo get_post_meta( $post_id, 'sortfield', true );
         }
     }
 

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 11:26+0000\n"
+"POT-Creation-Date: 2020-05-26 16:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -87,7 +87,7 @@ msgid "Use this name as attribute 'domain' in shortcode [faq]"
 msgstr ""
 
 #: config/config.php:107 config/config.php:191 config/config.php:214
-#: includes/Layout.php:240
+#: includes/Layout.php:239
 msgid "Categories"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgid "none"
 msgstr ""
 
 #: config/config.php:192 config/config.php:220 includes/CPT.php:92
-#: includes/Layout.php:241
+#: includes/Layout.php:240
 msgid "Tags"
 msgstr ""
 
@@ -200,16 +200,16 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: config/config.php:279 includes/Layout.php:163 includes/Layout.php:172
+#: config/config.php:279 includes/Layout.php:162 includes/Layout.php:171
 msgid "ID"
 msgstr ""
 
-#: config/config.php:280 includes/Layout.php:161 includes/Layout.php:170
-msgid "Sort criterion"
+#: config/config.php:280
+msgid "Sort field"
 msgstr ""
 
 #. id, used as the html id att
-#: config/config.php:284 includes/Layout.php:152
+#: config/config.php:284 includes/Layout.php:151
 msgid "Sort"
 msgstr ""
 
@@ -271,7 +271,7 @@ msgstr ""
 msgid "FAQ informations"
 msgstr ""
 
-#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:168
+#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:167
 msgid "Category"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgstr ""
 msgid "Update category"
 msgstr ""
 
-#: includes/CPT.php:97 includes/Layout.php:169
+#: includes/CPT.php:97 includes/Layout.php:168
 msgid "Tag"
 msgstr ""
 
@@ -421,53 +421,57 @@ msgstr ""
 msgid "-- all --"
 msgstr ""
 
-#: includes/Layout.php:71
+#: includes/Layout.php:70
 msgid "Criterion for sorting the output of the shortcode"
 msgstr ""
 
-#: includes/Layout.php:97
+#: includes/Layout.php:96
 msgid "Single entries"
 msgstr ""
 
-#: includes/Layout.php:98
+#: includes/Layout.php:97
 msgid "Accordion with category"
 msgstr ""
 
-#: includes/Layout.php:98
+#: includes/Layout.php:97
 msgid "If there is more than one category listed, use at least one of them."
 msgstr ""
 
-#: includes/Layout.php:99
+#: includes/Layout.php:98
 msgid "Accordion with tag"
 msgstr ""
 
-#: includes/Layout.php:99
+#: includes/Layout.php:98
 msgid "If there is more than one tag listed, use at least one of them."
 msgstr ""
 
-#: includes/Layout.php:100
+#: includes/Layout.php:99
 msgid "Accordion with all entries"
 msgstr ""
 
-#: includes/Layout.php:108
+#: includes/Layout.php:107
 msgid "Enter question here"
 msgstr ""
 
 #. id, used as the html id att
-#: includes/Layout.php:133
+#: includes/Layout.php:132
 msgid "This FAQ cannot be edited because it is sychronized"
 msgstr ""
 
-#: includes/Layout.php:133
+#: includes/Layout.php:132
 msgid "You can edit it at the source"
 msgstr ""
 
 #. id, used as the html id att
-#: includes/Layout.php:143
+#: includes/Layout.php:142
 msgid "Integration in pages and posts"
 msgstr ""
 
-#: includes/Layout.php:162 includes/Layout.php:171 includes/Layout.php:202
+#: includes/Layout.php:160 includes/Layout.php:169
+msgid "Sort criterion"
+msgstr ""
+
+#: includes/Layout.php:161 includes/Layout.php:170 includes/Layout.php:201
 msgid "Source"
 msgstr ""
 

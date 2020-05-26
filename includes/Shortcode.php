@@ -210,8 +210,8 @@ class Shortcode {
                 }
             }            
         }
-        // possible values for "sort" : title, id and sort_criterion / default = 'title'
-        $atts['sort'] = ( isset( $atts['sort'] ) && ( $atts['sort'] == 'title' || $atts['sort'] == 'id' || $atts['sort'] == 'sort_criterion' ) ? $atts['sort'] : 'title' );
+        // possible values for "sort" : title, id and sortfield / default = 'title'
+        $atts['sort'] = ( isset( $atts['sort'] ) && ( $atts['sort'] == 'title' || $atts['sort'] == 'id' || $atts['sort'] == 'sortfield' ) ? $atts['sort'] : 'title' );
 
         // merge given attributes with default ones
         $atts_default = array();
@@ -279,12 +279,12 @@ class Shortcode {
 
             // $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => $sort, 'order' => $order, 'suppress_filters' => false);
             $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => false);
-            if ( $sort == 'sort_criterion' ){
+            if ( $sort == 'sortfield' ){
                 $postQuery['orderby'] = array( 
                     'meta_value' => $order,
                     'title' => $order
                 );
-                $postQuery['meta_key'] = 'sort_criterion';
+                $postQuery['meta_key'] = 'sortfield';
             } else {
                 $postQuery['orderby'] = $sort;
                 $postQuery['order'] = $order;

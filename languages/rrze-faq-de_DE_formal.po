@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 11:26+0000\n"
-"PO-Revision-Date: 2020-05-26 11:27+0000\n"
+"POT-Creation-Date: 2020-05-26 16:07+0000\n"
+"PO-Revision-Date: 2020-05-26 16:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: German (Formal)\n"
 "Language: de_DE_formal\n"
@@ -87,7 +87,7 @@ msgstr ""
 "Verwenden Sie diesen Namen als Attribut für 'domain' im Shortcode [faq]"
 
 #: config/config.php:107 config/config.php:191 config/config.php:214
-#: includes/Layout.php:240
+#: includes/Layout.php:239
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -145,7 +145,7 @@ msgid "none"
 msgstr "keine"
 
 #: config/config.php:192 config/config.php:220 includes/CPT.php:92
-#: includes/Layout.php:241
+#: includes/Layout.php:240
 msgid "Tags"
 msgstr "Schlagwörter"
 
@@ -205,16 +205,16 @@ msgstr "Zusätzliche CSS-Klasse(n) für das umgebende DIV"
 msgid "Title"
 msgstr "Titel"
 
-#: config/config.php:279 includes/Layout.php:163 includes/Layout.php:172
+#: config/config.php:279 includes/Layout.php:162 includes/Layout.php:171
 msgid "ID"
 msgstr ""
 
-#: config/config.php:280 includes/Layout.php:161 includes/Layout.php:170
-msgid "Sort criterion"
-msgstr "Sortierkriterium"
+#: config/config.php:280
+msgid "Sort field"
+msgstr "Sortierfeld"
 
 #. id, used as the html id att
-#: config/config.php:284 includes/Layout.php:152
+#: config/config.php:284 includes/Layout.php:151
 msgid "Sort"
 msgstr "Sortierung"
 
@@ -276,7 +276,7 @@ msgstr "FAQ suchen"
 msgid "FAQ informations"
 msgstr "FAQ Informationen"
 
-#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:168
+#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:167
 msgid "Category"
 msgstr "Kategorie"
 
@@ -324,7 +324,7 @@ msgstr "Kategorie editieren"
 msgid "Update category"
 msgstr "Kategorie aktualisieren"
 
-#: includes/CPT.php:97 includes/Layout.php:169
+#: includes/CPT.php:97 includes/Layout.php:168
 msgid "Tag"
 msgstr "Schlagwort"
 
@@ -432,57 +432,61 @@ msgstr ""
 msgid "-- all --"
 msgstr "-- alle --"
 
-#: includes/Layout.php:71
+#: includes/Layout.php:70
 msgid "Criterion for sorting the output of the shortcode"
 msgstr "Kriterium für die Sortierung der Shortcode-Ausgabe"
 
-#: includes/Layout.php:97
+#: includes/Layout.php:96
 msgid "Single entries"
 msgstr "Einzelner Eintrag"
 
-#: includes/Layout.php:98
+#: includes/Layout.php:97
 msgid "Accordion with category"
 msgstr "Akkordeon mit Kategorie"
 
-#: includes/Layout.php:98
+#: includes/Layout.php:97
 msgid "If there is more than one category listed, use at least one of them."
 msgstr ""
 "Wenn mehrere Kategorien aufgeführt sind, nutzen Sie bitte mindestens eine "
 "davon."
 
-#: includes/Layout.php:99
+#: includes/Layout.php:98
 msgid "Accordion with tag"
 msgstr "Akkordeon mit Schlagwort"
 
-#: includes/Layout.php:99
+#: includes/Layout.php:98
 msgid "If there is more than one tag listed, use at least one of them."
 msgstr ""
 "Wenn mehrere Schlagwörter aufgeführt sind, nutzen Sie bitte mindestens eines "
 "davon."
 
-#: includes/Layout.php:100
+#: includes/Layout.php:99
 msgid "Accordion with all entries"
 msgstr "Akkordeon mit allen Einträgen"
 
-#: includes/Layout.php:108
+#: includes/Layout.php:107
 msgid "Enter question here"
 msgstr "Geben Sie hier die Frage ein"
 
 #. id, used as the html id att
-#: includes/Layout.php:133
+#: includes/Layout.php:132
 msgid "This FAQ cannot be edited because it is sychronized"
 msgstr "Diese FAQ kann nicht editiert werden, weil sie synchronisiert wurde"
 
-#: includes/Layout.php:133
+#: includes/Layout.php:132
 msgid "You can edit it at the source"
 msgstr "Sie können es auf der Quelle editieren"
 
 #. id, used as the html id att
-#: includes/Layout.php:143
+#: includes/Layout.php:142
 msgid "Integration in pages and posts"
 msgstr "Einfügen in Seiten und Beiträge"
 
-#: includes/Layout.php:162 includes/Layout.php:171 includes/Layout.php:202
+#: includes/Layout.php:160 includes/Layout.php:169
+msgid "Sort criterion"
+msgstr "Sortierkriterium"
+
+#: includes/Layout.php:161 includes/Layout.php:170 includes/Layout.php:201
 msgid "Source"
 msgstr "Quelle"
 
