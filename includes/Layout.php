@@ -68,7 +68,7 @@ class Layout {
         $sort_criterion = get_post_meta( $meta_id->ID, 'sort_criterion', TRUE );
         // $output = '<label for="sort_criterion">'. esc_html__('Sort criterion', 'rrze-faq') .'</label>';
         $output = '<input type="text" name="sort_criterion" id="sort_criterion" class="sort_criterion" value="'. esc_attr($sort_criterion) .'">';
-        $output .= '<p class="description">' . __( 'Kriterium für die Sortierung der Shortcode-Ausgabe', 'rrze-faq' ) . '</p>';
+        $output .= '<p class="description">' . __( 'Criterion for sorting the output of the shortcode', 'rrze-faq' ) . '</p>';
         echo $output;
     }
 
