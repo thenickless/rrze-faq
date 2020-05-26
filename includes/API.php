@@ -410,7 +410,7 @@ class API {
                                 'source' => $shortname,
                                 'lang' => $faq['lang'],
                                 'remoteID' => $faq['remoteID'],
-                                'sort_criterion' => $faq['sort_criterion']
+                                // 'sort_criterion' => $faq['sort_criterion']
                                 ),
                             'tax_input' => array(
                                 'faq_category' => $aCategoryIDs,
