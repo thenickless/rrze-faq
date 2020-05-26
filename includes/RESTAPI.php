@@ -31,10 +31,6 @@ class RESTAPI {
         return get_post_meta( $object['id'], 'remoteChanged', TRUE );
     }
 
-    public function getPostSortCriterion( $object ) {
-        return get_post_meta( $object['id'], 'sort_criterion', TRUE );
-    }
-
     // make API deliver source and lang for FAQ
     public function createPostMeta() {
         register_rest_field( 'faq', 'source', array(
@@ -51,10 +47,6 @@ class RESTAPI {
         ));
         register_rest_field( 'faq', 'remoteChanged', array(
             'get_callback'    => [$this, 'getPostRemoteChanged'],
-            'schema'          => null,
-        ));
-        register_rest_field( 'faq', 'sort_criterion', array(
-            'get_callback'    => [$this, 'getPostSortCriterion'],
             'schema'          => null,
         ));
     }
