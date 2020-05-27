@@ -51,6 +51,12 @@ class Layout {
                     $wp_query->set('orderby', 'title');
                     $wp_query->set('order', 'ASC');
                 }
+
+                $orderby = $wp_query->get('orderby');
+                if ( $orderby == 'sortfield' ){
+                    $wp_query->set('meta_key','sortfield');
+                    $wp_query->set('orderby','meta_value');                    
+                }
             }
         }
     }
@@ -166,7 +172,7 @@ class Layout {
     public function addFaqSortableColumns( $columns ) {
         $columns['taxonomy-faq_category'] = __( 'Category', 'rrze-faq' );
         $columns['taxonomy-faq_tag'] = __( 'Tag', 'rrze-faq' );
-        $columns['sortfield'] = __( 'Sort criterion', 'rrze-faq' );
+        $columns['sortfield'] = 'sortfield';
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
         return $columns;
