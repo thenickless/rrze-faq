@@ -51,7 +51,7 @@ show : belegen Sie dieses Attribut mit dem Wert "expand-all-link", dann erschein
 class : hier lässt sich festlegen, in welcher Farbe der linke Rand der Accordeons sein soll. Mögliche Werte sind die Kennungen der Fakultäten "med", "nat", "rw", "phil" oder "tk". Zusätlich können Sie hier beliebig viele CSS-Klassen durch Leerzeichen getrennt angeben, die als Klassen für das umrahmende DIV dienen.
 
 sort : die Sortierung der Ausgabe kann hiermit gesteuert werden. Mögliche Werte sind "title", "id" und "sortfield". 
-"sortfield" bezieht sich auf das Sortierfeld, das bei jeder FAQ eingeben werden kann. Voreingestellt ist "title", womit alle Fragen in alphabetischer Reihenfolge angezeigt werden.
+"sortfield" bezieht sich auf das Sortierfeld, das bei jeder FAQ eingeben werden kann. Bei Verwendung von "sortfield" wird zuerst nach dem Sortierfeld und danach nach dem Titel sortiert. Voreingestellt ist "title", womit alle Fragen in alphabetischer Reihenfolge angezeigt werden.
 
 order : legt fest, in welcher Reihenfolge sortiert werden soll. "asc" aufsteigend und "desc" absteigend. Voreingestellt ist "asc".
 
