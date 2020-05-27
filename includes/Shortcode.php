@@ -210,8 +210,8 @@ class Shortcode {
                 }
             }            
         }
-        $atts['sort'] = ( isset( $atts['sort'] ) && ( $atts['sort'] == 'title' || $atts['sort'] == 'id' ) ? $atts['sort'] : 'title' );
-        $atts['order'] = ( isset( $atts['order'] ) && ( strtoupper( $atts['order'] ) == 'ASC' || strtoupper( $atts['order'] ) == 'DESC' ) ? $atts['order'] : 'ASC' );
+        // possible values for "sort" : title, id and sortfield / default = 'title'
+        $atts['sort'] = ( isset( $atts['sort'] ) && ( $atts['sort'] == 'title' || $atts['sort'] == 'id' || $atts['sort'] == 'sortfield' ) ? $atts['sort'] : 'title' );
 
         // merge given attributes with default ones
         $atts_default = array();
@@ -277,7 +277,18 @@ class Shortcode {
             $aTax = array();
             $tax_query = '';
 
-            $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => $sort, 'order' => $order, 'suppress_filters' => false);
+            // $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => $sort, 'order' => $order, 'suppress_filters' => false);
+            $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => false);
+            if ( $sort == 'sortfield' ){
+                $postQuery['orderby'] = array( 
+                    'meta_value' => $order,
+                    'title' => $order
+                );
+                $postQuery['meta_key'] = 'sortfield';
+            } else {
+                $postQuery['orderby'] = $sort;
+                $postQuery['order'] = $order;
+            }
 
             $fields = array( 'category', 'tag' );
             foreach( $fields as $field ){

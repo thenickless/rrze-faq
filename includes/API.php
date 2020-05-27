@@ -16,9 +16,11 @@ class API {
         $ret = FALSE;
         $request = wp_remote_get( $url . ENDPOINT . '?per_page=1' );
         $status_code = wp_remote_retrieve_response_code( $request );
+
         if ( $status_code == '200' ){
             $content = json_decode( wp_remote_retrieve_body( $request ), TRUE );
-            $ret = substr( $content[0]['guid']["rendered"], 0 , strpos( $content[0]['guid']["rendered"], '?' ) );
+            // $ret = substr( $content[0]['guid']["rendered"], 0 , strpos( $content[0]['guid']["rendered"], '?' ) );
+            $ret = substr( $content[0]['link'], 0 , strpos( $content[0]['link'], '/faq' ) ) . '/';
         }
         return $ret;
     }
@@ -432,7 +434,8 @@ class API {
                             'source' => $shortname,
                             'lang' => $faq['lang'],
                             'remoteID' => $faq['id'],
-                            'remoteChanged' => $faq['remoteChanged']
+                            'remoteChanged' => $faq['remoteChanged'],
+                            'sortfield' => ''
                             ),
                         'tax_input' => array(
                             'faq_category' => $aCategoryIDs,
