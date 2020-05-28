@@ -25,8 +25,8 @@ class Shortcode {
         $this->settings = getShortcodeSettings();
         add_action( 'init',  [$this, 'initGutenberg'] );
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
-        add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
-        add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
+        // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
+        // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // alternative shortcode
     }
 
     /**
