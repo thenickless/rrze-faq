@@ -38,8 +38,8 @@ class Layout {
         // show categories and tags under content
         add_filter( 'the_content', [$this, 'showDetails'] );  
         
-        // metabox for sort criterion 
-        add_action( 'save_post_faq', [$this, 'saveSort'] );        
+        // add_action( 'save_post_faq', [$this, 'saveSort'] );   
+        add_action( 'save_post_faq', [$this, 'savePostMeta'] );        
     }
 
 
@@ -61,13 +61,17 @@ class Layout {
         }
     }
 
-
-    public function saveSort( $post_id ){
-        if ( ! current_user_can( 'edit_post', $post_id ) || ! isset( $_POST['sortfield'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
-            return $post_id;
+    // public function saveSort( $post_id ){
+    public function savePostMeta( $postID ){
+        if ( ! current_user_can( 'edit_post', $postID ) || ! isset( $_POST['sortfield'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
+            return $postID;
         }
- 
-        update_post_meta( $post_id, 'sortfield', sanitize_text_field( $_POST['sortfield'] ) );        
+        update_post_meta( $postID, 'source', 'website', TRUE );
+        update_post_meta( $postID, 'lang', $this->lang, TRUE );
+        update_post_meta( $postID, 'remoteID', $postID, TRUE );
+        $remoteChanged = get_post_timestamp( $postID, 'modified' );
+        update_post_meta( $postID, 'remoteChanged', $remoteChanged, TRUE );
+        update_post_meta( $postID, 'sortfield', sanitize_text_field( $_POST['sortfield'] ) );        
     }
 
     public function sortboxCallback( $meta_id ) {
