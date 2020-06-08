@@ -25,8 +25,6 @@ class Layout {
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'addFaqSortableColumns'] );
         add_action( 'restrict_manage_posts', [$this, 'addFaqFilters'], 10, 1 );
 
-        // remove_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
-
         // Table "Category"
         add_filter( 'manage_edit-faq_category_columns', [$this, 'addTaxColumns'] );
         add_filter( 'manage_faq_category_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
@@ -121,7 +119,6 @@ class Layout {
 
     public function toggleEditor(){
         $post_id = ( isset( $_GET['post'] ) ? $_GET['post'] : ( isset ( $_POST['post_ID'] ) ? $_POST['post_ID'] : 0 ) ) ;
-
         if ( $post_id ){            
             if ( get_post_type( $post_id ) == 'faq' ) {
                 $source = get_post_meta( $post_id, "source", TRUE );
@@ -129,7 +126,6 @@ class Layout {
                     if ( $source != 'website' ){
                         $api = new API();
                         $domains = $api->getDomains();
-                        $source = get_post_meta( $post_id, "source", TRUE );
                         $remoteID = get_post_meta( $post_id, "remoteID", TRUE );
                         $link = $domains[$source] . 'wp-admin/post.php?post=' . $remoteID . '&action=edit';
                         remove_post_type_support( 'faq', 'title' );

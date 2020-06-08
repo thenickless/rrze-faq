@@ -84,8 +84,6 @@ class Settings {
      */
     public function __construct($pluginFile) {
         $this->pluginFile = $pluginFile;
-        $api = new API();
-        $this->domains = $api->getDomains();
     }
 
     /**
@@ -133,9 +131,10 @@ class Settings {
      */
     protected function setFields() {
         $this->settingsFields = getFields();
-
-        // Add Sync fields for each domain
-        $this->settingsFields['faqsync'] = $this->setSettingsDomains();
+        if ( isset($_GET['page']) && $_GET['page'] == 'rrze-faq' ){
+            // Add Sync fields for each domain
+            $this->settingsFields['faqsync'] = $this->setSettingsDomains();
+        }
     }
 
     /**
@@ -327,11 +326,13 @@ class Settings {
     }
 
     public function domainOutput(){
-        if ( $this->domains ){
+        $aDomains = API::getDomains();
+
+        if ( count($aDomains) > 0 ){
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
             echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Domains:</th></tr></thead><tbody>';
-            foreach ( $this->domains as $name => $url ){
+            foreach ( $aDomains as $name => $url ){
                 echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
                 $i++;
             }
@@ -347,7 +348,10 @@ class Settings {
         $api = new API();
         $additionalfields = array();
 
-        foreach ( $this->domains as $shortname => $url ){
+        $aDomains = API::getDomains();
+
+        // foreach ( $this->domains as $shortname => $url ){
+        foreach ( $aDomains as $shortname => $url ){
             $aCategories = $api->getCategories( $url, $shortname ); 
             foreach ( $this->settingsFields['faqsync'] as $field ){
                 if ( $field['name'] == 'autosync' || $field['name'] == 'frequency' || $field['name'] == 'info' ){
