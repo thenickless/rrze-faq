@@ -25,8 +25,6 @@ class Layout {
         add_filter( 'manage_edit-faq_sortable_columns', [$this, 'addFaqSortableColumns'] );
         add_action( 'restrict_manage_posts', [$this, 'addFaqFilters'], 10, 1 );
 
-        // remove_action( 'restrict_manage_posts', [$this, 'addTaxPostTable'] );
-
         // Table "Category"
         add_filter( 'manage_edit-faq_category_columns', [$this, 'addTaxColumns'] );
         add_filter( 'manage_faq_category_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
@@ -38,8 +36,7 @@ class Layout {
         // show categories and tags under content
         add_filter( 'the_content', [$this, 'showDetails'] );  
         
-        // metabox for sort criterion 
-        add_action( 'save_post_faq', [$this, 'saveSort'] );        
+        add_action( 'save_post_faq', [$this, 'savePostMeta'] );        
     }
 
 
@@ -61,13 +58,18 @@ class Layout {
         }
     }
 
-
-    public function saveSort( $post_id ){
-        if ( ! current_user_can( 'edit_post', $post_id ) || ! isset( $_POST['sortfield'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
-            return $post_id;
+    // public function saveSort( $post_id ){
+    public function savePostMeta( $postID ){
+        if ( ! current_user_can( 'edit_post', $postID ) || ! isset( $_POST['sortfield'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
+            return $postID;
         }
- 
-        update_post_meta( $post_id, 'sortfield', sanitize_text_field( $_POST['sortfield'] ) );        
+        update_post_meta( $postID, 'source', 'website' );
+        $lang = substr( get_locale(), 0, 2 );
+        update_post_meta( $postID, 'lang', $lang );
+        update_post_meta( $postID, 'remoteID', $postID );
+        $remoteChanged = get_post_timestamp( $postID, 'modified' );
+        update_post_meta( $postID, 'remoteChanged', $remoteChanged );
+        update_post_meta( $postID, 'sortfield', sanitize_text_field( $_POST['sortfield'] ) );       
     }
 
     public function sortboxCallback( $meta_id ) {
@@ -81,7 +83,7 @@ class Layout {
     public function fillContentBox( $post ) {
         $mycontent = apply_filters( 'the_content', $post->post_content );
         $mycontent = substr( $mycontent, 0, strpos( $mycontent, '<!-- rrze-faq -->' ));
-        echo '<h1>' . $post->post_title . '</h1><br>' . $mycontent;
+        echo '<h1>' . html_entity_decode( $post->post_title ) . '</h1><br>' . $mycontent;
     }
 
     public function fillShortcodeBox( ) { 
@@ -117,7 +119,6 @@ class Layout {
 
     public function toggleEditor(){
         $post_id = ( isset( $_GET['post'] ) ? $_GET['post'] : ( isset ( $_POST['post_ID'] ) ? $_POST['post_ID'] : 0 ) ) ;
-
         if ( $post_id ){            
             if ( get_post_type( $post_id ) == 'faq' ) {
                 $source = get_post_meta( $post_id, "source", TRUE );
@@ -125,7 +126,6 @@ class Layout {
                     if ( $source != 'website' ){
                         $api = new API();
                         $domains = $api->getDomains();
-                        $source = get_post_meta( $post_id, "source", TRUE );
                         $remoteID = get_post_meta( $post_id, "remoteID", TRUE );
                         $link = $domains[$source] . 'wp-admin/post.php?post=' . $remoteID . '&action=edit';
                         remove_post_type_support( 'faq', 'title' );

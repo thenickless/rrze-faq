@@ -3,8 +3,8 @@
 /*
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
-Description:       
-Version:         4.21.3
+Description:     Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und mittels Shortcode oder als Block (Gutenberg Editor) einzubinden.  
+Version:         4.22.6
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
