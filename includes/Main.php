@@ -88,25 +88,30 @@ class Main {
                     $options['doms_new_name'] = '';
                     $options['doms_new_url'] = '';
                 } else {
+
                     // delete domain(s)
                     foreach ( $_POST as $key => $url ){
                         if ( substr( $key, 0, 11 ) === "del_domain_" ){
-                            foreach( $options as $field => $val ){
-                                if ( ( stripos( $field, 'faqsync_url' ) === 0 ) && ( $val == $url ) ){
-                                    $parts = explode( '_', $field );
-                                    $shortname = $parts[2];
-                                    $api->deleteDomain( $shortname );
-                                    unset( $options['faqsync_shortname_' . $shortname] );
-                                    unset( $options['faqsync_url_' . $shortname] );
-                                    unset( $options['faqsync_categories_' . $shortname] );
-                                    // unset( $options['faqsync_mode_' . $shortname] );
-                                    unset( $options['faqsync_hr_' . $shortname] );
-                                    if ( ( $key = array_search( $url, $domains ) ) !== false) {
-                                        unset( $domains[$key] );
-                                    }           
-                                    logIt( __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '" ' . __( 'deleted', 'rrze-faq') );
-                                }
-                            }   
+                            if (($shortname = array_search($url, $domains)) !== false) {
+                                unset($domains[$shortname]);
+                                $api->deleteDomain( $shortname );
+                            }
+
+                            // foreach( $options as $field => $val ){
+                            //     if ( ( stripos( $field, 'faqsync_url' ) === 0 ) && ( $val == $url ) ){
+                            //         $parts = explode( '_', $field );
+                            //         $shortname = $parts[2];
+                            //         unset( $options['faqsync_shortname_' . $shortname] );
+                            //         unset( $options['faqsync_url_' . $shortname] );
+                            //         unset( $options['faqsync_categories_' . $shortname] );
+                            //         // unset( $options['faqsync_mode_' . $shortname] );
+                            //         unset( $options['faqsync_hr_' . $shortname] );
+                            //         if ( ( $key = array_search( $url, $domains ) ) !== false) {
+                            //             unset( $domains[$key] );
+                            //         }           
+                            //         logIt( __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '" ' . __( 'deleted', 'rrze-faq') );
+                            //     }
+                            // }   
                         }
                     }
                 }    

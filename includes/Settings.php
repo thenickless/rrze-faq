@@ -326,7 +326,8 @@ class Settings {
     }
 
     public function domainOutput(){
-        $aDomains = API::getDomains();
+        $api = new API();
+        $aDomains = $api->getDomains();
 
         if ( count($aDomains) > 0 ){
             $i = 1;
@@ -348,7 +349,7 @@ class Settings {
         $api = new API();
         $additionalfields = array();
 
-        $aDomains = API::getDomains();
+        $aDomains = $api->getDomains();
 
         // foreach ( $this->domains as $shortname => $url ){
         foreach ( $aDomains as $shortname => $url ){

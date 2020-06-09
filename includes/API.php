@@ -29,7 +29,7 @@ class API {
         return in_array( $url, $this->getDomains() );
     }
 
-    public static function getDomains(){
+    public function getDomains(){
         $domains = array();
         $options = get_option( 'rrze-faq' );
         if ( isset( $options['registeredDomains'] ) ){
