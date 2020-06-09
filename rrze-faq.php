@@ -3,8 +3,8 @@
 /*
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
-Description:     Das Plugin kann genutzt werden, um FAQ zu erstellen und FAQ von Websites aus dem FAU-Netzwerk zu synchronisieren. Shortcode (bei classic editor) bzw. Block Editor (Gutenberg): Es kann nach Kategorien und Schlagwörtern gefiltert werden. Das Layout lässt sich derart bestimmen, dass ein A-Z Register, die Kategorien bzw Schlagwörter als Links oder als Links, die sich nach Anzahl der gefundenen Treffer in der Größe unterscheiden ausgebeben werden kann. Kategorien und Schlagwörter werden in Akkordeons gruppiert. Es ist ebenso möglich, einzelne FAQ auszugeben und mithilfe des custom fields "sortfield" die Reihenfolge bestimmen.  
-Version:         4.22.2
+Description:     Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und mit Shortcode oder Block Editor (Gutenberg) einzubinden.  
+Version:         4.22.3
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
