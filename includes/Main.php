@@ -84,7 +84,7 @@ class Main {
 
                     if ( $aRet['status'] ){
                         // url is correct, RRZE-FAQ at given url is in use and shortname is new
-                        $domains[$aRet['cleanShortname']] = $aRet['cleanUrl'];
+                        $domains[$aRet['ret']['cleanShortname']] = $aRet['ret']['cleanUrl'];
                     }else{
                         add_settings_error( 'doms_new_url', 'doms_new_error', $aRet['ret'], 'error' );        
                     }
