@@ -142,8 +142,8 @@ class API {
             $term = term_exists( $name, 'faq_category' );
             if ( !$term ) {
                 $term = wp_insert_term( $name, 'faq_category' );
-                update_term_meta( $term['term_id'], 'source', $shortname );    
             }
+            update_term_meta( $term['term_id'], 'source', $shortname );    
             foreach ( $aDetails as $childname => $tmp ) {
                 $childterm = term_exists( $childname, 'faq_category' );
                 if ( !$childterm ) {

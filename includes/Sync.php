@@ -24,20 +24,22 @@ class Sync {
         foreach( $domains as $shortname => $url ){            
             $tStartDetail = microtime( TRUE );
             if ( isset( $options['faqsync_donotsync_' . $shortname] ) && $options['faqsync_donotsync_' . $shortname ] != 'on' ){
-                $categories = ( isset( $options['faqsync_categories_' . $shortname] ) ? implode( ',', $options['faqsync_categories_' . $shortname] ) : '' );
-                $aCnt = $api->setFAQ( $url, $categories, $shortname  );
-                $syncRan = TRUE;
-                foreach( $aCnt['URLhasSlider'] as $URLhasSlider ){
-                    $error_msg = __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '": ' . __( 'Synchronization error. This FAQ contains sliders ([gallery]) and cannot be synchronized:', 'rrze-faq' ) . ' ' . $URLhasSlider;
-                    logIt( $error_msg . ' | ' . $mode );
-                    if ( $allowSettingsError ){
-                        add_settings_error( 'Synchronization error', 'syncerror', $error_msg, 'error' );
+                $categories = ( isset( $options['faqsync_categories_' . $shortname] ) ? implode( ',', $options['faqsync_categories_' . $shortname] ) : FALSE );
+                if ( $categories ){
+                    $aCnt = $api->setFAQ( $url, $categories, $shortname  );
+                    $syncRan = TRUE;
+                    foreach( $aCnt['URLhasSlider'] as $URLhasSlider ){
+                        $error_msg = __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '": ' . __( 'Synchronization error. This FAQ contains sliders ([gallery]) and cannot be synchronized:', 'rrze-faq' ) . ' ' . $URLhasSlider;
+                        logIt( $error_msg . ' | ' . $mode );
+                        if ( $allowSettingsError ){
+                            add_settings_error( 'Synchronization error', 'syncerror', $error_msg, 'error' );
+                        }
                     }
-                }
-                $sync_msg = __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '": ' . __( 'Synchronization completed.', 'rrze-faq' ) . ' ' . $aCnt['iNew'] . ' ' . __( 'new', 'rrze-faq' ) . ', ' . $aCnt['iUpdated'] . ' ' . __( ' updated', 'rrze-faq' ) . ' ' . __( 'and', 'rrze-faq' ) . ' ' . $aCnt['iDeleted'] . ' ' . __( 'deleted', 'rrze-faq' ) . '. ' . __('Required time:', 'rrze-faq') . ' ' . sprintf( '%.1f ', microtime( TRUE ) - $tStartDetail ) . __( 'seconds', 'rrze-faq' );
-                logIt( $sync_msg . ' | ' . $mode );
-                if ( $allowSettingsError ){
-                    add_settings_error( 'Synchronization completed', 'synccompleted', $sync_msg, 'success' );
+                    $sync_msg = __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '": ' . __( 'Synchronization completed.', 'rrze-faq' ) . ' ' . $aCnt['iNew'] . ' ' . __( 'new', 'rrze-faq' ) . ', ' . $aCnt['iUpdated'] . ' ' . __( ' updated', 'rrze-faq' ) . ' ' . __( 'and', 'rrze-faq' ) . ' ' . $aCnt['iDeleted'] . ' ' . __( 'deleted', 'rrze-faq' ) . '. ' . __('Required time:', 'rrze-faq') . ' ' . sprintf( '%.1f ', microtime( TRUE ) - $tStartDetail ) . __( 'seconds', 'rrze-faq' );
+                    logIt( $sync_msg . ' | ' . $mode );
+                    if ( $allowSettingsError ){
+                        add_settings_error( 'Synchronization completed', 'synccompleted', $sync_msg, 'success' );
+                    }
                 }
             }
         }        
