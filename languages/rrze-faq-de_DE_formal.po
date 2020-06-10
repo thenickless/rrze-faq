@@ -2,26 +2,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 16:07+0000\n"
-"PO-Revision-Date: 2020-05-26 16:08+0000\n"
+"POT-Creation-Date: 2020-06-10 14:52+0000\n"
+"PO-Revision-Date: 2020-06-10 15:12+0000\n"
 "Last-Translator: \n"
-"Language-Team: German (Formal)\n"
-"Language: de_DE_formal\n"
+"Language-Team: Deutsch\n"
+"Language: de-DE\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.4.0; wp-5.4.1"
+"X-Loco-Version: 2.4.0; wp-5.5-alpha-47942"
 
-#: rrze-faq.php:93
+#: rrze-faq.php:91
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
 msgstr ""
 
-#: rrze-faq.php:96
+#: rrze-faq.php:94
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
@@ -79,15 +79,15 @@ msgstr ""
 
 #: config/config.php:86
 msgid "Enter the domain's URL you want to receive FAQ from."
-msgstr "Geben Sie den URL der Domain ein, von der Sie FAQ beziehen möchten."
+msgstr "Geben Sie die URL der Domain ein, von der Sie FAQ beziehen möchten."
 
 #: config/config.php:94
 msgid "Use this name as attribute 'domain' in shortcode [faq]"
 msgstr ""
 "Verwenden Sie diesen Namen als Attribut für 'domain' im Shortcode [faq]"
 
-#: config/config.php:107 config/config.php:191 config/config.php:214
-#: includes/Layout.php:239
+#: config/config.php:107 config/config.php:179 config/config.php:202 
+#: includes/Layout.php:244
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -100,11 +100,11 @@ msgstr ""
 msgid "Do not synchronize"
 msgstr "Nicht synchronisieren"
 
-#: config/config.php:138
+#: config/config.php:126
 msgid "Info"
 msgstr ""
 
-#: config/config.php:139 config/config.php:141
+#: config/config.php:127 config/config.php:129
 msgid ""
 "All FAQ that match to the selected categories will be updated or inserted. "
 "Already synchronized FAQ that refer to categories which are not selected "
@@ -116,131 +116,127 @@ msgstr ""
 "sind, werden gelöscht. FAQ, die auf dem Fremdsystem gelöscht wurden, werden "
 "auf dieser Website ebenfalls gelöscht."
 
-#: config/config.php:145
+#: config/config.php:133
 msgid "Mode"
 msgstr "Modus"
 
-#: config/config.php:146
+#: config/config.php:134
 msgid "Synchronize automatically"
 msgstr "Automatisch synchronisieren"
 
-#: config/config.php:151
+#: config/config.php:139
 msgid "Frequency"
 msgstr "Häufigkeit"
 
-#: config/config.php:155
+#: config/config.php:143
 msgid "daily"
 msgstr "täglich"
 
-#: config/config.php:156
+#: config/config.php:144
 msgid "twicedaily"
 msgstr "Zwei Mal am Tag"
 
-#: config/config.php:186
+#: config/config.php:174
 msgid "Find the settings on the right side"
 msgstr "Nehmen Sie die Einstellungen auf der rechten Seite vor"
 
-#: config/config.php:190
+#: config/config.php:178
 msgid "none"
 msgstr "keine"
 
-#: config/config.php:192 config/config.php:220 includes/CPT.php:92
-#: includes/Layout.php:240
+#: config/config.php:180 config/config.php:208 includes/CPT.php:92 
+#: includes/Layout.php:245
 msgid "Tags"
 msgstr "Schlagwörter"
 
-#: config/config.php:196
+#: config/config.php:184
 msgid "Glossary content"
 msgstr "Glossar Inhalt"
 
-#: config/config.php:201
+#: config/config.php:189
 msgid "-- hidden --"
 msgstr "-- versteckt --"
 
-#: config/config.php:202
+#: config/config.php:190
 msgid "A - Z"
 msgstr ""
 
-#: config/config.php:203
+#: config/config.php:191
 msgid "Tagcloud"
 msgstr ""
 
-#: config/config.php:204
+#: config/config.php:192
 msgid "Tabs"
 msgstr ""
 
-#: config/config.php:208
+#: config/config.php:196
 msgid "Glossary style"
 msgstr "Style des Glossars"
 
-#: config/config.php:226 includes/CPT.php:28 includes/CPT.php:42
+#: config/config.php:214 includes/CPT.php:28 includes/CPT.php:42
 msgid "FAQ"
 msgstr ""
 
-#: config/config.php:231
+#: config/config.php:219
 msgid "Hide accordeon"
 msgstr "Ausgabe nicht in Akkordeons"
 
-#: config/config.php:238
+#: config/config.php:226
 msgid "Hide title"
 msgstr "Ausgabe ohne Frage"
 
-#: config/config.php:245
+#: config/config.php:233
 msgid "Show \"expand all\" button"
 msgstr "\"Alle öffnen\" - Button anzeigen"
 
-#: config/config.php:252
+#: config/config.php:240
 msgid "Load website with opened accordeons"
 msgstr "Website mit geöffneten Akkordeons laden"
 
-#: config/config.php:267
+#: config/config.php:255
 msgid "Color"
 msgstr "Farbe"
 
-#: config/config.php:273
+#: config/config.php:261
 msgid "Additonal CSS-class(es) for sourrounding DIV"
 msgstr "Zusätzliche CSS-Klasse(n) für das umgebende DIV"
 
-#: config/config.php:278
+#: config/config.php:266
 msgid "Title"
 msgstr "Titel"
 
-#: config/config.php:279 includes/Layout.php:162 includes/Layout.php:171
+#: config/config.php:267 includes/Layout.php:167 includes/Layout.php:176
 msgid "ID"
 msgstr ""
 
-#: config/config.php:280
+#: config/config.php:268
 msgid "Sort field"
 msgstr "Sortierfeld"
 
 #. id, used as the html id att
-#: config/config.php:284 includes/Layout.php:151
+#: config/config.php:272 includes/Layout.php:156
 msgid "Sort"
 msgstr "Sortierung"
 
-#: config/config.php:289
+#: config/config.php:277
 msgid "ASC"
 msgstr "aufsteigend"
 
-#: config/config.php:290
+#: config/config.php:278
 msgid "DESC"
 msgstr "absteigend"
 
-#: config/config.php:294
+#: config/config.php:282
 msgid "Order"
 msgstr "Reihenfolge"
 
-#: includes/Main.php:107 includes/Sync.php:31 includes/Sync.php:37
-msgid "Domain"
-msgstr ""
+#: includes/API.php:21 includes/API.php:24
+msgid " is already in use."
+msgstr " ist bereits in Verwendung."
 
-#: includes/Main.php:107 includes/Sync.php:37
-msgid "deleted"
-msgstr "gelöscht"
-
-#: includes/Main.php:170
-msgid "Next automatically synchronization:"
-msgstr "Nächste automatische Synchronisierung:"
+#: includes/API.php:31 includes/API.php:39
+msgid " is not valid."
+msgstr " ist nicht gültig."
 
 #: includes/CPT.php:26
 msgctxt "FAQ, synonym or glossary entries"
@@ -276,7 +272,7 @@ msgstr "FAQ suchen"
 msgid "FAQ informations"
 msgstr "FAQ Informationen"
 
-#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:167
+#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:172
 msgid "Category"
 msgstr "Kategorie"
 
@@ -324,7 +320,7 @@ msgstr "Kategorie editieren"
 msgid "Update category"
 msgstr "Kategorie aktualisieren"
 
-#: includes/CPT.php:97 includes/Layout.php:168
+#: includes/CPT.php:97 includes/Layout.php:173
 msgid "Tag"
 msgstr "Schlagwort"
 
@@ -372,45 +368,95 @@ msgstr "Schlagwort editieren"
 msgid "Update tag"
 msgstr "Schlagwort aktualisieren"
 
-#: includes/Sync.php:31
-msgid ""
-"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
-"synchronized:"
+#: includes/Layout.php:77
+msgid "Criterion for sorting the output of the shortcode"
+msgstr "Kriterium für die Sortierung der Shortcode-Ausgabe"
+
+#: includes/Layout.php:103
+msgid "Single entries"
+msgstr "Einzelner Eintrag"
+
+#: includes/Layout.php:104
+msgid "Accordion with category"
+msgstr "Akkordeon mit Kategorie"
+
+#: includes/Layout.php:104
+msgid "If there is more than one category listed, use at least one of them."
 msgstr ""
-"Synchronisierungsfehler. Diese FAQ enthält sliders ([gallery]) und kann "
-"nicht synchronisiert werden: "
+"Wenn mehrere Kategorien aufgeführt sind, nutzen Sie bitte mindestens eine "
+"davon."
 
-#: includes/Sync.php:37
-msgid "Synchronization completed."
-msgstr "Synchronisierung abgeschlossen."
+#: includes/Layout.php:105
+msgid "Accordion with tag"
+msgstr "Akkordeon mit Schlagwort"
 
-#: includes/Sync.php:37
-msgid "new"
-msgstr "neu"
+#: includes/Layout.php:105
+msgid "If there is more than one tag listed, use at least one of them."
+msgstr ""
+"Wenn mehrere Schlagwörter aufgeführt sind, nutzen Sie bitte mindestens eines "
+"davon."
 
-#: includes/Sync.php:37
-msgid " updated"
-msgstr "aktualisiert"
+#: includes/Layout.php:106
+msgid "Accordion with all entries"
+msgstr "Akkordeon mit allen Einträgen"
 
-#: includes/Sync.php:37
-msgid "and"
-msgstr "und"
+#: includes/Layout.php:114
+msgid "Enter question here"
+msgstr "Geben Sie hier die Frage ein"
 
-#: includes/Sync.php:37 includes/Sync.php:46
-msgid "Required time:"
-msgstr "Benötigte Zeit:"
+#. id, used as the html id att
+#: includes/Layout.php:137
+msgid "This FAQ cannot be edited because it is sychronized"
+msgstr "Diese FAQ kann nicht editiert werden, weil sie synchronisiert wurde"
 
-#: includes/Sync.php:37 includes/Sync.php:46
-msgid "seconds"
-msgstr "Sekunden"
+#: includes/Layout.php:137
+msgid "You can edit it at the source"
+msgstr "Sie können es auf der Quelle editieren"
 
-#: includes/Sync.php:46
-msgid "All synchronizations completed"
-msgstr "Alle Synchronisierungen abgeschlossen"
+#. id, used as the html id att
+#: includes/Layout.php:147
+msgid "Integration in pages and posts"
+msgstr "Einfügen in Seiten und Beiträge"
 
-#: includes/Sync.php:48
-msgid "Settings updated"
-msgstr "Einstellungen aktualisiert"
+#: includes/Layout.php:165
+msgid "Sort criterion"
+msgstr "Sortierkriterium"
+
+#: includes/Layout.php:166 includes/Layout.php:175 includes/Layout.php:206
+msgid "Source"
+msgstr "Quelle"
+
+#: includes/Main.php:173
+msgid "Next automatically synchronization:"
+msgstr "Nächste automatische Synchronisierung:"
+
+#: includes/Settings.php:296
+msgid "Add domain"
+msgstr "Domain hinzufügen"
+
+#: includes/Settings.php:300
+msgid "Delete logfile"
+msgstr "Logfile löschen"
+
+#: includes/Settings.php:341
+msgid ""
+"Please note: \"Delete selected domains\" will DELETE every FAQ on this "
+"website that has been fetched from the selected domains."
+msgstr ""
+"Bitte beachten: \"Ausgewählte Domains löschen\" LÖSCHT alle FAQ auf dieser "
+"Website, die von den ausgewählten Domains bezogen wurden."
+
+#: includes/Settings.php:342
+msgid "Delete selected domains"
+msgstr "Ausgewählte Domains löschen"
+
+#: includes/Settings.php:373
+msgid "no category with source = \"website\" found"
+msgstr "Keine Kategorie mit Quelle = \"website\" gefunden"
+
+#: includes/Settings.php:944 includes/Settings.php:947
+msgid "Logfile is empty."
+msgstr "Logfile ist leer."
 
 #: includes/Shortcode.php:232
 msgid ""
@@ -432,91 +478,59 @@ msgstr ""
 msgid "-- all --"
 msgstr "-- alle --"
 
-#: includes/Layout.php:70
-msgid "Criterion for sorting the output of the shortcode"
-msgstr "Kriterium für die Sortierung der Shortcode-Ausgabe"
-
-#: includes/Layout.php:96
-msgid "Single entries"
-msgstr "Einzelner Eintrag"
-
-#: includes/Layout.php:97
-msgid "Accordion with category"
-msgstr "Akkordeon mit Kategorie"
-
-#: includes/Layout.php:97
-msgid "If there is more than one category listed, use at least one of them."
+#: includes/Sync.php:32 includes/Sync.php:38
+msgid "Domain"
 msgstr ""
-"Wenn mehrere Kategorien aufgeführt sind, nutzen Sie bitte mindestens eine "
-"davon."
 
-#: includes/Layout.php:98
-msgid "Accordion with tag"
-msgstr "Akkordeon mit Schlagwort"
-
-#: includes/Layout.php:98
-msgid "If there is more than one tag listed, use at least one of them."
-msgstr ""
-"Wenn mehrere Schlagwörter aufgeführt sind, nutzen Sie bitte mindestens eines "
-"davon."
-
-#: includes/Layout.php:99
-msgid "Accordion with all entries"
-msgstr "Akkordeon mit allen Einträgen"
-
-#: includes/Layout.php:107
-msgid "Enter question here"
-msgstr "Geben Sie hier die Frage ein"
-
-#. id, used as the html id att
-#: includes/Layout.php:132
-msgid "This FAQ cannot be edited because it is sychronized"
-msgstr "Diese FAQ kann nicht editiert werden, weil sie synchronisiert wurde"
-
-#: includes/Layout.php:132
-msgid "You can edit it at the source"
-msgstr "Sie können es auf der Quelle editieren"
-
-#. id, used as the html id att
-#: includes/Layout.php:142
-msgid "Integration in pages and posts"
-msgstr "Einfügen in Seiten und Beiträge"
-
-#: includes/Layout.php:160 includes/Layout.php:169
-msgid "Sort criterion"
-msgstr "Sortierkriterium"
-
-#: includes/Layout.php:161 includes/Layout.php:170 includes/Layout.php:201
-msgid "Source"
-msgstr "Quelle"
-
-#: includes/Settings.php:297
-msgid "Add domain"
-msgstr "Domain hinzufügen"
-
-#: includes/Settings.php:301
-msgid "Delete logfile"
-msgstr "Logfile löschen"
-
-#: includes/Settings.php:339
+#: includes/Sync.php:32
 msgid ""
-"Please note: \"Delete selected domains\" will DELETE every FAQ on this "
-"website that has been fetched from the selected domains."
+"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
+"synchronized:"
 msgstr ""
-"Bitte beachten: \"Ausgewählte Domains löschen\" LÖSCHT alle FAQ auf dieser "
-"Website, die von den ausgewählten Domains bezogen wurden."
+"Synchronisierungsfehler. Diese FAQ enthält sliders ([gallery]) und kann "
+"nicht synchronisiert werden: "
 
-#: includes/Settings.php:340
-msgid "Delete selected domains"
-msgstr "Ausgewählte Domains löschen"
+#: includes/Sync.php:38
+msgid "Synchronization completed."
+msgstr "Synchronisierung abgeschlossen."
 
-#: includes/Settings.php:368
-msgid "no category with source = \"website\" found"
-msgstr "Keine Kategorie mit Quelle = \"website\" gefunden"
+#: includes/Sync.php:38
+msgid "new"
+msgstr "neu"
 
-#: includes/Settings.php:939 includes/Settings.php:942
-msgid "Logfile is empty."
-msgstr "Logfile ist leer."
+#: includes/Sync.php:38
+msgid " updated"
+msgstr "aktualisiert"
+
+#: includes/Sync.php:38
+msgid "and"
+msgstr "und"
+
+#: includes/Sync.php:38
+msgid "deleted"
+msgstr "gelöscht"
+
+#: includes/Sync.php:38 includes/Sync.php:48
+msgid "Required time:"
+msgstr "Benötigte Zeit:"
+
+#: includes/Sync.php:38 includes/Sync.php:48
+msgid "seconds"
+msgstr "Sekunden"
+
+#: includes/Sync.php:48
+msgid "All synchronizations completed"
+msgstr "Alle Synchronisierungen abgeschlossen"
+
+#: includes/Sync.php:50
+msgid "Settings updated"
+msgstr "Einstellungen aktualisiert"
+
+#. Description of the plugin
+msgid ""
+"Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und "
+"mittels Shortcode oder als Block (Gutenberg Editor) einzubinden."
+msgstr ""
 
 #. URI of the plugin
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"

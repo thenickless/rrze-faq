@@ -131,7 +131,7 @@ class Settings {
      */
     protected function setFields() {
         $this->settingsFields = getFields();
-        if ( isset($_GET['page']) && $_GET['page'] == 'rrze-faq' ){
+        if ( isset($_GET['page']) && $_GET['page'] == 'rrze-faq' && isset($_GET['current-tab']) && $_GET['current-tab'] == 'faqsync' ){
             // Add Sync fields for each domain
             $this->settingsFields['faqsync'] = $this->setSettingsDomains();
         }
@@ -326,7 +326,8 @@ class Settings {
     }
 
     public function domainOutput(){
-        $aDomains = API::getDomains();
+        $api = new API();
+        $aDomains = $api->getDomains();
 
         if ( count($aDomains) > 0 ){
             $i = 1;
@@ -348,7 +349,7 @@ class Settings {
         $api = new API();
         $additionalfields = array();
 
-        $aDomains = API::getDomains();
+        $aDomains = $api->getDomains();
 
         // foreach ( $this->domains as $shortname => $url ){
         foreach ( $aDomains as $shortname => $url ){

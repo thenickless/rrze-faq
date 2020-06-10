@@ -115,18 +115,6 @@ function getFields() {
 				'desc' => __('Do not synchronize', 'rrze-faq' ),
 				'type' => 'checkbox',
 			],
-			// [
-			// 	'name' => 'mode',
-			// 	'label' => __('Synchronize', 'rrze-faq' ),
-			// 	'desc' => __( 'All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too.', 'rrze-faq' ),
-			// 	'default' => '',
-			// 	'options' => [
-			// 		'' => __('Do not synchronize.', 'rrze-faq' ),
-			// 		'manual' => __('Synchronize one time now.', 'rrze-faq' ),
-			// 		'auto' => __('Synchronize now and then automatically.', 'rrze-faq' ),
-			// 	],
-			// 	'type' => 'radio'
-			// ],
 			[
 				'name' => 'hr',
 				'label' => '',

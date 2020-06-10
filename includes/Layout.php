@@ -4,7 +4,6 @@ namespace RRZE\FAQ;
 
 defined( 'ABSPATH' ) || exit;
 
-// use function RRZE\FAQ\API\getDomains;
 use RRZE\FAQ\API;
 
 
