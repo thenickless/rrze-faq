@@ -15,7 +15,7 @@ class API {
         // on error returns array('status' => FALSE, 'ret' => error-message)
         $aRet = array( 'status' => FALSE, 'ret' => '' );
         $cleanUrl = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
-        $cleanShortname = strtolower( preg_replace('/[^A-Za-z0-9\-]/', '', str_replace( ' ', '-', $shortname ) ) );
+        $cleanShortname = strtolower( preg_replace('/[^A-Za-z0-9]/', '', $shortname ) );
 
         if ( in_array( $cleanUrl, $domains )){
             $aRet['ret'] = $url . __( ' is already in use.', 'rrze-faq' );
