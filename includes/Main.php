@@ -65,53 +65,36 @@ class Main {
     }
 
 
-
-
-
     /**
      * Click on buttons "sync", "add domain", "delete domain" or "delete logfile"
      */
     public function switchTask( $options ) {
         $api = new API();
         $domains = $api->getDomains();
+        // get stored options because they are generated and not defined in config.php
+        $options = array_merge(get_option( 'rrze-faq' ), $options);
         $tab = ( isset($_GET['doms'] ) ? 'doms' : ( isset( $_GET['sync'] ) ? 'sync' : ( isset( $_GET['del'] ) ? 'del' : '' ) ) );
 
         switch ( $tab ){
             case 'doms':
-                if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
+                // if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
+                if ( $options['doms_new_name'] && $options['doms_new_url'] ){
                     // add domain
-                    $domains = $api->setDomain( $_POST['rrze-faq']['doms_new_name'], $_POST['rrze-faq']['doms_new_url'] );
+                    $domains = $api->setDomain( $options['doms_new_name'], $options['doms_new_url'] );
                     if ( !$domains ){
                         $domains = $api->getDomains();
-                        add_settings_error( 'doms_new_url', 'doms_new_error', $_POST['rrze-faq']['doms_new_url'] . ' is not valid.', 'error' );        
+                        add_settings_error( 'doms_new_url', 'doms_new_error', $options['doms_new_url'] . ' is not valid.', 'error' );        
                     }
-                    $options['doms_new_name'] = '';
-                    $options['doms_new_url'] = '';
                 } else {
-
                     // delete domain(s)
                     foreach ( $_POST as $key => $url ){
                         if ( substr( $key, 0, 11 ) === "del_domain_" ){
                             if (($shortname = array_search($url, $domains)) !== false) {
                                 unset($domains[$shortname]);
-                                $api->deleteDomain( $shortname );
+                                $api->deleteFAQ( $shortname );
                             }
-
-                            // foreach( $options as $field => $val ){
-                            //     if ( ( stripos( $field, 'faqsync_url' ) === 0 ) && ( $val == $url ) ){
-                            //         $parts = explode( '_', $field );
-                            //         $shortname = $parts[2];
-                            //         unset( $options['faqsync_shortname_' . $shortname] );
-                            //         unset( $options['faqsync_url_' . $shortname] );
-                            //         unset( $options['faqsync_categories_' . $shortname] );
-                            //         // unset( $options['faqsync_mode_' . $shortname] );
-                            //         unset( $options['faqsync_hr_' . $shortname] );
-                            //         if ( ( $key = array_search( $url, $domains ) ) !== false) {
-                            //             unset( $domains[$key] );
-                            //         }           
-                            //         logIt( __( 'Domain', 'rrze-faq' ) . ' "' . $shortname . '" ' . __( 'deleted', 'rrze-faq') );
-                            //     }
-                            // }   
+                            unset($options['faqsync_categories_' . $shortname]);
+                            unset($options['faqsync_donotsync_' . $shortname]);
                         }
                     }
                 }    
@@ -125,10 +108,22 @@ class Main {
         }
 
         if ( !$domains ){
+            // unset this option because $api->getDomains() checks isset(..) because of asort(..)
             unset( $options['registeredDomains'] );
         } else {
             $options['registeredDomains'] = $domains;
         }
+
+        // we don't need these temporary fields to be stored in database table options
+        // domains are stored as shortname and url in registeredDomains
+        // categories and donotsync are stored in faqsync_categories_<SHORTNAME> and faqsync_donotsync_<SHORTNAME>
+        unset($options['doms_new_name']);
+        unset($options['doms_new_url']);
+        unset($options['faqsync_shortname']);
+        unset($options['faqsync_url']);
+        unset($options['faqsync_categories']);
+        unset($options['faqsync_donotsync']);
+        unset($options['faqsync_hr']);
 
         return $options;
     }

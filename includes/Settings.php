@@ -131,7 +131,7 @@ class Settings {
      */
     protected function setFields() {
         $this->settingsFields = getFields();
-        if ( isset($_GET['page']) && $_GET['page'] == 'rrze-faq' ){
+        if ( isset($_GET['page']) && $_GET['page'] == 'rrze-faq' && isset($_GET['current-tab']) && $_GET['current-tab'] == 'faqsync' ){
             // Add Sync fields for each domain
             $this->settingsFields['faqsync'] = $this->setSettingsDomains();
         }

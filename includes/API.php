@@ -57,10 +57,6 @@ class API {
         return $domains;
     }
 
-    public function deleteDomain( &$shortname ){
-        $this->deleteFAQ( $shortname );
-    }
-
     protected function getTaxonomies( $url, $field, &$filter ){
         $aRet = array();    
         $url .= ENDPOINT . '_' . $field;    
