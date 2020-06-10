@@ -71,19 +71,22 @@ class Main {
     public function switchTask( $options ) {
         $api = new API();
         $domains = $api->getDomains();
+
         // get stored options because they are generated and not defined in config.php
         $options = array_merge(get_option( 'rrze-faq' ), $options);
         $tab = ( isset($_GET['doms'] ) ? 'doms' : ( isset( $_GET['sync'] ) ? 'sync' : ( isset( $_GET['del'] ) ? 'del' : '' ) ) );
 
         switch ( $tab ){
             case 'doms':
-                // if ( isset( $_POST['rrze-faq']['doms_new_url'] ) && $_POST['rrze-faq']['doms_new_url'] != '' ){
                 if ( $options['doms_new_name'] && $options['doms_new_url'] ){
-                    // add domain
-                    $domains = $api->setDomain( $options['doms_new_name'], $options['doms_new_url'] );
-                    if ( !$domains ){
-                        $domains = $api->getDomains();
-                        add_settings_error( 'doms_new_url', 'doms_new_error', $options['doms_new_url'] . ' is not valid.', 'error' );        
+                    // add new domain
+                    $aRet = $api->setDomain( $options['doms_new_name'], $options['doms_new_url'], $domains );
+
+                    if ( $aRet['status'] ){
+                        // url is correct, RRZE-FAQ at given url is in use and shortname is new
+                        $domains[$aRet['cleanShortname']] = $aRet['cleanUrl'];
+                    }else{
+                        add_settings_error( 'doms_new_url', 'doms_new_error', $aRet['ret'], 'error' );        
                     }
                 } else {
                     // delete domain(s)
