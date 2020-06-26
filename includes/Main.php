@@ -73,7 +73,11 @@ class Main {
         $domains = $api->getDomains();
 
         // get stored options because they are generated and not defined in config.php
-        $options = array_merge(get_option( 'rrze-faq' ), $options);
+        $storedOptions = get_option( 'rrze-faq' );
+        if (is_array($storedOptions)){
+            $options = array_merge($storedOptions, $options);
+        }
+
         $tab = ( isset($_GET['doms'] ) ? 'doms' : ( isset( $_GET['sync'] ) ? 'sync' : ( isset( $_GET['del'] ) ? 'del' : '' ) ) );
 
         switch ( $tab ){
