@@ -13,6 +13,32 @@ function getOptionName() {
 }
 
 
+function getConstants() {
+	$options = array(
+		'fauthemes' => [
+			'FAU-Einrichtungen',
+			'FAU-Einrichtungen-BETA',
+			'FAU-Medfak',
+			'FAU-RWFak',
+			'FAU-Philfak',
+			'FAU-Techfak',
+			'FAU-Natfak',
+			'FAU-Blog',
+			'FAU-Jobs'
+		],
+		'langcodes' => [
+			"de" => __('German','rrze-synonym'),
+			"en" => __('English','rrze-synonym'),
+			"es" => __('Spanish','rrze-synonym'),
+			"fr" => __('French','rrze-synonym'),
+			"ru" => __('Russian','rrze-synonym'),
+			"zh" => __('Chinese','rrze-synonym')
+		]
+	);               
+	return $options;
+}
+
+
 /**
  * Gibt die Einstellungen des Menus zurück.
  * @return array [description]

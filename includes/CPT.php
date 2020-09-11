@@ -18,6 +18,9 @@ class CPT {
         add_action( 'publish_faq', [$this, 'setPostMeta'], 10, 1 );
         add_action( 'create_faq_category', [$this, 'setTermMeta'], 10, 1 );
         add_action( 'create_faq_tag', [$this, 'setTermMeta'], 10, 1 );
+        // add_filter( 'faq_category_template', [$this, 'faq_category_template'] );
+        add_filter('template_include', [$this, 'taxonomy_template']);
+
     }
 
     
@@ -68,7 +71,7 @@ class CPT {
             [ 
                 'name' => 'faq_category',
                 'label' => __('Category', 'rrze-faq'),
-                'slug' => 'category',
+                'slug' => 'faq_category',
                 'rest_base' => 'faq_category',
                 'hierarchical' => TRUE,
                 'labels' => array(
@@ -90,7 +93,7 @@ class CPT {
             [ 
                 'name' => 'faq_tag',
                 'label' => __('Tags', 'rrze-faq'),
-                'slug' => 'tag',
+                'slug' => 'faq_tag',
                 'rest_base' => 'faq_tag',
                 'hierarchical' => FALSE,
                 'labels' => array(
@@ -169,5 +172,18 @@ class CPT {
         add_term_meta( $termID, 'lang', $this->lang, TRUE );
     }
     
+
+    public function taxonomy_template( $template ){
+
+        if( is_tax('faq_category')){
+            $template = plugin_dir_path( __DIR__ ) .'templates/faq_category.php';
+        }elseif( is_tax('faq_tag')){
+            $template = plugin_dir_path( __DIR__ ) .'templates/faq_tag.php';
+        }
+        
+        return $template;
+        
+        }
+        
 
 }

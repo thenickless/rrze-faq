@@ -5,6 +5,8 @@ namespace RRZE\FAQ;
 defined( 'ABSPATH' ) || exit;
 
 use RRZE\FAQ\API;
+use function RRZE\FAQ\Config\getConstants;
+
 
 
 /**
@@ -226,11 +228,12 @@ class Layout {
         }
     }
 
-    public function getTermsAsString( &$postID, $field ){
+    public function getTermLinks( &$postID, $field ){
         $ret = '';
         $terms = wp_get_post_terms( $postID, 'faq_' . $field );
+
         foreach ( $terms as $term ){
-            $ret .= $term->name . ', ';
+            $ret .= '<a href="' . get_term_link($term->slug, 'faq_' . $field ) . '">' . $term->name . '</a>, ';
         }
         return substr( $ret, 0, -2 );
     }
@@ -238,8 +241,8 @@ class Layout {
     public function showDetails( $content ){
         global $post;
         if ( $post->post_type == 'faq' ){
-            $cats = $this->getTermsAsString( $post->ID, 'category' );
-            $tags = $this->getTermsAsString( $post->ID, 'tag' );            
+            $cats = $this->getTermLinks( $post->ID, 'category' );
+            $tags = $this->getTermLinks( $post->ID, 'tag' );            
             $details = '<!-- rrze-faq --><p id="rrze-faq" class="meta-footer">'
             . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
             . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
@@ -258,5 +261,17 @@ class Layout {
             $content .= $details . $schema;
         }
         return $content;
+    }
+
+    public static function isFAUTheme() {
+        $constants = getConstants();
+        $themelist = $constants['fauthemes'];
+        $fautheme = false;
+        $active_theme = wp_get_theme();
+        $active_theme = $active_theme->get( 'Name' );
+        if (in_array($active_theme, $themelist)) {
+            $fautheme = true;
+        }
+        return $fautheme;   
     }
 }
