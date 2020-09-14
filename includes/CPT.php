@@ -19,7 +19,7 @@ class CPT {
         add_action( 'create_faq_category', [$this, 'setTermMeta'], 10, 1 );
         add_action( 'create_faq_tag', [$this, 'setTermMeta'], 10, 1 );
         add_filter( 'single_template', [$this, 'filter_single_template'] );
-        // add_filter( 'archive_template', [$this, 'filter_archive_template'] );
+        add_filter( 'archive_template', [$this, 'filter_archive_template'] );
         add_filter( 'taxonomy_template', [$this, 'filter_taxonomy_template'] );
     }
 
