@@ -1,6 +1,6 @@
 <?php
 /**
- * The is a template for displaying a single or all FAQ
+ * This a template for displaying a single or all FAQ
  *
  *
  * @package WordPress
