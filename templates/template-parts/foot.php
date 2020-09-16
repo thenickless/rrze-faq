@@ -8,10 +8,6 @@
  * @since FAU 1.0
 */
 
-use RRZE\FAQ\Layout;
-
-$thisThemeGroup = Layout::getThemeGroup();
-
 if ($thisThemeGroup == 'fauthemes') { ?>
     </main>
 </div>
