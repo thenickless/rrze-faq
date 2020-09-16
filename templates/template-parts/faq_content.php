@@ -1,6 +1,6 @@
 <?php
 /**
- * This is part of the templates for displaying a single resp all FAQ
+ * This is part of the templates for displaying the FAQ
  *
  *
  * @package WordPress
@@ -11,11 +11,19 @@
 namespace RRZE\FAQ;
 
 use RRZE\FAQ\Layout;
+
+echo '<div id="post-' . get_the_ID() . '" class="' . implode(' ', get_post_class()) .'">';
+
 ?>
+
+
 
 <h1 id="droppoint" class="faq-title" itemprop="title"><?php the_title(); ?></h1>
 
+
 <?php 
+
+// echo '<strong>' . the_title() . '</strong><br>';
 
 $postID = get_the_ID();
 $cats = Layout::getTermLinks( $postID, 'faq_category' );
@@ -34,3 +42,6 @@ if ( $source == 'website' ){
 
 the_content(); 
 echo $details;
+
+echo '</div>';
+

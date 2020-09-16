@@ -26,6 +26,9 @@ function getConstants() {
 			'FAU-Blog',
 			'FAU-Jobs'
 		],
+		'rrzethemes' => [
+			'RRZE 2019',
+		],
 		'langcodes' => [
 			"de" => __('German','rrze-synonym'),
 			"en" => __('English','rrze-synonym'),

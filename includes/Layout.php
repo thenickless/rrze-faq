@@ -235,15 +235,17 @@ class Layout {
         return substr( $ret, 0, -2 );
     }
 
-    public static function isFAUTheme() {
+    public static function getThemeGroup() {
         $constants = getConstants();
-        $themelist = $constants['fauthemes'];
-        $fautheme = false;
+        $ret = '';
         $active_theme = wp_get_theme();
         $active_theme = $active_theme->get( 'Name' );
-        if (in_array($active_theme, $themelist)) {
-            $fautheme = true;
+
+        if (in_array($active_theme, $constants['fauthemes'])) {
+            $ret = 'fauthemes';
+        }elseif (in_array($active_theme, $constants['rrzethemes'])) {
+            $ret = 'rrzethemes';
         }
-        return $fautheme;   
+        return $ret;   
     }
 }
