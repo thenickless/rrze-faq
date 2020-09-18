@@ -18,6 +18,9 @@ class CPT {
         add_action( 'publish_faq', [$this, 'setPostMeta'], 10, 1 );
         add_action( 'create_faq_category', [$this, 'setTermMeta'], 10, 1 );
         add_action( 'create_faq_tag', [$this, 'setTermMeta'], 10, 1 );
+        add_filter( 'single_template', [$this, 'filter_single_template'] );
+        add_filter( 'archive_template', [$this, 'filter_archive_template'] );
+        add_filter( 'taxonomy_template', [$this, 'filter_taxonomy_template'] );
     }
 
     
@@ -67,8 +70,8 @@ class CPT {
         $tax = [
             [ 
                 'name' => 'faq_category',
-                'label' => __('Category', 'rrze-faq'),
-                'slug' => 'category',
+                'label' => __('Categories', 'rrze-faq'),
+                'slug' => 'faq_category',
                 'rest_base' => 'faq_category',
                 'hierarchical' => TRUE,
                 'labels' => array(
@@ -90,7 +93,7 @@ class CPT {
             [ 
                 'name' => 'faq_tag',
                 'label' => __('Tags', 'rrze-faq'),
-                'slug' => 'tag',
+                'slug' => 'faq_tag',
                 'rest_base' => 'faq_tag',
                 'hierarchical' => FALSE,
                 'labels' => array(
@@ -168,6 +171,34 @@ class CPT {
         add_term_meta( $termID, 'source', 'website', TRUE );
         add_term_meta( $termID, 'lang', $this->lang, TRUE );
     }
+
+
+    public function filter_single_template( $template ){
+        global $post;
+        if( 'faq' === $post->post_type ){
+            $template = plugin_dir_path( __DIR__ ) .'templates/single-faq.php';
+        }
+        return $template;
+    }
+
+
     
+    public function filter_archive_template( $template ){
+        if( is_post_type_archive('faq')){
+            $template = plugin_dir_path( __DIR__ ) .'templates/archive-faq.php';
+        }
+        return $template;
+    }
+
+
+    public function filter_taxonomy_template( $template ){
+        if( is_tax('faq_category')){
+            $template = plugin_dir_path( __DIR__ ) .'templates/faq_category.php';
+        }elseif( is_tax('faq_tag')){
+            $template = plugin_dir_path( __DIR__ ) .'templates/faq_tag.php';
+        }
+        return $template;
+    }
+
 
 }

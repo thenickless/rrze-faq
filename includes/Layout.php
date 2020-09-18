@@ -5,6 +5,8 @@ namespace RRZE\FAQ;
 defined( 'ABSPATH' ) || exit;
 
 use RRZE\FAQ\API;
+use function RRZE\FAQ\Config\getConstants;
+
 
 
 /**
@@ -32,9 +34,6 @@ class Layout {
         add_filter( 'manage_edit-faq_tag_columns', [$this, 'addTaxColumns'] );
         add_filter( 'manage_faq_tag_custom_column', [$this, 'getTaxColumnsValues'], 10, 3 );
         add_filter( 'manage_edit-faq_tag_sortable_columns', [$this, 'addTaxColumns'] );
-        // show categories and tags under content
-        add_filter( 'the_content', [$this, 'showDetails'] );  
-        
         add_action( 'save_post_faq', [$this, 'savePostMeta'] );        
     }
 
@@ -226,37 +225,27 @@ class Layout {
         }
     }
 
-    public function getTermsAsString( &$postID, $field ){
+    public static function getTermLinks( &$postID, $mytaxonomy ){
         $ret = '';
-        $terms = wp_get_post_terms( $postID, 'faq_' . $field );
+        $terms = wp_get_post_terms( $postID, $mytaxonomy);
+
         foreach ( $terms as $term ){
-            $ret .= $term->name . ', ';
+            $ret .= '<a href="' . get_term_link($term->slug, $mytaxonomy ) . '">' . $term->name . '</a>, ';
         }
         return substr( $ret, 0, -2 );
     }
 
-    public function showDetails( $content ){
-        global $post;
-        if ( $post->post_type == 'faq' ){
-            $cats = $this->getTermsAsString( $post->ID, 'category' );
-            $tags = $this->getTermsAsString( $post->ID, 'tag' );            
-            $details = '<!-- rrze-faq --><p id="rrze-faq" class="meta-footer">'
-            . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
-            . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
-            . '</p>';
-            $schema = '';
-            $source = get_post_meta( $post->ID, "source", TRUE );
-            if ( $source == 'website' ){
-                $question = get_the_title( $post->ID );
-                $answer = wp_strip_all_tags( $content, TRUE );
-                $schema = '<div style="display:none" itemscope itemtype="https://schema.org/FAQPage">';
-                $schema .= '<div style="display:none" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">';
-                $schema .= '<div style="display:none" itemprop="name">' . $question . '</div>';
-                $schema .= '<div style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">';
-                $schema .= '<div style="display:none" itemprop="text">' . $answer . '</div></div></div></div>';
-            }
-            $content .= $details . $schema;
+    public static function getThemeGroup() {
+        $constants = getConstants();
+        $ret = '';
+        $active_theme = wp_get_theme();
+        $active_theme = $active_theme->get( 'Name' );
+
+        if (in_array($active_theme, $constants['fauthemes'])) {
+            $ret = 'fauthemes';
+        }elseif (in_array($active_theme, $constants['rrzethemes'])) {
+            $ret = 'rrzethemes';
         }
-        return $content;
+        return $ret;   
     }
 }
