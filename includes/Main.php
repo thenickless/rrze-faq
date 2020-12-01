@@ -12,6 +12,7 @@ use RRZE\FAQ\Layout;
 use RRZE\FAQ\RESTAPI;
 use RRZE\FAQ\Settings;
 use RRZE\FAQ\Shortcode;
+use RRZE\FAQ\FAQWidget;
 
 
 /**
@@ -52,10 +53,17 @@ class Main {
         $layout = new Layout();
         $shortcode = new Shortcode();
 
+        // Widget
+        add_action( 'widgets_init', [$this, 'loadWidget'] );    
+
         // Auto-Sync
         add_action( 'rrze_faq_auto_sync', [$this, 'runFAQCronjob'] );
     }
 
+    public function loadWidget() {
+        $widget = new FAQwidget();
+        register_widget( $widget );
+    }
 
     /**
      * Enqueue der globale Skripte.
