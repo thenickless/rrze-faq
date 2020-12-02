@@ -82,13 +82,14 @@ class FAQwidget extends \WP_Widget {
 		$output = '';
 
 		if( ! empty($posts) ) {
-			$output = "<select id='{$this->get_field_id('faqID')}' name='{$this->get_field_name('faqID')}' class='widefat'>";
-            $output .= "<option value='0'>--- " . __('Choose a FAQ', 'rrze-faq') . " ---</option>";
+            $output = "<p><label for='{$this->get_field_id('faqID')}'>" . __('Choose a FAQ', 'rrze-faq') . ":</label> ";
+			$output .= "<select id='{$this->get_field_id('faqID')}' name='{$this->get_field_name('faqID')}' class='widefat'>";
+            $output .= "<option value='0'>---</option>";
 			foreach($posts as $post) {
                 $sSelected = selected($selectedID, $post->ID, FALSE );
 				$output .= "<option value='{$post->ID}' $sSelected>" . esc_html( $post->post_title ) . "</option>";
 			}
-			$output .= "</select>";
+			$output .= "</select></p>";
 		}
 		$html = apply_filters( 'dropdownFAQs', $output, $args, $posts );
 	    echo $html;
@@ -100,12 +101,13 @@ class FAQwidget extends \WP_Widget {
             2 => __('show question and answer opened', 'rrze-faq'),
             3 => __('hide question', 'rrze-faq')
         ];
-        $output = "<select id='{$this->get_field_id('display')}' name='{$this->get_field_name('display')}' class='widefat'>";
+        $output = "<p><label for='{$this->get_field_id('display')}'>" . __('Display options:', 'rrze-faq') . ":</label>";
+        $output .= "<select id='{$this->get_field_id('display')}' name='{$this->get_field_name('display')}' class='widefat'>";
         foreach($aOptions as $ID => $txt){
             $sSelected = selected($selectedID, $ID, FALSE );
             $output .= "<option value='$ID' $sSelected>$txt</option>";
         }
-        $output .= "</select>";
+        $output .= "</select></p>";
         echo $output;
     }
 
@@ -114,8 +116,8 @@ class FAQwidget extends \WP_Widget {
         $output = '';
         foreach($aFields as $field){
             $val = $dates[$field];
-            $output .= "<p><label for='$field'>" . ucfirst($field) . ":</label> ";
-            $output .= "<input type='date' id='{$this->get_field_id($field)}' name='{$this->get_field_name($field)}' value='$val'></p>";
+            $output .= "<p><label for='$field'>" . ucfirst($field) . ":</label><br>";
+            $output .= "<input type='date' id='{$this->get_field_id($field)}' name='{$this->get_field_name($field)}' value='$val' class='widefat'></p>";
         }
         echo $output;
     }
@@ -133,7 +135,7 @@ class FAQwidget extends \WP_Widget {
         $this->dropdownFAQs($faqID);
 
         $args = [
-            'show_option_none' => '--- ' . __('Choose a category', 'rrze-faq') . ' ---',
+            'show_option_none' => '---',
             'name' => $this->get_field_name('catID'),
             'taxonomy' => 'faq_category',
             'hide_empty' => 0,
@@ -141,7 +143,9 @@ class FAQwidget extends \WP_Widget {
             'selected' => $catID,
             'class' => 'widefat',
         ];
+        echo "<p><label for='{$this->get_field_name('catID')}'>" . __('or choose a Category to display a random FAQ', 'rrze-faq') . ":</label>";
         wp_dropdown_categories($args);
+        echo '</p>';
         $this->dateFields($dates);
         $this->displaySelect($display);
     }
