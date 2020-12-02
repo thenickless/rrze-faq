@@ -1,9 +1,11 @@
 # RRZE-FAQ
-WordPress-Plugin: Shortcode zur Einbindung von eigenen FAQ sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
+WordPress-Plugin: Shortcode / Gutenberg Block / Widget zur Einbindung von eigenen FAQ sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
 
 ## Allgemeines
 
 Das Plugin kann genutzt werden, um FAQ zu erstellen und FAQ von Websites aus dem FAU-Netzwerk zu synchronisieren. Es kann nach Kategorien und Schlagwörtern gefiltert werden. Das Layout lässt sich derart bestimmen, dass ein A-Z Register, die Kategorien bzw Schlagwörter als Links oder als Links, die sich nach Anzahl der gefundenen Treffer in der Größe unterscheiden ausgebeben werden kann. Kategorien und Schlagwörter werden in Akkordeons gruppiert. Es ist ebenso möglich, einzelne FAQ auszugeben.
+Darüberhinaus wird ein Widget bereitgestellt. Einstellbar sind die Anzeigedauer und ob ein bestimmtes FAQ oder aus einer gewählten Kategorie ein zufälliges FAQ angezeigt werden soll.
+
 
 ## Verwendung des Shortcodes
 
@@ -82,5 +84,8 @@ Das Synchronisieren kann über den Menüpunkt "Einstellungen" -> "RRZE FAQ" -> T
 Synchronisierte FAQ können nun wie selbst erstellte FAQ mit dem Shortcode ausgegeben werden.
 
 
+## Verwendung als Widget
+
+Unter /wp-admin/widgets.php wird das Widget als "FAQ Widget" angeboten. Per drag&drop lässt es sich in einen Bereich wie z.B. der Sidebar einbetten. Einstellbar sind die Anzeigedauer und ob ein bestimmtes FAQ oder aus einer gewählten Kategorie ein zufälliges FAQ angezeigt werden soll.
 
 

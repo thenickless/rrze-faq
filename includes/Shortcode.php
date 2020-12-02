@@ -400,13 +400,6 @@ class Shortcode {
                     }
                     $accordion .= '[/collapsibles]';
 
-
-                    // echo 'here we are ';
-
-                    // echo '$accordion = ' . $accordion;
-                    
-                    // exit;
-
                     $content .= do_shortcode( $accordion );
                 } else {  
                     // attribut glossary is not given  

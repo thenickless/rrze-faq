@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 15:13+0000\n"
+"POT-Creation-Date: 2020-12-02 14:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -14,6 +14,511 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.4; wp-5.4.1"
+
+#: includes/API.php:21 includes/API.php:24
+msgid " is already in use."
+msgstr ""
+
+#: includes/API.php:31 includes/API.php:39
+msgid " is not valid."
+msgstr ""
+
+#: includes/Sync.php:38
+msgid " updated"
+msgstr ""
+
+#: includes/Shortcode.php:472 includes/Shortcode.php:500
+msgid "-- all --"
+msgstr ""
+
+#: config/config.php:218
+msgid "-- hidden --"
+msgstr ""
+
+#: config/config.php:219
+msgid "A - Z"
+msgstr ""
+
+#: includes/Layout.php:105
+msgid "Accordion with all entries"
+msgstr ""
+
+#: includes/Layout.php:103
+msgid "Accordion with category"
+msgstr ""
+
+#: includes/Layout.php:104
+msgid "Accordion with tag"
+msgstr ""
+
+#: includes/Settings.php:296
+msgid "Add domain"
+msgstr ""
+
+#: includes/CPT.php:32
+msgid "Add FAQ"
+msgstr ""
+
+#: includes/CPT.php:79 includes/CPT.php:80
+msgid "Add new category"
+msgstr ""
+
+#: includes/CPT.php:33
+msgid "Add new FAQ"
+msgstr ""
+
+#: includes/CPT.php:101 includes/CPT.php:102
+msgid "Add new tag"
+msgstr ""
+
+#: config/config.php:290
+msgid "Additonal CSS-class(es) for sourrounding DIV"
+msgstr ""
+
+#: includes/CPT.php:86
+msgid "All categories"
+msgstr ""
+
+#: includes/CPT.php:35
+msgid "All FAQ"
+msgstr ""
+
+#: config/config.php:156 config/config.php:158
+msgid ""
+"All FAQ that match to the selected categories will be updated or inserted. "
+"Already synchronized FAQ that refer to categories which are not selected "
+"will be deleted. FAQ that have been deleted at the remote website will be "
+"deleted on this website, too."
+msgstr ""
+
+#: includes/Sync.php:48
+msgid "All synchronizations completed"
+msgstr ""
+
+#: includes/CPT.php:108
+msgid "All tags"
+msgstr ""
+
+#: includes/Sync.php:38
+msgid "and"
+msgstr ""
+
+#: config/config.php:306
+msgid "ASC"
+msgstr ""
+
+#: includes/Shortcode.php:235
+msgid ""
+"Attribute color is not correct. Please use either 'medfak', 'natfak', "
+"'rwfak', 'philfak' or 'techfak'"
+msgstr ""
+
+#: includes/Shortcode.php:232
+msgid ""
+"Attribute glossary is not correct. Please use either glossary=\"category\" "
+"or glossary=\"tag\"."
+msgstr ""
+
+#: config/config.php:136 config/config.php:208 config/config.php:231
+#: includes/CPT.php:73 templates/template-parts/faq_content.php:33
+msgid "Categories"
+msgstr ""
+
+#: includes/CPT.php:78 includes/Layout.php:171
+msgid "Category"
+msgstr ""
+
+#: includes/FAQWidget.php:85
+msgid "Choose a FAQ"
+msgstr ""
+
+#: includes/CPT.php:88
+msgid "Choose from the most used categories"
+msgstr ""
+
+#: includes/CPT.php:110
+msgid "Choose from the most used tags"
+msgstr ""
+
+#: config/config.php:284
+msgid "Color"
+msgstr ""
+
+#: includes/Layout.php:76
+msgid "Criterion for sorting the output of the shortcode"
+msgstr ""
+
+#: config/config.php:172
+msgid "daily"
+msgstr ""
+
+#: includes/Settings.php:300
+msgid "Delete logfile"
+msgstr ""
+
+#: includes/Settings.php:342
+msgid "Delete selected domains"
+msgstr ""
+
+#: includes/Sync.php:38
+msgid "deleted"
+msgstr ""
+
+#: config/config.php:307
+msgid "DESC"
+msgstr ""
+
+#: includes/FAQWidget.php:104
+msgid "Display options:"
+msgstr ""
+
+#: includes/FAQWidget.php:17
+msgid "Displays a FAQ"
+msgstr ""
+
+#: config/config.php:144
+msgid "Do not synchronize"
+msgstr ""
+
+#: includes/Sync.php:32 includes/Sync.php:38
+msgid "Domain"
+msgstr ""
+
+#: config/config.php:85
+msgid "Domains"
+msgstr ""
+
+#: includes/CPT.php:89
+msgid "Edit category"
+msgstr ""
+
+#: includes/CPT.php:34
+msgid "Edit FAQ"
+msgstr ""
+
+#: includes/CPT.php:111
+msgid "Edit tag"
+msgstr ""
+
+#: includes/FAQWidget.php:117
+msgid "End"
+msgstr ""
+
+#: config/config.php:109
+msgid "Enter a short name for this domain."
+msgstr ""
+
+#: includes/Layout.php:113
+msgid "Enter question here"
+msgstr ""
+
+#: config/config.php:115
+msgid "Enter the domain's URL you want to receive FAQ from."
+msgstr ""
+
+#: config/config.php:243 includes/CPT.php:31 includes/CPT.php:45
+msgid "FAQ"
+msgstr ""
+
+#: includes/CPT.php:46
+msgid "FAQ informations"
+msgstr ""
+
+#: includes/FAQWidget.php:16
+msgid "FAQ Widget"
+msgstr ""
+
+#: includes/CPT.php:29
+msgctxt "FAQ, synonym or glossary entries"
+msgid "FAQ"
+msgstr ""
+
+#: config/config.php:203
+msgid "Find the settings on the right side"
+msgstr ""
+
+#: config/config.php:71
+msgid "For more information"
+msgstr ""
+
+#: config/config.php:168
+msgid "Frequency"
+msgstr ""
+
+#: config/config.php:213
+msgid "Glossary content"
+msgstr ""
+
+#: config/config.php:225
+msgid "Glossary style"
+msgstr ""
+
+#: config/config.php:68
+msgid "Here comes the Context Help content."
+msgstr ""
+
+#: config/config.php:248
+msgid "Hide accordeon"
+msgstr ""
+
+#: includes/FAQWidget.php:102
+msgid "hide question"
+msgstr ""
+
+#: config/config.php:255
+msgid "Hide title"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://blogs.fau.de/webworking/"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
+msgstr ""
+
+#: config/config.php:296 includes/Layout.php:166 includes/Layout.php:175
+msgid "ID"
+msgstr ""
+
+#: includes/Layout.php:103
+msgid "If there is more than one category listed, use at least one of them."
+msgstr ""
+
+#: includes/Layout.php:104
+msgid "If there is more than one tag listed, use at least one of them."
+msgstr ""
+
+#: config/config.php:155
+msgid "Info"
+msgstr ""
+
+#. id, used as the html id att
+#: includes/Layout.php:146
+msgid "Integration in pages and posts"
+msgstr ""
+
+#: config/config.php:269
+msgid "Load website with opened accordeons"
+msgstr ""
+
+#: config/config.php:93
+msgid "Logfile"
+msgstr ""
+
+#: includes/Settings.php:944 includes/Settings.php:947
+msgid "Logfile is empty."
+msgstr ""
+
+#: config/config.php:162
+msgid "Mode"
+msgstr ""
+
+#: includes/Sync.php:38
+msgid "new"
+msgstr ""
+
+#: includes/CPT.php:81
+msgid "New category"
+msgstr ""
+
+#: includes/CPT.php:103
+msgid "New tag"
+msgstr ""
+
+#: includes/Main.php:185
+msgid "Next automatically synchronization:"
+msgstr ""
+
+#: includes/CPT.php:85
+msgid "No category found"
+msgstr ""
+
+#: includes/Settings.php:373
+msgid "no category with source = \"website\" found"
+msgstr ""
+
+#: includes/CPT.php:107
+msgid "No tag found"
+msgstr ""
+
+#: config/config.php:207
+msgid "none"
+msgstr ""
+
+#: includes/FAQWidget.php:149
+msgid "or choose a Category to display a FAQ randomly"
+msgstr ""
+
+#: config/config.php:311
+msgid "Order"
+msgstr ""
+
+#: config/config.php:70
+msgid "Overview"
+msgstr ""
+
+#: includes/Settings.php:341
+msgid ""
+"Please note: \"Delete selected domains\" will DELETE every FAQ on this "
+"website that has been fetched from the selected domains."
+msgstr ""
+
+#: config/config.php:137
+msgid "Please select the categories you'd like to fetch FAQ to."
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und "
+"mittels Shortcode oder als Block (Gutenberg Editor) einzubinden."
+msgstr ""
+
+#: includes/Sync.php:38 includes/Sync.php:48
+msgid "Required time:"
+msgstr ""
+
+#. Name of the plugin
+#: config/config.php:51 config/config.php:52
+msgid "RRZE FAQ"
+msgstr ""
+
+#: config/config.php:55
+msgid "RRZE FAQ Settings"
+msgstr ""
+
+#. Author of the plugin
+msgid "RRZE Webteam"
+msgstr ""
+
+#: config/config.php:71
+msgid "RRZE Webteam on Github"
+msgstr ""
+
+#: includes/CPT.php:84
+msgid "Search categories"
+msgstr ""
+
+#: includes/CPT.php:36
+msgid "Search FAQ"
+msgstr ""
+
+#: includes/CPT.php:106
+msgid "Search tags"
+msgstr ""
+
+#: includes/Sync.php:38 includes/Sync.php:48
+msgid "seconds"
+msgstr ""
+
+#: includes/CPT.php:87
+msgid "Separate categories with commas"
+msgstr ""
+
+#: includes/CPT.php:109
+msgid "Separate tags with commas"
+msgstr ""
+
+#: includes/Sync.php:50
+msgid "Settings updated"
+msgstr ""
+
+#: config/config.php:108 config/config.php:122
+msgid "Short name"
+msgstr ""
+
+#: config/config.php:262
+msgid "Show \"expand all\" button"
+msgstr ""
+
+#: includes/CPT.php:83
+msgid "Show categories"
+msgstr ""
+
+#: includes/CPT.php:82
+msgid "Show category"
+msgstr ""
+
+#: includes/FAQWidget.php:100
+msgid "show question and answer"
+msgstr ""
+
+#: includes/FAQWidget.php:101
+msgid "show question and answer opened"
+msgstr ""
+
+#: includes/CPT.php:104
+msgid "Show tag"
+msgstr ""
+
+#: includes/CPT.php:105
+msgid "Show tags"
+msgstr ""
+
+#: includes/Layout.php:102
+msgid "Single entries"
+msgstr ""
+
+#: includes/CPT.php:30
+msgctxt "Single FAQ, synonym or glossary "
+msgid "FAQ"
+msgstr ""
+
+#. id, used as the html id att
+#: config/config.php:301 includes/Layout.php:155
+msgid "Sort"
+msgstr ""
+
+#: includes/Layout.php:164
+msgid "Sort criterion"
+msgstr ""
+
+#: config/config.php:297
+msgid "Sort field"
+msgstr ""
+
+#: includes/Layout.php:165 includes/Layout.php:174 includes/Layout.php:205
+msgid "Source"
+msgstr ""
+
+#: includes/FAQWidget.php:116
+msgid "Start"
+msgstr ""
+
+#: includes/Sync.php:38
+msgid "Synchronization completed."
+msgstr ""
+
+#: includes/Sync.php:32
+msgid ""
+"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
+"synchronized:"
+msgstr ""
+
+#: config/config.php:89 config/config.php:143
+msgid "Synchronize"
+msgstr ""
+
+#: config/config.php:163
+msgid "Synchronize automatically"
+msgstr ""
+
+#: config/config.php:221
+msgid "Tabs"
+msgstr ""
+
+#: includes/CPT.php:100 includes/Layout.php:172
+msgid "Tag"
+msgstr ""
+
+#: config/config.php:220
+msgid "Tagcloud"
+msgstr ""
+
+#: config/config.php:209 config/config.php:237 includes/CPT.php:95
+#: templates/template-parts/faq_content.php:34
+msgid "Tags"
+msgstr ""
 
 #: rrze-faq.php:91
 #, php-format
@@ -29,500 +534,35 @@ msgid ""
 "WordPress version %2$s."
 msgstr ""
 
-#. Name of the plugin
-#: config/config.php:22 config/config.php:23
-msgid "RRZE FAQ"
-msgstr ""
-
-#: config/config.php:26
-msgid "RRZE FAQ Settings"
-msgstr ""
-
-#: config/config.php:39
-msgid "Here comes the Context Help content."
-msgstr ""
-
-#: config/config.php:41
-msgid "Overview"
-msgstr ""
-
-#: config/config.php:42
-msgid "For more information"
-msgstr ""
-
-#: config/config.php:42
-msgid "RRZE Webteam on Github"
-msgstr ""
-
-#: config/config.php:56
-msgid "Domains"
-msgstr ""
-
-#: config/config.php:60 config/config.php:114
-msgid "Synchronize"
-msgstr ""
-
-#: config/config.php:64
-msgid "Logfile"
-msgstr ""
-
-#: config/config.php:79 config/config.php:93
-msgid "Short name"
-msgstr ""
-
-#: config/config.php:80
-msgid "Enter a short name for this domain."
-msgstr ""
-
-#: config/config.php:85 config/config.php:100
-msgid "URL"
-msgstr ""
-
-#: config/config.php:86
-msgid "Enter the domain's URL you want to receive FAQ from."
-msgstr ""
-
-#: config/config.php:94
-msgid "Use this name as attribute 'domain' in shortcode [faq]"
-msgstr ""
-
-#: config/config.php:107 config/config.php:179 config/config.php:202 
-#: includes/Layout.php:244
-msgid "Categories"
-msgstr ""
-
-#: config/config.php:108
-msgid "Please select the categories you'd like to fetch FAQ to."
-msgstr ""
-
-#: config/config.php:115
-msgid "Do not synchronize"
-msgstr ""
-
-#: config/config.php:126
-msgid "Info"
-msgstr ""
-
-#: config/config.php:127 config/config.php:129
-msgid ""
-"All FAQ that match to the selected categories will be updated or inserted. "
-"Already synchronized FAQ that refer to categories which are not selected "
-"will be deleted. FAQ that have been deleted at the remote website will be "
-"deleted on this website, too."
-msgstr ""
-
-#: config/config.php:133
-msgid "Mode"
-msgstr ""
-
-#: config/config.php:134
-msgid "Synchronize automatically"
-msgstr ""
-
-#: config/config.php:139
-msgid "Frequency"
-msgstr ""
-
-#: config/config.php:143
-msgid "daily"
-msgstr ""
-
-#: config/config.php:144
-msgid "twicedaily"
-msgstr ""
-
-#: config/config.php:174
-msgid "Find the settings on the right side"
-msgstr ""
-
-#: config/config.php:178
-msgid "none"
-msgstr ""
-
-#: config/config.php:180 config/config.php:208 includes/CPT.php:92 
-#: includes/Layout.php:245
-msgid "Tags"
-msgstr ""
-
-#: config/config.php:184
-msgid "Glossary content"
-msgstr ""
-
-#: config/config.php:189
-msgid "-- hidden --"
-msgstr ""
-
-#: config/config.php:190
-msgid "A - Z"
-msgstr ""
-
-#: config/config.php:191
-msgid "Tagcloud"
-msgstr ""
-
-#: config/config.php:192
-msgid "Tabs"
-msgstr ""
-
-#: config/config.php:196
-msgid "Glossary style"
-msgstr ""
-
-#: config/config.php:214 includes/CPT.php:28 includes/CPT.php:42
-msgid "FAQ"
-msgstr ""
-
-#: config/config.php:219
-msgid "Hide accordeon"
-msgstr ""
-
-#: config/config.php:226
-msgid "Hide title"
-msgstr ""
-
-#: config/config.php:233
-msgid "Show \"expand all\" button"
-msgstr ""
-
-#: config/config.php:240
-msgid "Load website with opened accordeons"
-msgstr ""
-
-#: config/config.php:255
-msgid "Color"
-msgstr ""
-
-#: config/config.php:261
-msgid "Additonal CSS-class(es) for sourrounding DIV"
-msgstr ""
-
-#: config/config.php:266
-msgid "Title"
-msgstr ""
-
-#: config/config.php:267 includes/Layout.php:167 includes/Layout.php:176
-msgid "ID"
-msgstr ""
-
-#: config/config.php:268
-msgid "Sort field"
-msgstr ""
-
 #. id, used as the html id att
-#: config/config.php:272 includes/Layout.php:156
-msgid "Sort"
-msgstr ""
-
-#: config/config.php:277
-msgid "ASC"
-msgstr ""
-
-#: config/config.php:278
-msgid "DESC"
-msgstr ""
-
-#: config/config.php:282
-msgid "Order"
-msgstr ""
-
-#: includes/API.php:21 includes/API.php:24
-msgid " is already in use."
-msgstr ""
-
-#: includes/API.php:31 includes/API.php:39
-msgid " is not valid."
-msgstr ""
-
-#: includes/CPT.php:26
-msgctxt "FAQ, synonym or glossary entries"
-msgid "FAQ"
-msgstr ""
-
-#: includes/CPT.php:27
-msgctxt "Single FAQ, synonym or glossary "
-msgid "FAQ"
-msgstr ""
-
-#: includes/CPT.php:29
-msgid "Add FAQ"
-msgstr ""
-
-#: includes/CPT.php:30
-msgid "Add new FAQ"
-msgstr ""
-
-#: includes/CPT.php:31
-msgid "Edit FAQ"
-msgstr ""
-
-#: includes/CPT.php:32
-msgid "All FAQ"
-msgstr ""
-
-#: includes/CPT.php:33
-msgid "Search FAQ"
-msgstr ""
-
-#: includes/CPT.php:43
-msgid "FAQ informations"
-msgstr ""
-
-#: includes/CPT.php:70 includes/CPT.php:75 includes/Layout.php:172
-msgid "Category"
-msgstr ""
-
-#: includes/CPT.php:76 includes/CPT.php:77
-msgid "Add new category"
-msgstr ""
-
-#: includes/CPT.php:78
-msgid "New category"
-msgstr ""
-
-#: includes/CPT.php:79
-msgid "Show category"
-msgstr ""
-
-#: includes/CPT.php:80
-msgid "Show categories"
-msgstr ""
-
-#: includes/CPT.php:81
-msgid "Search categories"
-msgstr ""
-
-#: includes/CPT.php:82
-msgid "No category found"
-msgstr ""
-
-#: includes/CPT.php:83
-msgid "All categories"
-msgstr ""
-
-#: includes/CPT.php:84
-msgid "Separate categories with commas"
-msgstr ""
-
-#: includes/CPT.php:85
-msgid "Choose from the most used categories"
-msgstr ""
-
-#: includes/CPT.php:86
-msgid "Edit category"
-msgstr ""
-
-#: includes/CPT.php:87
-msgid "Update category"
-msgstr ""
-
-#: includes/CPT.php:97 includes/Layout.php:173
-msgid "Tag"
-msgstr ""
-
-#: includes/CPT.php:98 includes/CPT.php:99
-msgid "Add new tag"
-msgstr ""
-
-#: includes/CPT.php:100
-msgid "New tag"
-msgstr ""
-
-#: includes/CPT.php:101
-msgid "Show tag"
-msgstr ""
-
-#: includes/CPT.php:102
-msgid "Show tags"
-msgstr ""
-
-#: includes/CPT.php:103
-msgid "Search tags"
-msgstr ""
-
-#: includes/CPT.php:104
-msgid "No tag found"
-msgstr ""
-
-#: includes/CPT.php:105
-msgid "All tags"
-msgstr ""
-
-#: includes/CPT.php:106
-msgid "Separate tags with commas"
-msgstr ""
-
-#: includes/CPT.php:107
-msgid "Choose from the most used tags"
-msgstr ""
-
-#: includes/CPT.php:108
-msgid "Edit tag"
-msgstr ""
-
-#: includes/CPT.php:109
-msgid "Update tag"
-msgstr ""
-
-#: includes/Layout.php:77
-msgid "Criterion for sorting the output of the shortcode"
-msgstr ""
-
-#: includes/Layout.php:103
-msgid "Single entries"
-msgstr ""
-
-#: includes/Layout.php:104
-msgid "Accordion with category"
-msgstr ""
-
-#: includes/Layout.php:104
-msgid "If there is more than one category listed, use at least one of them."
-msgstr ""
-
-#: includes/Layout.php:105
-msgid "Accordion with tag"
-msgstr ""
-
-#: includes/Layout.php:105
-msgid "If there is more than one tag listed, use at least one of them."
-msgstr ""
-
-#: includes/Layout.php:106
-msgid "Accordion with all entries"
-msgstr ""
-
-#: includes/Layout.php:114
-msgid "Enter question here"
-msgstr ""
-
-#. id, used as the html id att
-#: includes/Layout.php:137
+#: includes/Layout.php:136
 msgid "This FAQ cannot be edited because it is sychronized"
 msgstr ""
 
-#: includes/Layout.php:137
+#: config/config.php:295
+msgid "Title"
+msgstr ""
+
+#: config/config.php:173
+msgid "twicedaily"
+msgstr ""
+
+#: includes/CPT.php:90
+msgid "Update category"
+msgstr ""
+
+#: includes/CPT.php:112
+msgid "Update tag"
+msgstr ""
+
+#: config/config.php:114 config/config.php:129
+msgid "URL"
+msgstr ""
+
+#: config/config.php:123
+msgid "Use this name as attribute 'domain' in shortcode [faq]"
+msgstr ""
+
+#: includes/Layout.php:136
 msgid "You can edit it at the source"
-msgstr ""
-
-#. id, used as the html id att
-#: includes/Layout.php:147
-msgid "Integration in pages and posts"
-msgstr ""
-
-#: includes/Layout.php:165
-msgid "Sort criterion"
-msgstr ""
-
-#: includes/Layout.php:166 includes/Layout.php:175 includes/Layout.php:206
-msgid "Source"
-msgstr ""
-
-#: includes/Main.php:173
-msgid "Next automatically synchronization:"
-msgstr ""
-
-#: includes/Settings.php:296
-msgid "Add domain"
-msgstr ""
-
-#: includes/Settings.php:300
-msgid "Delete logfile"
-msgstr ""
-
-#: includes/Settings.php:341
-msgid ""
-"Please note: \"Delete selected domains\" will DELETE every FAQ on this "
-"website that has been fetched from the selected domains."
-msgstr ""
-
-#: includes/Settings.php:342
-msgid "Delete selected domains"
-msgstr ""
-
-#: includes/Settings.php:373
-msgid "no category with source = \"website\" found"
-msgstr ""
-
-#: includes/Settings.php:944 includes/Settings.php:947
-msgid "Logfile is empty."
-msgstr ""
-
-#: includes/Shortcode.php:232
-msgid ""
-"Attribute glossary is not correct. Please use either glossary=\"category\" "
-"or glossary=\"tag\"."
-msgstr ""
-
-#: includes/Shortcode.php:235
-msgid ""
-"Attribute color is not correct. Please use either 'medfak', 'natfak', "
-"'rwfak', 'philfak' or 'techfak'"
-msgstr ""
-
-#: includes/Shortcode.php:479 includes/Shortcode.php:507
-msgid "-- all --"
-msgstr ""
-
-#: includes/Sync.php:32 includes/Sync.php:38
-msgid "Domain"
-msgstr ""
-
-#: includes/Sync.php:32
-msgid ""
-"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
-"synchronized:"
-msgstr ""
-
-#: includes/Sync.php:38
-msgid "Synchronization completed."
-msgstr ""
-
-#: includes/Sync.php:38
-msgid "new"
-msgstr ""
-
-#: includes/Sync.php:38
-msgid " updated"
-msgstr ""
-
-#: includes/Sync.php:38
-msgid "and"
-msgstr ""
-
-#: includes/Sync.php:38
-msgid "deleted"
-msgstr ""
-
-#: includes/Sync.php:38 includes/Sync.php:48
-msgid "Required time:"
-msgstr ""
-
-#: includes/Sync.php:38 includes/Sync.php:48
-msgid "seconds"
-msgstr ""
-
-#: includes/Sync.php:48
-msgid "All synchronizations completed"
-msgstr ""
-
-#: includes/Sync.php:50
-msgid "Settings updated"
-msgstr ""
-
-#. Description of the plugin
-msgid ""
-"Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und "
-"mittels Shortcode oder als Block (Gutenberg Editor) einzubinden."
-msgstr ""
-
-#. URI of the plugin
-msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
-msgstr ""
-
-#. Author of the plugin
-msgid "RRZE Webteam"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://blogs.fau.de/webworking/"
 msgstr ""
