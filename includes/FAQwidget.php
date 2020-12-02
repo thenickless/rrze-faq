@@ -32,43 +32,59 @@ class FAQwidget extends \WP_Widget {
         echo __( 'Hello, World!', 'rrze-faq' );
         echo $args['after_widget'];
     }
+
+    public function dropdownFAQs($selectedID = 0) {
+		$args = [
+            'post_type'             => 'faq',
+            'pagination'            => FALSE,
+			'posts_per_page'        => -1,
+			'post_status'           => 'publish',
+			'cache_results'         => TRUE,
+			'cache_post_meta_cache' => TRUE,
+			'order'                 => 'ASC',
+			'orderby'               => 'post_title',
+        ];
+
+		$posts  = get_posts($args);
+		$output = '';
+
+		if( ! empty($posts) ) {
+			$output = "<select name='{$this->get_field_name('faq_id')}' class='widefat'>";
+            $output .= "<option value='0'>--- " . __('Choose a FAQ', 'rrze-faq') . " ---</option>";
+			foreach($posts as $post) {
+                $sSelected = selected($selectedID, $post->ID, FALSE );
+				$output .= "<option value='{$post->ID}' $sSelected>" . esc_html( $post->post_title ) . "</option>";
+			}
+			$output .= "</select>";
+		}
+		$html = apply_filters( 'dropdownFAQs', $output, $args, $posts );
+	    echo $html;
+	}
               
     // Widget Backend 
     public function form( $instance ) {
-        if ( isset( $instance[ 'title' ] ) ) {
-            $title = 'TEST' . $instance[ 'title' ];
-        }else{
-            $title = __( 'New title', 'rrze-faq' );
-        }
-        // Widget admin form
+        $faq_id = (isset($instance['faq_id'] ) ? $instance['faq_id'] : 0);
+        $faq_cat = (isset($instance['faq_cat']) ? $instance['faq_cat'] : '');
 
-        // fields:
-        // 1. drop-down:
-        // random
-        // explizit FAQ
-        // 2. date from - date to (if empty: unlimited)
+        $this->dropdownFAQs($faq_id);
 
-        // fill select id ( = FAQ )
-        // $faqs = get_posts( array(
-        //     'posts_per_page'  => -1,
-        //     'post_type' => 'faq',
-        //     'orderby' => 'title',
-        //     'order' => 'ASC'
-        // ));
-
-
-        ?>
-        <p>
-        <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
-        <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-        </p>
-        <?php 
+        $args = [
+            'show_option_none' => '--- ' . __('Choose a category', 'rrze-faq') . ' ---',
+            'name' => $this->get_field_name('faq_cat'),
+            'taxonomy' => 'faq_category',
+            'hide_empty' => 0,
+            'orderby' => 'name',
+            'selected' => $faq_cat,
+            'class' => 'widefat',
+        ];
+        wp_dropdown_categories($args);
     }
           
     // Updating widget replacing old instances with new
     public function update( $new_instance, $old_instance ) {
-        $instance = array();
-        $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+        $instance = [];
+        $instance['faq_id'] = ( !empty( $new_instance['faq_id'] ) ) ? $new_instance['faq_id'] : 0;
+        $instance['faq_cat'] = ( !empty( $new_instance['faq_cat'] ) ) ? strip_tags( $new_instance['faq_cat'] ) : '';
         return $instance;
     }
 } 
