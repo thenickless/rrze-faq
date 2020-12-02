@@ -73,7 +73,7 @@ class FAQwidget extends \WP_Widget {
 		$output = '';
 
 		if( ! empty($posts) ) {
-			$output = "<select name='{$this->get_field_name('faqID')}' class='widefat'>";
+			$output = "<select id='{$this->get_field_id('faqID')}' name='{$this->get_field_name('faqID')}' class='widefat'>";
             $output .= "<option value='0'>--- " . __('Choose a FAQ', 'rrze-faq') . " ---</option>";
 			foreach($posts as $post) {
                 $sSelected = selected($selectedID, $post->ID, FALSE );
@@ -85,6 +85,21 @@ class FAQwidget extends \WP_Widget {
 	    echo $html;
     }
     
+    public function displaySelect($selectedID = 0){
+        $aOptions = [
+            1 => __('show answer, hide question', 'rrze-faq'),
+            2 => __('show question and answer', 'rrze-faq'),
+            3 => __('show question and answer opened', 'rrze-faq')
+        ];
+        $output = "<select id='{$this->get_field_id('display')}' name='{$this->get_field_name('display')}' class='widefat'>";
+        foreach($aOptions as $ID => $txt){
+            $sSelected = selected($selectedID, $ID, FALSE );
+            $output .= "<option value='$ID' $sSelected>$txt</option>";
+        }
+        $output .= "</select>";
+        echo $output;
+    }
+
     public function dateFields($dates){
         $aFields = ['start', 'end'];
         $output = '';
@@ -104,6 +119,7 @@ class FAQwidget extends \WP_Widget {
             'start' => (isset($instance['start']) ? $instance['start'] : ''),
             'end' => (isset($instance['end']) ? $instance['end'] : '')
         ];
+        $display = (isset($instance['display']) ? $instance['display'] : 0);
 
         $this->dropdownFAQs($faqID);
 
@@ -118,15 +134,17 @@ class FAQwidget extends \WP_Widget {
         ];
         wp_dropdown_categories($args);
         $this->dateFields($dates);
+        $this->displaySelect($display);
     }
           
     // Updating widget replacing old instances with new
     public function update( $new_instance, $old_instance ) {
         $instance = [];
-        $instance['faqID'] = ( !empty( $new_instance['faqID'] ) ) ? $new_instance['faqID'] : 0;
-        $instance['catID'] = ( !empty( $new_instance['catID'] ) ) ? $new_instance['catID'] : 0;
-        $instance['start'] = ( !empty( $new_instance['start'] ) ) ? $new_instance['start'] : '';
-        $instance['end'] = ( !empty( $new_instance['end'] ) ) ? $new_instance['end'] : '';
+        $instance['faqID'] = (isset($new_instance['faqID']) ? $new_instance['faqID'] : 0);
+        $instance['catID'] = (isset($new_instance['catID']) ? $new_instance['catID'] : 0);
+        $instance['start'] = (isset( $new_instance['start']) ? $new_instance['start'] : '');
+        $instance['end'] = (isset( $new_instance['end']) ? $new_instance['end'] : '');
+        $instance['display'] = (isset($new_instance['display']) ? $new_instance['display'] : 0);
         return $instance;
     }
 } 
