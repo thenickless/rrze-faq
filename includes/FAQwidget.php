@@ -18,19 +18,33 @@ class FAQwidget extends \WP_Widget {
         );
     }
       
+
+    public function getRandomFAQIDByCatgory($catID){
+        $aFaqIDs = get_posts([
+            'posts_per_page' => -1,
+            'post_type' => 'faq',
+            'fields' => 'ids',
+            'tax_query' => [[
+                'taxonomy' => 'faq_category',
+                'field' => 'term_id',
+                'terms' => $catID,
+            ]]
+        ]);
+        return $aFaqIDs[array_rand($aFaqIDs, 1)];
+    }
+
     // Creating widget front-end
     public function widget( $args, $instance ) {
-        $title = apply_filters( 'widget_title', $instance['title'] );
-          
-        // before and after widget arguments are defined by themes
-        echo $args['before_widget'];
-        if ( ! empty( $title ) ){
-            echo $args['before_title'] . $title . $args['after_title'];
+        $faqID = (isset($instance['faqID'] ) ? $instance['faqID'] : 0);
+        $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
+
+        $faqID = ($faqID ? $faqID : ($catID ? $this->getRandomFAQIDByCatgory($catID) : 0));
+
+        if ($faqID){
+            echo $args['before_widget'];
+            echo do_shortcode('[faq id="'. $faqID . '"]');
+            echo $args['after_widget'];
         }
-          
-        // This is where you run the code and display the output
-        echo __( 'Hello, World!', 'rrze-faq' );
-        echo $args['after_widget'];
     }
 
     public function dropdownFAQs($selectedID = 0) {
@@ -49,7 +63,7 @@ class FAQwidget extends \WP_Widget {
 		$output = '';
 
 		if( ! empty($posts) ) {
-			$output = "<select name='{$this->get_field_name('faq_id')}' class='widefat'>";
+			$output = "<select name='{$this->get_field_name('faqID')}' class='widefat'>";
             $output .= "<option value='0'>--- " . __('Choose a FAQ', 'rrze-faq') . " ---</option>";
 			foreach($posts as $post) {
                 $sSelected = selected($selectedID, $post->ID, FALSE );
@@ -63,18 +77,18 @@ class FAQwidget extends \WP_Widget {
               
     // Widget Backend 
     public function form( $instance ) {
-        $faq_id = (isset($instance['faq_id'] ) ? $instance['faq_id'] : 0);
-        $faq_cat = (isset($instance['faq_cat']) ? $instance['faq_cat'] : '');
+        $faqID = (isset($instance['faqID'] ) ? $instance['faqID'] : 0);
+        $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
 
-        $this->dropdownFAQs($faq_id);
+        $this->dropdownFAQs($faqID);
 
         $args = [
             'show_option_none' => '--- ' . __('Choose a category', 'rrze-faq') . ' ---',
-            'name' => $this->get_field_name('faq_cat'),
+            'name' => $this->get_field_name('catID'),
             'taxonomy' => 'faq_category',
             'hide_empty' => 0,
             'orderby' => 'name',
-            'selected' => $faq_cat,
+            'selected' => $catID,
             'class' => 'widefat',
         ];
         wp_dropdown_categories($args);
@@ -83,8 +97,8 @@ class FAQwidget extends \WP_Widget {
     // Updating widget replacing old instances with new
     public function update( $new_instance, $old_instance ) {
         $instance = [];
-        $instance['faq_id'] = ( !empty( $new_instance['faq_id'] ) ) ? $new_instance['faq_id'] : 0;
-        $instance['faq_cat'] = ( !empty( $new_instance['faq_cat'] ) ) ? strip_tags( $new_instance['faq_cat'] ) : '';
+        $instance['faqID'] = ( !empty( $new_instance['faqID'] ) ) ? $new_instance['faqID'] : 0;
+        $instance['catID'] = ( !empty( $new_instance['catID'] ) ) ? $new_instance['catID'] : 0;
         return $instance;
     }
 } 
