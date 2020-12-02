@@ -35,8 +35,8 @@ class FAQWidget extends \WP_Widget {
 
     // Creating widget front-end
     public function widget( $args, $instance ) {
-        $start = (isset($instance['start'] ) ? date('Y-m-d', strtotime($instance['start'])) : '');
-        $end = (isset($instance['end'] ) ? date('Y-m-d', strtotime($instance['end'])) : '');
+        $start = ($instance['start'] ? date('Y-m-d', strtotime($instance['start'])) : '');
+        $end = ($instance['end'] ? date('Y-m-d', strtotime($instance['end'])) : '');
 
         if ($start || $end){
             $today = date('Y-m-d');
