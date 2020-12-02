@@ -51,8 +51,17 @@ class FAQwidget extends \WP_Widget {
         $faqID = ($faqID ? $faqID : ($catID ? $this->getRandomFAQID($catID) : 0));
 
         if ($faqID){
+            $attributes = (isset($instance['display'] ) ? $instance['display'] : '');
+            switch($attributes){
+                case 1 : $attributes = '';
+                    break;
+                case 2 : $attributes = "show='load-open'";
+                    break;
+                case 3 : $attributes = "hide='title'";
+                    break;
+            }
             echo $args['before_widget'];
-            echo do_shortcode('[faq id="'. $faqID . '"]');
+            echo do_shortcode('[faq id="'. $faqID . '" ' . $attributes . ']');
             echo $args['after_widget'];
         }
     }
@@ -87,9 +96,9 @@ class FAQwidget extends \WP_Widget {
     
     public function displaySelect($selectedID = 0){
         $aOptions = [
-            1 => __('show answer, hide question', 'rrze-faq'),
-            2 => __('show question and answer', 'rrze-faq'),
-            3 => __('show question and answer opened', 'rrze-faq')
+            1 => __('show question and answer', 'rrze-faq'),
+            2 => __('show question and answer opened', 'rrze-faq'),
+            3 => __('hide question', 'rrze-faq')
         ];
         $output = "<select id='{$this->get_field_id('display')}' name='{$this->get_field_name('display')}' class='widefat'>";
         foreach($aOptions as $ID => $txt){
