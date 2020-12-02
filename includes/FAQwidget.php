@@ -9,7 +9,7 @@ require_once ABSPATH.'wp-includes/class-wp-widget.php';
 // Creating the widget 
 class FAQwidget extends \WP_Widget {
   
-    function __construct() {
+    public function __construct() {
         parent::__construct(
             'faq_widget', 
             __('FAQ Widget', 'rrze-faq'), 
