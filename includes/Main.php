@@ -62,6 +62,7 @@ class Main {
 
     public function loadWidget() {
         $widget = new FAQwidget();
+        
         register_widget( $widget );
     }
 
