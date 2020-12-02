@@ -19,7 +19,7 @@ class FAQwidget extends \WP_Widget {
     }
       
 
-    public function getRandomFAQIDByCatgory($catID){
+    public function getRandomFAQID($catID){
         $aFaqIDs = get_posts([
             'posts_per_page' => -1,
             'post_type' => 'faq',
@@ -35,10 +35,20 @@ class FAQwidget extends \WP_Widget {
 
     // Creating widget front-end
     public function widget( $args, $instance ) {
+        $start = (isset($instance['start'] ) ? date('Y-m-d', strtotime($instance['start'])) : '');
+        $end = (isset($instance['end'] ) ? date('Y-m-d', strtotime($instance['end'])) : '');
+
+        if ($start || $end){
+            $today = date('Y-m-d');
+            if (($start && $today < $start) || ($end && $today > $end)){
+                return;
+            }
+        }
+        
         $faqID = (isset($instance['faqID'] ) ? $instance['faqID'] : 0);
         $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
 
-        $faqID = ($faqID ? $faqID : ($catID ? $this->getRandomFAQIDByCatgory($catID) : 0));
+        $faqID = ($faqID ? $faqID : ($catID ? $this->getRandomFAQID($catID) : 0));
 
         if ($faqID){
             echo $args['before_widget'];
@@ -73,12 +83,27 @@ class FAQwidget extends \WP_Widget {
 		}
 		$html = apply_filters( 'dropdownFAQs', $output, $args, $posts );
 	    echo $html;
-	}
+    }
+    
+    public function dateFields($dates){
+        $aFields = ['start', 'end'];
+        $output = '';
+        foreach($aFields as $field){
+            $val = $dates[$field];
+            $output .= "<p><label for='$field'>" . ucfirst($field) . ":</label> ";
+            $output .= "<input type='date' id='{$this->get_field_id($field)}' name='{$this->get_field_name($field)}' value='$val'></p>";
+        }
+        echo $output;
+    }
               
     // Widget Backend 
     public function form( $instance ) {
         $faqID = (isset($instance['faqID'] ) ? $instance['faqID'] : 0);
         $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
+        $dates = [
+            'start' => (isset($instance['start']) ? $instance['start'] : ''),
+            'end' => (isset($instance['end']) ? $instance['end'] : '')
+        ];
 
         $this->dropdownFAQs($faqID);
 
@@ -92,6 +117,7 @@ class FAQwidget extends \WP_Widget {
             'class' => 'widefat',
         ];
         wp_dropdown_categories($args);
+        $this->dateFields($dates);
     }
           
     // Updating widget replacing old instances with new
@@ -99,6 +125,8 @@ class FAQwidget extends \WP_Widget {
         $instance = [];
         $instance['faqID'] = ( !empty( $new_instance['faqID'] ) ) ? $new_instance['faqID'] : 0;
         $instance['catID'] = ( !empty( $new_instance['catID'] ) ) ? $new_instance['catID'] : 0;
+        $instance['start'] = ( !empty( $new_instance['start'] ) ) ? $new_instance['start'] : '';
+        $instance['end'] = ( !empty( $new_instance['end'] ) ) ? $new_instance['end'] : '';
         return $instance;
     }
 } 
