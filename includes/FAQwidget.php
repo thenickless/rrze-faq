@@ -112,11 +112,14 @@ class FAQwidget extends \WP_Widget {
     }
 
     public function dateFields($dates){
-        $aFields = ['start', 'end'];
+        $aFields = [
+            'start' => __('Start', 'rrze-faq'),
+            'end' => __('End', 'rrze-faq')
+        ];
         $output = '';
-        foreach($aFields as $field){
+        foreach($aFields as $field => $label){
             $val = $dates[$field];
-            $output .= "<p><label for='$field'>" . ucfirst($field) . ":</label><br>";
+            $output .= "<p><label for='$field'>" . $label . ":</label><br>";
             $output .= "<input type='date' id='{$this->get_field_id($field)}' name='{$this->get_field_name($field)}' value='$val' class='widefat'></p>";
         }
         echo $output;
@@ -143,7 +146,7 @@ class FAQwidget extends \WP_Widget {
             'selected' => $catID,
             'class' => 'widefat',
         ];
-        echo "<p><label for='{$this->get_field_name('catID')}'>" . __('or choose a Category to display a random FAQ', 'rrze-faq') . ":</label>";
+        echo "<p><label for='{$this->get_field_name('catID')}'>" . __('or choose a Category to display a FAQ randomly', 'rrze-faq') . ":</label>";
         wp_dropdown_categories($args);
         echo '</p>';
         $this->dateFields($dates);
