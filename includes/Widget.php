@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
 require_once ABSPATH.'wp-includes/class-wp-widget.php';
 
 // Creating the widget 
-class FAQwidget extends \WP_Widget {
+class Widget extends \WP_Widget {
   
     public function __construct() {
         parent::__construct(
