@@ -60,9 +60,9 @@ class Main {
         add_action( 'rrze_faq_auto_sync', [$this, 'runFAQCronjob'] );
     }
 
+    
     public function loadWidget() {
         $widget = new FAQwidget();
-        
         register_widget( $widget );
     }
 
