@@ -199,8 +199,7 @@ function getShortcodeSettings(){
 			'title' => 'RRZE FAQ',
 			'category' => 'widgets',
             'icon' => 'editor-help',
-            'show_block' => 'content',
-			'message' => __( 'Find the settings on the right side', 'rrze-faq' )
+            'show_block' => 'content'
 		],
         'glossary' => [
 			'values' => [
