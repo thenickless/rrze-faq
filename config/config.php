@@ -203,10 +203,19 @@ function getShortcodeSettings(){
 		],
         'glossary' => [
 			'values' => [
-				'' => __( 'none', 'rrze-faq' ),
-				'category' => __( 'Categories', 'rrze-faq' ),
-				'tag' => __( 'Tags', 'rrze-faq' )
-			],
+                [
+                    'id' => '',
+                    'val' => __( 'none', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'category',
+                    'val' => __( 'Categories', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'tag',
+                    'val' => __( 'Tags', 'rrze-faq' )
+                ]			
+            ],
 			'default' => '',
 			'field_type' => 'select',
 			'label' => __( 'Glossary content', 'rrze-faq' ),
@@ -214,11 +223,23 @@ function getShortcodeSettings(){
 		],
         'glossarystyle' => [
 			'values' => [
-				'' => __( '-- hidden --', 'rrze-faq' ),
-				'a-z' => __( 'A - Z', 'rrze-faq' ),
-				'tagcloud' => __( 'Tagcloud', 'rrze-faq' ),
-				'tabs' => __( 'Tabs', 'rrze-faq' )
-			],
+                [
+                    'id' => '',
+                    'val' => __( '-- hidden --', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'a-z',
+                    'val' => __( 'A - Z', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'tagcloud',
+                    'val' => __( 'Tagcloud', 'rrze-faq' )
+                ],			
+                [
+                    'id' => 'tabs',
+                    'val' => __( 'Tabs', 'rrze-faq' )
+                ]
+            ],
 			'default' => 'a-z',
 			'field_type' => 'select',
 			'label' => __( 'Glossary style', 'rrze-faq' ),
@@ -272,11 +293,26 @@ function getShortcodeSettings(){
 		],	  
 		'color' => [
 			'values' => [
-				'med' => 'med',
-				'nat' => 'nat',
-				'rw' => 'rw',
-				'phil' => 'phil',
-				'tk' => 'tk'
+                [
+                    'id' => 'med',
+                    'val' => 'med'
+                ],
+                [
+                    'id' => 'nat',
+                    'val' => 'nat'
+                ],
+                [
+                    'id' => 'rw',
+                    'val' => 'rw'
+                ],
+                [
+                    'id' => 'phil',
+                    'val' => 'phil'
+                ],
+                [
+                    'id' => 'tk',
+                    'val' => 'tk'
+                ],
 			],
 			'default' => 'tk',
 			'field_type' => 'select',
@@ -291,9 +327,18 @@ function getShortcodeSettings(){
 		],
         'sort' => [
 			'values' => [
-				'title' => __( 'Title', 'rrze-faq' ),
-				'id' => __( 'ID', 'rrze-faq' ),
-				'sortfield' => __( 'Sort field', 'rrze-faq' )
+                [
+                    'id' => 'title',
+                    'val' => __( 'Title', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'id',
+                    'val' => __( 'ID', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'sortfield',
+                    'val' => __( 'Sort field', 'rrze-faq' )
+                ],
 			],
 			'default' => 'title',
 			'field_type' => 'select',
@@ -302,8 +347,14 @@ function getShortcodeSettings(){
 		],
         'order' => [
 			'values' => [
-				'ASC' => __( 'ASC', 'rrze-faq' ),
-				'DESC' => __( 'DESC', 'rrze-faq' )
+                [
+                    'id' => 'ASC',
+                    'val' => __( 'ASC', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'DESC',
+                    'val' => __( 'DESC', 'rrze-faq' )
+                ],
 			],
 			'default' => 'ASC',
 			'field_type' => 'select',
