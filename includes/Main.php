@@ -40,6 +40,8 @@ class Main {
      */
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
+        add_action( 'admin_enqueue_scripts', [$this, 'enqueueScripts'] );
+
         // Actions: sync, add domain, delete domain, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
         add_filter( 'pre_update_option_rrze-faq',  [$this, 'switchTask'], 10, 1 );
@@ -70,7 +72,7 @@ class Main {
      * Enqueue der globale Skripte.
      */
     public function enqueueScripts() {
-        wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.min.css', plugin_basename($this->pluginFile)));
+        wp_register_style('rrze-faq-styles', plugins_url('assets/css/rrze-faq.css', plugin_basename($this->pluginFile)));
     }
 
 

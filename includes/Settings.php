@@ -514,8 +514,8 @@ class Settings {
      */
     public function adminEnqueueScripts()
     {
-        wp_register_script('wp-color-picker-settings', plugins_url('assets/js/wp-color-picker.min.js', plugin_basename($this->pluginFile)));
-        wp_register_script('wp-media-settings', plugins_url('assets/js/wp-media.min.js', plugin_basename($this->pluginFile)));
+        wp_register_script('wp-color-picker-settings', plugins_url('assets/js/wp-color-picker.js', plugin_basename($this->pluginFile)));
+        wp_register_script('wp-media-settings', plugins_url('assets/js/wp-media.js', plugin_basename($this->pluginFile)));
     }
 
     /**

@@ -228,12 +228,12 @@ class Shortcode {
         $glossarystyle  = ( isset( $glossarystyle ) ? $glossarystyle : '' );
         $hide_title = ( isset( $hide_title ) ? $hide_title : FALSE );        
         $color = ( isset( $color ) ? $color : '' );
-        if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
-            return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
-        }
-        if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
-            return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
-        }
+        // if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
+        //     return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
+        // }
+        // if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
+        //     return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
+        // }
 
         $gutenberg = ( is_array( $id ) ? TRUE : FALSE );
 
@@ -458,18 +458,16 @@ class Shortcode {
     }
 
     public function fillGutenbergOptions() {
-        $options = get_option( 'rrze-faq' );
-
         // fill selects "category" and "tag"
         $fields = array( 'category', 'tag' );
         foreach ( $fields as $field ) {
             // set new params for gutenberg / the old ones are used for shortcode in classic editor
             $this->settings[$field]['values'] = array();
             $this->settings[$field]['field_type'] = 'multi_select';
-            $this->settings[$field]['default'] = array('');
+            $this->settings[$field]['default'] = array(0);
             $this->settings[$field]['type'] = 'array';
             $this->settings[$field]['items'] = array( 'type' => 'string' );
-            $this->settings[$field]['values'][0] = __( '-- all --', 'rrze-faq' );
+            $this->settings[$field]['values'][] = ['id' => 0, 'val' => __( '-- all --', 'rrze-faq' )];
 
             // get categories and tags from this website
             $terms = get_terms([
@@ -481,7 +479,10 @@ class Shortcode {
 
 
             foreach ( $terms as $term ){
-                $this->settings[$field]['values'][$term->slug] = $term->name;
+                $this->settings[$field]['values'][] = [
+                    'id' => $term->slug,
+                    'val' => $term->name
+                ];
             }
         }
 
@@ -493,13 +494,17 @@ class Shortcode {
             'order' => 'ASC'
         ));
 
+        $this->settings['id']['values'] = array();
         $this->settings['id']['field_type'] = 'multi_select';
-        $this->settings['id']['default'] = array('');
+        $this->settings['id']['default'] = array(0);
         $this->settings['id']['type'] = 'array';
         $this->settings['id']['items'] = array( 'type' => 'number' );
-        $this->settings['id']['values'][0] = __( '-- all --', 'rrze-faq' );
+        $this->settings['id']['values'][] = ['id' => 0, 'val' => __( '-- all --', 'rrze-faq' )];
         foreach ( $faqs as $faq){
-            $this->settings['id']['values'][$faq->ID] = str_replace( "'", "", str_replace( '"', "", $faq->post_title ) );
+            $this->settings['id']['values'][] = [
+                'id' => $faq->ID,
+                'val' => str_replace( "'", "", str_replace( '"', "", $faq->post_title ) )
+            ];
         }
 
         return $this->settings;
@@ -519,14 +524,10 @@ class Shortcode {
             }
         }
 
-        $this->settings = $this->fillGutenbergOptions();
-
-        $js = '../assets/js/gutenberg.min.js';
-        $editor_script = $this->settings['block']['blockname'] . '-blockJS';
-
-        wp_register_script(
-            $editor_script,
-            plugins_url( $js, __FILE__ ),
+        // include gutenberg lib
+        wp_enqueue_script(
+            'RRZE-Gutenberg',
+            plugins_url( '../assets/js/gutenberg.js', __FILE__ ),
             array(
                 'wp-blocks',
                 'wp-i18n',
@@ -534,23 +535,40 @@ class Shortcode {
                 'wp-components',
                 'wp-editor'
             ),
-            filemtime( dirname( __FILE__ ) . '/' . $js )
+            NULL
         );
-        wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
-        $css = '../assets/css/gutenberg.min.css';
+        // get prefills for dropdowns
+        $this->settings = $this->fillGutenbergOptions();
+
+        // register js-script to inject php config to call gutenberg lib
+        $editor_script = $this->settings['block']['blockname'] . '-block';        
+        $js = '../assets/js/' . $editor_script . '.js';
+
+        wp_register_script(
+            $editor_script,
+            plugins_url( $js, __FILE__ ),
+            array(
+                'RRZE-Gutenberg',
+            ),
+            NULL
+        );
+        wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
+
+        // register styles
         $editor_style = 'gutenberg-css';
-        wp_register_style( $editor_style, plugins_url( $css, __FILE__ ) );
+        wp_register_style( $editor_style, plugins_url( '../assets/css/gutenberg.css', __FILE__ ) );
+        $theme_style = 'theme-css';
+        wp_register_style($theme_style, get_template_directory_uri() . '/style.css', array('wp-editor'), null);
+
+        // register block
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
-            'style' => $editor_style,
+            'editor_style' => $editor_style,
+            'style' => $theme_style,
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
-            // 'attributes' => $this->fillGutenbergOptions()
             ) 
         );
-
-        wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
-        // wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->fillGutenbergOptions() );
     }
 }
