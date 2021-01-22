@@ -23,6 +23,7 @@ class Shortcode {
 
     public function __construct() {
         $this->settings = getShortcodeSettings();
+        add_action( 'admin_enqueue_scripts', [$this, 'enqueueGutenberg'] );
         add_action( 'init',  [$this, 'initGutenberg'] );
         add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
         // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // BK 2020-06-05 Shortcode [fau_glossar ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
@@ -524,20 +525,6 @@ class Shortcode {
             }
         }
 
-        // include gutenberg lib
-        wp_enqueue_script(
-            'RRZE-Gutenberg',
-            plugins_url( '../assets/js/gutenberg.js', __FILE__ ),
-            array(
-                'wp-blocks',
-                'wp-i18n',
-                'wp-element',
-                'wp-components',
-                'wp-editor'
-            ),
-            NULL
-        );
-
         // get prefills for dropdowns
         $this->settings = $this->fillGutenbergOptions();
 
@@ -569,6 +556,26 @@ class Shortcode {
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
             ) 
+        );
+    }
+
+    public function enqueueGutenberg(){
+        if ( ! function_exists( 'register_block_type' ) ) {
+            return;        
+        }
+
+        // include gutenberg lib
+        wp_enqueue_script(
+            'RRZE-Gutenberg',
+            plugins_url( '../assets/js/gutenberg.js', __FILE__ ),
+            array(
+                'wp-blocks',
+                'wp-i18n',
+                'wp-element',
+                'wp-components',
+                'wp-editor'
+            ),
+            NULL
         );
     }
 }
