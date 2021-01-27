@@ -458,6 +458,23 @@ class Shortcode {
         } );
     }
 
+    public function isGutenberg(){
+        if ( ! function_exists( 'register_block_type' ) ) {
+            return false;        
+        }
+
+        // check if RRZE-Settings if classic editor is enabled
+        $rrze_settings = (array) get_option( 'rrze_settings' );
+        if ( isset( $rrze_settings['writing'] ) ) {
+            $rrze_settings = (array) $rrze_settings['writing'];
+            if ( isset( $rrze_settings['enable_classic_editor'] ) && $rrze_settings['enable_classic_editor'] ) {
+                return false;        
+            }
+        }
+
+        return true;        
+    }
+
     public function fillGutenbergOptions() {
         // fill selects "category" and "tag"
         $fields = array( 'category', 'tag' );
@@ -512,17 +529,8 @@ class Shortcode {
     }
 
     public function initGutenberg() {
-        if ( ! function_exists( 'register_block_type' ) ) {
-            return;        
-        }
-
-        // check if RRZE-Settings if classic editor is enabled
-        $rrze_settings = (array) get_option( 'rrze_settings' );
-        if ( isset( $rrze_settings['writing'] ) ) {
-            $rrze_settings = (array) $rrze_settings['writing'];
-            if ( isset( $rrze_settings['enable_classic_editor'] ) && $rrze_settings['enable_classic_editor'] ) {
-                return;
-            }
+        if (! $this->isGutenberg()){
+            return;
         }
 
         // get prefills for dropdowns
@@ -542,17 +550,9 @@ class Shortcode {
         );
         wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
 
-        // register styles
-        $editor_style = 'gutenberg-css';
-        wp_register_style( $editor_style, plugins_url( '../assets/css/gutenberg.css', __FILE__ ) );
-        $theme_style = 'theme-css';
-        wp_register_style($theme_style, get_template_directory_uri() . '/style.css', array('wp-editor'), null);
-
         // register block
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
-            'editor_style' => $editor_style,
-            'style' => $theme_style,
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
             ) 
@@ -560,8 +560,8 @@ class Shortcode {
     }
 
     public function enqueueGutenberg(){
-        if ( ! function_exists( 'register_block_type' ) ) {
-            return;        
+        if (! $this->isGutenberg()){
+            return;
         }
 
         // include gutenberg lib
