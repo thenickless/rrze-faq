@@ -12,20 +12,12 @@ namespace RRZE\FAQ;
 
 use RRZE\FAQ\Layout;
 
-echo '<div id="post-' . get_the_ID() . '" class="' . implode(' ', get_post_class()) .'">';
-
-?>
-
-
-
-<h1 id="droppoint" class="faq-title" itemprop="title"><?php the_title(); ?></h1>
-
-
-<?php 
-
-// echo '<strong>' . the_title() . '</strong><br>';
-
 $postID = get_the_ID();
+$title = get_the_title();
+
+$content .= '<div id="post-' . get_the_ID() . '" class="' . implode(' ', get_post_class()) .'">';
+$content .= '[collapse title="' . $title . '"]';
+
 $cats = Layout::getTermLinks( $postID, 'faq_category' );
 $tags = Layout::getTermLinks( $postID, 'faq_tag' );            
 $details = '<article class="news-details">
@@ -37,11 +29,15 @@ $schema = '';
 $source = get_post_meta( $postID, "source", TRUE );
 
 if ( $source == 'website' ){
-    $schema .= RRZE_SCHEMA_QUESTION_START . get_the_title() . RRZE_SCHEMA_QUESTION_END . RRZE_SCHEMA_ANSWER_START . wp_strip_all_tags( get_the_content(), TRUE ) . RRZE_SCHEMA_ANSWER_END;
+    $schema .= RRZE_SCHEMA_QUESTION_START . $title . RRZE_SCHEMA_QUESTION_END . RRZE_SCHEMA_ANSWER_START . wp_strip_all_tags( get_the_content(), TRUE ) . RRZE_SCHEMA_ANSWER_END;
 }
 
-the_content(); 
-echo $details;
+$content .= get_the_content(); 
+$content .= $details;
 
-echo '</div>';
+
+$content .= '[/collapse]';
+
+$content .= '</div>';
+
 
