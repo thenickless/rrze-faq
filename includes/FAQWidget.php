@@ -30,7 +30,11 @@ class FAQWidget extends \WP_Widget {
                 'terms' => $catID,
             ]]
         ]);
-        return $aFaqIDs[array_rand($aFaqIDs, 1)];
+        if (!empty($aFaqIDs)){
+            return $aFaqIDs[array_rand($aFaqIDs, 1)];
+        }else{
+            return 0;
+        }
     }
 
     // Creating widget front-end
