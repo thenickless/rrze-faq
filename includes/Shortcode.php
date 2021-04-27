@@ -56,7 +56,7 @@ class Shortcode {
         if ( count( $aTerms ) == 1 ){
             return '';
         }
-        $ret = '<div class="fau-glossar"><ul class="letters">';
+        $ret = '<div class="fau-glossar">';
         foreach( $aTerms as $name => $aDetails ){
             $ret .= '<a href="#ID-' . $aDetails['ID'] . '">' . $name . '</a> | ';
         }
@@ -67,7 +67,7 @@ class Shortcode {
         if ( count( $aTerms ) == 1 ){
             return '';
         }
-        $ret = '<div class="fau-glossar"><ul class="letters">';
+        $ret = '<div class="fau-glossar">';
         $smallest = 12;
         $largest = 22;
         $aCounts = array();
