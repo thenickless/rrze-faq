@@ -20,14 +20,18 @@ class Shortcode {
      * @var object
      */
     private $settings = '';
+    private $pluginname = '';
 
     public function __construct() {
         $this->settings = getShortcodeSettings();
-        add_action( 'admin_enqueue_scripts', [$this, 'enqueueGutenberg'] );
-        add_action( 'init',  [$this, 'initGutenberg'] );
-        add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
+        $this->pluginname = $this->settings['block']['blockname'];
         // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ], 10, 2 ); // BK 2020-06-05 Shortcode [fau_glossar ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
         // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ], 10, 2 ); // BK 2020-06-05 Shortcode [glossary ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
+        add_shortcode( 'faq', [ $this, 'shortcodeOutput' ], 10, 2 );
+        add_action( 'admin_enqueue_scripts', [$this, 'enqueueGutenberg'] );
+        add_action( 'init',  [$this, 'initGutenberg'] );
+        add_action('admin_head', [$this, 'setMCEConfig']);
+        add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
 
     /**
@@ -569,5 +573,33 @@ class Shortcode {
             ),
             NULL
         );
+    }
+
+    public function setMCEConfig(){
+        $shortcode = '';
+        foreach($this->settings as $att => $details){
+            if ($att != 'block'){
+                $shortcode .= ' ' . $att . '=""';
+            }
+        }
+        $shortcode = '[' . $this->pluginname . ' ' . $shortcode . ']';
+        ?>
+        <script type='text/javascript'>
+            tmp = [{
+                'name': <?php echo json_encode($this->pluginname); ?>,
+                'title': <?php echo json_encode($this->settings['block']['title']); ?>,
+                'icon': <?php echo json_encode($this->settings['block']['tinymce_icon']); ?>,
+                'shortcode': <?php echo json_encode($shortcode); ?>,
+            }];
+            phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp)); 
+        </script> 
+        <?php        
+    }
+
+    public function addMCEButtons($pluginArray){
+        if (current_user_can('edit_posts') &&  current_user_can('edit_pages')) {
+            $pluginArray['rrze_shortcode'] = plugins_url('../assets/js/tinymce-shortcodes.js', plugin_basename(__FILE__));
+        }
+        return $pluginArray;
     }
 }
