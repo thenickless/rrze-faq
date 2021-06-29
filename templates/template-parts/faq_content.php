@@ -12,7 +12,6 @@ namespace RRZE\FAQ;
 
 use RRZE\FAQ\Layout;
 
-
 echo '<div id="post-' . get_the_ID() . '" class="' . implode(' ', get_post_class()) .'">';
 
 ?>
@@ -27,8 +26,7 @@ echo '<div id="post-' . get_the_ID() . '" class="' . implode(' ', get_post_class
 $postID = get_the_ID();
 $cats = Layout::getTermLinks( $postID, 'faq_category' );
 $tags = Layout::getTermLinks( $postID, 'faq_tag' );            
-$details = '<article class="news-details">
-<!-- rrze-glossary --><p class="meta-footer">'
+$details = '<article class="news-details"><p class="meta-footer">'
 . ( $cats ? '<span class="post-meta-categories"> '. __( 'Categories', 'rrze-faq' ) . ': ' . $cats . '</span>' : '' )
 . ( $tags ? '<span class="post-meta-tags"> '. __( 'Tags', 'rrze-faq' ) . ': ' . $tags . '</span>' : '' )
 . '</p></article>';

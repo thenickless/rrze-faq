@@ -247,12 +247,6 @@ class API {
         return $iDel;
     }
 
-    protected function cleanContent( $txt ){
-        // returns content without info below '<!-- rrze-faq -->'
-        $txt = substr( $txt, 0, strpos( $txt, '<!-- rrze-faq -->' ));
-        return $txt;
-    }
-
     protected function absoluteUrl( $txt, $baseUrl ){
         // converts relative URLs to absolute ones
         $needles = array('href="', 'src="', 'background="');
@@ -315,8 +309,7 @@ class API {
                     }
                     foreach( $entries as $entry ){
                         if ( $entry['source'] == 'website' ){
-                            // $content = substr( $entry['content']['rendered'], 0, strpos( $entry['content']['rendered'], '<!-- rrze-faq -->' ));
-                            $content = $this->cleanContent( $entry['content']['rendered'] );
+                            $content = $entry['content']['rendered'];
                             $content = $this->absoluteUrl( $content, $url );
 
                             $faqs[$entry['id']] = array(

@@ -17,7 +17,7 @@ if ($thisThemeGroup == 'fauthemes') {
     get_template_part('template-parts/hero', 'index'); 
 ?>
 
-    <div id="content">
+       <div id="content">
         <div class="content-container">
             <div class="post-row">
                 <main class="col-xs-12">

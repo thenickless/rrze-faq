@@ -80,7 +80,6 @@ class Layout {
 
     public function fillContentBox( $post ) {
         $mycontent = apply_filters( 'the_content', $post->post_content );
-        $mycontent = substr( $mycontent, 0, strpos( $mycontent, '<!-- rrze-faq -->' ));
         echo '<h1>' . html_entity_decode( $post->post_title ) . '</h1><br>' . $mycontent;
     }
 
