@@ -17,11 +17,10 @@ if ($thisThemeGroup == 'fauthemes') {
     get_template_part('template-parts/hero', 'index'); 
 ?>
 
-    <div id="content">
+       <div id="content">
         <div class="content-container">
             <div class="post-row">
-                <div class="col-xs-12">
-                    <main id="droppoint">
+                <main class="col-xs-12">
                         <h1 class="screen-reader-text"><?php echo __('Index','fau'); ?></h1>
 
 <?php } elseif ($thisThemeGroup == 'rrzethemes') {
