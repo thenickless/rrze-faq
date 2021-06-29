@@ -18,8 +18,8 @@ if ($thisThemeGroup == 'fauthemes') {
 ?>
 
     <div id="content">
-        <div class="container">
-            <div class="row">
+        <div class="content-container">
+            <div class="post-row">
                 <div class="col-xs-12">
                     <main id="droppoint">
                         <h1 class="screen-reader-text"><?php echo __('Index','fau'); ?></h1>
