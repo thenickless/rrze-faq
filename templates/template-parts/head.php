@@ -18,10 +18,9 @@ if ($thisThemeGroup == 'fauthemes') {
 ?>
 
     <div id="content">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                    <main id="droppoint">
+        <div class="content-container">
+            <div class="post-row">
+                <main class="col-xs-12">
                         <h1 class="screen-reader-text"><?php echo __('Index','fau'); ?></h1>
 
 <?php } elseif ($thisThemeGroup == 'rrzethemes') {
