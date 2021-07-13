@@ -259,7 +259,7 @@ class API {
         foreach ( $needles as $needle ){
             while( $pos = strpos( $txt, $needle ) ){
                 $pos += strlen( $needle );
-                if ( substr( $txt, $pos, 7 ) != 'http://' && substr( $txt, $pos, 8) != 'https://' && substr( $txt, $pos, 6) != 'ftp://' && substr( $txt, $pos, 9 ) != 'mailto://' ){
+                if ( substr( $txt, $pos, 7 ) != 'http://' && substr( $txt, $pos, 8) != 'https://' && substr( $txt, $pos, 6) != 'ftp://' && substr( $txt, $pos, 7 ) != 'mailto:' ){
                     if ( substr( $txt, $pos, 1 ) == '/' ){
                         $newBaseUrl = $baseUrlParts['scheme'] . '://' . $baseUrlParts['host'];
                     }
