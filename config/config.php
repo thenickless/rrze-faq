@@ -360,7 +360,13 @@ function getShortcodeSettings(){
 			'field_type' => 'select',
 			'label' => __( 'Order', 'rrze-faq' ),
 			'type' => 'string'
-		]				
+		],
+		'hstart' => [
+			'default' => 2,
+			'field_type' => 'number',
+			'label' => __( 'Überschriftenebene der ersten Überschrift', 'rrze-faq' ),
+			'type' => 'integer' 
+		],
     ];
 }
 

@@ -261,7 +261,7 @@ class Shortcode {
                         $description = get_post_meta( $id, 'description', true );
                     }
                     if ( $hide_accordeon ){
-                        $content .= ( $hide_title ? '' : '<h2>' . $title . '</h2>' ) . ( $description ? '<p>' . $description . '</p>' : '' );
+                        $content .= ( $hide_title ? '' : '<h' . $atts['hstart'] . '>' . $title . '</h' . $atts['hstart'] . '>' ) . ( $description ? '<p>' . $description . '</p>' : '' );
                     } else {
                         if ( $description) {
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="ID-' . $faqID . '"' . $load_open . ']' . $description . '[/collapse]';
@@ -430,7 +430,7 @@ class Shortcode {
                             }
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']' . $tmp . '[/collapse]';               
                         } else {
-                            $content .= ( $hide_title ? '' : '<h2>' . $title . '</h2>' ) . ( $tmp ? '<p>' . $tmp . '</p>' : '' );
+                            $content .= ( $hide_title ? '' : '<h' . $atts['hstart'] . '>' . $title . '</h' . $atts['hstart'] . '>' ) . ( $tmp ? '<p>' . $tmp . '</p>' : '' );
                         }
                         $schema .= $this->getSchema( $post->ID, $title, $tmp );
                         $last_anchor = $letter;
