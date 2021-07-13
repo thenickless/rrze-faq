@@ -364,7 +364,7 @@ function getShortcodeSettings(){
 		'hstart' => [
 			'default' => 2,
 			'field_type' => 'text',
-			'label' => __( 'Überschriftenebene der ersten Überschrift', 'rrze-faq' ),
+			'label' => __( 'Heading level of the first heading', 'rrze-faq' ),
 			'type' => 'number' 
 		],
     ];
