@@ -263,7 +263,7 @@ function getShortcodeSettings(){
 			'label' => __( 'FAQ', 'rrze-faq' ),
 			'type' => 'number'
 		],
-		'hide_accordeon' => [
+		'hide_accordion' => [
 			'field_type' => 'toggle',
 			'label' => __( 'Hide accordeon', 'rrze-faq' ),
 			'type' => 'boolean',
@@ -363,9 +363,9 @@ function getShortcodeSettings(){
 		],
 		'hstart' => [
 			'default' => 2,
-			'field_type' => 'number',
+			'field_type' => 'text',
 			'label' => __( 'Überschriftenebene der ersten Überschrift', 'rrze-faq' ),
-			'type' => 'integer' 
+			'type' => 'number' 
 		],
     ];
 }
