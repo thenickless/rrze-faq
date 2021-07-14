@@ -30,6 +30,7 @@ show=".."
 class=".."
 sort=".."
 order=".."
+hstart=".."
 ] 
 ```
 
@@ -56,6 +57,8 @@ sort : die Sortierung der Ausgabe kann hiermit gesteuert werden. Mögliche Werte
 "sortfield" bezieht sich auf das Sortierfeld, das bei jeder FAQ eingeben werden kann. Bei Verwendung von "sortfield" wird zuerst nach dem Sortierfeld und danach nach dem Titel sortiert. Voreingestellt ist "title", womit alle Fragen in alphabetischer Reihenfolge angezeigt werden.
 
 order : legt fest, in welcher Reihenfolge sortiert werden soll. "asc" aufsteigend und "desc" absteigend. Voreingestellt ist "asc".
+
+hstart : bestimmt die Überschriftenebene der ersten Überschrift. Voreingestellt ist 2, womit die Überschriften als <h2> ausgegeben werden.
 
 
 ## Beispiele

@@ -263,7 +263,7 @@ function getShortcodeSettings(){
 			'label' => __( 'FAQ', 'rrze-faq' ),
 			'type' => 'number'
 		],
-		'hide_accordeon' => [
+		'hide_accordion' => [
 			'field_type' => 'toggle',
 			'label' => __( 'Hide accordeon', 'rrze-faq' ),
 			'type' => 'boolean',
@@ -360,7 +360,13 @@ function getShortcodeSettings(){
 			'field_type' => 'select',
 			'label' => __( 'Order', 'rrze-faq' ),
 			'type' => 'string'
-		]				
+		],
+		'hstart' => [
+			'default' => 2,
+			'field_type' => 'text',
+			'label' => __( 'Heading level of the first heading', 'rrze-faq' ),
+			'type' => 'number' 
+		],
     ];
 }
 

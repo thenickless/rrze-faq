@@ -169,8 +169,9 @@ class Shortcode {
                 switch ( $part ){
                     case 'title':
                         $atts['hide_title'] = TRUE;
+                    case 'accordion':
                     case 'accordeon':
-                        $atts['hide_accordeon'] = TRUE;
+                        $atts['hide_accordion'] = TRUE;
                     break;
                     break;
                     case 'glossary':
@@ -260,8 +261,8 @@ class Shortcode {
                     if ( !isset( $description ) || ( mb_strlen( $description ) < 1)) {
                         $description = get_post_meta( $id, 'description', true );
                     }
-                    if ( $hide_accordeon ){
-                        $content .= ( $hide_title ? '' : '<h2>' . $title . '</h2>' ) . ( $description ? '<p>' . $description . '</p>' : '' );
+                    if ( $hide_accordion ){
+                        $content .= ( $hide_title ? '' : '<h' . $atts['hstart'] . '>' . $title . '</h' . $atts['hstart'] . '>' ) . ( $description ? '<p>' . $description . '</p>' : '' );
                     } else {
                         if ( $description) {
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="ID-' . $faqID . '"' . $load_open . ']' . $description . '[/collapse]';
@@ -271,7 +272,7 @@ class Shortcode {
                     $found = TRUE;
                 }
             }
-            if ( $found && !$hide_accordeon ){
+            if ( $found && !$hide_accordion ){
                 $accordion .= '[/collapsibles]';
                 $content = do_shortcode( $accordion );    
             }
@@ -408,7 +409,7 @@ class Shortcode {
                     $content .= do_shortcode( $accordion );
                 } else {  
                     // attribut glossary is not given  
-                    if ( !$hide_accordeon ){
+                    if ( !$hide_accordion ){
                         $accordion = '[collapsibles' . $expand_all_link . ']';
                     }           
                     $last_anchor = '';
@@ -422,7 +423,7 @@ class Shortcode {
                             $tmp = get_post_meta( $post->ID, 'description', true );
                         }
 
-                        if ( !$hide_accordeon ){
+                        if ( !$hide_accordion ){
                             $accordion_anchor = '';
                             $accordion_anchor = 'name="ID-' . $post->ID . '"';
                             if ( $glossarystyle == 'a-z' && count( $posts) > 1 ){
@@ -430,12 +431,12 @@ class Shortcode {
                             }
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']' . $tmp . '[/collapse]';               
                         } else {
-                            $content .= ( $hide_title ? '' : '<h2>' . $title . '</h2>' ) . ( $tmp ? '<p>' . $tmp . '</p>' : '' );
+                            $content .= ( $hide_title ? '' : '<h' . $atts['hstart'] . '>' . $title . '</h' . $atts['hstart'] . '>' ) . ( $tmp ? '<p>' . $tmp . '</p>' : '' );
                         }
                         $schema .= $this->getSchema( $post->ID, $title, $tmp );
                         $last_anchor = $letter;
                     }
-                    if ( !$hide_accordeon ){
+                    if ( !$hide_accordion ){
                         $accordion .= '[/collapsibles]';
                         $content .= do_shortcode( $accordion );
                     }
