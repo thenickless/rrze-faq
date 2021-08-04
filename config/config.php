@@ -12,7 +12,6 @@ function getOptionName() {
     return 'rrze-faq';
 }
 
-
 function getConstants() {
 	$options = array(
 		'fauthemes' => [
@@ -192,7 +191,10 @@ function getFields() {
  */
 
 function getShortcodeSettings(){
-	return [
+	$conts = getConstants();
+	$langs = $conts['langcodes'];
+	
+	$ret = [
 		'block' => [
             'blocktype' => 'rrze-faq/faq',
 			'blockname' => 'faq',
@@ -325,6 +327,12 @@ function getShortcodeSettings(){
 			'label' => __( 'Additonal CSS-class(es) for sourrounding DIV', 'rrze-faq' ),
 			'type' => 'text'
 		],
+        'lang' => [
+			'default' => '',
+			'field_type' => 'select',
+			'label' => __( 'Language', 'rrze-faq' ),
+			'type' => 'string'
+		],
         'sort' => [
 			'values' => [
                 [
@@ -368,6 +376,27 @@ function getShortcodeSettings(){
 			'type' => 'number' 
 		],
     ];
+
+	$ret['lang']['values'] = [
+		[
+			'id' => '',
+			'val' => __( 'All languages', 'rrze-faq')
+		],
+	];
+	$consts = getConstants();
+	$langs = $consts['langcodes'];
+	asort($langs);
+
+	foreach($langs as $short => $long){
+		$ret['lang']['values'][] = 
+			[
+				'id' => $short,
+				'val' => $long
+			];
+	}
+
+	return $ret;
+
 }
 
 function logIt( $msg ){

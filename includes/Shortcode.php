@@ -310,6 +310,14 @@ class Shortcode {
                     $postQuery['tax_query'] = $tax_query;
                 }    
             }
+            if ( isset($atts['lang']) ){
+                $postQuery['meta_query'] = [[
+                    'key' => 'lang', 
+                    'value' => $atts['lang'], 
+                    'compare' => '='
+                    ]];
+            }
+
             $posts = get_posts( $postQuery );
 
             if ( $posts ){
