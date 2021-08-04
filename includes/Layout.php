@@ -71,12 +71,16 @@ class Layout {
     }
 
     public function sortboxCallback( $meta_id ) {
-        $sortfield = get_post_meta( $meta_id->ID, 'sortfield', TRUE );
-        $output = '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr($sortfield) .'">';
+        $output = '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr(get_post_meta( $meta_id->ID, 'sortfield', TRUE )) .'">';
         $output .= '<p class="description">' . __( 'Criterion for sorting the output of the shortcode', 'rrze-faq' ) . '</p>';
         echo $output;
     }
 
+    public function langboxCallback( $meta_id ) {
+        $output = '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr(get_post_meta( $meta_id->ID, 'lang', TRUE )) .'">';
+        $output .= '<p class="description">' . __( 'Language of this FAQ', 'rrze-faq' ) . '</p>';
+        echo $output;
+    }
 
     public function fillContentBox( $post ) {
         $mycontent = apply_filters( 'the_content', $post->post_content );
@@ -150,6 +154,14 @@ class Layout {
             }
         }
         add_meta_box(
+            'langbox', // id, used as the html id att
+            __( 'Language', 'rrze-faq'), // meta box title
+            [$this, 'langboxCallback'], // callback function, spits out the content
+            'faq', // post type or page. This adds to posts only
+            'side',
+            // 'high' // priority, where should this go in the context
+        );    
+        add_meta_box(
             'sortbox', // id, used as the html id att
             __( 'Sort', 'rrze-faq'), // meta box title
             [$this, 'sortboxCallback'], // callback function, spits out the content
@@ -160,6 +172,7 @@ class Layout {
     }
 
     public function addFaqColumns( $columns ) {
+        $columns['lang'] = __( 'Language', 'rrze-faq' );
         $columns['sortfield'] = __( 'Sort criterion', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
@@ -169,6 +182,7 @@ class Layout {
     public function addFaqSortableColumns( $columns ) {
         $columns['taxonomy-faq_category'] = __( 'Category', 'rrze-faq' );
         $columns['taxonomy-faq_tag'] = __( 'Tag', 'rrze-faq' );
+        $columns['lang'] = __( 'Language', 'rrze-faq' );
         $columns['sortfield'] = 'sortfield';
         $columns['source'] = __( 'Source', 'rrze-faq' );
         $columns['id'] = __( 'ID', 'rrze-faq' );
@@ -182,7 +196,7 @@ class Layout {
         }
         $taxonomies_slugs = array(
             'faq_category',
-            'faq_tag'
+            'faq_tag',
         );
         foreach( $taxonomies_slugs as $slug ){
             $taxonomy = get_taxonomy( $slug );
@@ -201,6 +215,7 @@ class Layout {
     }    
 
     public function addTaxColumns( $columns ) {
+        $columns['lang'] = __( 'Language', 'rrze-faq' );
         $columns['source'] = __( 'Source', 'rrze-faq' );
         return $columns;
     }
@@ -208,6 +223,9 @@ class Layout {
     public function getFaqColumnsValues( $column_name, $post_id ) {
         if( $column_name == 'id' ) {
             echo $post_id;
+        }
+        if( $column_name == 'lang' ) {
+            echo get_post_meta( $post_id, 'lang', true );
         }
         if( $column_name == 'source' ) {
             echo get_post_meta( $post_id, 'source', true );
@@ -218,6 +236,10 @@ class Layout {
     }
 
     public function getTaxColumnsValues( $content, $column_name, $term_id ) {
+        if( $column_name == 'lang' ) {
+            $source = get_term_meta( $term_id, 'lang', true );
+            echo $source;
+        }
         if( $column_name == 'source' ) {
             $source = get_term_meta( $term_id, 'source', true );
             echo $source;
