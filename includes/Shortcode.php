@@ -310,7 +310,8 @@ class Shortcode {
                     $postQuery['tax_query'] = $tax_query;
                 }    
             }
-            if ( isset($atts['lang']) ){
+
+            if ( !empty($atts['lang']) ){
                 $postQuery['meta_query'] = [[
                     'key' => 'lang', 
                     'value' => $atts['lang'], 
