@@ -56,28 +56,27 @@ class Layout {
         }
     }
 
-    // public function saveSort( $post_id ){
     public function savePostMeta( $postID ){
         if ( ! current_user_can( 'edit_post', $postID ) || ! isset( $_POST['sortfield'] ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ){
             return $postID;
         }
-        update_post_meta( $postID, 'source', 'website' );
-        $lang = substr( get_locale(), 0, 2 );
-        update_post_meta( $postID, 'lang', $lang );
+        $source = (empty($_POST['source']) ? 'website' : sanitize_text_field( $_POST['source'] ));
+        update_post_meta( $postID, 'source', $source);
+        update_post_meta( $postID, 'lang', substr( get_locale(), 0, 2 ) );
         update_post_meta( $postID, 'remoteID', $postID );
-        $remoteChanged = get_post_timestamp( $postID, 'modified' );
-        update_post_meta( $postID, 'remoteChanged', $remoteChanged );
+        update_post_meta( $postID, 'remoteChanged', get_post_timestamp( $postID, 'modified' ) );
         update_post_meta( $postID, 'sortfield', sanitize_text_field( $_POST['sortfield'] ) );       
     }
 
     public function sortboxCallback( $meta_id ) {
-        $output = '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr(get_post_meta( $meta_id->ID, 'sortfield', TRUE )) .'">';
+        $output = '<input type="hidden" name="source" id="source" value="'. esc_attr(get_post_meta( $meta_id->ID, 'source', TRUE )) .'">';
+        $output .= '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr(get_post_meta( $meta_id->ID, 'sortfield', TRUE )) .'">';
         $output .= '<p class="description">' . __( 'Criterion for sorting the output of the shortcode', 'rrze-faq' ) . '</p>';
         echo $output;
     }
 
     public function langboxCallback( $meta_id ) {
-        $output = '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="'. esc_attr(get_post_meta( $meta_id->ID, 'lang', TRUE )) .'">';
+        $output = '<input type="text" name="lang" id="lang" class="lang" value="'. esc_attr(get_post_meta( $meta_id->ID, 'lang', TRUE )) .'">';
         $output .= '<p class="description">' . __( 'Language of this FAQ', 'rrze-faq' ) . '</p>';
         echo $output;
     }
