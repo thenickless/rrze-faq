@@ -25,23 +25,23 @@ if ($thisThemeGroup == 'fauthemes') {
 
 <?php } elseif ($thisThemeGroup == 'rrzethemes') {
 
-if (!is_front_page()) { ?>
-    <div id="sidebar" class="sidebar">
-        <?php get_sidebar('page'); ?>
-    </div><!-- .sidebar -->
-<?php } ?>
+    if (!is_front_page()) { ?>
+        <div id="sidebar" class="sidebar">
+            <?php get_sidebar('page'); ?>
+        </div><!-- .sidebar -->
+    <?php } ?>
 
-<div id="primary" class="content-area">
-    <div id="content" class="site-content" role="main">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
 
 <?php }else{ ?>
 
-<div id="sidebar" class="sidebar">
+    <div id="sidebar" class="sidebar">
 
-    <?php get_sidebar(); ?>
+        <?php get_sidebar(); ?>
 
-</div>
-<div id="primary" class="content-area">
-    <main id="main" class="site-main">
+    </div>
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
 
 <?php }
