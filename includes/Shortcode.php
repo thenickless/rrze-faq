@@ -229,6 +229,7 @@ class Shortcode {
         $atts = shortcode_atts( $atts_default, $atts );
 
         extract( $atts );
+
         $content = '';
         $schema = '';
         $glossarystyle  = ( isset( $glossarystyle ) ? $glossarystyle : '' );
@@ -236,7 +237,7 @@ class Shortcode {
         $color = ( isset( $color ) ? $color : '' );
         // if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
         //     return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
-        // }
+        // }    
         // if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
         //     return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
         // }
@@ -252,7 +253,7 @@ class Shortcode {
                 $aIDs = explode( ',', $id );
             }
             $found = FALSE;
-            $accordion = '[collapsibles' . $expand_all_link . ']';
+            $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
             foreach ( $aIDs as $faqID ){
                 $faqID = trim( $faqID );
                 if ( $faqID ){
@@ -262,7 +263,7 @@ class Shortcode {
                         $description = get_post_meta( $id, 'description', true );
                     }
                     if ( $hide_accordion ){
-                        $content .= ( $hide_title ? '' : '<h' . $atts['hstart'] . '>' . $title . '</h' . $atts['hstart'] . '>' ) . ( $description ? '<p>' . $description . '</p>' : '' );
+                        $content .= ( $hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>' ) . ( $description ? '<p>' . $description . '</p>' : '' );
                     } else {
                         if ( $description) {
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="ID-' . $faqID . '"' . $load_open . ']' . $description . '[/collapse]';
@@ -386,7 +387,7 @@ class Shortcode {
                                 break;            
                         }
                     }
-                    $accordion = '[collapsibles' . $expand_all_link . ']';
+                    $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
                     $last_anchor = '';
                     foreach ( $aUsedTerms as $k => $aVal ){
                         if ( $glossarystyle == 'a-z' && $content ){
@@ -414,12 +415,11 @@ class Shortcode {
                         $last_anchor = $aVal[$anchor];
                     }
                     $accordion .= '[/collapsibles]';
-
                     $content .= do_shortcode( $accordion );
                 } else {  
                     // attribut glossary is not given  
                     if ( !$hide_accordion ){
-                        $accordion = '[collapsibles' . $expand_all_link . ']';
+                        $accordion = '[collapsibles hstart="' . $hstart . '"'  . $expand_all_link . ']';
                     }           
                     $last_anchor = '';
                     foreach( $posts as $post ) {
@@ -440,15 +440,18 @@ class Shortcode {
                             }
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']' . $tmp . '[/collapse]';               
                         } else {
-                            $content .= ( $hide_title ? '' : '<h' . $atts['hstart'] . '>' . $title . '</h' . $atts['hstart'] . '>' ) . ( $tmp ? '<p>' . $tmp . '</p>' : '' );
+                            $content .= ( $hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>' ) . ( $tmp ? '<p>' . $tmp . '</p>' : '' );
                         }
                         $schema .= $this->getSchema( $post->ID, $title, $tmp );
                         $last_anchor = $letter;
                     }
+
                     if ( !$hide_accordion ){
                         $accordion .= '[/collapsibles]';
                         $content .= do_shortcode( $accordion );
                     }
+
+
                 }
             }
         } 

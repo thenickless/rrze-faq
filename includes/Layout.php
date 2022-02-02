@@ -39,7 +39,7 @@ class Layout {
 
 
     public function makeFaqSortable( $wp_query ) {
-        if ( is_admin() ) {    
+        if ( is_admin() && !empty($wp_query->query['post_type'])) { 
             $post_type = $wp_query->query['post_type'];    
             if ( $post_type == 'faq') {
                 if( ! isset($wp_query->query['orderby'])) {
