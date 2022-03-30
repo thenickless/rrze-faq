@@ -207,7 +207,8 @@ class Shortcode {
                     case 'nat':
                     case 'phil':
                     case 'rw':
-                    case 'tk':
+                    case 'tf':
+                    case 'fau':
                         $atts['color'] = $part;
                     break;
                     default:

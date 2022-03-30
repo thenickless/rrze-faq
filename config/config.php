@@ -296,6 +296,10 @@ function getShortcodeSettings(){
 		'color' => [
 			'values' => [
                 [
+                    'id' => 'fau',
+                    'val' => 'fau'
+                ],
+                [
                     'id' => 'med',
                     'val' => 'med'
                 ],
@@ -312,11 +316,11 @@ function getShortcodeSettings(){
                     'val' => 'phil'
                 ],
                 [
-                    'id' => 'tk',
-                    'val' => 'tk'
+                    'id' => 'tf',
+                    'val' => 'tf'
                 ],
 			],
-			'default' => 'tk',
+			'default' => 'fau',
 			'field_type' => 'select',
 			'label' => __( 'Color', 'rrze-faq' ),
 			'type' => 'string'
