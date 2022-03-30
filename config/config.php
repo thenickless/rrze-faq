@@ -308,12 +308,12 @@ function getShortcodeSettings(){
                     'val' => 'nat'
                 ],
                 [
-                    'id' => 'rw',
-                    'val' => 'rw'
-                ],
-                [
                     'id' => 'phil',
                     'val' => 'phil'
+                ],
+                [
+                    'id' => 'rw',
+                    'val' => 'rw'
                 ],
                 [
                     'id' => 'tf',
