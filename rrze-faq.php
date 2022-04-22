@@ -3,18 +3,17 @@
 /*
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
-Description:     Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und mittels Shortcode oder als Block (Gutenberg Editor) einzubinden.  
-Version:         4.27.24
+Description:     Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und mittels Shortcode oder als Block (Gutenberg Editor) einzubinden.
+Version:         4.27.25
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
 License URI:     http://www.gnu.org/licenses/gpl-2.0.html
 Domain Path:     /languages
 Text Domain:     rrze-faq
-*/
+ */
 
 namespace RRZE\FAQ;
-
 
 defined('ABSPATH') || exit;
 
@@ -24,16 +23,15 @@ use RRZE\FAQ\Main;
 $s = array(
     '/^((http|https):\/\/)?(www.)+/i',
     '/\//',
-    '/[^A-Za-z0-9\-]/'
+    '/[^A-Za-z0-9\-]/',
 );
 $r = array(
     '',
     '-',
-    '-'
+    '-',
 );
 
-define( 'FAQLOGFILE', plugin_dir_path( __FILE__) . 'rrze-faq-' . preg_replace( $s, $r,  get_bloginfo( 'url' ) ) . '.log' );
-
+define('FAQLOGFILE', plugin_dir_path(__FILE__) . 'rrze-faq-' . preg_replace($s, $r, get_bloginfo('url')) . '.log');
 
 const RRZE_PHP_VERSION = '7.3';
 const RRZE_WP_VERSION = '5.2';
@@ -44,8 +42,6 @@ const RRZE_SCHEMA_QUESTION_START = '<div style="display:none" itemscope itemprop
 const RRZE_SCHEMA_QUESTION_END = '</div>';
 const RRZE_SCHEMA_ANSWER_START = '<div style="display:none" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><div style="display:none" itemprop="text">';
 const RRZE_SCHEMA_ANSWER_END = '</div></div></div>';
-
-
 
 // Automatische Laden von Klassen.
 spl_autoload_register(function ($class) {
@@ -99,7 +95,8 @@ function system_requirements()
 /**
  * Wird durchgeführt, nachdem das Plugin aktiviert wurde.
  */
-function activation() {
+function activation()
+{
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
@@ -118,13 +115,14 @@ function activation() {
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
  */
-function deactivation() {
+function deactivation()
+{
     // Hier können die Funktionen hinzugefügt werden, die
     // bei der Deaktivierung des Plugins aufgerufen werden müssen.
     // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
 
     // delete_option(Options::get_option_name());
-    wp_clear_scheduled_hook( 'rrze_faq_auto_sync' );
+    wp_clear_scheduled_hook('rrze_faq_auto_sync');
     flush_rewrite_rules();
 }
 
@@ -132,13 +130,14 @@ function deactivation() {
  * Wird durchgeführt, nachdem das WP-Grundsystem hochgefahren
  * und alle Plugins eingebunden wurden.
  */
-function loaded() {
+function loaded()
+{
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
     // Überprüft die minimal erforderliche PHP- u. WP-Version.
     if ($error = system_requirements()) {
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        include_once ABSPATH . 'wp-admin/includes/plugin.php';
         $plugin_data = get_plugin_data(__FILE__);
         $plugin_name = $plugin_data['Name'];
         $tag = is_network_admin() ? 'network_admin_notices' : 'admin_notices';

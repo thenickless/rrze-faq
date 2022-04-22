@@ -4,313 +4,325 @@ namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
 
-define ('ENDPOINT', 'wp-json/wp/v2/faq' );
+define('ENDPOINT', 'wp-json/wp/v2/faq');
 
-class API {
+class API
+{
 
     private $aAllCats = array();
 
-    public function setDomain( $shortname, $url, $domains ){
+    public function setDomain($shortname, $url, $domains)
+    {
         // returns array('status' => TRUE, 'ret' => array(cleanShortname, cleanUrl)
         // on error returns array('status' => FALSE, 'ret' => error-message)
-        $aRet = array( 'status' => FALSE, 'ret' => '' );
-        $cleanUrl = trailingslashit( preg_replace( "/^((http|https):\/\/)?/i", "https://", $url ) );
-        $cleanShortname = strtolower( preg_replace('/[^A-Za-z0-9]/', '', $shortname ) );
+        $aRet = array('status' => false, 'ret' => '');
+        $cleanUrl = trailingslashit(preg_replace("/^((http|https):\/\/)?/i", "https://", $url));
+        $cleanShortname = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $shortname));
 
-        if ( in_array( $cleanUrl, $domains )){
-            $aRet['ret'] = $url . __( ' is already in use.', 'rrze-faq' );
+        if (in_array($cleanUrl, $domains)) {
+            $aRet['ret'] = $url . __(' is already in use.', 'rrze-faq');
             return $aRet;
-        }elseif ( array_key_exists( $cleanShortname, $domains )){
-            $aRet['ret'] = $cleanShortname . __( ' is already in use.', 'rrze-faq' );
+        } elseif (array_key_exists($cleanShortname, $domains)) {
+            $aRet['ret'] = $cleanShortname . __(' is already in use.', 'rrze-faq');
             return $aRet;
-        }else{
-            $request = wp_remote_get( $cleanUrl . ENDPOINT . '?per_page=1' );
-            $status_code = wp_remote_retrieve_response_code( $request );
+        } else {
+            $request = wp_remote_get($cleanUrl . ENDPOINT . '?per_page=1');
+            $status_code = wp_remote_retrieve_response_code($request);
 
-            if ( $status_code != '200' ){
-                $aRet['ret'] = $cleanUrl . __( ' is not valid.', 'rrze-faq' );
+            if ($status_code != '200') {
+                $aRet['ret'] = $cleanUrl . __(' is not valid.', 'rrze-faq');
                 return $aRet;
-            }else{
-                $content = json_decode( wp_remote_retrieve_body( $request ), TRUE );
+            } else {
+                $content = json_decode(wp_remote_retrieve_body($request), true);
 
-                if ($content){
-                    $cleanUrl = substr( $content[0]['link'], 0 , strpos( $content[0]['link'], '/faq' ) ) . '/';
-                }else{
-                    $aRet['ret'] = $cleanUrl . __( ' is not valid.', 'rrze-faq' );
-                    return $aRet;    
+                if ($content) {
+                    $cleanUrl = substr($content[0]['link'], 0, strpos($content[0]['link'], '/faq')) . '/';
+                } else {
+                    $aRet['ret'] = $cleanUrl . __(' is not valid.', 'rrze-faq');
+                    return $aRet;
                 }
-            } 
+            }
         }
 
-        $aRet['status'] = TRUE;
-        $aRet['ret'] = array( 'cleanShortname' => $cleanShortname, 'cleanUrl' => $cleanUrl );
+        $aRet['status'] = true;
+        $aRet['ret'] = array('cleanShortname' => $cleanShortname, 'cleanUrl' => $cleanUrl);
         return $aRet;
     }
 
-    protected function isRegisteredDomain( &$url ){
-        return in_array( $url, $this->getDomains() );
+    protected function isRegisteredDomain(&$url)
+    {
+        return in_array($url, $this->getDomains());
     }
 
-    public function getDomains(){
+    public function getDomains()
+    {
         $domains = array();
-        $options = get_option( 'rrze-faq' );
-        if ( isset( $options['registeredDomains'] ) ){
-            foreach( $options['registeredDomains'] as $shortname => $url ){
+        $options = get_option('rrze-faq');
+        if (isset($options['registeredDomains'])) {
+            foreach ($options['registeredDomains'] as $shortname => $url) {
                 $domains[$shortname] = $url;
-            }	
+            }
         }
-        asort( $domains );
+        asort($domains);
         return $domains;
     }
-    
 
-    protected function getTaxonomies( $url, $field, &$filter ){
-        $aRet = array();    
-        $url .= ENDPOINT . '_' . $field;    
-        $slug = ( $filter ? '&slug=' . $filter : '' );
+    protected function getTaxonomies($url, $field, &$filter)
+    {
+        $aRet = array();
+        $url .= ENDPOINT . '_' . $field;
+        $slug = ($filter ? '&slug=' . $filter : '');
         $page = 1;
 
         do {
-            $request = wp_remote_get( $url . '?page=' . $page . $slug );
-            $status_code = wp_remote_retrieve_response_code( $request );
-            if ( $status_code == 200 ){
-                $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                if ( !empty( $entries ) ){
-                    foreach( $entries as $entry ){
-                        if ( $entry['source'] == 'website' ){                            
-                            if ( $entry['children'] ) {
-                                foreach( $entry['children'] as $childname ){
-                                    $aRet[$entry['name']][$childname] = array();        
+            $request = wp_remote_get($url . '?page=' . $page . $slug);
+            $status_code = wp_remote_retrieve_response_code($request);
+            if ($status_code == 200) {
+                $entries = json_decode(wp_remote_retrieve_body($request), true);
+                if (!empty($entries)) {
+                    foreach ($entries as $entry) {
+                        if ($entry['source'] == 'website') {
+                            if ($entry['children']) {
+                                foreach ($entry['children'] as $childname) {
+                                    $aRet[$entry['name']][$childname] = array();
                                 }
-                            }else{
+                            } else {
                                 $aRet[$entry['name']] = array();
                             }
                         }
                     }
-                    foreach( $aRet as $name => $aChildren ){
-                        foreach ( $aChildren as $childname => $val ){
-                            if ( isset( $aRet[$childname] ) ){
+                    foreach ($aRet as $name => $aChildren) {
+                        foreach ($aChildren as $childname => $val) {
+                            if (isset($aRet[$childname])) {
                                 $aRet[$name][$childname] = $aRet[$childname];
                             }
                         }
                     }
                 }
             }
-            $page++;   
-        } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+            $page++;
+        } while (($status_code == 200) && (!empty($entries)));
         return $aRet;
     }
 
-    
-    public function sortIt( &$arr ){
-        uasort( $arr, function($a, $b) {
-            return strtolower( $a ) <=> strtolower( $b );
-        } );
+    public function sortIt(&$arr)
+    {
+        uasort($arr, function ($a, $b) {
+            return strtolower($a) <=> strtolower($b);
+        });
     }
-    
-    public function deleteTaxonomies( $source, $field ){
+
+    public function deleteTaxonomies($source, $field)
+    {
         $args = array(
-            'hide_empty' => FALSE,
+            'hide_empty' => false,
             'meta_query' => array(
                 array(
-                   'key'       => 'source',
-                   'value'     => $source,
-                   'compare'   => '='
-                )
+                    'key' => 'source',
+                    'value' => $source,
+                    'compare' => '=',
+                ),
             ),
-            'taxonomy'  => 'faq_' . $field,
-            'fields' => 'ids'
-            );
-        $terms = get_terms( $args );
-        foreach( $terms as $ID  ){
-            wp_delete_term( $ID, 'faq_' . $field );
+            'taxonomy' => 'faq_' . $field,
+            'fields' => 'ids',
+        );
+        $terms = get_terms($args);
+        foreach ($terms as $ID) {
+            wp_delete_term($ID, 'faq_' . $field);
         }
     }
 
-
-    public function deleteCategories( $source ){
-        $this->deleteTaxonomies( $source, 'category');
+    public function deleteCategories($source)
+    {
+        $this->deleteTaxonomies($source, 'category');
     }
 
-    public function deleteTags( $source ){
-        $this->deleteTaxonomies( $source, 'tag');
+    public function deleteTags($source)
+    {
+        $this->deleteTaxonomies($source, 'tag');
     }
 
-    protected function setCategories( &$aCategories, &$shortname ){
+    protected function setCategories(&$aCategories, &$shortname)
+    {
         $aTmp = $aCategories;
-        foreach ( $aTmp as $name => $aDetails ){
-            $term = term_exists( $name, 'faq_category' );
-            if ( !$term ) {
-                $term = wp_insert_term( $name, 'faq_category' );
+        foreach ($aTmp as $name => $aDetails) {
+            $term = term_exists($name, 'faq_category');
+            if (!$term) {
+                $term = wp_insert_term($name, 'faq_category');
             }
-            update_term_meta( $term['term_id'], 'source', $shortname );    
-            foreach ( $aDetails as $childname => $tmp ) {
-                $childterm = term_exists( $childname, 'faq_category' );
-                if ( !$childterm ) {
-                    $childterm = wp_insert_term( $childname, 'faq_category', array( 'parent' => $term['term_id'] ) );
-                    update_term_meta( $childterm['term_id'], 'source', $shortname );    
+            update_term_meta($term['term_id'], 'source', $shortname);
+            foreach ($aDetails as $childname => $tmp) {
+                $childterm = term_exists($childname, 'faq_category');
+                if (!$childterm) {
+                    $childterm = wp_insert_term($childname, 'faq_category', array('parent' => $term['term_id']));
+                    update_term_meta($childterm['term_id'], 'source', $shortname);
                 }
             }
-            if ( $aDetails ){
+            if ($aDetails) {
                 $aTmp = $aDetails;
             }
         }
     }
 
-    
-    public function sortAllCats( &$cats, &$into ) {
+    public function sortAllCats(&$cats, &$into)
+    {
         foreach ($cats as $ID => $aDetails) {
             $into[$ID]['slug'] = $aDetails['slug'];
-            $into[$ID]['name'] = $aDetails['name'];            
-            if ( $aDetails['parentID'] ) {
+            $into[$ID]['name'] = $aDetails['name'];
+            if ($aDetails['parentID']) {
                 $parentID = $aDetails['parentID'];
                 $into[$parentID][$ID]['slug'] = $aDetails['slug'];
                 $into[$parentID][$ID]['name'] = $aDetails['name'];
             }
-            unset( $cats[$parentID] );
-        }    
-        $this->sortAllCats( $cats, $into );
+            unset($cats[$parentID]);
+        }
+        $this->sortAllCats($cats, $into);
     }
 
-
-    public function sortCats(Array &$cats, Array &$into, $parentID = 0, $prefix = '' ) {
-        $prefix .= ( $parentID ? '-' : '' );
+    public function sortCats(array &$cats, array &$into, $parentID = 0, $prefix = '')
+    {
+        $prefix .= ($parentID ? '-' : '');
         foreach ($cats as $i => $cat) {
-            if ( $cat->parent == $parentID ) {
-                $into[$cat->term_id] = $cat;                
-                unset( $cats[$i] );
+            if ($cat->parent == $parentID) {
+                $into[$cat->term_id] = $cat;
+                unset($cats[$i]);
             }
             $this->aAllCats[$cat->term_id]['parentID'] = $cat->parent;
             $this->aAllCats[$cat->term_id]['slug'] = $cat->slug;
-            $this->aAllCats[$cat->term_id]['name'] = str_replace( '~', '&nbsp;', str_pad( ltrim( $prefix . ' ' . $cat->name ), 100, '~') );
-        }    
+            $this->aAllCats[$cat->term_id]['name'] = str_replace('~', '&nbsp;', str_pad(ltrim($prefix . ' ' . $cat->name), 100, '~'));
+        }
         foreach ($into as $topCat) {
             $topCat->children = array();
-            $this->sortCats($cats, $topCat->children, $topCat->term_id, $prefix );
+            $this->sortCats($cats, $topCat->children, $topCat->term_id, $prefix);
         }
-        if ( !$cats ){
-            foreach ( $this->aAllCats as $ID => $aDetails ){
-                if ( $aDetails['parentID'] ){
+        if (!$cats) {
+            foreach ($this->aAllCats as $ID => $aDetails) {
+                if ($aDetails['parentID']) {
                     $this->aAllCats[$aDetails['parentID']]['children'][$ID] = $this->aAllCats[$ID];
                 }
             }
-        } 
+        }
     }
 
-    public function cleanCats(){
-        foreach ( $this->aAllCats as $ID => $aDetails ){
-            if ( $aDetails['parentID'] ){
-                unset( $this->aAllCats[$ID] );
+    public function cleanCats()
+    {
+        foreach ($this->aAllCats as $ID => $aDetails) {
+            if ($aDetails['parentID']) {
+                unset($this->aAllCats[$ID]);
             }
         }
     }
 
-    public function getSlugNameCats(&$cats, &$into ){
-        foreach ( $cats as $i => $cat ){
+    public function getSlugNameCats(&$cats, &$into)
+    {
+        foreach ($cats as $i => $cat) {
             $into[$cat['slug']] = $cat['name'];
-            if ( isset( $cat['children'] ) ){
-                $this->getSlugNameCats($cat['children'], $into );
+            if (isset($cat['children'])) {
+                $this->getSlugNameCats($cat['children'], $into);
             }
-            unset( $cats[$i] );
+            unset($cats[$i]);
         }
     }
 
-    public function getCategories( $url, $shortname, $categories = '' ){
+    public function getCategories($url, $shortname, $categories = '')
+    {
         $aRet = array();
-        $aCategories = $this->getTaxonomies( $url, 'category', $categories );
-        $this->setCategories( $aCategories, $shortname );
-        $categories = get_terms( array(
+        $aCategories = $this->getTaxonomies($url, 'category', $categories);
+        $this->setCategories($aCategories, $shortname);
+        $categories = get_terms(array(
             'taxonomy' => 'faq_category',
-            'meta_query' => array( array(
+            'meta_query' => array(array(
                 'key' => 'source',
-                'value' => $shortname
-            ) ),
-            'hide_empty' => FALSE
-            ) );
+                'value' => $shortname,
+            )),
+            'hide_empty' => false,
+        ));
         $categoryHierarchy = array();
         $this->sortCats($categories, $categoryHierarchy);
         $this->cleanCats();
-        $this->getSlugNameCats( $this->aAllCats, $aRet );
+        $this->getSlugNameCats($this->aAllCats, $aRet);
         return $aRet;
     }
 
-
-    public function deleteFAQ( $source ){
+    public function deleteFAQ($source)
+    {
         // deletes all FAQ by source
         $iDel = 0;
-        $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'numberposts' => -1 ) );
+        $allFAQ = get_posts(array('post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'numberposts' => -1));
 
-        foreach ( $allFAQ as $faq ) {
-            wp_delete_post( $faq->ID, TRUE );
+        foreach ($allFAQ as $faq) {
+            wp_delete_post($faq->ID, true);
             $iDel++;
-        } 
+        }
         return $iDel;
     }
 
-    protected function absoluteUrl( $txt, $baseUrl ){
+    protected function absoluteUrl($txt, $baseUrl)
+    {
         // converts relative URLs to absolute ones
         $needles = array('href="', 'src="', 'background="');
         $newTxt = '';
-        if (substr( $baseUrl, -1 ) != '/' ){
+        if (substr($baseUrl, -1) != '/') {
             $baseUrl .= '/';
-        } 
+        }
         $newBaseUrl = $baseUrl;
-        $baseUrlParts = parse_url( $baseUrl );
-        foreach ( $needles as $needle ){
-            while( $pos = strpos( $txt, $needle ) ){
-                $pos += strlen( $needle );
-                if ( substr( $txt, $pos, 7 ) != 'http://' && substr( $txt, $pos, 8) != 'https://' && substr( $txt, $pos, 6) != 'ftp://' && substr( $txt, $pos, 7 ) != 'mailto:' ){
-                    if ( substr( $txt, $pos, 1 ) == '/' ){
+        $baseUrlParts = parse_url($baseUrl);
+        foreach ($needles as $needle) {
+            while ($pos = strpos($txt, $needle)) {
+                $pos += strlen($needle);
+                if (substr($txt, $pos, 7) != 'http://' && substr($txt, $pos, 8) != 'https://' && substr($txt, $pos, 6) != 'ftp://' && substr($txt, $pos, 7) != 'mailto:') {
+                    if (substr($txt, $pos, 1) == '/') {
                         $newBaseUrl = $baseUrlParts['scheme'] . '://' . $baseUrlParts['host'];
                     }
-                    $newTxt .= substr( $txt, 0, $pos ).$newBaseUrl;
+                    $newTxt .= substr($txt, 0, $pos) . $newBaseUrl;
                 } else {
-                    $newTxt .= substr( $txt, 0, $pos );
+                    $newTxt .= substr($txt, 0, $pos);
                 }
-                $txt = substr( $txt, $pos );
+                $txt = substr($txt, $pos);
             }
             $txt = $newTxt . $txt;
             $newTxt = '';
         }
         // convert all elements of srcset, too
         $needle = 'srcset="';
-        while( $pos = strpos( $txt, $needle, $pos ) ){
-            $pos += strlen( $needle );
-            $len = strpos( $txt, '"', $pos ) - $pos;
-            $srcset = substr( $txt, $pos, $len );
-            $aSrcset = explode( ',', $srcset );
+        while ($pos = strpos($txt, $needle, $pos)) {
+            $pos += strlen($needle);
+            $len = strpos($txt, '"', $pos) - $pos;
+            $srcset = substr($txt, $pos, $len);
+            $aSrcset = explode(',', $srcset);
             $aNewSrcset = array();
-            foreach( $aSrcset as $src ){
-                $src = trim( $src );
-                if ( substr( $src, 0, 1 ) == '/' ){
+            foreach ($aSrcset as $src) {
+                $src = trim($src);
+                if (substr($src, 0, 1) == '/') {
                     $aNewSrcset[] = $newBaseUrl . $src;
-                }                                
+                }
             }
-            $newSrcset = implode( ', ', $aNewSrcset );
-            $txt = str_replace( $srcset, $newSrcset, $txt );
+            $newSrcset = implode(', ', $aNewSrcset);
+            $txt = str_replace($srcset, $newSrcset, $txt);
         }
         return $txt;
-      }
+    }
 
-    protected function getFAQ( &$url, &$categories ){
+    protected function getFAQ(&$url, &$categories)
+    {
         $faqs = array();
         $aCategoryRelation = array();
         $filter = '&filter[faq_category]=' . $categories;
         $page = 1;
 
         do {
-            $request = wp_remote_get( $url . ENDPOINT . '?page=' . $page . $filter );
-            $status_code = wp_remote_retrieve_response_code( $request );
-            if ( $status_code == 200 ){
-                $entries = json_decode( wp_remote_retrieve_body( $request ), true );
-                if ( !empty( $entries ) ){
-                    if ( !isset( $entries[0] ) ){
-                        $entries = array( $entries );
+            $request = wp_remote_get($url . ENDPOINT . '?page=' . $page . $filter);
+            $status_code = wp_remote_retrieve_response_code($request);
+            if ($status_code == 200) {
+                $entries = json_decode(wp_remote_retrieve_body($request), true);
+                if (!empty($entries)) {
+                    if (!isset($entries[0])) {
+                        $entries = array($entries);
                     }
-                    foreach( $entries as $entry ){
-                        if ( $entry['source'] == 'website' ){
+                    foreach ($entries as $entry) {
+                        if ($entry['source'] == 'website') {
                             $content = $entry['content']['rendered'];
-                            $content = $this->absoluteUrl( $content, $url );
+                            $content = $this->absoluteUrl($content, $url);
 
                             $faqs[$entry['id']] = array(
                                 'id' => $entry['id'],
@@ -319,108 +331,111 @@ class API {
                                 'lang' => $entry['lang'],
                                 'faq_category' => $entry['faq_category'],
                                 'remoteID' => $entry['remoteID'],
-                                'remoteChanged' => $entry['remoteChanged']
+                                'remoteChanged' => $entry['remoteChanged'],
                             );
                             $sTag = '';
-                            foreach ( $entry['faq_tag'] as $tag ){
+                            foreach ($entry['faq_tag'] as $tag) {
                                 $sTag .= $tag . ',';
                             }
-                            $faqs[$entry['id']]['faq_tag'] = trim( $sTag, ',' );
-                            $faqs[$entry['id']]['URLhasSlider'] = ( ( strpos( $content, 'slider') !== false ) ? $entry['link'] : FALSE ); // we cannot handle sliders, see note in Shortcode.php shortcodeOutput()
+                            $faqs[$entry['id']]['faq_tag'] = trim($sTag, ',');
+                            $faqs[$entry['id']]['URLhasSlider'] = ((strpos($content, 'slider') !== false) ? $entry['link'] : false); // we cannot handle sliders, see note in Shortcode.php shortcodeOutput()
                         }
                     }
                 }
             }
-            $page++;   
-        } while ( ( $status_code == 200 ) && ( !empty( $entries ) ) );
+            $page++;
+        } while (($status_code == 200) && (!empty($entries)));
 
         return $faqs;
     }
 
-    public function setTags( $terms, $shortname ){
-        if ( $terms ){
-            $aTerms = explode( ',', $terms );
-            foreach( $aTerms as $name ){
-                if ( $name ){
-                    $term = term_exists( $name, 'faq_tag' );
-                    if ( !$term ) {
-                        $term = wp_insert_term( $name, 'faq_tag' );
-                        update_term_meta( $term['term_id'], 'source', $shortname );    
+    public function setTags($terms, $shortname)
+    {
+        if ($terms) {
+            $aTerms = explode(',', $terms);
+            foreach ($aTerms as $name) {
+                if ($name) {
+                    $term = term_exists($name, 'faq_tag');
+                    if (!$term) {
+                        $term = wp_insert_term($name, 'faq_tag');
+                        update_term_meta($term['term_id'], 'source', $shortname);
                     }
                 }
             }
         }
     }
 
-    public function getFAQRemoteIDs( $source ){
+    public function getFAQRemoteIDs($source)
+    {
         $aRet = array();
-        $allFAQ = get_posts( array( 'post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'fields' => 'ids', 'numberposts' => -1 ) );
-        foreach ( $allFAQ as $postID ){
-            $remoteID = get_post_meta( $postID, 'remoteID', TRUE );
-            $remoteChanged = get_post_meta( $postID, 'remoteChanged', TRUE );
+        $allFAQ = get_posts(array('post_type' => 'faq', 'meta_key' => 'source', 'meta_value' => $source, 'fields' => 'ids', 'numberposts' => -1));
+        foreach ($allFAQ as $postID) {
+            $remoteID = get_post_meta($postID, 'remoteID', true);
+            $remoteChanged = get_post_meta($postID, 'remoteChanged', true);
             $aRet[$remoteID] = array(
                 'postID' => $postID,
-                'remoteChanged' => $remoteChanged
-                );
+                'remoteChanged' => $remoteChanged,
+            );
         }
         return $aRet;
     }
 
-    public function setFAQ( $url, $categories, $shortname ){
+    public function setFAQ($url, $categories, $shortname)
+    {
         $iNew = 0;
         $iUpdated = 0;
         $iDeleted = 0;
         $aURLhasSlider = array();
 
         // get all remoteIDs of stored FAQ to this source ( key = remoteID, value = postID )
-        $aRemoteIDs = $this->getFAQRemoteIDs( $shortname );
+        $aRemoteIDs = $this->getFAQRemoteIDs($shortname);
 
         // $this->deleteTags( $shortname );
         // $this->deleteCategories( $shortname );
         // $this->getCategories( $url, $shortname );
 
         // get all FAQ
-        $aFaq = $this->getFAQ( $url, $categories );
-        
+        $aFaq = $this->getFAQ($url, $categories);
+
         // set FAQ
-        foreach ( $aFaq as $faq ){
-            $this->setTags( $faq['faq_tag'], $shortname );
+        foreach ($aFaq as $faq) {
+            $this->setTags($faq['faq_tag'], $shortname);
 
             $aCategoryIDs = array();
-            foreach ( $faq['faq_category'] as $name ){
-                $term = get_term_by( 'name', $name, 'faq_category' );
+            foreach ($faq['faq_category'] as $name) {
+                $term = get_term_by('name', $name, 'faq_category');
                 $aCategoryIDs[] = $term->term_id;
             }
 
-            if ( $faq['URLhasSlider'] ) {
+            if ($faq['URLhasSlider']) {
                 $aURLhasSlider[] = $faq['URLhasSlider'];
             } else {
-                if ( isset( $aRemoteIDs[$faq['remoteID']] ) ) {
-                    if ( $aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged'] ){
+                if (isset($aRemoteIDs[$faq['remoteID']])) {
+                    if ($aRemoteIDs[$faq['remoteID']]['remoteChanged'] < $faq['remoteChanged']) {
                         // update FAQ
-                        $post_id = wp_update_post( array(
+                        $post_id = wp_update_post(array(
                             'ID' => $aRemoteIDs[$faq['remoteID']]['postID'],
-                            'post_name' => sanitize_title( $faq['title'] ),
+                            'post_name' => sanitize_title($faq['title']),
                             'post_title' => $faq['title'],
                             'post_content' => $faq['content'],
                             'meta_input' => array(
                                 'source' => $shortname,
                                 'lang' => $faq['lang'],
-                                'remoteID' => $faq['remoteID']
-                                ),
+                                'remoteID' => $faq['remoteID'],
+                            ),
                             'tax_input' => array(
                                 'faq_category' => $aCategoryIDs,
-                                'faq_tag' => $faq['faq_tag']
-                                )
-                            ) ); 
+                                'faq_tag' => $faq['faq_tag'],
+                            ),
+                        ));
                         $iUpdated++;
                     }
-                    unset( $aRemoteIDs[$faq['remoteID']] );
+                    unset($aRemoteIDs[$faq['remoteID']]);
                 } else {
                     // insert FAQ
-                    $post_id = wp_insert_post( array(
+                    $post_id = wp_insert_post(array(
                         'post_type' => 'faq',
-                        'post_name' => sanitize_title( $faq['title'] ),
+                        'post_name' => sanitize_title($faq['title']),
                         'post_title' => $faq['title'],
                         'post_content' => $faq['content'],
                         'comment_status' => 'closed',
@@ -431,31 +446,29 @@ class API {
                             'lang' => $faq['lang'],
                             'remoteID' => $faq['id'],
                             'remoteChanged' => $faq['remoteChanged'],
-                            'sortfield' => ''
-                            ),
+                            'sortfield' => '',
+                        ),
                         'tax_input' => array(
                             'faq_category' => $aCategoryIDs,
-                            'faq_tag' => $faq['faq_tag']
-                            )
-                        ) );
+                            'faq_tag' => $faq['faq_tag'],
+                        ),
+                    ));
                     $iNew++;
                 }
             }
         }
 
         // delete all other FAQ to this source
-        foreach( $aRemoteIDs as $remoteID => $aDetails ){
-            wp_delete_post( $aDetails['postID'], TRUE );
+        foreach ($aRemoteIDs as $remoteID => $aDetails) {
+            wp_delete_post($aDetails['postID'], true);
             $iDeleted++;
         }
 
-        return array( 
+        return array(
             'iNew' => $iNew,
             'iUpdated' => $iUpdated,
             'iDeleted' => $iDeleted,
-            'URLhasSlider' => $aURLhasSlider
+            'URLhasSlider' => $aURLhasSlider,
         );
     }
-}    
-
-
+}
