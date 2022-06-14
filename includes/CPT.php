@@ -70,7 +70,7 @@ class CPT {
         $tax = [
             [ 
                 'name' => 'faq_category',
-                'label' => __('Categories', 'rrze-faq'),
+                'label' => 'FAQ ' . __('Categories', 'rrze-faq'),
                 'slug' => 'faq_category',
                 'rest_base' => 'faq_category',
                 'hierarchical' => TRUE,
@@ -92,7 +92,7 @@ class CPT {
             ],
             [ 
                 'name' => 'faq_tag',
-                'label' => __('Tags', 'rrze-faq'),
+                'label' => 'FAQ ' . __('Tags', 'rrze-faq'),
                 'slug' => 'faq_tag',
                 'rest_base' => 'faq_tag',
                 'hierarchical' => FALSE,
