@@ -55,7 +55,7 @@ class CPT {
                 'menu_icon'		  => 'dashicons-editor-help',
                 'can_export'          => true,
                 'has_archive'         => true,
-                'exclude_from_search' => true,
+                'exclude_from_search' => false,
                 'publicly_queryable'  => true,
                 'query_var'           => 'faq',
                 'rewrite'             => $rewrite,
