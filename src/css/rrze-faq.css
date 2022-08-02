@@ -3,6 +3,9 @@
 }
 
 .fau-glossar .letters li{
+    display: inline-block;
+    background: none;
+    margin: 0.2rem;
     border: 1px solid #e9edf2;
     color: #e9edf2;
     vertical-align: middle;
@@ -12,6 +15,11 @@
     margin: 2px;
     border-radius: 4px;
     background-clip: padding-box
+
+}
+
+.fau-glossar .letters a{
+    text-decoration: none;
 }
 
 .fau-glossar .letters li.filled{
@@ -41,3 +49,4 @@ ul.letters{
 /* .accordion-body{
     display: none !important;
 } */
+
