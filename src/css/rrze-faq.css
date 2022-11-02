@@ -1,7 +1,3 @@
-.fau-faq{
-    font-family: Roboto,sans-serif !important;
-}
-
 .fau-glossar .letters li{
     display: inline-block;
     background: none;
@@ -35,10 +31,6 @@
 .accordion{
     margin: 0;
     padding: 0;
-}
-
-.fau-glossary{
-    font-family: Roboto,sans-serif !important;
 }
 
 ul.letters{
