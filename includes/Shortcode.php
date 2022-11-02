@@ -470,7 +470,7 @@ class Shortcode
         //     wp_enqueue_script( 'fau-js-heroslider' );
         // }
 
-        return '<div class="fau-faq' . ($color ? ' ' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
+        return '<div class="' . ($color ? '' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
     }
 
     public function sortIt(&$arr)
