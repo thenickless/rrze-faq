@@ -8,7 +8,7 @@
  * @since FAU 1.0
 */
 
-include_once('template-parts/head.php');
+include_once('template-parts/archive_head.php');
 
 if ( have_posts() ) : while ( have_posts() ) : the_post();
 

@@ -14,7 +14,11 @@ $thisThemeGroup = Layout::getThemeGroup();
 
 get_header();
 if ($thisThemeGroup == 'fauthemes') {
-    get_template_part('template-parts/hero', 'index'); 
+    $currentTheme = wp_get_theme();		
+    $vers = $currentTheme->get( 'Version' );
+      if (version_compare($vers, "2.3", '<')) {      
+        get_template_part('template-parts/hero', 'index'); 
+      }
 ?>
 
        <div id="content">
