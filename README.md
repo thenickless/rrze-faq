@@ -112,7 +112,8 @@ https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq?filter[faq_category]=Diens
 Tags und Kategorien:
 https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq?filter[faq_category]=Dienste&filter[faq_tag]=Sprache
 
-
+Pagination:
+https://developer.wordpress.org/rest-api/using-the-rest-api/pagination/
 
 
 
