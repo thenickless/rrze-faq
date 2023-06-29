@@ -92,3 +92,27 @@ Synchronisierte FAQ können nun wie selbst erstellte FAQ mit dem Shortcode ausge
 Unter /wp-admin/widgets.php wird das Widget als "FAQ Widget" angeboten. Per drag&drop lässt es sich in einen Bereich wie z.B. der Sidebar einbetten. Einstellbar sind die Anzeigedauer und ob ein bestimmtes FAQ oder aus einer gewählten Kategorie ein zufälliges FAQ angezeigt werden soll.
 
 
+## Verwendung via REST API v2
+
+Beispiele:
+
+https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq
+
+Filterungen:
+
+Tag:
+https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq?filter[faq_tag]=Matrix
+
+Mehrere Tags:
+https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq?filter[faq_tag]=Matrix%2BAccounts
+
+Kategorie:
+https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq?filter[faq_category]=Dienste
+
+Tags und Kategorien:
+https://www.anleitungen.rrze.fau.de/wp-json/wp/v2/faq?filter[faq_category]=Dienste&filter[faq_tag]=Sprache
+
+
+
+
+
