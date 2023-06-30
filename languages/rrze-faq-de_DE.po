@@ -3,10 +3,10 @@ msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-06-10 14:52+0000\n"
-"PO-Revision-Date: 2022-04-22 11:16+0000\n"
+"PO-Revision-Date: 2023-06-30 11:46+0000\n"
 "Last-Translator: \n"
-"Language-Team: Deutsch (Sie)\n"
-"Language: de_DE_formal\n"
+"Language-Team: Deutsch\n"
+"Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,7 +26,7 @@ msgstr " ist nicht gültig."
 msgid " updated"
 msgstr "aktualisiert"
 
-#: includes/Shortcode.php:504 includes/Shortcode.php:535
+#: includes/Shortcode.php:522 includes/Shortcode.php:553
 msgid "-- all --"
 msgstr "-- alle --"
 
@@ -38,15 +38,15 @@ msgstr "-- versteckt --"
 msgid "A - Z"
 msgstr ""
 
-#: includes/Layout.php:113
+#: includes/Layout.php:123
 msgid "Accordion with all entries"
 msgstr "Akkordeon mit allen Einträgen"
 
-#: includes/Layout.php:111
+#: includes/Layout.php:121
 msgid "Accordion with category"
 msgstr "Akkordeon mit Kategorie"
 
-#: includes/Layout.php:112
+#: includes/Layout.php:122
 msgid "Accordion with tag"
 msgstr "Akkordeon mit Schlagwort"
 
@@ -98,7 +98,7 @@ msgstr ""
 msgid "All languages"
 msgstr "Alle Sprachen"
 
-#: includes/Layout.php:235
+#: includes/Layout.php:253
 msgid "All Sources"
 msgstr "Alle Quellen"
 
@@ -109,6 +109,18 @@ msgstr "Alle Synchronisierungen abgeschlossen"
 #: includes/CPT.php:108
 msgid "All tags"
 msgstr "Alle Schlagwörter"
+
+#. id, used as the html id att
+#: includes/Layout.php:191
+msgid "Anchor"
+msgstr "Sprungmarke"
+
+#: includes/Layout.php:86
+msgid ""
+"Anchor field (optional) to define jump marks when displayed in accordions "
+msgstr ""
+"Ankerfeld (optional) zum Definieren von Sprungmarken bei der Anzeige in "
+"Akkordeons"
 
 #: includes/Sync.php:38
 msgid "and"
@@ -123,7 +135,7 @@ msgstr "aufsteigend"
 msgid "Categories"
 msgstr "Kategorien"
 
-#: includes/CPT.php:78 includes/Layout.php:192
+#: includes/CPT.php:78 includes/Layout.php:210
 msgid "Category"
 msgstr "Kategorie"
 
@@ -143,7 +155,7 @@ msgstr "Wählen Sie aus den meistverwendeten Schlagwörtern"
 msgid "Color"
 msgstr "Farbe"
 
-#: includes/Layout.php:77
+#: includes/Layout.php:78
 msgid "Criterion for sorting the output of the shortcode"
 msgstr "Kriterium für die Sortierung der Shortcode-Ausgabe"
 
@@ -207,7 +219,7 @@ msgstr "Ende"
 msgid "Enter a short name for this domain."
 msgstr "Geben Sie eine Kurzbezeichnung für diese Domain ein."
 
-#: includes/Layout.php:122
+#: includes/Layout.php:132
 msgid "Enter question here"
 msgstr "Geben Sie hier die Frage ein"
 
@@ -276,17 +288,17 @@ msgstr ""
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
 msgstr ""
 
-#: config/config.php:348 includes/Layout.php:186 includes/Layout.php:197
+#: config/config.php:348 includes/Layout.php:204 includes/Layout.php:215
 msgid "ID"
 msgstr ""
 
-#: includes/Layout.php:111
+#: includes/Layout.php:121
 msgid "If there is more than one category listed, use at least one of them."
 msgstr ""
 "Wenn mehrere Kategorien aufgeführt sind, nutzen Sie bitte mindestens eine "
 "davon."
 
-#: includes/Layout.php:112
+#: includes/Layout.php:122
 msgid "If there is more than one tag listed, use at least one of them."
 msgstr ""
 "Wenn mehrere Schlagwörter aufgeführt sind, nutzen Sie bitte mindestens eines "
@@ -297,17 +309,17 @@ msgid "Info"
 msgstr ""
 
 #. id, used as the html id att
-#: includes/Layout.php:156
+#: includes/Layout.php:166
 msgid "Integration in pages and posts"
 msgstr "Einfügen in Seiten und Beiträge"
 
 #. id, used as the html id att
-#: config/config.php:337 includes/Layout.php:165 includes/Layout.php:183
-#: includes/Layout.php:194 includes/Layout.php:269
+#: config/config.php:337 includes/Layout.php:175 includes/Layout.php:201
+#: includes/Layout.php:212 includes/Layout.php:287
 msgid "Language"
 msgstr "Sprache"
 
-#: includes/Layout.php:84
+#: includes/Layout.php:94
 msgid "Language of this FAQ"
 msgstr "Sprache dieser FAQ"
 
@@ -339,7 +351,7 @@ msgstr "Neue Kategorie"
 msgid "New tag"
 msgstr "Neues Schlagwort"
 
-#: includes/Main.php:188
+#: includes/Main.php:189
 msgid "Next automatically synchronization:"
 msgstr "Nächste automatische Synchronisierung:"
 
@@ -472,7 +484,7 @@ msgstr "Schlagwort anzeigen"
 msgid "Show tags"
 msgstr "Schlagwörter anzeigen"
 
-#: includes/Layout.php:110
+#: includes/Layout.php:120
 msgid "Single entries"
 msgstr "Einzelner Eintrag"
 
@@ -482,11 +494,11 @@ msgid "FAQ"
 msgstr ""
 
 #. id, used as the html id att
-#: config/config.php:357 includes/Layout.php:173
+#: config/config.php:357 includes/Layout.php:183
 msgid "Sort"
 msgstr "Sortierung"
 
-#: includes/Layout.php:184
+#: includes/Layout.php:202
 msgid "Sort criterion"
 msgstr "Sortierkriterium"
 
@@ -494,7 +506,7 @@ msgstr "Sortierkriterium"
 msgid "Sort field"
 msgstr "Sortierfeld"
 
-#: includes/Layout.php:185 includes/Layout.php:196 includes/Layout.php:270
+#: includes/Layout.php:203 includes/Layout.php:214 includes/Layout.php:288
 msgid "Source"
 msgstr "Quelle"
 
@@ -526,7 +538,7 @@ msgstr "Automatisch synchronisieren"
 msgid "Tabs"
 msgstr ""
 
-#: includes/CPT.php:100 includes/Layout.php:193
+#: includes/CPT.php:100 includes/Layout.php:211
 msgid "Tag"
 msgstr "Schlagwort"
 
@@ -539,14 +551,14 @@ msgstr ""
 msgid "Tags"
 msgstr "Schlagwörter"
 
-#: rrze-faq.php:87
+#: rrze-faq.php:89
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
 msgstr ""
 
-#: rrze-faq.php:90
+#: rrze-faq.php:92
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
@@ -554,7 +566,7 @@ msgid ""
 msgstr ""
 
 #. id, used as the html id att
-#: includes/Layout.php:146
+#: includes/Layout.php:156
 msgid "This FAQ cannot be edited because it is sychronized"
 msgstr "Diese FAQ kann nicht editiert werden, weil sie synchronisiert wurde"
 
@@ -583,6 +595,6 @@ msgid "Use this name as attribute 'domain' in shortcode [faq]"
 msgstr ""
 "Verwenden Sie diesen Namen als Attribut für 'domain' im Shortcode [faq]"
 
-#: includes/Layout.php:146
+#: includes/Layout.php:156
 msgid "You can edit it at the source"
 msgstr "Sie können es auf der Quelle editieren"

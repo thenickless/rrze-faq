@@ -59,7 +59,7 @@ class Layout
 
     public function savePostMeta($postID)
     {
-        if (!current_user_can('edit_post', $postID) || !isset($_POST['sortfield']) || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)) {
+        if (!current_user_can('edit_post', $postID) || !isset($_POST['sortfield']) || !isset($_POST['anchorfield']) || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)) {
             return $postID;
         }
         $source = (empty($_POST['source']) ? 'website' : sanitize_text_field($_POST['source']));
@@ -68,6 +68,7 @@ class Layout
         update_post_meta($postID, 'remoteID', $postID);
         update_post_meta($postID, 'remoteChanged', get_post_timestamp($postID, 'modified'));
         update_post_meta($postID, 'sortfield', sanitize_text_field($_POST['sortfield']));
+        update_post_meta($postID, 'anchorfield', sanitize_title($_POST['anchorfield']));
     }
 
     public function sortboxCallback($meta_id)
@@ -77,6 +78,15 @@ class Layout
         $output .= '<p class="description">' . __('Criterion for sorting the output of the shortcode', 'rrze-faq') . '</p>';
         echo $output;
     }
+
+    public function anchorboxCallback($meta_id)
+    {
+        $output = '<input type="hidden" name="source" id="source" value="' . esc_attr(get_post_meta($meta_id->ID, 'source', true)) . '">';
+        $output .= '<input type="text" name="anchorfield" id="anchorfield" class="anchorfield" value="' . esc_attr(get_post_meta($meta_id->ID, 'anchorfield', true)) . '">';
+        $output .= '<p class="description">' . __('Anchor field (optional) to define jump marks when displayed in accordions ', 'rrze-faq') . '</p>';
+        echo $output;
+    }
+
 
     public function langboxCallback($meta_id)
     {
@@ -172,6 +182,14 @@ class Layout
             'sortbox', // id, used as the html id att
             __('Sort', 'rrze-faq'), // meta box title
             [$this, 'sortboxCallback'], // callback function, spits out the content
+            'faq', // post type or page. This adds to posts only
+            'side'
+            // 'high' // priority, where should this go in the context
+        );
+        add_meta_box(
+            'anchorbox', // id, used as the html id att
+            __('Anchor', 'rrze-faq'), // meta box title
+            [$this, 'anchorboxCallback'], // callback function, spits out the content
             'faq', // post type or page. This adds to posts only
             'side'
             // 'high' // priority, where should this go in the context
@@ -284,6 +302,9 @@ class Layout
         }
         if ($column_name == 'sortfield') {
             echo get_post_meta($post_id, 'sortfield', true);
+        }
+        if ($column_name == 'anchorfield') {
+            echo get_post_meta($post_id, 'anchorfield', true);
         }
     }
 
