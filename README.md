@@ -58,7 +58,7 @@ sort : die Sortierung der Ausgabe kann hiermit gesteuert werden. Mögliche Werte
 
 order : legt fest, in welcher Reihenfolge sortiert werden soll. "asc" aufsteigend und "desc" absteigend. Voreingestellt ist "asc".
 
-hstart : bestimmt die Überschriftenebene der ersten Überschrift. Voreingestellt ist 2, womit die Überschriften als <h2> ausgegeben werden.
+hstart : bestimmt die Überschriftenebene der ersten Überschrift. Voreingestellt ist 2, womit die Überschriften als `<h2>` ausgegeben werden.
 
 
 ## Beispiele
