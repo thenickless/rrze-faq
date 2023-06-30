@@ -86,7 +86,8 @@ class Main {
 
         // get stored options because they are generated and not defined in config.php
         $storedOptions = get_option( 'rrze-faq' );
-        if (is_array($storedOptions)){
+
+        if (is_array($storedOptions) && is_array($options)){
             $options = array_merge($storedOptions, $options);
         }
 
