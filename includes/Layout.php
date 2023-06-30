@@ -83,7 +83,7 @@ class Layout
     {
         $output = '<input type="hidden" name="source" id="source" value="' . esc_attr(get_post_meta($meta_id->ID, 'source', true)) . '">';
         $output .= '<input type="text" name="anchorfield" id="anchorfield" class="anchorfield" value="' . esc_attr(get_post_meta($meta_id->ID, 'anchorfield', true)) . '">';
-        $output .= '<p class="description">' . __('Anchor field (optional)', 'rrze-faq') . '</p>';
+        $output .= '<p class="description">' . __('Anchor field (optional) to define jump marks when displayed in accordions ', 'rrze-faq') . '</p>';
         echo $output;
     }
 
