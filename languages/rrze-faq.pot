@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAQ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-22 11:15+0000\n"
+"POT-Creation-Date: 2023-06-30 10:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid " updated"
 msgstr ""
 
-#: includes/Shortcode.php:504 includes/Shortcode.php:535
+#: includes/Shortcode.php:522 includes/Shortcode.php:553
 msgid "-- all --"
 msgstr ""
 
@@ -39,15 +39,15 @@ msgstr ""
 msgid "A - Z"
 msgstr ""
 
-#: includes/Layout.php:113
+#: includes/Layout.php:123
 msgid "Accordion with all entries"
 msgstr ""
 
-#: includes/Layout.php:111
+#: includes/Layout.php:121
 msgid "Accordion with category"
 msgstr ""
 
-#: includes/Layout.php:112
+#: includes/Layout.php:122
 msgid "Accordion with tag"
 msgstr ""
 
@@ -95,7 +95,7 @@ msgstr ""
 msgid "All languages"
 msgstr ""
 
-#: includes/Layout.php:235
+#: includes/Layout.php:253
 msgid "All Sources"
 msgstr ""
 
@@ -105,6 +105,15 @@ msgstr ""
 
 #: includes/CPT.php:108
 msgid "All tags"
+msgstr ""
+
+#. id, used as the html id att
+#: includes/Layout.php:191
+msgid "Anchor"
+msgstr ""
+
+#: includes/Layout.php:86
+msgid "Anchor field (optional)"
 msgstr ""
 
 #: includes/Sync.php:38
@@ -120,7 +129,7 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#: includes/CPT.php:78 includes/Layout.php:192
+#: includes/CPT.php:78 includes/Layout.php:210
 msgid "Category"
 msgstr ""
 
@@ -140,7 +149,7 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: includes/Layout.php:77
+#: includes/Layout.php:78
 msgid "Criterion for sorting the output of the shortcode"
 msgstr ""
 
@@ -204,7 +213,7 @@ msgstr ""
 msgid "Enter a short name for this domain."
 msgstr ""
 
-#: includes/Layout.php:122
+#: includes/Layout.php:132
 msgid "Enter question here"
 msgstr ""
 
@@ -273,15 +282,15 @@ msgstr ""
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
 msgstr ""
 
-#: config/config.php:348 includes/Layout.php:186 includes/Layout.php:197
+#: config/config.php:348 includes/Layout.php:204 includes/Layout.php:215
 msgid "ID"
 msgstr ""
 
-#: includes/Layout.php:111
+#: includes/Layout.php:121
 msgid "If there is more than one category listed, use at least one of them."
 msgstr ""
 
-#: includes/Layout.php:112
+#: includes/Layout.php:122
 msgid "If there is more than one tag listed, use at least one of them."
 msgstr ""
 
@@ -290,17 +299,17 @@ msgid "Info"
 msgstr ""
 
 #. id, used as the html id att
-#: includes/Layout.php:156
+#: includes/Layout.php:166
 msgid "Integration in pages and posts"
 msgstr ""
 
 #. id, used as the html id att
-#: config/config.php:337 includes/Layout.php:165 includes/Layout.php:183
-#: includes/Layout.php:194 includes/Layout.php:269
+#: config/config.php:337 includes/Layout.php:175 includes/Layout.php:201
+#: includes/Layout.php:212 includes/Layout.php:287
 msgid "Language"
 msgstr ""
 
-#: includes/Layout.php:84
+#: includes/Layout.php:94
 msgid "Language of this FAQ"
 msgstr ""
 
@@ -332,7 +341,7 @@ msgstr ""
 msgid "New tag"
 msgstr ""
 
-#: includes/Main.php:188
+#: includes/Main.php:189
 msgid "Next automatically synchronization:"
 msgstr ""
 
@@ -461,7 +470,7 @@ msgstr ""
 msgid "Show tags"
 msgstr ""
 
-#: includes/Layout.php:110
+#: includes/Layout.php:120
 msgid "Single entries"
 msgstr ""
 
@@ -471,11 +480,11 @@ msgid "FAQ"
 msgstr ""
 
 #. id, used as the html id att
-#: config/config.php:357 includes/Layout.php:173
+#: config/config.php:357 includes/Layout.php:183
 msgid "Sort"
 msgstr ""
 
-#: includes/Layout.php:184
+#: includes/Layout.php:202
 msgid "Sort criterion"
 msgstr ""
 
@@ -483,7 +492,7 @@ msgstr ""
 msgid "Sort field"
 msgstr ""
 
-#: includes/Layout.php:185 includes/Layout.php:196 includes/Layout.php:270
+#: includes/Layout.php:203 includes/Layout.php:214 includes/Layout.php:288
 msgid "Source"
 msgstr ""
 
@@ -513,7 +522,7 @@ msgstr ""
 msgid "Tabs"
 msgstr ""
 
-#: includes/CPT.php:100 includes/Layout.php:193
+#: includes/CPT.php:100 includes/Layout.php:211
 msgid "Tag"
 msgstr ""
 
@@ -526,14 +535,14 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: rrze-faq.php:87
+#: rrze-faq.php:89
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
 msgstr ""
 
-#: rrze-faq.php:90
+#: rrze-faq.php:92
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
@@ -541,7 +550,7 @@ msgid ""
 msgstr ""
 
 #. id, used as the html id att
-#: includes/Layout.php:146
+#: includes/Layout.php:156
 msgid "This FAQ cannot be edited because it is sychronized"
 msgstr ""
 
@@ -569,6 +578,6 @@ msgstr ""
 msgid "Use this name as attribute 'domain' in shortcode [faq]"
 msgstr ""
 
-#: includes/Layout.php:146
+#: includes/Layout.php:156
 msgid "You can edit it at the source"
 msgstr ""

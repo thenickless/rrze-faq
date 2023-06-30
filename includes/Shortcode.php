@@ -263,6 +263,12 @@ class Shortcode
                 $faqID = trim($faqID);
                 if ($faqID) {
                     $title = get_the_title($faqID);
+                    $anchorfield = get_post_meta($faqID, 'anchorfield', true);
+
+                    if (empty($anchorfield)){
+                        $anchorfield = 'ID-' . $faqID;
+                    }
+
                     $description = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $faqID)));
                     if (!isset($description) || (mb_strlen($description) < 1)) {
                         $description = get_post_meta($id, 'description', true);
@@ -271,7 +277,7 @@ class Shortcode
                         $content .= ($hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>') . ($description ? '<p>' . $description . '</p>' : '');
                     } else {
                         if ($description) {
-                            $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="ID-' . $faqID . '"' . $load_open . ']' . $description . '[/collapse]';
+                            $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="' . $anchorfield . '"' . $load_open . ']' . $description . '[/collapse]';
                             $schema .= $this->getSchema($faqID, $title, $description);
                         }
                     }
@@ -401,7 +407,6 @@ class Shortcode
                         } else {
                             $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
                         }
-
                         $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']';
 
                         // find the postIDs to this tag
@@ -413,7 +418,14 @@ class Shortcode
                                 $tmp = get_post_meta($ID, 'description', true);
                             }
                             $title = get_the_title($ID);
-                            $accordion .= '[accordion][accordion-item title="' . $title . '" name="innerID-' . $ID . '"]' . $tmp . '[/accordion-item][/accordion]';
+
+                            $anchorfield = get_post_meta($ID, 'anchorfield', true);
+
+                            if (empty($anchorfield)){
+                                $anchorfield = 'innerID-' . $ID;
+                            }
+
+                            $accordion .= '[accordion][accordion-item title="' . $title . '" name="' . $anchorfield . '"]' . $tmp . '[/accordion-item][/accordion]';
                             $schema .= $this->getSchema($ID, $title, $tmp);
                         }
                         $accordion .= '[/collapse]';
@@ -422,12 +434,14 @@ class Shortcode
                     $accordion .= '[/collapsibles]';
                     $content .= do_shortcode($accordion);
                 } else {
+
                     // attribut glossary is not given
                     if (!$hide_accordion) {
                         $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
                     }
                     $last_anchor = '';
                     foreach ($posts as $post) {
+
                         $title = get_the_title($post->ID);
                         $letter = $this->getLetter($title);
                         $aLetters[$letter] = true;
@@ -438,12 +452,16 @@ class Shortcode
                         }
 
                         if (!$hide_accordion) {
-                            $accordion_anchor = '';
-                            $accordion_anchor = 'name="ID-' . $post->ID . '"';
+                            $anchorfield = get_post_meta($post->ID, 'anchorfield', true);
+
+                            if (empty($anchorfield)){
+                                $anchorfield = 'ID-' . $post->ID;
+                            }
+        
                             if ($glossarystyle == 'a-z' && count($posts) > 1) {
                                 $accordion .= ($last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '');
                             }
-                            $accordion .= '[collapse title="' . $title . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']' . $tmp . '[/collapse]';
+                            $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="' . $anchorfield . '"' . $load_open . ']' . $tmp . '[/collapse]';
                         } else {
                             $content .= ($hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>') . ($tmp ? '<p>' . $tmp . '</p>' : '');
                         }
