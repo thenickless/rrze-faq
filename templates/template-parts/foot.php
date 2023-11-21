@@ -8,13 +8,22 @@
  * @since FAU 1.0
 */
 
+use RRZE\FAQ\Layout;
+
+$thisThemeGroup = Layout::getThemeGroup();
+
 if ($thisThemeGroup == 'fauthemes') { ?>
     </main>
 </div>
 </div>
 </div>
 
-<?php get_template_part('template-parts/footer', 'social');
+<?php
+    $currentTheme = wp_get_theme();
+    $vers = $currentTheme->get( 'Version' );
+    if (version_compare($vers, "2.3", '<')) {
+        get_template_part('template-parts/footer', 'social');
+    }
 } elseif($thisThemeGroup == 'rrzethemes') { ?>
 
     </div>
