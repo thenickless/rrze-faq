@@ -240,7 +240,7 @@ class Shortcode
 
         extract($atts);
 
-        // $content = '';
+        $content = '';
         $schema = '';
         $glossarystyle = (isset($glossarystyle) ? $glossarystyle : '');
         $hide_title = (isset($hide_title) ? $hide_title : false);
