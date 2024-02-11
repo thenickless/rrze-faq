@@ -1,8 +1,8 @@
 {
 	"name": "rrze-faq",
 	"version": "5.0.2",
-	"description": "Example block scaffolded with Create Block tool.",
-	"author": "The WordPress Contributors",
+	"description": "Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren und mittels Shortcode oder als Block (Gutenberg Editor) einzubinden.",
+	"author": "RRZE Webteam",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
