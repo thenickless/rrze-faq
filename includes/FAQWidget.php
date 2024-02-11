@@ -51,12 +51,12 @@ class FAQWidget extends \WP_Widget
             }
         }
 
-        $faqID = (isset($instance['faqID']) ? $instance['faqID'] : 0);
+        $id = (isset($instance['id']) ? $instance['id'] : 0);
         $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
 
-        $faqID = ($faqID ? $faqID : ($catID ? $this->getRandomFAQID($catID) : 0));
+        $id = ($id ? $id : ($catID ? $this->getRandomFAQID($catID) : 0));
 
-        if ($faqID) {
+        if ($id) {
             $attributes = (isset($instance['display']) ? $instance['display'] : '');
             switch ($attributes) {
                 case 1:$attributes = '';
@@ -67,7 +67,7 @@ class FAQWidget extends \WP_Widget
                     break;
             }
             echo $args['before_widget'];
-            echo do_shortcode('[faq id="' . $faqID . '" ' . $attributes . ']');
+            echo do_shortcode('[faq id="' . $id . '" ' . $attributes . ']');
             echo $args['after_widget'];
         }
     }
@@ -89,8 +89,8 @@ class FAQWidget extends \WP_Widget
         $output = '';
 
         if (!empty($posts)) {
-            $output = "<p><label for='{$this->get_field_id('faqID')}'>" . __('Choose a FAQ', 'rrze-faq') . ":</label> ";
-            $output .= "<select id='{$this->get_field_id('faqID')}' name='{$this->get_field_name('faqID')}' class='widefat'>";
+            $output = "<p><label for='{$this->get_field_id('id')}'>" . __('Choose a FAQ', 'rrze-faq') . ":</label> ";
+            $output .= "<select id='{$this->get_field_id('id')}' name='{$this->get_field_name('id')}' class='widefat'>";
             $output .= "<option value='0'>---</option>";
             foreach ($posts as $post) {
                 $sSelected = selected($selectedID, $post->ID, false);
@@ -137,7 +137,7 @@ class FAQWidget extends \WP_Widget
     // Widget Backend
     public function form($instance)
     {
-        $faqID = (isset($instance['faqID']) ? $instance['faqID'] : 0);
+        $id = (isset($instance['id']) ? $instance['id'] : 0);
         $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
         $dates = [
             'start' => (isset($instance['start']) ? $instance['start'] : ''),
@@ -145,7 +145,7 @@ class FAQWidget extends \WP_Widget
         ];
         $display = (isset($instance['display']) ? $instance['display'] : 0);
 
-        $this->dropdownFAQs($faqID);
+        $this->dropdownFAQs($id);
 
         $args = [
             'show_option_none' => '---',
@@ -167,7 +167,7 @@ class FAQWidget extends \WP_Widget
     public function update($new_instance, $old_instance)
     {
         $instance = [];
-        $instance['faqID'] = (isset($new_instance['faqID']) ? $new_instance['faqID'] : 0);
+        $instance['id'] = (isset($new_instance['id']) ? $new_instance['id'] : 0);
         $instance['catID'] = (isset($new_instance['catID']) ? $new_instance['catID'] : 0);
         $instance['start'] = (isset($new_instance['start']) ? $new_instance['start'] : '');
         $instance['end'] = (isset($new_instance['end']) ? $new_instance['end'] : '');

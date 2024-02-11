@@ -27,8 +27,6 @@ class Shortcode
         // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [fau_glossar ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
         // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [glossary ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
         add_shortcode('faq', [$this, 'shortcodeOutput']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
-        add_action('init', [$this, 'initGutenberg']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
@@ -145,6 +143,13 @@ class Shortcode
      */
     public function shortcodeOutput($atts)
     {
+
+        // if (!empty($atts['category'])){
+        //     // return gettype($atts) . ' asdflkj';
+        //     return json_encode($atts['category']);
+
+        // }
+
         if (!$atts) {
             $atts = array();
         }
@@ -235,7 +240,7 @@ class Shortcode
 
         extract($atts);
 
-        $content = '';
+        // $content = '';
         $schema = '';
         $glossarystyle = (isset($glossarystyle) ? $glossarystyle : '');
         $hide_title = (isset($hide_title) ? $hide_title : false);
@@ -259,17 +264,17 @@ class Shortcode
             }
             $found = false;
             $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
-            foreach ($aIDs as $faqID) {
-                $faqID = trim($faqID);
-                if ($faqID) {
-                    $title = get_the_title($faqID);
-                    $anchorfield = get_post_meta($faqID, 'anchorfield', true);
+            foreach ($aIDs as $id) {
+                $id = trim($id);
+                if ($id) {
+                    $title = get_the_title($id);
+                    $anchorfield = get_post_meta($id, 'anchorfield', true);
 
                     if (empty($anchorfield)){
-                        $anchorfield = 'ID-' . $faqID;
+                        $anchorfield = 'ID-' . $id;
                     }
 
-                    $description = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $faqID)));
+                    $description = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $id)));
                     if (!isset($description) || (mb_strlen($description) < 1)) {
                         $description = get_post_meta($id, 'description', true);
                     }
@@ -278,7 +283,7 @@ class Shortcode
                     } else {
                         if ($description) {
                             $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="' . $anchorfield . '"' . $load_open . ']' . $description . '[/collapse]';
-                            $schema .= $this->getSchema($faqID, $title, $description);
+                            $schema .= $this->getSchema($id, $title, $description);
                         }
                     }
                     $found = true;
@@ -309,6 +314,7 @@ class Shortcode
             }
 
             $fields = array('category', 'tag');
+
             foreach ($fields as $field) {
                 if (!is_array($$field)) {
                     $aTax[$field] = explode(',', trim($$field));
@@ -498,121 +504,7 @@ class Shortcode
         });
     }
 
-    public function isGutenberg()
-    {
-        $postID = get_the_ID();
-        if ($postID && !use_block_editor_for_post($postID)) {
-            return false;
-        }
 
-        return true;
-    }
-
-    public function fillGutenbergOptions()
-    {
-        // fill selects "category" and "tag"
-        $fields = array('category', 'tag');
-        foreach ($fields as $field) {
-            // set new params for gutenberg / the old ones are used for shortcode in classic editor
-            $this->settings[$field]['values'] = array();
-            $this->settings[$field]['field_type'] = 'multi_select';
-            $this->settings[$field]['default'] = array(0);
-            $this->settings[$field]['type'] = 'array';
-            $this->settings[$field]['items'] = array('type' => 'string');
-            $this->settings[$field]['values'][] = ['id' => 0, 'val' => __('-- all --', 'rrze-faq')];
-
-            // get categories and tags from this website
-            $terms = get_terms([
-                'taxonomy' => 'faq_' . $field,
-                'hide_empty' => true,
-                'orderby' => 'name',
-                'order' => 'ASC',
-            ]);
-
-            foreach ($terms as $term) {
-                $this->settings[$field]['values'][] = [
-                    'id' => $term->slug,
-                    'val' => $term->name,
-                ];
-            }
-        }
-
-        // fill select id ( = FAQ )
-        $faqs = get_posts(array(
-            'posts_per_page' => -1,
-            'post_type' => 'faq',
-            'orderby' => 'title',
-            'order' => 'ASC',
-        ));
-
-        $this->settings['id']['values'] = array();
-        $this->settings['id']['field_type'] = 'multi_select';
-        $this->settings['id']['default'] = array(0);
-        $this->settings['id']['type'] = 'array';
-        $this->settings['id']['items'] = array('type' => 'number');
-        $this->settings['id']['values'][] = ['id' => 0, 'val' => __('-- all --', 'rrze-faq')];
-        foreach ($faqs as $faq) {
-            $this->settings['id']['values'][] = [
-                'id' => $faq->ID,
-                'val' => str_replace("'", "", str_replace('"', "", $faq->post_title)),
-            ];
-        }
-
-        return $this->settings;
-    }
-
-    public function initGutenberg()
-    {
-        if (!$this->isGutenberg()) {
-            return;
-        }
-
-        // get prefills for dropdowns
-        $this->settings = $this->fillGutenbergOptions();
-
-        // register js-script to inject php config to call gutenberg lib
-        $editor_script = $this->settings['block']['blockname'] . '-block';
-        $js = '../assets/js/' . $editor_script . '.js';
-
-        wp_register_script(
-            $editor_script,
-            plugins_url($js, __FILE__),
-            array(
-                'RRZE-Gutenberg',
-            ),
-            null
-        );
-        wp_localize_script($editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings);
-
-        // register block
-        register_block_type($this->settings['block']['blocktype'], array(
-            'editor_script' => $editor_script,
-            'render_callback' => [$this, 'shortcodeOutput'],
-            'attributes' => $this->settings,
-        )
-        );
-    }
-
-    public function enqueueGutenberg()
-    {
-        if (!$this->isGutenberg()) {
-            return;
-        }
-
-        // include gutenberg lib
-        wp_enqueue_script(
-            'RRZE-Gutenberg',
-            plugins_url('../assets/js/gutenberg.js', __FILE__),
-            array(
-                'wp-blocks',
-                'wp-i18n',
-                'wp-element',
-                'wp-components',
-                'wp-editor',
-            ),
-            null
-        );
-    }
 
     public function setMCEConfig()
     {

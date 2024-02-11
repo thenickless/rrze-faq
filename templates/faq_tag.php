@@ -3,7 +3,7 @@
 Template Name: Custom Taxonomy faq_tag Template
 */
 
-include_once(WP_PLUGIN_DIR . '/rrze-faq/templates/template-parts/head.php');
+include_once('template-parts/head.php');
 $taxonomy = 'faq_tag';
-include_once(WP_PLUGIN_DIR . '/rrze-faq/templates/template-parts/faq_taxonomy.php');
-include_once(WP_PLUGIN_DIR . '/rrze-faq/templates/template-parts/foot.php');
+include_once('template-parts/faq_taxonomy.php');
+include_once('template-parts/foot.php');
