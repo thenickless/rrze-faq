@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "create-block/rrze-faq",
 	"version": "5.0.2",
-	"title": "RRZE FAQ",
+	"title": "FAQ RRZE",
 	"category": "widgets",
 	"description": "Display FAQ from your website or others",
 	"icon": "editor-help",
