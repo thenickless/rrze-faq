@@ -3,9 +3,10 @@
 	"apiVersion": 3,
 	"name": "create-block/rrze-faq",
 	"version": "5.0.2",
-	"title": "RRZE FAQ block plugin",
+	"title": "RRZE FAQ",
 	"category": "widgets",
 	"description": "Display FAQ from your website or others",
+	"icon": "editor-help",
 	"example": {},
 	"attributes": {
 		"glossary": {
