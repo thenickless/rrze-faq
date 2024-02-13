@@ -1,5 +1,5 @@
 
 .vscode/sftp.json
 .DS_Store
-includes/Sync Kopie.php
-includes/API Kopie.php
+node_modules/
+*.log

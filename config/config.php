@@ -29,12 +29,12 @@ function getConstants() {
 			'RRZE 2019',
 		],
 		'langcodes' => [
-			"de" => __('German','rrze-synonym'),
-			"en" => __('English','rrze-synonym'),
-			"es" => __('Spanish','rrze-synonym'),
-			"fr" => __('French','rrze-synonym'),
-			"ru" => __('Russian','rrze-synonym'),
-			"zh" => __('Chinese','rrze-synonym')
+			"de" => __('German','rrze-faq'),
+			"en" => __('English','rrze-faq'),
+			"es" => __('Spanish','rrze-faq'),
+			"fr" => __('French','rrze-faq'),
+			"ru" => __('Russian','rrze-faq'),
+			"zh" => __('Chinese','rrze-faq')
 		]
 	);               
 	return $options;

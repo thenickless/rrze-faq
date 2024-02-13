@@ -40,7 +40,7 @@ class Main {
      */
     public function onLoaded() {
         add_action( 'wp_enqueue_scripts', [$this, 'enqueueScripts'] );
-        add_action( 'admin_enqueue_scripts', [$this, 'enqueueScripts'] );
+        add_action( 'enqueue_block_assets', [$this, 'enqueueScripts'] );
 
         // Actions: sync, add domain, delete domain, delete logfile
         add_action( 'update_option_rrze-faq', [$this, 'checkSync'] );
