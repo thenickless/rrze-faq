@@ -239,7 +239,7 @@ export default function Edit({ attributes, setAttributes }) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={__('Settings', 'rrze-faq')}>
+				<PanelBody title={__('Filter', 'rrze-faq')}>
 					<SelectControl
 						label={__('Categories', 'rrze-faq')}
 						value={categorystate}
