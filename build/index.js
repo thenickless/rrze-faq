@@ -114,8 +114,8 @@ function Edit({
     return select('core').getEntityRecords('taxonomy', 'faq_category', {
       per_page: -1,
       orderby: 'name',
-      order: "asc",
-      status: "publish",
+      order: 'asc',
+      status: 'publish',
       ['_fields']: 'id,name,slug'
     });
   }, []);
@@ -135,8 +135,8 @@ function Edit({
     return select('core').getEntityRecords('taxonomy', 'faq_tag', {
       per_page: -1,
       orderby: 'name',
-      order: "asc",
-      status: "publish",
+      order: 'asc',
+      status: 'publish',
       ['_fields']: 'id,name,slug'
     });
   }, []);
@@ -156,8 +156,8 @@ function Edit({
     return select('core').getEntityRecords('postType', 'faq', {
       per_page: -1,
       orderby: 'title',
-      order: "asc",
-      status: "publish",
+      order: 'asc',
+      status: 'publish',
       ['_fields']: 'id,title.rendered'
     });
   }, []);
@@ -173,27 +173,28 @@ function Edit({
       });
     });
   }
-
-  // const languages = useSelect((select) => {
-  // 	return select('core').getEntityRecords('term', 'lang', { per_page: -1 });
-  // }, []);
-
-  // console.log('edit.js languages: ' + JSON.stringify(languages));
-
   const langoptions = [{
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('all', 'rrze-faq'),
     value: ''
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('German', 'rrze-synonym'),
+    value: 'de'
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('English', 'rrze-synonym'),
+    value: 'en'
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('French', 'rrze-synonym'),
+    value: 'fr'
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Spanish', 'rrze-synonym'),
+    value: 'es'
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Russian', 'rrze-synonym'),
+    value: 'ru'
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Chinese', 'rrze-synonym'),
+    value: 'zh'
   }];
-
-  // if (!!languages) {
-  // 	Object.values(languages).forEach(language => {
-  // 		langoptions.push({
-  // 			label: language.name,
-  // 			value: language.id,
-  // 		});
-  // 	});
-  // }
-
   const glossaryoptions = [{
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('none', 'rrze-faq'),
     value: ''
@@ -277,25 +278,25 @@ function Edit({
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.PanelBody, {
     title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Settings', 'rrze-faq')
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Categories", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Categories', 'rrze-faq'),
     value: categorystate,
     options: categoryoptions,
     onChange: onChangeCategory,
     multiple: true
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Tags", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Tags', 'rrze-faq'),
     value: tagstate,
     options: tagoptions,
     onChange: onChangeTag,
     multiple: true
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("FAQ", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('FAQ', 'rrze-faq'),
     value: idstate,
     options: faqoptions,
     onChange: onChangeID,
     multiple: true
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Language", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Language', 'rrze-faq'),
     options: langoptions,
     onChange: value => setAttributes({
       lang: value
@@ -305,13 +306,13 @@ function Edit({
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.PanelBody, {
     title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Styles', 'rrze-faq')
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Glossary Content", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Glossary content', 'rrze-faq'),
     options: glossaryoptions,
     onChange: value => setAttributes({
       glossary: value
     })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Glossary Style", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Glossary style', 'rrze-faq'),
     options: glossarystyleoptions,
     onChange: value => setAttributes({
       glossarystyle: value
@@ -341,30 +342,30 @@ function Edit({
       load_open: !load_open
     })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Color", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Color', 'rrze-faq'),
     options: coloroptions,
     onChange: value => setAttributes({
       color: value
     })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Additional CSS-class(es) for sourrounding DIV", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Additional CSS-class(es) for sourrounding DIV', 'rrze-faq'),
     onChange: value => setAttributes({
       additional_class: value
     })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Sort", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Sort', 'rrze-faq'),
     options: sortoptions,
     onChange: value => setAttributes({
       sort: value
     })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Order", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Order', 'rrze-faq'),
     options: orderoptions,
     onChange: value => setAttributes({
       order: value
     })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.RangeControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Heading starts with...", 'rrze-faq'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Heading starts with...', 'rrze-faq'),
     onChange: value => setAttributes({
       hstart: value
     }),
