@@ -177,22 +177,22 @@ function Edit({
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('all', 'rrze-faq'),
     value: ''
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('German', 'rrze-synonym'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('German', 'rrze-faq'),
     value: 'de'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('English', 'rrze-synonym'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('English', 'rrze-faq'),
     value: 'en'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('French', 'rrze-synonym'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('French', 'rrze-faq'),
     value: 'fr'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Spanish', 'rrze-synonym'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Spanish', 'rrze-faq'),
     value: 'es'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Russian', 'rrze-synonym'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Russian', 'rrze-faq'),
     value: 'ru'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Chinese', 'rrze-synonym'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Chinese', 'rrze-faq'),
     value: 'zh'
   }];
   const glossaryoptions = [{
@@ -206,9 +206,6 @@ function Edit({
     value: 'tag'
   }];
   const glossarystyleoptions = [{
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('-- hidden --', 'rrze-faq'),
-    value: ''
-  }, {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('A - Z', 'rrze-faq'),
     value: 'a-z'
   }, {
@@ -217,6 +214,9 @@ function Edit({
   }, {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Tabs', 'rrze-faq'),
     value: 'tabs'
+  }, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('-- hidden --', 'rrze-faq'),
+    value: ''
   }];
   const coloroptions = [{
     label: 'fau',

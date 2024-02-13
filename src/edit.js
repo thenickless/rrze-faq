@@ -104,30 +104,30 @@ export default function Edit({ attributes, setAttributes }) {
 			value: ''
 		},
 		{
-			label: __('German', 'rrze-synonym'),
+			label: __('German', 'rrze-faq'),
 			value: 'de'
 		},
 		{
 
-			label: __('English', 'rrze-synonym'),
+			label: __('English', 'rrze-faq'),
 			value: 'en'
 		},
 		{
 
-			label: __('French', 'rrze-synonym'),
+			label: __('French', 'rrze-faq'),
 			value: 'fr'
 		},
 		{
 
-			label: __('Spanish', 'rrze-synonym'),
+			label: __('Spanish', 'rrze-faq'),
 			value: 'es'
 		},
 		{
-			label: __('Russian', 'rrze-synonym'),
+			label: __('Russian', 'rrze-faq'),
 			value: 'ru'
 		},
 		{
-			label: __('Chinese', 'rrze-synonym'),
+			label: __('Chinese', 'rrze-faq'),
 			value: 'zh'
 		}
 	];
@@ -149,10 +149,6 @@ export default function Edit({ attributes, setAttributes }) {
 
 	const glossarystyleoptions = [
 		{
-			label: __('-- hidden --', 'rrze-faq'),
-			value: ''
-		},
-		{
 			label: __('A - Z', 'rrze-faq'),
 			value: 'a-z'
 		},
@@ -163,6 +159,10 @@ export default function Edit({ attributes, setAttributes }) {
 		{
 			label: __('Tabs', 'rrze-faq'),
 			value: 'tabs'
+		},
+		{
+			label: __('-- hidden --', 'rrze-faq'),
+			value: ''
 		}
 	];
 
