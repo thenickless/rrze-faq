@@ -111,7 +111,13 @@ function Edit({
     });
   }, [category, tag, id, hstart, order, sort, lang, additional_class, color, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary, setAttributes]);
   const categories = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useSelect)(select => {
-    return select('core').getEntityRecords('taxonomy', 'faq_category');
+    return select('core').getEntityRecords('taxonomy', 'faq_category', {
+      per_page: -1,
+      orderby: 'name',
+      order: "asc",
+      status: "publish",
+      ['_fields']: 'id,name,slug'
+    });
   }, []);
   const categoryoptions = [{
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('all', 'rrze-faq'),
@@ -126,7 +132,13 @@ function Edit({
     });
   }
   const tags = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useSelect)(select => {
-    return select('core').getEntityRecords('taxonomy', 'faq_tag');
+    return select('core').getEntityRecords('taxonomy', 'faq_tag', {
+      per_page: -1,
+      orderby: 'name',
+      order: "asc",
+      status: "publish",
+      ['_fields']: 'id,name,slug'
+    });
   }, []);
   const tagoptions = [{
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('all', 'rrze-faq'),
@@ -144,7 +156,9 @@ function Edit({
     return select('core').getEntityRecords('postType', 'faq', {
       per_page: -1,
       orderby: 'title',
-      order: "asc"
+      order: "asc",
+      status: "publish",
+      ['_fields']: 'id,title.rendered'
     });
   }, []);
   const faqoptions = [{
@@ -377,41 +391,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ save)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-
-
-function save({
-  attributes
-}) {
-  // console.log('in save.js');
-
-  const {
-    id,
-    defaultID,
-    showFaqID
-  } = attributes;
-  // console.log('in save.js id = ' + id);
-  // console.log('in save.js defaultID = ' + defaultID);
-  // console.log('in save.js showID = ' + showFaqID);
-
-  if (!defaultID) {
-    return null;
-  }
-  let displayFAQ;
-  if (id) {
-    displayFAQ = id;
-  } else {
-    displayFAQ = defaultID;
-  }
-
-  // console.log('in save.js displayFAQ = ' + displayFAQ);
-
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
-    ..._wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save()
-  }, "von save.js ", displayFAQ);
+//It's a dynamic block
+function save() {
+  return null;
 }
 
 /***/ }),
@@ -502,7 +484,7 @@ module.exports = window["wp"]["serverSideRender"];
   \************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/rrze-faq","version":"5.0.1","title":"RRZE FAQ block plugin","category":"widgets","description":"Display FAQ from your website or others","example":{},"attributes":{"glossary":{"type":"string"},"glossarystyle":{"type":"string"},"category":{"type":"string"},"tag":{"type":"string"},"id":{"type":"string"},"hide_accordion":{"type":"boolean"},"hide_title":{"type":"boolean"},"expand_all_link":{"type":"boolean"},"load_open":{"type":"boolean"},"color":{"type":"string"},"additional_class":{"type":"string"},"lang":{"type":"string"},"sort":{"type":"string"},"order":{"type":"string"},"hstart":{"type":"number"}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"rrze-faq","editorScript":"file:./index.js","render":"file:./render.php"}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/rrze-faq","version":"5.0.2","title":"RRZE FAQ block plugin","category":"widgets","description":"Display FAQ from your website or others","example":{},"attributes":{"glossary":{"type":"string"},"glossarystyle":{"type":"string"},"category":{"type":"string"},"tag":{"type":"string"},"id":{"type":"string"},"hide_accordion":{"type":"boolean"},"hide_title":{"type":"boolean"},"expand_all_link":{"type":"boolean"},"load_open":{"type":"boolean"},"color":{"type":"string"},"additional_class":{"type":"string"},"lang":{"type":"string"},"sort":{"type":"string"},"order":{"type":"string"},"hstart":{"type":"number"}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"rrze-faq","editorScript":"file:./index.js","render":"file:./render.php"}');
 
 /***/ })
 

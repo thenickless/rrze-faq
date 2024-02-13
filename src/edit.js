@@ -39,7 +39,7 @@ export default function Edit({ attributes, setAttributes }) {
 
 
 	const categories = useSelect((select) => {
-		return select('core').getEntityRecords('taxonomy', 'faq_category');
+		return select('core').getEntityRecords('taxonomy', 'faq_category', { per_page: -1, orderby: 'name', order: "asc", status: "publish", ['_fields']: 'id,name,slug' });
 	}, []);
 
 	const categoryoptions = [
@@ -59,7 +59,7 @@ export default function Edit({ attributes, setAttributes }) {
 	}
 
 	const tags = useSelect((select) => {
-		return select('core').getEntityRecords('taxonomy', 'faq_tag');
+		return select('core').getEntityRecords('taxonomy', 'faq_tag', { per_page: -1, orderby: 'name', order: "asc", status: "publish", ['_fields']: 'id,name,slug' });
 	}, []);
 
 	const tagoptions = [
@@ -79,7 +79,7 @@ export default function Edit({ attributes, setAttributes }) {
 	}
 
 	const faqs = useSelect((select) => {
-		return select('core').getEntityRecords('postType', 'faq', { per_page: -1, orderby: 'title', order: "asc" });
+		return select('core').getEntityRecords('postType', 'faq', { per_page: -1, orderby: 'title', order: "asc", status: "publish", ['_fields']: 'id,title.rendered' });
 	}, []);
 
 	const faqoptions = [
