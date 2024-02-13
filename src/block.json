@@ -5,7 +5,7 @@
 	"version": "5.0.2",
 	"title": "FAQ RRZE",
 	"category": "widgets",
-	"description": "Display FAQ from your website or others",
+	"description": "Plugin, um FAQ zu erstellen und aus dem FAU-Netzwerk zu synchronisieren. Verwendbar als Shortcode, Block oder Widget.",
 	"icon": "editor-help",
 	"example": {},
 	"attributes": {

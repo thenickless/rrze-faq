@@ -1,7 +1,7 @@
 {
 	"name": "rrze-faq",
 	"version": "5.0.2",
-	"description": "Plugin, um FAQ zu erstellen, aus dem FAU-Netzwerk zu synchronisieren. Verwendbar im klassischen Editor als Shortcode und im BlockEditor als Block.",
+	"description": "Plugin, um FAQ zu erstellen und aus dem FAU-Netzwerk zu synchronisieren. Verwendbar als Shortcode, Block oder Widget.",
 	"author": "RRZE Webteam",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
