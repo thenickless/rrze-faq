@@ -274,7 +274,7 @@ class Layout
             $query->query_vars['meta_query'] = [
                 [
                     'key' => 'source',
-                    'value' => filter_var($_REQUEST['source'], FILTER_SANITIZE_STRING),
+                    'value' => htmlspecialchars($_GET['source'], ENT_QUOTES, 'UTF-8'),
                     'compare' => '=',
                 ],
             ];
