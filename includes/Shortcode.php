@@ -346,7 +346,7 @@ class Shortcode
                     'relation' => 'AND'
                 ], $metaQuery);
             }
-            error_log(print_r($postQuery, true));
+            // error_log(print_r($postQuery, true));
 
             $posts = get_posts($postQuery);
 
