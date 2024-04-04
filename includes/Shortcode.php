@@ -3,6 +3,7 @@
 namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
+
 use function RRZE\FAQ\Config\getShortcodeSettings;
 
 $settings;
@@ -26,6 +27,7 @@ class Shortcode
         $this->pluginname = $this->settings['block']['blockname'];
         // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [fau_glossar ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
         // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [glossary ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
+
         add_shortcode('faq', [$this, 'shortcodeOutput']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
@@ -143,16 +145,12 @@ class Shortcode
      */
     public function shortcodeOutput($atts)
     {
-
-        // if (!empty($atts['category'])){
-        //     // return gettype($atts) . ' asdflkj';
-        //     return json_encode($atts['category']);
-
-        // }
-
-        if (!$atts) {
+        if (empty($atts)) {
             $atts = array();
+        } else {
+            $atts = array_map('sanitize_text_field', $atts);
         }
+
         // translate new attributes
         if (isset($atts['glossary'])) {
             $parts = explode(' ', $atts['glossary']);
@@ -169,7 +167,6 @@ class Shortcode
                         $atts['glossarystyle'] = $part;
                         break;
                 }
-
             }
         }
         if (isset($atts['hide'])) {
@@ -236,6 +233,7 @@ class Shortcode
                 $atts_default[$k] = $v['default'];
             }
         }
+
         $atts = shortcode_atts($atts_default, $atts);
 
         extract($atts);
@@ -245,12 +243,6 @@ class Shortcode
         $glossarystyle = (isset($glossarystyle) ? $glossarystyle : '');
         $hide_title = (isset($hide_title) ? $hide_title : false);
         $color = (isset($color) ? $color : '');
-        // if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
-        //     return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
-        // }
-        // if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
-        //     return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
-        // }
 
         $gutenberg = (is_array($id) ? true : false);
 
@@ -270,7 +262,7 @@ class Shortcode
                     $title = get_the_title($id);
                     $anchorfield = get_post_meta($id, 'anchorfield', true);
 
-                    if (empty($anchorfield)){
+                    if (empty($anchorfield)) {
                         $anchorfield = 'ID-' . $id;
                     }
 
@@ -300,7 +292,6 @@ class Shortcode
             $aTax = array();
             $tax_query = '';
 
-            // $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => $sort, 'order' => $order, 'suppress_filters' => false);
             $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => false);
             if ($sort == 'sortfield') {
                 $postQuery['orderby'] = array(
@@ -329,13 +320,33 @@ class Shortcode
                 }
             }
 
-            if (!empty($atts['lang'])) {
-                $postQuery['meta_query'] = [[
+            $metaQuery = [];
+            $lang = $atts['lang'] ? trim($atts['lang']) : '';
+            if ($lang) {
+                $metaQuery[] = [
                     'key' => 'lang',
-                    'value' => $atts['lang'],
+                    'value' => $lang,
                     'compare' => '=',
-                ]];
+                ];
             }
+
+            $source = !empty($atts['domain']) ?
+                array_filter(array_map('trim', explode(',', $atts['domain']))) :
+                [];
+            if ($source) {
+                $metaQuery[] = [
+                    'key' => 'source',
+                    'value' => $source,
+                    'compare' => 'IN',
+                ];
+            }
+
+            if ($metaQuery) {
+                $postQuery['meta_query'] = array_merge([
+                    'relation' => 'AND'
+                ], $metaQuery);
+            }
+            error_log(print_r($postQuery, true));
 
             $posts = get_posts($postQuery);
 
@@ -427,7 +438,7 @@ class Shortcode
 
                             $anchorfield = get_post_meta($ID, 'anchorfield', true);
 
-                            if (empty($anchorfield)){
+                            if (empty($anchorfield)) {
                                 $anchorfield = 'innerID-' . $ID;
                             }
 
@@ -460,10 +471,10 @@ class Shortcode
                         if (!$hide_accordion) {
                             $anchorfield = get_post_meta($post->ID, 'anchorfield', true);
 
-                            if (empty($anchorfield)){
+                            if (empty($anchorfield)) {
                                 $anchorfield = 'ID-' . $post->ID;
                             }
-        
+
                             if ($glossarystyle == 'a-z' && count($posts) > 1) {
                                 $accordion .= ($last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '');
                             }
@@ -479,7 +490,6 @@ class Shortcode
                         $accordion .= '[/collapsibles]';
                         $content .= do_shortcode($accordion);
                     }
-
                 }
             }
         }
@@ -515,7 +525,7 @@ class Shortcode
             }
         }
         $shortcode = '[' . $this->pluginname . ' ' . $shortcode . ']';
-        ?>
+?>
         <script type='text/javascript'>
             tmp = [{
                 'name': <?php echo json_encode($this->pluginname); ?>,
@@ -525,8 +535,8 @@ class Shortcode
             }];
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>
-        <?php
-}
+<?php
+    }
 
     public function addMCEButtons($pluginArray)
     {
