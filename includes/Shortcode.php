@@ -236,9 +236,9 @@ class Shortcode
 
         $atts = shortcode_atts($atts_default, $atts);
 
-        // Is a source given? Reason: domain can use the same categories, so we need to add this filter. F.e. rrze:allgemeines, anleitungen:allgemeines - domain="rrze, allgemeines" would not solve the problem completely => same with tags
-        $atts['cat_domain'] = implode(', ', array_map(fn($c) => explode(':', $c)[0], preg_split('/\s*,\s*/', $atts['category'] ?? '')));
-        $atts['tag_domain'] = implode(', ', array_map(fn($c) => explode(':', $c)[0], preg_split('/\s*,\s*/', $atts['tag'] ?? '')));
+        // Is a source given? Reason: synced sources can use the same categories, so we need to add this filter. F.e. rrze:allgemeines, anleitungen:allgemeines - domain="rrze, allgemeines" would not solve the problem completely => same with tags
+        $atts['category_source'] = implode(',', array_map(fn($c) => trim(explode(':', $c)[0]), preg_split('/\s*,\s*/', $atts['category'] ?? '')));
+        $atts['tag_source'] = implode(',', array_map(fn($c) => trim(explode(':', $c)[0]), preg_split('/\s*,\s*/', $atts['tag'] ?? '')));
 
         extract($atts);
 
@@ -309,23 +309,25 @@ class Shortcode
             }
 
             // filter by category and/or tag and -if given- by domain related to category/tag, too
-            // $fields = array('category', 'tag');
+            $fields = array('category', 'tag');
 
-            // foreach ($fields as $field) {
-            //     if (!is_array($$field)) {
-            //         $aTax[$field] = explode(',', trim($$field));
-            //     } elseif ($$field[0]) {
-            //         $aTax[$field] = $$field;
-            //     }
-            // }
-            // if ($aTax) {
-            //     $tax_query = $this->getTaxQuery($aTax);
-            //     if ($tax_query) {
-            //         $postQuery['tax_query'] = $tax_query;
-            //     }
-            // }
+            foreach ($fields as $field) {
+                if (!is_array($$field)) {
+                    $aTax[$field] = explode(',', trim($$field));
+                } elseif ($$field[0]) {
+                    $aTax[$field] = $$field;
+                }
+            }
+            if ($aTax) {
+                $tax_query = $this->getTaxQuery($aTax);
+                if ($tax_query) {
+                    $postQuery['tax_query'] = $tax_query;
+                }
+            }
 
-            $fields = array('category', 'tag', 'cat_domain', 'tag_domains');
+            // filter by category & source pairs, if given
+
+            $fields = array('category_source', 'tag_source');
             // $aTax = array();
 
             foreach ($fields as $field) {
@@ -345,7 +347,7 @@ class Shortcode
                 $tax_query[] = array(
                     'relation' => 'AND',
                     array(
-                        'taxonomy' => 'faq_category',
+                        'taxonomy' => 'faq_' . $field,
                         'field' => 'slug',
                         'terms' => $aTax['category'], // Assuming 'category' refers to 'faq_category'
                     ),
