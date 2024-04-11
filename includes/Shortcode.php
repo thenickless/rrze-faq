@@ -236,6 +236,10 @@ class Shortcode
 
         $atts = shortcode_atts($atts_default, $atts);
 
+        // Is a source given? Reason: domain can use the same categories, so we need to add this filter. F.e. rrze:allgemeines, anleitungen:allgemeines - domain="rrze, allgemeines" would not solve the problem completely => same with tags
+        $atts['cat_domain'] = implode(', ', array_map(fn($c) => explode(':', $c)[0], preg_split('/\s*,\s*/', $atts['category'] ?? '')));
+        $atts['tag_domain'] = implode(', ', array_map(fn($c) => explode(':', $c)[0], preg_split('/\s*,\s*/', $atts['tag'] ?? '')));
+
         extract($atts);
 
         $content = '';
@@ -304,21 +308,58 @@ class Shortcode
                 $postQuery['order'] = $order;
             }
 
-            $fields = array('category', 'tag');
+            // filter by category and/or tag and -if given- by domain related to category/tag, too
+            // $fields = array('category', 'tag');
+
+            // foreach ($fields as $field) {
+            //     if (!is_array($$field)) {
+            //         $aTax[$field] = explode(',', trim($$field));
+            //     } elseif ($$field[0]) {
+            //         $aTax[$field] = $$field;
+            //     }
+            // }
+            // if ($aTax) {
+            //     $tax_query = $this->getTaxQuery($aTax);
+            //     if ($tax_query) {
+            //         $postQuery['tax_query'] = $tax_query;
+            //     }
+            // }
+
+            $fields = array('category', 'tag', 'cat_domain', 'tag_domains');
+            // $aTax = array();
 
             foreach ($fields as $field) {
-                if (!is_array($$field)) {
+                if (!empty($$field)) {
                     $aTax[$field] = explode(',', trim($$field));
-                } elseif ($$field[0]) {
-                    $aTax[$field] = $$field;
                 }
             }
+
             if ($aTax) {
-                $tax_query = $this->getTaxQuery($aTax);
-                if ($tax_query) {
-                    $postQuery['tax_query'] = $tax_query;
+                $tax_query = array('relation' => 'AND'); // Adjust the relation to AND
+                foreach ($aTax as $taxonomy => $terms) {
+                    $taxonomy_query = array('taxonomy' => $taxonomy, 'field' => 'slug', 'terms' => $terms);
+                    $tax_query[] = $taxonomy_query;
                 }
+
+                // Add meta query for 'source' term meta in 'faq_category' taxonomy
+                $tax_query[] = array(
+                    'relation' => 'AND',
+                    array(
+                        'taxonomy' => 'faq_category',
+                        'field' => 'slug',
+                        'terms' => $aTax['category'], // Assuming 'category' refers to 'faq_category'
+                    ),
+                    array(
+                        'taxonomy' => 'faq_category',
+                        'field' => 'meta_key',
+                        'key' => 'source',
+                        'compare' => 'EXISTS',
+                    ),
+                );
+
+                $postQuery['tax_query'] = $tax_query;
             }
+
 
             $metaQuery = [];
             $lang = $atts['lang'] ? trim($atts['lang']) : '';
@@ -525,7 +566,7 @@ class Shortcode
             }
         }
         $shortcode = '[' . $this->pluginname . ' ' . $shortcode . ']';
-?>
+        ?>
         <script type='text/javascript'>
             tmp = [{
                 'name': <?php echo json_encode($this->pluginname); ?>,
@@ -535,7 +576,7 @@ class Shortcode
             }];
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>
-<?php
+        <?php
     }
 
     public function addMCEButtons($pluginArray)
