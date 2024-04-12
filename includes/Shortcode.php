@@ -137,6 +137,45 @@ class Shortcode
         return $schema;
     }
 
+    // returns the pairs source and category(or tag) as an Array; values without source are added to "sourceless" 
+    // example:
+    // $atts['category'] = "rrze:allgemeines, fau:allgemeines, fau:neues, sonstiges";
+    // convertAttPairs($atts['category']) returns [category] => Array([rrze] => Array([0] => allgemeines),[fau] => Array([0] => allgemeines, [1] => neues), [sourceless] => 'sonstiges')
+    private function convertAttPairs($input)
+    {
+        $aRet = [];
+
+        if (empty($input)){
+            return $aRet;
+        }
+
+        $inputArray = preg_split('/\s*,\s*/', $input);
+
+        foreach ($inputArray as $item) {
+            $parts = explode(':', $item);
+            $source = trim($parts[0]);
+            $value = isset($parts[1]) ? trim($parts[1]) : null;
+
+            // non-pair values are used without term
+            if (empty($value)) {
+                $aRet['sourceless'][] = $source; // in this case $source contains $value because there is no :
+            }else{
+                // Check if the source key exists in the array, if not, create it
+                if (!array_key_exists($source, $aRet)) {
+                    $aRet[$source] = [];
+                }
+
+                // Add the value to the source if it exists
+                if ($value !== null) {
+                    $aRet[$source][] = $value;
+                }
+            }
+        }
+
+        return $aRet;
+    }
+
+
     /**
      * Generieren Sie die Shortcode-Ausgabe
      * @param  array   $atts Shortcode-Attribute
@@ -234,11 +273,10 @@ class Shortcode
             }
         }
 
-        $atts = shortcode_atts($atts_default, $atts);
+        $aCat = $this->convertAttPairs($atts['category']);
+        $aTag = $this->convertAttPairs($atts['tag']);
 
-        // Is a source given? Reason: synced sources can use the same categories, so we need to add this filter. F.e. rrze:allgemeines, anleitungen:allgemeines - domain="rrze, allgemeines" would not solve the problem completely => same with tags
-        $atts['category_source'] = implode(',', array_map(fn($c) => trim(explode(':', $c)[0]), preg_split('/\s*,\s*/', $atts['category'] ?? '')));
-        $atts['tag_source'] = implode(',', array_map(fn($c) => trim(explode(':', $c)[0]), preg_split('/\s*,\s*/', $atts['tag'] ?? '')));
+        $atts = shortcode_atts($atts_default, $atts);
 
         extract($atts);
 
@@ -324,44 +362,6 @@ class Shortcode
                     $postQuery['tax_query'] = $tax_query;
                 }
             }
-
-            // filter by category & source pairs, if given
-
-            $fields = array('category_source', 'tag_source');
-            // $aTax = array();
-
-            foreach ($fields as $field) {
-                if (!empty($$field)) {
-                    $aTax[$field] = explode(',', trim($$field));
-                }
-            }
-
-            if ($aTax) {
-                $tax_query = array('relation' => 'AND'); // Adjust the relation to AND
-                foreach ($aTax as $taxonomy => $terms) {
-                    $taxonomy_query = array('taxonomy' => $taxonomy, 'field' => 'slug', 'terms' => $terms);
-                    $tax_query[] = $taxonomy_query;
-                }
-
-                // Add meta query for 'source' term meta in 'faq_category' taxonomy
-                $tax_query[] = array(
-                    'relation' => 'AND',
-                    array(
-                        'taxonomy' => 'faq_' . $field,
-                        'field' => 'slug',
-                        'terms' => $aTax['category'], // Assuming 'category' refers to 'faq_category'
-                    ),
-                    array(
-                        'taxonomy' => 'faq_category',
-                        'field' => 'meta_key',
-                        'key' => 'source',
-                        'compare' => 'EXISTS',
-                    ),
-                );
-
-                $postQuery['tax_query'] = $tax_query;
-            }
-
 
             $metaQuery = [];
             $lang = $atts['lang'] ? trim($atts['lang']) : '';
