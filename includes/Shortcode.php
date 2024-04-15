@@ -95,26 +95,38 @@ class Shortcode
 
     private function getTaxQuery(&$aTax)
     {
-        $ret = '';
-        $aTmp = array();
-        foreach ($aTax as $field => $aVal) {
-            if ($aVal[0]) {
-                $aTmp[] = array(
-                    'taxonomy' => 'faq_' . $field,
-                    'field' => 'slug',
-                    'terms' => $aVal,
-                );
+        $ret = array();
+    
+        foreach ($aTax as $field => $aData) {
+            $source = $aData['source'];
+            $values = $aData['values'];
+    
+            if ($values) {
+                foreach ($values as $value) {
+                    $query = array(
+                        'taxonomy' => 'faq_' . $field,
+                        'field' => 'slug', // oder ein anderes Feld, das du verwenden möchtest
+                        'terms' => $value,
+                    );
+    
+                    // Quelle nur hinzufügen, wenn sie nicht leer ist
+                    if (!empty($source)) {
+                        $query['meta_key'] = 'source';
+                        $query['meta_value'] = $source;
+                    }
+    
+                    $ret[] = $query;
+                }
             }
         }
-        if ($aTmp) {
-            $ret = $aTmp;
-            if (count($aTmp) > 1) {
-                $ret['relation'] = 'AND';
-            }
+    
+        if (count($ret) > 1) {
+            $ret['relation'] = 'AND';
         }
+    
         return $ret;
     }
-
+    
     private function searchArrayByKey(&$needle, &$aHaystack)
     {
         foreach ($aHaystack as $k => $v) {
@@ -140,41 +152,27 @@ class Shortcode
     // returns the pairs source and category(or tag) as an Array; values without source are added to "sourceless" 
     // example:
     // $atts['category'] = "rrze:allgemeines, fau:allgemeines, fau:neues, sonstiges";
-    // convertAttPairs($atts['category']) returns [category] => Array([rrze] => Array([0] => allgemeines),[fau] => Array([0] => allgemeines, [1] => neues), [sourceless] => 'sonstiges')
-    private function convertAttPairs($input)
+    // getTaxBySource($category]) returns [category] => Array([rrze] => Array([0] => allgemeines),[fau] => Array([0] => allgemeines, [1] => neues), [sourceless] => 'sonstiges')
+    private function getTaxBySource($input)
     {
-        $aRet = [];
-
-        if (empty($input)){
-            return $aRet;
-        }
-
-        $inputArray = preg_split('/\s*,\s*/', $input);
-
-        foreach ($inputArray as $item) {
-            $parts = explode(':', $item);
-            $source = trim($parts[0]);
-            $value = isset($parts[1]) ? trim($parts[1]) : null;
-
-            // non-pair values are used without term
-            if (empty($value)) {
-                $aRet['sourceless'][] = $source; // in this case $source contains $value because there is no :
-            }else{
-                // Check if the source key exists in the array, if not, create it
-                if (!array_key_exists($source, $aRet)) {
-                    $aRet[$source] = [];
-                }
-
-                // Add the value to the source if it exists
-                if ($value !== null) {
-                    $aRet[$source][] = $value;
-                }
+        $result = array();
+    
+        foreach ($input as $type => $values) {
+            $taxonomy = 'faq_' . $type;
+    
+            foreach ($values as $value) {
+                list($source, $value) = array_pad(explode(':', $value, 2), 2, '');
+    
+                $result[$taxonomy][] = array(
+                    'source' => trim($source),
+                    'value' => trim($value)
+                );
             }
         }
-
-        return $aRet;
+    
+        return $result;
     }
-
+        
 
     /**
      * Generieren Sie die Shortcode-Ausgabe
@@ -273,11 +271,7 @@ class Shortcode
             }
         }
 
-        $aCat = $this->convertAttPairs($atts['category']);
-        $aTag = $this->convertAttPairs($atts['tag']);
-
         $atts = shortcode_atts($atts_default, $atts);
-
         extract($atts);
 
         $content = '';
@@ -329,6 +323,7 @@ class Shortcode
             }
         } else {
             // attribute category or tag is given or none of them
+
             $aLetters = array();
             $aCategory = array();
             $aTax = array();
@@ -347,6 +342,9 @@ class Shortcode
             }
 
             // filter by category and/or tag and -if given- by domain related to category/tag, too
+            $aCategoryBySource = $this->getTaxBySource($category);
+            $aTagBySource = $this->getTaxBySource($tag);
+
             $fields = array('category', 'tag');
 
             foreach ($fields as $field) {
