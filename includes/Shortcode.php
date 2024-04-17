@@ -152,7 +152,7 @@ class Shortcode
     // returns the pairs source and category(or tag) as an Array; values without source are added to "sourceless" 
     // example:
     // $atts['category'] = "rrze:allgemeines, fau:allgemeines, fau:neues, sonstiges";
-    // getTaxBySource($category]) returns [category] => Array([rrze] => Array([0] => allgemeines),[fau] => Array([0] => allgemeines, [1] => neues), [sourceless] => 'sonstiges')
+    // getTaxBySource($atts['category']) returns [faq_category] => ['source' => 'rrze', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'neues'], ['source' => '', 'value' => 'sonstiges']
     private function getTaxBySource($input)
     {
         $result = array();
@@ -342,6 +342,9 @@ class Shortcode
             }
 
             // filter by category and/or tag and -if given- by domain related to category/tag, too
+
+                // getTaxBySource($atts['category']) returns [faq_category] => ['source' => 'rrze', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'neues'], ['source' => '', 'value' => 'sonstiges']
+
             $aCategoryBySource = $this->getTaxBySource($category);
             $aTagBySource = $this->getTaxBySource($tag);
 
