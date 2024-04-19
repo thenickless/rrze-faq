@@ -47,9 +47,9 @@ category : mit diesem Attribut wird bestimmt, zu welchen Kategorien passende FAQ
 Zur Filterung unter Berücksichtigung der Datenquelle können Sie diese mit angeben. Beispiel: category="rrze:allgemeines, info" filtert nach "allgemeines" mit Datenquelle "rrze" und "info". Bei "info" ist nicht relevant, mit welcher Datenquelle die Kategorie "info" verbunden ist.
 
 tag : mit diesem Attribut wird bestimmt, zu welchen Schlagwörtern passende FAQ ausgegeben werden sollen. Es können beliebig viele Schlagwörter angegeben werden. Nutzen Sie dazu die Titelform der Schlagwörter, die Sie im Menü unter "FAQ"->"Schlagwörter" finden und trennen Sie diese voneinander durch Kommata.
-Zur Filterung unter Berücksichtigung der Datenquelle können Sie diese mit angeben. Beispiel: tag="rrze:schlagwort1, schlagwort2" filtert nach "schlagwort1" mit Datenquelle "rrze" und "schlagwort2". Bei "schlagwort2" ist nicht relevant, mit welcher Datenquelle die Kategorie "info" verbunden ist.
+Zur Filterung unter Berücksichtigung der Datenquelle können Sie diese mit angeben. Beispiel: tag="rrze:schlagwort1, schlagwort2" filtert nach "schlagwort1" mit Datenquelle "rrze" und "schlagwort2". Bei "schlagwort2" ist nicht relevant, mit welcher Datenquelle das Schlagwort "schlagwort2" verbunden ist.
 
-domain : mit diesem Attribut wird bestimmt, zu welcher Domain passende FAQ ausgegeben werden sollen. Es können beliebig viele Domains angegeben werden. Trennen Sie diese voneinander durch Kommata. 
+domain : mit diesem Attribut wird bestimmt, zu welcher Datenquelle passende FAQ ausgegeben werden sollen. Es können beliebig viele Domains angegeben werden. Trennen Sie diese voneinander durch Kommata. 
 
 id : mit diesem Attribut erfolgt die Ausgabe eines oder mehrerer FAQ. Sie finden die ID in der rechten Spalte unter "FAQ"->"Alle FAQ" sowie in der Informationsbox "Einfügen in Seiten und Beiträgen" bei jeder FAQ im Bearbeitungsmodus. Sie können damit auch die Reihenfolge der FAQ in der Ausgabe bestimmen. 
 
