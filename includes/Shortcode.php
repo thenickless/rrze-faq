@@ -3,6 +3,7 @@
 namespace RRZE\FAQ;
 
 defined('ABSPATH') || exit;
+
 use function RRZE\FAQ\Config\getShortcodeSettings;
 
 $settings;
@@ -26,6 +27,7 @@ class Shortcode
         $this->pluginname = $this->settings['block']['blockname'];
         // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [fau_glossar ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
         // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [glossary ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
+
         add_shortcode('faq', [$this, 'shortcodeOutput']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
@@ -93,26 +95,57 @@ class Shortcode
 
     private function getTaxQuery(&$aTax)
     {
-        $ret = '';
-        $aTmp = array();
-        foreach ($aTax as $field => $aVal) {
-            if ($aVal[0]) {
-                $aTmp[] = array(
-                    'taxonomy' => 'faq_' . $field,
+        $ret = array();
+    
+        foreach ($aTax as $taxfield => $aEntries) {
+            $term_queries = array();
+            $sources = array();
+    
+            foreach ($aEntries as $entry) {
+                $source = !empty($entry['source']) ? $entry['source'] : '';
+    
+                if (!empty($source) && in_array($source, $sources)) {
+                    $term_queries[$source][] = $entry['value'];
+                } else {
+                    $sources[] = $source;
+                    $term_queries[$source] = array($entry['value']);
+                }
+            }
+    
+            foreach ($term_queries as $source => $terms) {
+                $query = array(
+                    'taxonomy' => $taxfield,
                     'field' => 'slug',
-                    'terms' => $aVal,
+                    'terms' => $terms,
+                    'operator' => 'IN',
                 );
+    
+                if (!empty($source)) {
+                    $query['meta_key'] = 'source';
+                    $query['meta_value'] = $source;
+                }
+    
+                $ret[] = $query;
             }
         }
-        if ($aTmp) {
-            $ret = $aTmp;
-            if (count($aTmp) > 1) {
-                $ret['relation'] = 'AND';
-            }
-        }
+    
+        $faq_category_queries = array_filter($ret, function($query) {
+            return $query['taxonomy'] === 'faq_category';
+        });
+    
+        $faq_tag_queries = array_filter($ret, function($query) {
+            return $query['taxonomy'] === 'faq_tag';
+        });
+    
+        $faq_category_group = array_merge(array('relation' => 'OR'), $faq_category_queries);
+        $faq_tag_group = array_merge(array('relation' => 'OR'), $faq_tag_queries);
+    
+        $ret = array($faq_category_group, $faq_tag_group);
+        $ret['relation'] = 'AND';
+    
         return $ret;
     }
-
+    
     private function searchArrayByKey(&$needle, &$aHaystack)
     {
         foreach ($aHaystack as $k => $v) {
@@ -135,6 +168,42 @@ class Shortcode
         return $schema;
     }
 
+    // returns the pairs source and category(or tag) as an Array; values without source are added to "sourceless" 
+    // example:
+    // $atts['category'] = "rrze:allgemeines, fau:allgemeines, fau:neues, sonstiges";
+    // getTaxBySource($atts['category']) returns [faq_category] => ['source' => 'rrze', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'neues'], ['source' => '', 'value' => 'sonstiges']
+    private function getTaxBySource($input)
+    {
+        $result = [];
+
+        if (empty($input)){
+            return $result;
+        }
+
+        // Teilen des Eingabestrings in einzelne Kategorien
+        $categories = explode(', ', $input);
+
+        foreach ($categories as $category) {
+            // Teilen der Kategorie in Quelle und Wert
+            list($source, $value) = array_pad(explode(':', $category, 2), 2, '');
+
+            // Überprüfen, ob $value leer ist
+            if ($value === '') {
+                $value = $source; // Wenn $value leer ist, setze $value auf $source
+                $source = ''; // Setze $source auf leer
+            }
+
+            // Erstellen des Ergebnisarrays für jede Kategorie
+            $result[] = array(
+                'source' => preg_replace('/[\s,]+$/', '', $source),
+                'value' => preg_replace('/[\s,]+$/', '', $value)
+            );
+        }
+
+        return $result;
+    }
+
+
     /**
      * Generieren Sie die Shortcode-Ausgabe
      * @param  array   $atts Shortcode-Attribute
@@ -143,16 +212,12 @@ class Shortcode
      */
     public function shortcodeOutput($atts)
     {
-
-        // if (!empty($atts['category'])){
-        //     // return gettype($atts) . ' asdflkj';
-        //     return json_encode($atts['category']);
-
-        // }
-
-        if (!$atts) {
+        if (empty($atts)) {
             $atts = array();
+        } else {
+            $atts = array_map('sanitize_text_field', $atts);
         }
+
         // translate new attributes
         if (isset($atts['glossary'])) {
             $parts = explode(' ', $atts['glossary']);
@@ -169,7 +234,6 @@ class Shortcode
                         $atts['glossarystyle'] = $part;
                         break;
                 }
-
             }
         }
         if (isset($atts['hide'])) {
@@ -236,8 +300,8 @@ class Shortcode
                 $atts_default[$k] = $v['default'];
             }
         }
-        $atts = shortcode_atts($atts_default, $atts);
 
+        $atts = shortcode_atts($atts_default, $atts);
         extract($atts);
 
         $content = '';
@@ -245,12 +309,6 @@ class Shortcode
         $glossarystyle = (isset($glossarystyle) ? $glossarystyle : '');
         $hide_title = (isset($hide_title) ? $hide_title : false);
         $color = (isset($color) ? $color : '');
-        // if ( $glossary && ( array_key_exists( $glossary, $this->settings['glossary']['values'] ) == FALSE )){
-        //     return __( 'Attribute glossary is not correct. Please use either glossary="category" or glossary="tag".', 'rrze-faq' );
-        // }
-        // if ( array_key_exists( $color, $this->settings['color']['values'] ) == FALSE ){
-        //     return __( 'Attribute color is not correct. Please use either \'medfak\', \'natfak\', \'rwfak\', \'philfak\' or \'techfak\'', 'rrze-faq' );
-        // }
 
         $gutenberg = (is_array($id) ? true : false);
 
@@ -270,7 +328,7 @@ class Shortcode
                     $title = get_the_title($id);
                     $anchorfield = get_post_meta($id, 'anchorfield', true);
 
-                    if (empty($anchorfield)){
+                    if (empty($anchorfield)) {
                         $anchorfield = 'ID-' . $id;
                     }
 
@@ -295,12 +353,11 @@ class Shortcode
             }
         } else {
             // attribute category or tag is given or none of them
+
             $aLetters = array();
             $aCategory = array();
-            $aTax = array();
             $tax_query = '';
 
-            // $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => $sort, 'order' => $order, 'suppress_filters' => false);
             $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => false);
             if ($sort == 'sortfield') {
                 $postQuery['orderby'] = array(
@@ -313,15 +370,12 @@ class Shortcode
                 $postQuery['order'] = $order;
             }
 
-            $fields = array('category', 'tag');
+            // filter by category and/or tag and -if given- by domain related to category/tag, too
+            $aTax = [];
+            $aTax['faq_category'] = $this->getTaxBySource($category);
+            $aTax['faq_tag'] = $this->getTaxBySource($tag);
 
-            foreach ($fields as $field) {
-                if (!is_array($$field)) {
-                    $aTax[$field] = explode(',', trim($$field));
-                } elseif ($$field[0]) {
-                    $aTax[$field] = $$field;
-                }
-            }
+
             if ($aTax) {
                 $tax_query = $this->getTaxQuery($aTax);
                 if ($tax_query) {
@@ -329,14 +383,34 @@ class Shortcode
                 }
             }
 
-            if (!empty($atts['lang'])) {
-                $postQuery['meta_query'] = [[
+
+            $metaQuery = [];
+            $lang = $atts['lang'] ? trim($atts['lang']) : '';
+            if ($lang) {
+                $metaQuery[] = [
                     'key' => 'lang',
-                    'value' => $atts['lang'],
+                    'value' => $lang,
                     'compare' => '=',
-                ]];
+                ];
             }
 
+            $source = !empty($atts['domain']) ?
+                array_filter(array_map('trim', explode(',', $atts['domain']))) :
+                [];
+            if ($source) {
+                $metaQuery[] = [
+                    'key' => 'source',
+                    'value' => $source,
+                    'compare' => 'IN',
+                ];
+            }
+
+            if ($metaQuery) {
+                $postQuery['meta_query'] = array_merge([
+                    'relation' => 'AND'
+                ], $metaQuery);
+            }
+            // error_log(print_r($postQuery, true));
             $posts = get_posts($postQuery);
 
             if ($posts) {
@@ -427,7 +501,7 @@ class Shortcode
 
                             $anchorfield = get_post_meta($ID, 'anchorfield', true);
 
-                            if (empty($anchorfield)){
+                            if (empty($anchorfield)) {
                                 $anchorfield = 'innerID-' . $ID;
                             }
 
@@ -460,10 +534,10 @@ class Shortcode
                         if (!$hide_accordion) {
                             $anchorfield = get_post_meta($post->ID, 'anchorfield', true);
 
-                            if (empty($anchorfield)){
+                            if (empty($anchorfield)) {
                                 $anchorfield = 'ID-' . $post->ID;
                             }
-        
+
                             if ($glossarystyle == 'a-z' && count($posts) > 1) {
                                 $accordion .= ($last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '');
                             }
@@ -479,7 +553,6 @@ class Shortcode
                         $accordion .= '[/collapsibles]';
                         $content .= do_shortcode($accordion);
                     }
-
                 }
             }
         }
@@ -526,7 +599,7 @@ class Shortcode
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>
         <?php
-}
+    }
 
     public function addMCEButtons($pluginArray)
     {

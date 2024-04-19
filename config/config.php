@@ -259,6 +259,12 @@ function getShortcodeSettings(){
 			'label' => __( 'Tags', 'rrze-faq' ),
 			'type' => 'text'
         ],
+		'domain' => [
+			'default' => '',
+			'field_type' => 'text',
+			'label' => __( 'Domain', 'rrze-faq' ),
+			'type' => 'text'
+        ],        
 		'id' => [
 			'default' => NULL,
 			'field_type' => 'text',

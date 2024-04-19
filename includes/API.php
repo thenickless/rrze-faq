@@ -8,7 +8,6 @@ define('ENDPOINT', 'wp-json/wp/v2/faq');
 
 class API
 {
-
     private $aAllCats = array();
 
     public function setDomain($shortname, $url, $domains)
@@ -26,7 +25,7 @@ class API
             $aRet['ret'] = $cleanShortname . __(' is already in use.', 'rrze-faq');
             return $aRet;
         } else {
-            $request = wp_remote_get($cleanUrl . ENDPOINT . '?per_page=1');
+            $request = $this->remoteGet($cleanUrl . ENDPOINT . '?per_page=1');
             $status_code = wp_remote_retrieve_response_code($request);
 
             if ($status_code != '200') {
@@ -75,7 +74,7 @@ class API
         $page = 1;
 
         do {
-            $request = wp_remote_get($url . '?page=' . $page . $slug);
+            $request = $this->remoteGet($url . '?page=' . $page . $slug);
             $status_code = wp_remote_retrieve_response_code($request);
             if ($status_code == 200) {
                 $entries = json_decode(wp_remote_retrieve_body($request), true);
@@ -311,7 +310,7 @@ class API
         $page = 1;
 
         do {
-            $request = wp_remote_get($url . ENDPOINT . '?page=' . $page . $filter);
+            $request = $this->remoteGet($url . ENDPOINT . '?page=' . $page . $filter);
             $status_code = wp_remote_retrieve_response_code($request);
             if ($status_code == 200) {
                 $entries = json_decode(wp_remote_retrieve_body($request), true);
@@ -470,5 +469,27 @@ class API
             'iDeleted' => $iDeleted,
             'URLhasSlider' => $aURLhasSlider,
         );
+    }
+
+    /**
+     * Get remote content
+     * 
+     * @param string $url
+     * @param array $args
+     * @param bool $safe
+     * @return mixed
+     */
+    private function remoteGet(string $url, array $args = [], bool $safe = true)
+    {
+        if (!$args) {
+            $args =  [
+                'sslverify' => defined('WP_DEBUG') && WP_DEBUG ? false : true
+            ];
+        }
+        if ($safe) {
+            return wp_safe_remote_get($url, $args);
+        } else {
+            return wp_remote_get($url, $args);
+        }
     }
 }
