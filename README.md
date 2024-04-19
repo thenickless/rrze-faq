@@ -44,8 +44,10 @@ Alle Attribute sind optional.
 glossary : bestimmt, wonach gruppiert werden soll. Mögliche Werte für die Gruppierung sind "category" oder "tag". D.h. entweder es wird nach den Kategorien gruppiert oder nach Schlagwörtern. Um gar nicht zu gruppieren, reicht es, das Attribut glossary wegzulassen. Darüberhinaus können Sie das Aussehen des Glossars bestimmen: "a-z" stellt ein alphabetisches Register dar. Mit "tabs" werden die Begriffe ausgegeben und ebenso mit "tagcloud", wobei sie hier abhängig von der Anzahl an gefundenen Treffer unterschiedlich groß dargestellt werden. Voreingestellt ist die Darstellung "a-z".
 
 category : mit diesem Attribut wird bestimmt, zu welchen Kategorien passende FAQ ausgegeben werden sollen. Es können beliebig viele Kategorien angegeben werden. Nutzen Sie dazu die Titelform der Kategorien, die Sie im Menü unter "FAQ"->"Kategorie" finden und trennen Sie diese voneinander durch Kommata.
+Zur Filterung unter Berücksichtigung der Datenquelle können Sie diese mit angeben. Beispiel: category="rrze:allgemeines, info" filtert nach "allgemeines" mit Datenquelle "rrze" und "info". Bei "info" ist nicht relevant, mit welcher Datenquelle die Kategorie "info" verbunden ist.
 
 tag : mit diesem Attribut wird bestimmt, zu welchen Schlagwörtern passende FAQ ausgegeben werden sollen. Es können beliebig viele Schlagwörter angegeben werden. Nutzen Sie dazu die Titelform der Schlagwörter, die Sie im Menü unter "FAQ"->"Schlagwörter" finden und trennen Sie diese voneinander durch Kommata.
+Zur Filterung unter Berücksichtigung der Datenquelle können Sie diese mit angeben. Beispiel: tag="rrze:schlagwort1, schlagwort2" filtert nach "schlagwort1" mit Datenquelle "rrze" und "schlagwort2". Bei "schlagwort2" ist nicht relevant, mit welcher Datenquelle die Kategorie "info" verbunden ist.
 
 domain : mit diesem Attribut wird bestimmt, zu welcher Domain passende FAQ ausgegeben werden sollen. Es können beliebig viele Domains angegeben werden. Trennen Sie diese voneinander durch Kommata. 
 

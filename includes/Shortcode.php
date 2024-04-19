@@ -97,32 +97,51 @@ class Shortcode
     {
         $ret = array();
     
-        foreach ($aTax as $field => $aData) {
-            $source = $aData['source'];
-            $values = $aData['values'];
+        foreach ($aTax as $taxfield => $aEntries) {
+            $term_queries = array();
+            $sources = array();
     
-            if ($values) {
-                foreach ($values as $value) {
-                    $query = array(
-                        'taxonomy' => 'faq_' . $field,
-                        'field' => 'slug', // oder ein anderes Feld, das du verwenden möchtest
-                        'terms' => $value,
-                    );
+            foreach ($aEntries as $entry) {
+                $source = !empty($entry['source']) ? $entry['source'] : '';
     
-                    // Quelle nur hinzufügen, wenn sie nicht leer ist
-                    if (!empty($source)) {
-                        $query['meta_key'] = 'source';
-                        $query['meta_value'] = $source;
-                    }
-    
-                    $ret[] = $query;
+                if (!empty($source) && in_array($source, $sources)) {
+                    $term_queries[$source][] = $entry['value'];
+                } else {
+                    $sources[] = $source;
+                    $term_queries[$source] = array($entry['value']);
                 }
+            }
+    
+            foreach ($term_queries as $source => $terms) {
+                $query = array(
+                    'taxonomy' => $taxfield,
+                    'field' => 'slug',
+                    'terms' => $terms,
+                    'operator' => 'IN',
+                );
+    
+                if (!empty($source)) {
+                    $query['meta_key'] = 'source';
+                    $query['meta_value'] = $source;
+                }
+    
+                $ret[] = $query;
             }
         }
     
-        if (count($ret) > 1) {
-            $ret['relation'] = 'AND';
-        }
+        $faq_category_queries = array_filter($ret, function($query) {
+            return $query['taxonomy'] === 'faq_category';
+        });
+    
+        $faq_tag_queries = array_filter($ret, function($query) {
+            return $query['taxonomy'] === 'faq_tag';
+        });
+    
+        $faq_category_group = array_merge(array('relation' => 'OR'), $faq_category_queries);
+        $faq_tag_group = array_merge(array('relation' => 'OR'), $faq_tag_queries);
+    
+        $ret = array($faq_category_group, $faq_tag_group);
+        $ret['relation'] = 'AND';
     
         return $ret;
     }
@@ -155,24 +174,35 @@ class Shortcode
     // getTaxBySource($atts['category']) returns [faq_category] => ['source' => 'rrze', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'neues'], ['source' => '', 'value' => 'sonstiges']
     private function getTaxBySource($input)
     {
-        $result = array();
-    
-        foreach ($input as $type => $values) {
-            $taxonomy = 'faq_' . $type;
-    
-            foreach ($values as $value) {
-                list($source, $value) = array_pad(explode(':', $value, 2), 2, '');
-    
-                $result[$taxonomy][] = array(
-                    'source' => trim($source),
-                    'value' => trim($value)
-                );
-            }
+        $result = [];
+
+        if (empty($input)){
+            return $result;
         }
-    
+
+        // Teilen des Eingabestrings in einzelne Kategorien
+        $categories = explode(', ', $input);
+
+        foreach ($categories as $category) {
+            // Teilen der Kategorie in Quelle und Wert
+            list($source, $value) = array_pad(explode(':', $category, 2), 2, '');
+
+            // Überprüfen, ob $value leer ist
+            if ($value === '') {
+                $value = $source; // Wenn $value leer ist, setze $value auf $source
+                $source = ''; // Setze $source auf leer
+            }
+
+            // Erstellen des Ergebnisarrays für jede Kategorie
+            $result[] = array(
+                'source' => preg_replace('/[\s,]+$/', '', $source),
+                'value' => preg_replace('/[\s,]+$/', '', $value)
+            );
+        }
+
         return $result;
     }
-        
+
 
     /**
      * Generieren Sie die Shortcode-Ausgabe
@@ -326,7 +356,6 @@ class Shortcode
 
             $aLetters = array();
             $aCategory = array();
-            $aTax = array();
             $tax_query = '';
 
             $postQuery = array('post_type' => 'faq', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => false);
@@ -342,27 +371,18 @@ class Shortcode
             }
 
             // filter by category and/or tag and -if given- by domain related to category/tag, too
+            $aTax = [];
+            $aTax['faq_category'] = $this->getTaxBySource($category);
+            $aTax['faq_tag'] = $this->getTaxBySource($tag);
 
-                // getTaxBySource($atts['category']) returns [faq_category] => ['source' => 'rrze', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'neues'], ['source' => '', 'value' => 'sonstiges']
 
-            $aCategoryBySource = $this->getTaxBySource($category);
-            $aTagBySource = $this->getTaxBySource($tag);
-
-            $fields = array('category', 'tag');
-
-            foreach ($fields as $field) {
-                if (!is_array($$field)) {
-                    $aTax[$field] = explode(',', trim($$field));
-                } elseif ($$field[0]) {
-                    $aTax[$field] = $$field;
-                }
-            }
             if ($aTax) {
                 $tax_query = $this->getTaxQuery($aTax);
                 if ($tax_query) {
                     $postQuery['tax_query'] = $tax_query;
                 }
             }
+
 
             $metaQuery = [];
             $lang = $atts['lang'] ? trim($atts['lang']) : '';
@@ -391,7 +411,6 @@ class Shortcode
                 ], $metaQuery);
             }
             // error_log(print_r($postQuery, true));
-
             $posts = get_posts($postQuery);
 
             if ($posts) {
