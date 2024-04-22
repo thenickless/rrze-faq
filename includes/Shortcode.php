@@ -96,53 +96,44 @@ class Shortcode
     private function getTaxQuery(&$aTax)
     {
         $ret = array();
-    
+
         foreach ($aTax as $taxfield => $aEntries) {
             $term_queries = array();
             $sources = array();
     
             foreach ($aEntries as $entry) {
                 $source = !empty($entry['source']) ? $entry['source'] : '';
-    
-                if (!empty($source) && in_array($source, $sources)) {
-                    $term_queries[$source][] = $entry['value'];
-                } else {
-                    $sources[] = $source;
-                    $term_queries[$source] = array($entry['value']);
-                }
+                $term_queries[$source][] = $entry['value'];
             }
-    
-            foreach ($term_queries as $source => $terms) {
+
+            foreach ($term_queries as $source => $aTerms) {
+
                 $query = array(
                     'taxonomy' => $taxfield,
                     'field' => 'slug',
-                    'terms' => $terms,
-                    'operator' => 'IN',
+                    'terms' => $aTerms,
                 );
+
+                if (count($aTerms) > 1){
+                    $query['operator'] = 'IN';
+                }
     
                 if (!empty($source)) {
                     $query['meta_key'] = 'source';
                     $query['meta_value'] = $source;
                 }
     
-                $ret[] = $query;
+                $ret[$taxfield][] = $query;
+            }
+            if (count($ret[$taxfield]) > 1){
+                $ret[$taxfield]['relation'] = 'OR';
             }
         }
-    
-        $faq_category_queries = array_filter($ret, function($query) {
-            return $query['taxonomy'] === 'faq_category';
-        });
-    
-        $faq_tag_queries = array_filter($ret, function($query) {
-            return $query['taxonomy'] === 'faq_tag';
-        });
-    
-        $faq_category_group = array_merge(array('relation' => 'OR'), $faq_category_queries);
-        $faq_tag_group = array_merge(array('relation' => 'OR'), $faq_tag_queries);
-    
-        $ret = array($faq_category_group, $faq_tag_group);
-        $ret['relation'] = 'AND';
-    
+
+        if (count($ret) > 1){
+            $ret['relation'] = 'AND';
+        }
+
         return $ret;
     }
     
@@ -374,6 +365,7 @@ class Shortcode
             $aTax = [];
             $aTax['faq_category'] = $this->getTaxBySource($category);
             $aTax['faq_tag'] = $this->getTaxBySource($tag);
+            $aTax = array_filter($aTax); // delete empty entries
 
 
             if ($aTax) {
@@ -382,7 +374,6 @@ class Shortcode
                     $postQuery['tax_query'] = $tax_query;
                 }
             }
-
 
             $metaQuery = [];
             $lang = $atts['lang'] ? trim($atts['lang']) : '';
@@ -411,6 +402,7 @@ class Shortcode
                 ], $metaQuery);
             }
             // error_log(print_r($postQuery, true));
+
             $posts = get_posts($postQuery);
 
             if ($posts) {
