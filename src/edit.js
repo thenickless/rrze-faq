@@ -12,7 +12,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 
 
 export default function Edit({ attributes, setAttributes }) {
-	const { category, tag, id, hstart, order, sort, lang, additional_class, color, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary } = attributes;
+	const { category, tag, id, hstart, order, sort, lang, additional_class, color, style, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary } = attributes;
 	const blockProps = useBlockProps();
 	const [categorystate, setSelectedCategories] = useState(['']);
 	const [tagstate, setSelectedTags] = useState(['']);
@@ -28,13 +28,14 @@ export default function Edit({ attributes, setAttributes }) {
 		setAttributes({ lang: lang });
 		setAttributes({ additional_class: additional_class });
 		setAttributes({ color: color });
+		setAttributes({ style: style });
 		setAttributes({ load_open: load_open });
 		setAttributes({ expand_all_link: expand_all_link });
 		setAttributes({ hide_title: hide_title });
 		setAttributes({ hide_accordion: hide_accordion });
 		setAttributes({ glossarystyle: glossarystyle });
 		setAttributes({ glossary: glossary });
-	}, [category, tag, id, hstart, order, sort, lang, additional_class, color, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary, setAttributes]);
+	}, [category, tag, id, hstart, order, sort, lang, additional_class, color, style, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary, setAttributes]);
 
 
 
@@ -193,6 +194,21 @@ export default function Edit({ attributes, setAttributes }) {
 		}
 	];
 
+	const styleoptions = [
+		{
+			label: __('none', 'rrze-faq'),
+			value: ''
+		},
+		{
+			label: 'light',
+			value: 'light'
+		},
+		{
+			label: 'dark',
+			value: 'dark'
+		}
+	];
+
 	const sortoptions = [
 		{
 			label: __('Title', 'rrze-faq'),
@@ -306,6 +322,11 @@ export default function Edit({ attributes, setAttributes }) {
 						label={__('Color', 'rrze-faq')}
 						options={coloroptions}
 						onChange={(value) => setAttributes({ color: value })}
+					/>
+					<SelectControl
+						label={__('Style', 'rrze-faq')}
+						options={styleoptions}
+						onChange={(value) => setAttributes({ style: value })}
 					/>
 					<TextControl
 						label={__(

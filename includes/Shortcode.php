@@ -300,6 +300,7 @@ class Shortcode
         $glossarystyle = (isset($glossarystyle) ? $glossarystyle : '');
         $hide_title = (isset($hide_title) ? $hide_title : false);
         $color = (isset($color) ? $color : '');
+        $style = (isset($style) ? 'style="' . $style . '"' : '');
 
         $gutenberg = (is_array($id) ? true : false);
 
@@ -312,7 +313,7 @@ class Shortcode
                 $aIDs = explode(',', $id);
             }
             $found = false;
-            $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
+            $accordion = '[collapsibles hstart="' . $hstart . '" ' . $style . ' ' . $expand_all_link . ']';
             foreach ($aIDs as $id) {
                 $id = trim($id);
                 if ($id) {
@@ -470,7 +471,7 @@ class Shortcode
                                 break;
                         }
                     }
-                    $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
+                    $accordion = '[collapsibles hstart="' . $hstart . '" ' . $style . ' ' . $expand_all_link . ']';
                     $last_anchor = '';
                     foreach ($aUsedTerms as $k => $aVal) {
                         if ($glossarystyle == 'a-z' && $content) {
@@ -509,7 +510,7 @@ class Shortcode
 
                     // attribut glossary is not given
                     if (!$hide_accordion) {
-                        $accordion = '[collapsibles hstart="' . $hstart . '"' . $expand_all_link . ']';
+                        $accordion = '[collapsibles hstart="' . $hstart . '" ' . $style . ' ' . $expand_all_link . ']';
                     }
                     $last_anchor = '';
                     foreach ($posts as $post) {

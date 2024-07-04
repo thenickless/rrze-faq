@@ -331,6 +331,26 @@ function getShortcodeSettings(){
 			'label' => __( 'Color', 'rrze-faq' ),
 			'type' => 'string'
 		],
+		'style' => [
+			'values' => [
+                [
+                    'id' => '',
+                    'val' => __('none', 'rrze-faq' )
+                ],
+                [
+                    'id' => 'light',
+                    'val' => 'light'
+                ],
+                [
+                    'id' => 'dark',
+                    'val' => 'dark'
+                ],
+			],
+			'default' => '',
+			'field_type' => 'select',
+			'label' => __( 'Style', 'rrze-faq' ),
+			'type' => 'string'
+		],
 		'additional_class' => [
 			'default' => '',
 			'field_type' => 'text',
