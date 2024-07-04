@@ -39,6 +39,9 @@
 		"color": {
 			"type": "string"
 		},
+		"style": {
+			"type": "string"
+		},
 		"additional_class": {
 			"type": "string"
 		},
