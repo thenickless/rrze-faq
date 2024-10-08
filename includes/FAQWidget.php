@@ -41,16 +41,16 @@ class FAQWidget extends \WP_Widget
     // Creating widget front-end
     public function widget($args, $instance)
     {
-        $start = ($instance['start'] ? date('Y-m-d', strtotime($instance['start'])) : '');
-        $end = ($instance['end'] ? date('Y-m-d', strtotime($instance['end'])) : '');
-
+        $start = ($instance['start'] ? wp_date('Y-m-d', strtotime($instance['start'])) : '');
+        $end = ($instance['end'] ? wp_date('Y-m-d', strtotime($instance['end'])) : '');
+        
         if ($start || $end) {
-            $today = date('Y-m-d');
+            $today = wp_date('Y-m-d');
             if (($start && $today < $start) || ($end && $today > $end)) {
                 return;
             }
         }
-
+        
         $id = (isset($instance['id']) ? $instance['id'] : 0);
         $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
 

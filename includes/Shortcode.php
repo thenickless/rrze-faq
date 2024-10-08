@@ -584,10 +584,10 @@ class Shortcode
         ?>
         <script type='text/javascript'>
             tmp = [{
-                'name': <?php echo json_encode($this->pluginname); ?>,
-                'title': <?php echo json_encode($this->settings['block']['title']); ?>,
-                'icon': <?php echo json_encode($this->settings['block']['tinymce_icon']); ?>,
-                'shortcode': <?php echo json_encode($shortcode); ?>,
+                'name': <?php echo wp_json_encode($this->pluginname); ?>,
+                'title': <?php echo wp_json_encode($this->settings['block']['title']); ?>,
+                'icon': <?php echo wp_json_encode($this->settings['block']['tinymce_icon']); ?>,
+                'shortcode': <?php echo wp_json_encode($shortcode); ?>,
             }];
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>

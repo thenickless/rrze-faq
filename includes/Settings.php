@@ -511,7 +511,7 @@ class Settings {
             $this->allTabs[] = $val['id'];
         }
 
-        $this->currentTab = array_key_exists('current-tab', $_GET) && in_array($_GET['current-tab'], $this->allTabs) ? $_GET['current-tab'] : $this->defaultTab;
+        $this->currentTab = array_key_exists('current-tab', $_GET) && in_array(sanitize_text_field(wp_unslash($_GET['current-tab'])), $this->allTabs) ? sanitize_text_field(wp_unslash($_GET['current-tab'])) : $this->defaultTab;
     }
 
     /**
