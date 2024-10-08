@@ -258,28 +258,28 @@ class Settings {
      * Zeigt alle Beschriftungen der Einstellungsbereiche als Registerkarte an.
      */
     public function showTabs() {
-        $html = '<h1>' . $this->settingsMenu['title'] . '</h1>' . PHP_EOL;
-
+        $html = '<h1>' . esc_html($this->settingsMenu['title']) . '</h1>' . PHP_EOL;
+    
         if (count($this->settingsSections) < 2) {
             return;
         }
-
+    
         $html .= '<h2 class="nav-tab-wrapper wp-clearfix">';
-
+    
         foreach ($this->settingsSections as $section) {
             $class = $section['id'] == $this->currentTab ? 'nav-tab-active' : $this->defaultTab;
             $html .= sprintf(
                 '<a href="?page=%4$s&current-tab=%1$s" class="nav-tab %3$s" id="%1$s-tab">%2$s</a>',
                 esc_attr($section['id']),
-                $section['title'],
+                esc_html($section['title']),
                 esc_attr($class),
-                $this->settingsMenu['menu_slug']
+                esc_attr($this->settingsMenu['menu_slug'])
             );
         }
-
+    
         $html .= '</h2>' . PHP_EOL;
-
-        echo $html;
+    
+        echo wp_kses_post($html);
     }
 
     /**
@@ -293,29 +293,29 @@ class Settings {
             }
             $btn_label = '';
             $get = '';
-
-            switch ( $this->currentTab ) {
-                case 'faqsync':                    
+    
+            switch ($this->currentTab) {
+                case 'faqsync':
                     $get = '?sync';
                     break;
-                case 'doms': 
-                    $btn_label = __('Add domain', 'rrze-faq' );
+                case 'doms':
+                    $btn_label = esc_html__('Add domain', 'rrze-faq');
                     $get = '?doms';
                     break;
-                case 'faqlog': 
-                    $btn_label = __('Delete logfile', 'rrze-faq' );
+                case 'faqlog':
+                    $btn_label = esc_html__('Delete logfile', 'rrze-faq');
                     $get = '?del';
                     break;
             }
-
-            echo '<div id="' . $section['id'] . '">';
-            echo '<form method="post" action="options.php'. $get . '">';
+    
+            echo '<div id="' . esc_attr($section['id']) . '">';
+            echo '<form method="post" action="options.php' . esc_attr($get) . '">';
             settings_fields($section['id']);
             do_settings_sections($section['id']);
-            submit_button( $btn_label );
-            if ( $this->currentTab == 'doms' ){
+            submit_button(esc_html($btn_label));
+            if ($this->currentTab == 'doms') {
                 $this->domainOutput();
-            }            
+            }
             echo '</form>';
             echo '</div>';
         }
@@ -334,18 +334,18 @@ class Settings {
     public function domainOutput(){
         $api = new API();
         $aDomains = $api->getDomains();
-
-        if ( count($aDomains) > 0 ){
+    
+        if (count($aDomains) > 0) {
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">Domains:</th></tr></thead><tbody>';
-            foreach ( $aDomains as $name => $url ){
-                echo '<tr><td><input type="checkbox" name="del_domain_' . $i . '" value="' . $url . '"></td><td>'. $name . '</td><td>'. $url . '</td></tr>';
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th colspan="3">' . esc_html__('Domains:', 'rrze-faq') . '</th></tr></thead><tbody>';
+            foreach ($aDomains as $name => $url) {
+                echo '<tr><td><input type="checkbox" name="del_domain_' . esc_attr($i) . '" value="' . esc_url($url) . '"></td><td>' . esc_html($name) . '</td><td>' . esc_url($url) . '</td></tr>';
                 $i++;
             }
             echo '</tbody></table>';
-            echo '<p>' . __( 'Please note: "Delete selected domains" will DELETE every FAQ on this website that has been fetched from the selected domains.', 'rrze-faq' ) . '</p>'; 
-            submit_button( __( 'Delete selected domains', 'rrze-faq' ) );
+            echo '<p>' . esc_html__('Please note: "Delete selected domains" will DELETE every FAQ on this website that has been fetched from the selected domains.', 'rrze-faq') . '</p>';
+            submit_button(esc_html__('Delete selected domains', 'rrze-faq'));
         }
     }
 
@@ -432,7 +432,7 @@ class Settings {
             if (isset($section['desc']) && !empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
                 $callback = function () use ($section) {
-                    echo str_replace('"', '\"', $section['desc']);
+                    echo wp_kses_post(str_replace('"', '\"', $section['desc']));
                 };
             } elseif (isset($section['callback'])) {
                 $callback = $section['callback'];
@@ -566,28 +566,28 @@ class Settings {
      * Zeigt ein Textfeld für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
      */
-    public function callbackText($args)
-    {
+    public function callbackText($args) {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
-        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
-        $type = isset($args['type']) ? $args['type'] : 'text';
-        $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
-
+        $size = isset($args['size']) && !is_null($args['size']) ? esc_attr($args['size']) : 'regular';
+        $type = isset($args['type']) ? esc_attr($args['type']) : 'text';
+        $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . esc_attr($args['placeholder']) . '"';
+    
         $html = sprintf(
             '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s>',
             $type,
             $size,
-            $this->optionName,
-            $args['section'],
-            $args['id'],
-            $value,
+            esc_attr($this->optionName),
+            esc_attr($args['section']),
+            esc_attr($args['id']),
+            esc_attr($value),
             $placeholder
         );
         $html .= $this->getFieldDescription($args);
-
-        echo $html;
+    
+        echo wp_kses_post($html);
     }
-
+    
+    
     /**
      * Zeigt ein Zahlenfeld für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
@@ -617,7 +617,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -653,7 +653,7 @@ class Settings {
         );
         $html .= '</fieldset>';
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -692,7 +692,7 @@ class Settings {
         $html .= $this->getFieldDescription($args);
         $html .= '</fieldset>';
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -728,7 +728,7 @@ class Settings {
         $html .= $this->getFieldDescription($args);
         $html .= '</fieldset>';
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -759,7 +759,7 @@ class Settings {
         $html .= sprintf('</select>');
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
 
@@ -791,7 +791,7 @@ class Settings {
         $html .= sprintf('</select>');
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -815,7 +815,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -827,7 +827,7 @@ class Settings {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : '500px';
 
-        echo '<div style="max-width: ' . $size . ';">';
+        echo wp_kses_post('<div style="max-width: ' . $size . ';">');
 
         $editor_settings = [
             'teeny' => true,
@@ -843,7 +843,7 @@ class Settings {
 
         echo '</div>';
 
-        echo $this->getFieldDescription($args);
+        echo wp_kses_post($this->getFieldDescription($args));
     }
 
     /**
@@ -868,7 +868,7 @@ class Settings {
         $html .= '<input type="button" class="button settings-media-browse" value="' . $label . '">';
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -890,7 +890,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     /**
@@ -913,7 +913,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     public function callbackHidden($args) {
@@ -934,7 +934,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo wp_kses_post($html);
     }
 
     public function callbackLogfile($args) {
@@ -943,19 +943,19 @@ class Settings {
             if ( $lines !== false ) {
                 echo '<style> .settings_page_rrze-faq #faqlog .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><tbody>';
                 foreach ( $lines as $line ){
-                    echo '<tr><td>' . $line . '</td></tr>';
+                    echo wp_kses_post('<tr><td>' . $line . '</td></tr>');
                 }
                 echo '</tbody></table>';
             }else{
-                echo __( 'Logfile is empty.', 'rrze-faq' );
+                echo esc_html(__( 'Logfile is empty.', 'rrze-faq' ));
             }
         }else{
-            echo __( 'Logfile is empty.', 'rrze-faq' );
+            echo esc_html(__( 'Logfile is empty.', 'rrze-faq' ));
         }
     }
 
     public function callbackPlaintext( $args ) {
-        echo '<strong>' . esc_attr($this->getOption($args['section'], $args['id'], $args['default'])) . '</strong>';
+        echo '<strong>' . esc_html($this->getOption($args['section'], $args['id'], $args['default'])) . '</strong>';
     }
 
     public function callbackLine() {
@@ -963,7 +963,7 @@ class Settings {
     }
 
     public function callbackButton( $args ) {
-        echo submit_button( esc_attr($this->getOption($args['section'], $args['id'], $args['default'])) );
+        echo wp_kses_post(submit_button($this->getOption($args['section'], $args['id'], $args['default'])));
     }
 
 

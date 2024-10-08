@@ -80,7 +80,7 @@ class Layout
         $output = '<input type="hidden" name="source" id="source" value="' . esc_attr(get_post_meta($meta_id->ID, 'source', true)) . '">';
         $output .= '<input type="text" name="sortfield" id="sortfield" class="sortfield" value="' . esc_attr(get_post_meta($meta_id->ID, 'sortfield', true)) . '">';
         $output .= '<p class="description">' . __('Criterion for sorting the output of the shortcode', 'rrze-faq') . '</p>';
-        echo $output;
+        echo wp_kses_post($output);
     }
 
     public function anchorboxCallback($meta_id)
@@ -88,7 +88,7 @@ class Layout
         $output = '<input type="hidden" name="source" id="source" value="' . esc_attr(get_post_meta($meta_id->ID, 'source', true)) . '">';
         $output .= '<input type="text" name="anchorfield" id="anchorfield" class="anchorfield" value="' . esc_attr(get_post_meta($meta_id->ID, 'anchorfield', true)) . '">';
         $output .= '<p class="description">' . __('Anchor field (optional) to define jump marks when displayed in accordions ', 'rrze-faq') . '</p>';
-        echo $output;
+        echo wp_kses_post($output);
     }
 
 
@@ -96,13 +96,13 @@ class Layout
     {
         $output = '<input type="text" name="lang" id="lang" class="lang" value="' . esc_attr(get_post_meta($meta_id->ID, 'lang', true)) . '">';
         $output .= '<p class="description">' . __('Language of this FAQ', 'rrze-faq') . '</p>';
-        echo $output;
+        echo wp_kses_post($output);
     }
 
     public function fillContentBox($post)
     {
         $mycontent = apply_filters('the_content', $post->post_content);
-        echo '<h1>' . html_entity_decode($post->post_title) . '</h1><br>' . $mycontent;
+        echo '<h1>' . esc_html($post->post_title) . '</h1><br>' . wp_kses_post($mycontent);
     }
 
     public function fillShortcodeBox()
@@ -126,7 +126,7 @@ class Layout
             $ret .= ($tag ? '<h3 class="hndle">' . __('Accordion with tag', 'rrze-faq') . ':</h3><p>[faq tag="' . $tag . '"]</p><p>' . __('If there is more than one tag listed, use at least one of them.', 'rrze-faq') . '</p>' : '');
             $ret .= '<h3 class="hndle">' . __('Accordion with all entries', 'rrze-faq') . ':</h3><p>[faq]</p>';
         }
-        echo $ret;
+        echo wp_kses_post($ret);
     }
 
     public function changeTitleText($title)
@@ -258,7 +258,7 @@ class Layout
         }
 
         $output .= "</select>";
-        echo $output;
+        echo wp_kses_post($output);
     }
 
     public function filterRequestQuery($query)
@@ -294,34 +294,34 @@ class Layout
     public function getFaqColumnsValues($column_name, $post_id)
     {
         if ($column_name == 'id') {
-            echo $post_id;
+            echo esc_html($post_id);
         }
         if ($column_name == 'lang') {
-            echo get_post_meta($post_id, 'lang', true);
+            echo esc_html(get_post_meta($post_id, 'lang', true) );
         }
         if ($column_name == 'source') {
-            echo get_post_meta($post_id, 'source', true);
+            echo esc_html(get_post_meta($post_id, 'source', true));
         }
         if ($column_name == 'sortfield') {
-            echo get_post_meta($post_id, 'sortfield', true);
+            echo esc_html(get_post_meta($post_id, 'sortfield', true));
         }
         if ($column_name == 'anchorfield') {
-            echo get_post_meta($post_id, 'anchorfield', true);
+            echo esc_html(get_post_meta($post_id, 'anchorfield', true));
         }
     }
 
     public function getTaxColumnsValues($content, $column_name, $term_id)
     {
         if ($column_name == 'lang') {
-            $source = get_term_meta($term_id, 'lang', true);
-            echo $source;
+            $lang = get_term_meta($term_id, 'lang', true);
+            echo esc_html($lang);
         }
         if ($column_name == 'source') {
             $source = get_term_meta($term_id, 'source', true);
-            echo $source;
+            echo esc_html($source);
         }
     }
-
+    
     public static function getTermLinks(&$postID, $mytaxonomy)
     {
         $ret = '';
