@@ -16,7 +16,8 @@ use RRZE\FAQ\API;
 /**
  * Settings-Klasse
  */
-class Settings {
+class Settings
+{
     /**
      * Der vollständige Pfad- und Dateiname der Plugin-Datei.
      * @var string
@@ -72,12 +73,12 @@ class Settings {
     protected $currentTab = '';
 
 
-     /**
+    /**
      * Registrierte Domains
      * @var string
      */
     protected $domains = array();
-   
+
     /**
      * Optionsseite
      * @var string
@@ -88,7 +89,8 @@ class Settings {
      * Variablen Werte zuweisen.
      * @param string $pluginFile [description]
      */
-    public function __construct($pluginFile) {
+    public function __construct($pluginFile)
+    {
         $this->pluginFile = $pluginFile;
     }
 
@@ -96,14 +98,57 @@ class Settings {
      * Er wird ausgeführt, sobald die Klasse instanziiert wird.
      * @return void
      */
-    public function onLoaded() {
+    public function onLoaded()
+    {
         add_action('init', [$this, 'regularInit'], 1);
         add_action('admin_init', [$this, 'adminInit']);
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
     }
 
-    public function regularInit(){
+    public function my_custom_allowed_html($allowed_tags, $context)
+    {
+        if ('post' === $context) {
+            // Add the <select> tag and its attributes
+            $allowed_tags['select'] = array(
+                'name' => true,
+                'id' => true,
+                'class' => true,
+                'multiple' => true,
+                'size' => true,
+            );
+
+            // Add the <option> tag and its attributes
+            $allowed_tags['option'] = array(
+                'value' => true,
+                'selected' => true,
+            );
+
+            // Add the <input> tag and its attributes
+            $allowed_tags['input'] = array(
+                'type' => true,
+                'name' => true,
+                'id' => true,
+                'class' => true,
+                'value' => true,
+                'placeholder' => true,
+                'checked' => true,
+                'disabled' => true,
+                'readonly' => true,
+                'maxlength' => true,
+                'size' => true,
+                'min' => true,
+                'max' => true,
+                'step' => true,
+            );
+        }
+
+        return $allowed_tags;
+    }
+
+
+    public function regularInit()
+    {
         $this->setMenu();
         $this->setSections();
         $this->setFields();
@@ -113,14 +158,16 @@ class Settings {
         $this->options = $this->getOptions();
     }
 
-    protected function setMenu() {
+    protected function setMenu()
+    {
         $this->settingsMenu = getmenuSettings();
     }
 
     /**
      * Einstellungsbereiche einstellen.
      */
-    protected function setSections() {
+    protected function setSections()
+    {
         $this->settingsSections = getSections();
     }
 
@@ -128,16 +175,18 @@ class Settings {
      * Einen einzelnen Einstellungsbereich hinzufügen.
      * @param array   $section
      */
-    protected function addSection($section) {
+    protected function addSection($section)
+    {
         $this->settingsSections[] = $section;
     }
 
     /**
      * Einstellungsfelder einstellen.
      */
-    protected function setFields() {
+    protected function setFields()
+    {
         $this->settingsFields = getFields();
-        if ( isset($_GET['page']) && $_GET['page'] == 'rrze-faq' && isset($_GET['current-tab']) && $_GET['current-tab'] == 'faqsync' ){
+        if (isset($_GET['page']) && $_GET['page'] == 'rrze-faq' && isset($_GET['current-tab']) && $_GET['current-tab'] == 'faqsync') {
             // Add Sync fields for each domain
             $this->settingsFields['faqsync'] = $this->setSettingsDomains();
         }
@@ -148,12 +197,13 @@ class Settings {
      * @param [type] $section [description]
      * @param [type] $field   [description]
      */
-    protected function addField($section, $field) {
+    protected function addField($section, $field)
+    {
         $defaults = array(
-            'name'  => '',
+            'name' => '',
             'label' => '',
-            'desc'  => '',
-            'type'  => 'text'
+            'desc' => '',
+            'type' => 'text'
         );
 
         $arg = wp_parse_args($field, $defaults);
@@ -164,7 +214,8 @@ class Settings {
      * Gibt die Standardeinstellungen zurück.
      * @return array
      */
-    protected function defaultOptions() {
+    protected function defaultOptions()
+    {
         $options = [];
         foreach ($this->settingsFields as $section => $field) {
             foreach ($field as $option) {
@@ -181,7 +232,8 @@ class Settings {
      * Gibt die Einstellungen zurück.
      * @return array
      */
-    public function getOptions() {
+    public function getOptions()
+    {
         $defaults = $this->defaultOptions();
 
         $options = (array) get_option($this->optionName);
@@ -198,7 +250,8 @@ class Settings {
      * @param string  $default default text if it's not found
      * @return string
      */
-    public function getOption($section, $name, $default = '') {
+    public function getOption($section, $name, $default = '')
+    {
         $option = $section . '_' . $name;
 
         if (isset($this->options[$option])) {
@@ -257,15 +310,16 @@ class Settings {
      * Einstellungsbereiche als Registerkarte anzeigen.
      * Zeigt alle Beschriftungen der Einstellungsbereiche als Registerkarte an.
      */
-    public function showTabs() {
+    public function showTabs()
+    {
         $html = '<h1>' . esc_html($this->settingsMenu['title']) . '</h1>' . PHP_EOL;
-    
+
         if (count($this->settingsSections) < 2) {
             return;
         }
-    
+
         $html .= '<h2 class="nav-tab-wrapper wp-clearfix">';
-    
+
         foreach ($this->settingsSections as $section) {
             $class = $section['id'] == $this->currentTab ? 'nav-tab-active' : $this->defaultTab;
             $html .= sprintf(
@@ -276,9 +330,9 @@ class Settings {
                 esc_attr($this->settingsMenu['menu_slug'])
             );
         }
-    
+
         $html .= '</h2>' . PHP_EOL;
-    
+
         echo wp_kses_post($html);
     }
 
@@ -286,14 +340,15 @@ class Settings {
      * Anzeigen der Einstellungsbereiche.
      * Zeigt für jeden Einstellungsbereich das entsprechende Formular an.
      */
-    public function showSections() {
+    public function showSections()
+    {
         foreach ($this->settingsSections as $section) {
             if ($section['id'] != $this->currentTab) {
                 continue;
             }
             $btn_label = '';
             $get = '';
-    
+
             switch ($this->currentTab) {
                 case 'faqsync':
                     $get = '?sync';
@@ -307,7 +362,7 @@ class Settings {
                     $get = '?del';
                     break;
             }
-    
+
             echo '<div id="' . esc_attr($section['id']) . '">';
             echo '<form method="post" action="options.php' . esc_attr($get) . '">';
             settings_fields($section['id']);
@@ -324,17 +379,19 @@ class Settings {
     /**
      * Optionen Seitenausgabe
      */
-    public function pageOutput() {
+    public function pageOutput()
+    {
         echo '<div class="wrap">', PHP_EOL;
         $this->showTabs();
         $this->showSections();
         echo '</div>', PHP_EOL;
     }
 
-    public function domainOutput(){
+    public function domainOutput()
+    {
         $api = new API();
         $aDomains = $api->getDomains();
-    
+
         if (count($aDomains) > 0) {
             $i = 1;
             echo '<style> .settings_page_rrze-faq #log .form-table th {width:0;}</style>';
@@ -349,7 +406,8 @@ class Settings {
         }
     }
 
-    public function setSettingsDomains(){
+    public function setSettingsDomains()
+    {
         $i = 1;
         $newFields = array();
         $api = new API();
@@ -358,38 +416,38 @@ class Settings {
         $aDomains = $api->getDomains();
 
         // foreach ( $this->domains as $shortname => $url ){
-        foreach ( $aDomains as $shortname => $url ){
-            $aCategories = $api->getCategories( $url, $shortname ); 
-            foreach ( $this->settingsFields['faqsync'] as $field ){
-                if ( $field['name'] == 'autosync' || $field['name'] == 'frequency' || $field['name'] == 'info' ){
-                    if ( $i == 1 ){
+        foreach ($aDomains as $shortname => $url) {
+            $aCategories = $api->getCategories($url, $shortname);
+            foreach ($this->settingsFields['faqsync'] as $field) {
+                if ($field['name'] == 'autosync' || $field['name'] == 'frequency' || $field['name'] == 'info') {
+                    if ($i == 1) {
                         $additionalfields[] = $field;
                     }
                     continue;
-                } 
-                switch ( $field['name'] ){
+                }
+                switch ($field['name']) {
                     case 'shortname':
                         $field['default'] = $shortname;
                         break;
-                    case 'url': 
+                    case 'url':
                         $field['default'] = $url;
                         break;
                     case 'categories':
-                        if ( !$aCategories ){
-                            $field['options'][''] = __( 'no category with source = "website" found', 'rrze-faq' );
+                        if (!$aCategories) {
+                            $field['options'][''] = __('no category with source = "website" found', 'rrze-faq');
                         }
-                        foreach ( $aCategories as $slug => $name ){
+                        foreach ($aCategories as $slug => $name) {
                             $field['options'][$slug] = $name;
                         }
-                        break;    
+                        break;
                 }
                 $field['name'] = $field['name'] . '_' . $shortname;
                 $newFields[] = $field;
             }
             $i++;
         }
-        foreach ( $additionalfields as $addfield ){
-            $newFields[] = $addfield;    
+        foreach ($additionalfields as $addfield) {
+            $newFields[] = $addfield;
         }
         return $newFields;
     }
@@ -397,7 +455,8 @@ class Settings {
     /**
      * Erstellt die Kontexthilfe der Einstellungsseite.
      */
-    public function adminHelpTab() {
+    public function adminHelpTab()
+    {
         $screen = get_current_screen();
 
         if (!method_exists($screen, 'add_help_tab') || $screen->id != $this->optionsPage) {
@@ -427,6 +486,8 @@ class Settings {
      */
     public function adminInit()
     {
+        add_filter('wp_kses_allowed_html', [$this, 'my_custom_allowed_html'], 10, 2);
+
         // Hinzufügen von Einstellungsbereichen
         foreach ($this->settingsSections as $section) {
             if (isset($section['desc']) && !empty($section['desc'])) {
@@ -503,7 +564,8 @@ class Settings {
     /**
      * Registerkarten einstellen
      */
-    protected function setTabs() {
+    protected function setTabs()
+    {
         foreach ($this->settingsSections as $key => $val) {
             if ($key == 0) {
                 $this->defaultTab = $val['id'];
@@ -553,7 +615,7 @@ class Settings {
      */
     public function getFieldDescription($args)
     {
-        if (! empty($args['desc'])) {
+        if (!empty($args['desc'])) {
             $desc = sprintf('<p class="description">%s</p>', $args['desc']);
         } else {
             $desc = '';
@@ -566,12 +628,13 @@ class Settings {
      * Zeigt ein Textfeld für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
      */
-    public function callbackText($args) {
+    public function callbackText($args)
+    {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? esc_attr($args['size']) : 'regular';
         $type = isset($args['type']) ? esc_attr($args['type']) : 'text';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . esc_attr($args['placeholder']) . '"';
-    
+
         $html = sprintf(
             '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s>',
             $type,
@@ -583,11 +646,11 @@ class Settings {
             $placeholder
         );
         $html .= $this->getFieldDescription($args);
-    
+
         echo wp_kses_post($html);
     }
-    
-    
+
+
     /**
      * Zeigt ein Zahlenfeld für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
@@ -702,7 +765,7 @@ class Settings {
     public function callbackRadio($args)
     {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
-        $html  = '<fieldset>';
+        $html = '<fieldset>';
 
         foreach ($args['options'] as $key => $label) {
             $html .= sprintf(
@@ -735,11 +798,12 @@ class Settings {
      * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds
      */
-    public function callbackMultiSelect( $args ) {
+    public function callbackMultiSelect($args)
+    {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
-        $value = ( $value ? $value : array() );
-        $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
-        $html  = sprintf(
+        $value = ($value ? $value : array());
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $html = sprintf(
             '<select class="%1$s" id="%3$s-%4$s" name="%2$s[%3$s_%4$s][]" multiple="multiple">',
             $size,
             $this->optionName,
@@ -751,7 +815,7 @@ class Settings {
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 $key,
-                selected( true, in_array( $key, $value ), false ),
+                selected(true, in_array($key, $value), false),
                 $label
             );
         }
@@ -770,8 +834,8 @@ class Settings {
     public function callbackSelect($args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
-        $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
-        $html  = sprintf(
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $html = sprintf(
             '<select class="%1$s" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]">',
             $size,
             $this->optionName,
@@ -854,7 +918,7 @@ class Settings {
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
-        $id = $args['section']  . '[' . $args['id'] . ']';
+        $id = $args['section'] . '[' . $args['id'] . ']';
         $label = isset($args['options']['button_label']) ? $args['options']['button_label'] : __('Choose File');
 
         $html = sprintf(
@@ -878,7 +942,7 @@ class Settings {
     public function callbackPassword($args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
-        $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
 
         $html = sprintf(
             '<input type="password" class="%1$s-text" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]" value="%5$s">',
@@ -916,7 +980,8 @@ class Settings {
         echo wp_kses_post($html);
     }
 
-    public function callbackHidden($args) {
+    public function callbackHidden($args)
+    {
         $value = time();
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
         $type = 'hidden';
@@ -937,32 +1002,36 @@ class Settings {
         echo wp_kses_post($html);
     }
 
-    public function callbackLogfile($args) {
-        if ( file_exists( $args['default'] ) ) {
-            $lines = file( $args['default'] );
-            if ( $lines !== false ) {
+    public function callbackLogfile($args)
+    {
+        if (file_exists($args['default'])) {
+            $lines = file($args['default']);
+            if ($lines !== false) {
                 echo '<style> .settings_page_rrze-faq #faqlog .form-table th {width:0;}</style><table class="wp-list-table widefat striped"><tbody>';
-                foreach ( $lines as $line ){
+                foreach ($lines as $line) {
                     echo wp_kses_post('<tr><td>' . $line . '</td></tr>');
                 }
                 echo '</tbody></table>';
-            }else{
-                echo esc_html(__( 'Logfile is empty.', 'rrze-faq' ));
+            } else {
+                echo esc_html(__('Logfile is empty.', 'rrze-faq'));
             }
-        }else{
-            echo esc_html(__( 'Logfile is empty.', 'rrze-faq' ));
+        } else {
+            echo esc_html(__('Logfile is empty.', 'rrze-faq'));
         }
     }
 
-    public function callbackPlaintext( $args ) {
+    public function callbackPlaintext($args)
+    {
         echo '<strong>' . esc_html($this->getOption($args['section'], $args['id'], $args['default'])) . '</strong>';
     }
 
-    public function callbackLine() {
+    public function callbackLine()
+    {
         echo '<hr>';
     }
 
-    public function callbackButton( $args ) {
+    public function callbackButton($args)
+    {
         echo wp_kses_post(submit_button($this->getOption($args['section'], $args['id'], $args['default'])));
     }
 
