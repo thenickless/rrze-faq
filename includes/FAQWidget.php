@@ -41,37 +41,42 @@ class FAQWidget extends \WP_Widget
     // Creating widget front-end
     public function widget($args, $instance)
     {
-        $start = ($instance['start'] ? date('Y-m-d', strtotime($instance['start'])) : '');
-        $end = ($instance['end'] ? date('Y-m-d', strtotime($instance['end'])) : '');
-
+        $start = ($instance['start'] ? wp_date('Y-m-d', strtotime($instance['start'])) : '');
+        $end = ($instance['end'] ? wp_date('Y-m-d', strtotime($instance['end'])) : '');
+        
         if ($start || $end) {
-            $today = date('Y-m-d');
+            $today = wp_date('Y-m-d');
             if (($start && $today < $start) || ($end && $today > $end)) {
                 return;
             }
         }
-
-        $id = (isset($instance['id']) ? $instance['id'] : 0);
-        $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
-
+        
+        $id = (isset($instance['id']) ? intval($instance['id']) : 0);
+        $catID = (isset($instance['catID']) ? intval($instance['catID']) : 0);
+    
         $id = ($id ? $id : ($catID ? $this->getRandomFAQID($catID) : 0));
-
+    
         if ($id) {
-            $attributes = (isset($instance['display']) ? $instance['display'] : '');
+            $attributes = (isset($instance['display']) ? intval($instance['display']) : '');
             switch ($attributes) {
-                case 1:$attributes = '';
+                case 1:
+                    $attributes = '';
                     break;
-                case 2:$attributes = "show='load-open'";
+                case 2:
+                    $attributes = "show='load-open'";
                     break;
-                case 3:$attributes = "hide='title'";
+                case 3:
+                    $attributes = "hide='title'";
                     break;
             }
-            echo $args['before_widget'];
-            echo do_shortcode('[faq id="' . $id . '" ' . $attributes . ']');
-            echo $args['after_widget'];
+    
+            // Escape before output
+            echo wp_kses_post($args['before_widget']); // Escaping HTML
+            echo do_shortcode('[faq id="' . esc_attr($id) . '" ' . esc_attr($attributes) . ']'); // Escape the shortcode attributes
+            echo wp_kses_post($args['after_widget']); // Escaping HTML
         }
     }
-
+    
     public function dropdownFAQs($selectedID = 0)
     {
         $args = [
@@ -84,24 +89,25 @@ class FAQWidget extends \WP_Widget
             'order' => 'ASC',
             'orderby' => 'post_title',
         ];
-
+    
         $posts = get_posts($args);
         $output = '';
-
+    
         if (!empty($posts)) {
-            $output = "<p><label for='{$this->get_field_id('id')}'>" . __('Choose a FAQ', 'rrze-faq') . ":</label> ";
-            $output .= "<select id='{$this->get_field_id('id')}' name='{$this->get_field_name('id')}' class='widefat'>";
+            $output = "<p><label for='" . esc_attr($this->get_field_id('id')) . "'>" . esc_html(__('Choose a FAQ', 'rrze-faq')) . ":</label> ";
+            $output .= "<select id='" . esc_attr($this->get_field_id('id')) . "' name='" . esc_attr($this->get_field_name('id')) . "' class='widefat'>";
             $output .= "<option value='0'>---</option>";
             foreach ($posts as $post) {
                 $sSelected = selected($selectedID, $post->ID, false);
-                $output .= "<option value='{$post->ID}' $sSelected>" . esc_html($post->post_title) . "</option>";
+                $output .= "<option value='" . esc_attr($post->ID) . "' $sSelected>" . esc_html($post->post_title) . "</option>";
             }
             $output .= "</select></p>";
         }
+    
         $html = apply_filters('dropdownFAQs', $output, $args, $posts);
-        echo $html;
+        echo wp_kses_post($html);
     }
-
+    
     public function displaySelect($selectedID = 0)
     {
         $aOptions = [
@@ -109,15 +115,16 @@ class FAQWidget extends \WP_Widget
             2 => __('show question and answer opened', 'rrze-faq'),
             3 => __('hide question', 'rrze-faq'),
         ];
-        $output = "<p><label for='{$this->get_field_id('display')}'>" . __('Display options:', 'rrze-faq') . ":</label>";
-        $output .= "<select id='{$this->get_field_id('display')}' name='{$this->get_field_name('display')}' class='widefat'>";
+        $output = "<p><label for='" . esc_attr($this->get_field_id('display')) . "'>" . esc_html(__('Display options:', 'rrze-faq')) . ":</label>";
+        $output .= "<select id='" . esc_attr($this->get_field_id('display')) . "' name='" . esc_attr($this->get_field_name('display')) . "' class='widefat'>";
         foreach ($aOptions as $ID => $txt) {
             $sSelected = selected($selectedID, $ID, false);
-            $output .= "<option value='$ID' $sSelected>$txt</option>";
+            $output .= "<option value='" . esc_attr($ID) . "' $sSelected>" . esc_html($txt) . "</option>";
         }
         $output .= "</select></p>";
-        echo $output;
+        echo wp_kses_post($output);
     }
+    
 
     public function dateFields($dates)
     {
@@ -127,42 +134,44 @@ class FAQWidget extends \WP_Widget
         ];
         $output = '';
         foreach ($aFields as $field => $label) {
-            $val = $dates[$field];
-            $output .= "<p><label for='$field'>" . $label . ":</label><br>";
-            $output .= "<input type='date' id='{$this->get_field_id($field)}' name='{$this->get_field_name($field)}' value='$val' class='widefat'></p>";
+            $val = isset($dates[$field]) ? esc_attr($dates[$field]) : ''; // Sanitize the value
+            $output .= "<p><label for='" . esc_attr($field) . "'>" . esc_html($label) . ":</label><br>";
+            $output .= "<input type='date' id='" . esc_attr($this->get_field_id($field)) . "' name='" . esc_attr($this->get_field_name($field)) . "' value='" . esc_attr($val) . "' class='widefat'></p>";
         }
-        echo $output;
+        echo wp_kses_post($output);
     }
-
+    
     // Widget Backend
     public function form($instance)
     {
-        $id = (isset($instance['id']) ? $instance['id'] : 0);
-        $catID = (isset($instance['catID']) ? $instance['catID'] : 0);
+        $id = (isset($instance['id']) ? intval($instance['id']) : 0);
+        $catID = (isset($instance['catID']) ? intval($instance['catID']) : 0);
         $dates = [
-            'start' => (isset($instance['start']) ? $instance['start'] : ''),
-            'end' => (isset($instance['end']) ? $instance['end'] : ''),
+            'start' => (isset($instance['start']) ? esc_attr($instance['start']) : ''),
+            'end' => (isset($instance['end']) ? esc_attr($instance['end']) : ''),
         ];
-        $display = (isset($instance['display']) ? $instance['display'] : 0);
-
+        $display = (isset($instance['display']) ? intval($instance['display']) : 0);
+    
         $this->dropdownFAQs($id);
-
+    
         $args = [
             'show_option_none' => '---',
-            'name' => $this->get_field_name('catID'),
+            'name' => esc_attr($this->get_field_name('catID')),
             'taxonomy' => 'faq_category',
             'hide_empty' => 0,
             'orderby' => 'name',
             'selected' => $catID,
             'class' => 'widefat',
         ];
-        echo "<p><label for='{$this->get_field_name('catID')}'>" . __('or choose a Category to display a FAQ randomly', 'rrze-faq') . ":</label>";
+    
+        echo "<p><label for='" . esc_attr($this->get_field_name('catID')) . "'>" . esc_html(__('or choose a Category to display a FAQ randomly', 'rrze-faq')) . ":</label>";
         wp_dropdown_categories($args);
         echo '</p>';
+    
         $this->dateFields($dates);
         $this->displaySelect($display);
     }
-
+    
     // Updating widget replacing old instances with new
     public function update($new_instance, $old_instance)
     {

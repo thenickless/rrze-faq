@@ -25,7 +25,7 @@ if ($thisThemeGroup == 'fauthemes') {
         <div class="content-container">
             <div class="post-row">
                 <main class="col-xs-12">
-                        <h1 class="screen-reader-text"><?php echo __('Index','fau'); ?></h1>
+                        <h1 class="screen-reader-text"><?php echo esc_html__('Index','fau'); ?></h1>
 
 <?php } elseif ($thisThemeGroup == 'rrzethemes') {
 

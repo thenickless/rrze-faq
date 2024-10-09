@@ -6,7 +6,7 @@ Template Name: Part of the Custom Taxonomy Templates
 $cat_slug = get_queried_object()->slug;
 $cat_name = get_queried_object()->name;
 
-echo '<h2>'.$cat_name . '</h2>';
+echo '<h2>' . esc_html($cat_name) . '</h2>';
 
 $tax_post_args = array(
     'post_type' => 'faq',
@@ -16,7 +16,7 @@ $tax_post_args = array(
         array(
             'taxonomy' => $taxonomy,
             'field' => 'slug',
-            'terms' => $cat_slug
+            'terms' => esc_attr($cat_slug) // Optional, aber empfohlen
         )
     )
 );
@@ -26,8 +26,7 @@ if ($tax_post_query->have_posts()){
     echo '<ul>';
     while($tax_post_query->have_posts()){
         $tax_post_query->the_post();
-        echo '<li><a href="' . get_the_permalink() . '">' . get_the_title() . '</a></li>';
+        echo '<li><a href="' . esc_url(get_the_permalink()) . '">' . esc_html(get_the_title()) . '</a></li>';
     }
     echo '</ul>';
 }
-    

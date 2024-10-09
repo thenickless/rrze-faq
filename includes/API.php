@@ -265,7 +265,7 @@ class API
             $baseUrl .= '/';
         }
         $newBaseUrl = $baseUrl;
-        $baseUrlParts = parse_url($baseUrl);
+        $baseUrlParts = wp_parse_url($baseUrl);
         foreach ($needles as $needle) {
             while ($pos = strpos($txt, $needle)) {
                 $pos += strlen($needle);
