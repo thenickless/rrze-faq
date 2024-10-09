@@ -1032,7 +1032,7 @@ class Settings
 
     public function callbackButton($args)
     {
-        echo wp_kses_post(submit_button($this->getOption($args['section'], $args['id'], $args['default'])));
+        submit_button($this->getOption($args['section'], $args['id'], $args['default']));
     }
 
 
