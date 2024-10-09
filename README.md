@@ -1,5 +1,19 @@
-# RRZE-FAQ
-WordPress-Plugin: Shortcode / Gutenberg Block / Widget zur Einbindung von eigenen FAQ sowie von FAQ-Einträgen aus dem FAU-Netzwerk. 
+=== RRZE FAQ ===
+Contributors: rrze-webteam
+Plugin URI: https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
+Tags: faq, shortcode, block, widget, categories
+Requires at least: 6.1
+Tested up to: 6.6
+Requires PHP: 8.0
+Stable tag: 5.3.4
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Author: RRZE Webteam
+Author URI: https://blogs.fau.de/webworking/
+Text Domain: rrze-faq
+Domain Path: /languages
+
+Plugin, um FAQ zu erstellen und aus dem FAU-Netzwerk zu synchronisieren. Verwendbar als Shortcode, Block oder Widget.
 
 ## Allgemeines
 
