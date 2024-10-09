@@ -78,7 +78,6 @@ class Main
     public function enqueueScripts()
     {
         wp_register_style('rrze-faq-style', plugins_url('assets/css/rrze-faq.css', plugin_basename($this->pluginFile)));
-        wp_enqueue_style('rrze-faq-style');
     }
 
 

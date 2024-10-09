@@ -560,6 +560,8 @@ class Shortcode
         //     wp_enqueue_script( 'fau-js-heroslider' );
         // }
 
+        wp_enqueue_style('rrze-faq-style');
+
         return '<div class="' . ($color ? '' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
     }
 
