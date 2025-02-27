@@ -1,54 +1,74 @@
-#, fuzzy
+# Copyright (C) 2025 RRZE Webteam
+# This file is distributed under the GNU General Public License v2.
 msgid ""
 msgstr ""
-"Project-Id-Version: RRZE FAQ\n"
-"POT-Creation-Date: 2025-02-27 10:23+0100\n"
-"PO-Revision-Date: 2025-02-27 10:22+0100\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"Project-Id-Version: RRZE FAQ 5.3.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faq\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"X-Generator: Poedit 3.5\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
-"X-Poedit-WPHeader: rrze-faq.php\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.min.js\n"
-"X-Poedit-SearchPathExcluded-1: node_modules\n"
+"POT-Creation-Date: 2025-02-27T09:48:14+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: rrze-faq\n"
 
-#: config/config.php:34 src/edit.js:144
+#. Plugin Name of the plugin
+#: rrze-faq.php
+#: config/config.php:53
+#: config/config.php:54
+msgid "RRZE FAQ"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: rrze-faq.php
+msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
+msgstr ""
+
+#. Description of the plugin
+#: rrze-faq.php
+msgid "Plugin, um FAQ zu erstellen und aus dem FAU-Netzwerk zu synchronisieren. Verwendbar als Shortcode, Block oder Widget."
+msgstr ""
+
+#. Author of the plugin
+#: rrze-faq.php
+msgid "RRZE Webteam"
+msgstr ""
+
+#. Author URI of the plugin
+#: rrze-faq.php
+msgid "https://blogs.fau.de/webworking/"
+msgstr ""
+
+#: config/config.php:34
+#: build/index.js:1
 msgid "German"
 msgstr ""
 
-#: config/config.php:35 src/edit.js:149
+#: config/config.php:35
+#: build/index.js:1
 msgid "English"
 msgstr ""
 
-#: config/config.php:36 src/edit.js:159
+#: config/config.php:36
+#: build/index.js:1
 msgid "Spanish"
 msgstr ""
 
-#: config/config.php:37 src/edit.js:154
+#: config/config.php:37
+#: build/index.js:1
 msgid "French"
 msgstr ""
 
-#: config/config.php:38 src/edit.js:163
+#: config/config.php:38
+#: build/index.js:1
 msgid "Russian"
 msgstr ""
 
-#: config/config.php:39 src/edit.js:167
+#: config/config.php:39
+#: build/index.js:1
 msgid "Chinese"
-msgstr ""
-
-#. Plugin Name of the plugin/theme
-#: config/config.php:53 config/config.php:54
-msgid "RRZE FAQ"
 msgstr ""
 
 #: config/config.php:57
@@ -75,7 +95,8 @@ msgstr ""
 msgid "Domains"
 msgstr ""
 
-#: config/config.php:93 config/config.php:148
+#: config/config.php:93
+#: config/config.php:148
 msgid "Synchronize"
 msgstr ""
 
@@ -83,7 +104,8 @@ msgstr ""
 msgid "Logfile"
 msgstr ""
 
-#: config/config.php:113 config/config.php:127
+#: config/config.php:113
+#: config/config.php:127
 msgid "Short name"
 msgstr ""
 
@@ -91,7 +113,8 @@ msgstr ""
 msgid "Enter a short name for this domain."
 msgstr ""
 
-#: config/config.php:119 config/config.php:134
+#: config/config.php:119
+#: config/config.php:134
 msgid "URL"
 msgstr ""
 
@@ -103,9 +126,12 @@ msgstr ""
 msgid "Use this name as attribute 'domain' in shortcode [faq]"
 msgstr ""
 
-#: config/config.php:141 config/config.php:221 config/config.php:260
-#: includes/CPT.php:73 src/edit.js:178 src/edit.js:304
+#: config/config.php:141
+#: config/config.php:221
+#: config/config.php:260
+#: includes/CPT.php:73
 #: templates/template-parts/faq_content.php:28
+#: build/index.js:1
 msgid "Categories"
 msgstr ""
 
@@ -121,12 +147,9 @@ msgstr ""
 msgid "Info"
 msgstr ""
 
-#: config/config.php:161 config/config.php:163
-msgid ""
-"All FAQ that match to the selected categories will be updated or inserted. "
-"Already synchronized FAQ that refer to categories which are not selected "
-"will be deleted. FAQ that have been deleted at the remote website will be "
-"deleted on this website, too."
+#: config/config.php:161
+#: config/config.php:163
+msgid "All FAQ that match to the selected categories will be updated or inserted. Already synchronized FAQ that refer to categories which are not selected will be deleted. FAQ that have been deleted at the remote website will be deleted on this website, too."
 msgstr ""
 
 #: config/config.php:167
@@ -149,12 +172,17 @@ msgstr ""
 msgid "twicedaily"
 msgstr ""
 
-#: config/config.php:217 config/config.php:345 src/edit.js:174 src/edit.js:235
+#: config/config.php:217
+#: config/config.php:345
+#: build/index.js:1
 msgid "none"
 msgstr ""
 
-#: config/config.php:225 config/config.php:266 includes/CPT.php:95
-#: src/edit.js:182 src/edit.js:312 templates/template-parts/faq_content.php:29
+#: config/config.php:225
+#: config/config.php:266
+#: includes/CPT.php:95
+#: templates/template-parts/faq_content.php:29
+#: build/index.js:1
 msgid "Tags"
 msgstr ""
 
@@ -162,31 +190,40 @@ msgstr ""
 msgid "Glossary content"
 msgstr ""
 
-#: config/config.php:237 src/edit.js:201
+#: config/config.php:237
+#: build/index.js:1
 msgid "-- hidden --"
 msgstr ""
 
-#: config/config.php:241 src/edit.js:189
+#: config/config.php:241
+#: build/index.js:1
 msgid "A - Z"
 msgstr ""
 
-#: config/config.php:245 src/edit.js:193
+#: config/config.php:245
+#: build/index.js:1
 msgid "Tagcloud"
 msgstr ""
 
-#: config/config.php:249 src/edit.js:197
+#: config/config.php:249
+#: build/index.js:1
 msgid "Tabs"
 msgstr ""
 
-#: config/config.php:254 src/edit.js:344
+#: config/config.php:254
+#: build/index.js:1
 msgid "Glossary style"
 msgstr ""
 
-#: config/config.php:272 includes/Sync.php:33 includes/Sync.php:41
+#: config/config.php:272
+#: includes/Sync.php:33
+#: includes/Sync.php:41
 msgid "Domain"
 msgstr ""
 
-#: config/config.php:278 includes/CPT.php:31 includes/CPT.php:45
+#: config/config.php:278
+#: includes/CPT.php:31
+#: includes/CPT.php:45
 msgid "FAQ"
 msgstr ""
 
@@ -194,11 +231,13 @@ msgstr ""
 msgid "Hide accordeon"
 msgstr ""
 
-#: config/config.php:290 src/edit.js:381
+#: config/config.php:290
+#: build/index.js:1
 msgid "Hide title"
 msgstr ""
 
-#: config/config.php:297 src/edit.js:359
+#: config/config.php:297
+#: build/index.js:1
 msgid "Show \"expand all\" button"
 msgstr ""
 
@@ -206,7 +245,8 @@ msgstr ""
 msgid "Load website with opened accordeons"
 msgstr ""
 
-#: config/config.php:338 src/edit.js:373
+#: config/config.php:338
+#: build/index.js:1
 msgid "Color"
 msgstr ""
 
@@ -218,37 +258,50 @@ msgstr ""
 msgid "Additonal CSS-class(es) for sourrounding DIV"
 msgstr ""
 
-#: config/config.php:370 includes/Layout.php:180 includes/Layout.php:203
-#: includes/Layout.php:214 includes/Layout.php:300 src/edit.js:328
+#: config/config.php:370
+#: includes/Layout.php:180
+#: includes/Layout.php:203
+#: includes/Layout.php:214
+#: includes/Layout.php:300
+#: build/index.js:1
 msgid "Language"
 msgstr ""
 
-#: config/config.php:377 src/edit.js:250
+#: config/config.php:377
+#: build/index.js:1
 msgid "Title"
 msgstr ""
 
-#: config/config.php:381 includes/Layout.php:206 includes/Layout.php:217
-#: src/edit.js:254
+#: config/config.php:381
+#: includes/Layout.php:206
+#: includes/Layout.php:217
+#: build/index.js:1
 msgid "ID"
 msgstr ""
 
-#: config/config.php:385 src/edit.js:258
+#: config/config.php:385
+#: build/index.js:1
 msgid "Sort field"
 msgstr ""
 
-#: config/config.php:390 includes/Layout.php:187 src/edit.js:390
+#: config/config.php:390
+#: includes/Layout.php:187
+#: build/index.js:1
 msgid "Sort"
 msgstr ""
 
-#: config/config.php:397 src/edit.js:265
+#: config/config.php:397
+#: build/index.js:1
 msgid "ASC"
 msgstr ""
 
-#: config/config.php:401 src/edit.js:269
+#: config/config.php:401
+#: build/index.js:1
 msgid "DESC"
 msgstr ""
 
-#: config/config.php:406 src/edit.js:395
+#: config/config.php:406
+#: build/index.js:1
 msgid "Order"
 msgstr ""
 
@@ -260,11 +313,13 @@ msgstr ""
 msgid "All languages"
 msgstr ""
 
-#: includes/API.php:22 includes/API.php:25
+#: includes/API.php:22
+#: includes/API.php:25
 msgid " is already in use."
 msgstr ""
 
-#: includes/API.php:32 includes/API.php:40
+#: includes/API.php:32
+#: includes/API.php:40
 msgid " is not valid."
 msgstr ""
 
@@ -302,11 +357,13 @@ msgstr ""
 msgid "FAQ informations"
 msgstr ""
 
-#: includes/CPT.php:78 includes/Layout.php:212
+#: includes/CPT.php:78
+#: includes/Layout.php:212
 msgid "Category"
 msgstr ""
 
-#: includes/CPT.php:79 includes/CPT.php:80
+#: includes/CPT.php:79
+#: includes/CPT.php:80
 msgid "Add new category"
 msgstr ""
 
@@ -350,11 +407,13 @@ msgstr ""
 msgid "Update category"
 msgstr ""
 
-#: includes/CPT.php:100 includes/Layout.php:213
+#: includes/CPT.php:100
+#: includes/Layout.php:213
 msgid "Tag"
 msgstr ""
 
-#: includes/CPT.php:101 includes/CPT.php:102
+#: includes/CPT.php:101
+#: includes/CPT.php:102
 msgid "Add new tag"
 msgstr ""
 
@@ -443,8 +502,7 @@ msgid "Criterion for sorting the output of the shortcode"
 msgstr ""
 
 #: includes/Layout.php:90
-msgid ""
-"Anchor field (optional) to define jump marks when displayed in accordions "
+msgid "Anchor field (optional) to define jump marks when displayed in accordions "
 msgstr ""
 
 #: includes/Layout.php:98
@@ -499,7 +557,9 @@ msgstr ""
 msgid "Sort criterion"
 msgstr ""
 
-#: includes/Layout.php:205 includes/Layout.php:216 includes/Layout.php:301
+#: includes/Layout.php:205
+#: includes/Layout.php:216
+#: includes/Layout.php:301
 msgid "Source"
 msgstr ""
 
@@ -524,9 +584,7 @@ msgid "Domains:"
 msgstr ""
 
 #: includes/Settings.php:404
-msgid ""
-"Please note: \"Delete selected domains\" will DELETE every FAQ on this "
-"website that has been fetched from the selected domains."
+msgid "Please note: \"Delete selected domains\" will DELETE every FAQ on this website that has been fetched from the selected domains."
 msgstr ""
 
 #: includes/Settings.php:405
@@ -537,18 +595,13 @@ msgstr ""
 msgid "no category with source = \"website\" found"
 msgstr ""
 
-#: includes/Settings.php:922
-msgid "Choose File"
-msgstr ""
-
-#: includes/Settings.php:1016 includes/Settings.php:1019
+#: includes/Settings.php:1016
+#: includes/Settings.php:1019
 msgid "Logfile is empty."
 msgstr ""
 
 #: includes/Sync.php:33
-msgid ""
-"Synchronization error. This FAQ contains sliders ([gallery]) and cannot be "
-"synchronized:"
+msgid "Synchronization error. This FAQ contains sliders ([gallery]) and cannot be synchronized:"
 msgstr ""
 
 #: includes/Sync.php:41
@@ -571,11 +624,13 @@ msgstr ""
 msgid "deleted"
 msgstr ""
 
-#: includes/Sync.php:41 includes/Sync.php:52
+#: includes/Sync.php:41
+#: includes/Sync.php:52
 msgid "Required time:"
 msgstr ""
 
-#: includes/Sync.php:41 includes/Sync.php:52
+#: includes/Sync.php:41
+#: includes/Sync.php:52
 msgid "seconds"
 msgstr ""
 
@@ -587,105 +642,76 @@ msgstr ""
 msgid "Settings updated"
 msgstr ""
 
-#. translators: 1: current PHP version, 2: required PHP version
-#: rrze-faq.php:89
-#, php-format
-msgid ""
-"The server is running PHP version %1$s. The Plugin requires at least PHP "
-"version %2$s."
-msgstr ""
-
-#. translators: 1: current WordPress version, 2: required WordPress version
-#: rrze-faq.php:92
-#, php-format
-msgid ""
-"The server is running WordPress version %1$s. The Plugin requires at least "
-"WordPress version %2$s."
-msgstr ""
-
-#: src/edit.js:72 src/edit.js:98 src/edit.js:124 src/edit.js:140
+#: build/index.js:1
 msgid "all"
 msgstr ""
 
-#: src/edit.js:132
+#: build/index.js:1
 msgid "No title"
 msgstr ""
 
-#: src/edit.js:301
+#: build/index.js:1
 msgid "Filter options"
 msgstr ""
 
-#: src/edit.js:302
+#: build/index.js:1
 msgid "Filter the FAQ-entries."
 msgstr ""
 
-#: src/edit.js:305
+#: build/index.js:1
 msgid "Only show FAQ-entries with these selected categories."
 msgstr ""
 
-#: src/edit.js:313
+#: build/index.js:1
 msgid "Only show FAQ-entries with these selected tags."
 msgstr ""
 
-#: src/edit.js:320
+#: build/index.js:1
 msgid "Single FAQ-Entries"
 msgstr ""
 
-#: src/edit.js:321
+#: build/index.js:1
 msgid "Only show these FAQ-entries."
 msgstr ""
 
-#: src/edit.js:330
+#: build/index.js:1
 msgid "Only show FAQ-entries in this language."
 msgstr ""
 
-#: src/edit.js:335
+#: build/index.js:1
 msgid "Group Glossary Content by"
 msgstr ""
 
-#: src/edit.js:336
+#: build/index.js:1
 msgid "Group FAQ-entries by categories or tags."
 msgstr ""
 
-#: src/edit.js:341
+#: build/index.js:1
 msgid "Appearance"
 msgstr ""
 
-#: src/edit.js:352
+#: build/index.js:1
 msgid "Hide accordion"
 msgstr ""
 
-#: src/edit.js:364
+#: build/index.js:1
 msgid "Load website with opened accordions"
 msgstr ""
 
-#: src/edit.js:368
+#: build/index.js:1
 msgid "Accordion-Style"
 msgstr ""
 
-#: src/edit.js:388
+#: build/index.js:1
 msgid "Sorting options"
 msgstr ""
 
-#: templates/template-parts/archive_head.php:28
-#: templates/template-parts/single_head.php:29
-msgid "Index"
+#: build/block.json
+msgctxt "block title"
+msgid "FAQ RRZE"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
-msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid ""
-"Plugin, um FAQ zu erstellen und aus dem FAU-Netzwerk zu synchronisieren. "
-"Verwendbar als Shortcode, Block oder Widget."
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "RRZE Webteam"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "https://blogs.fau.de/webworking/"
+#: build/block.json
+msgctxt "block description"
+msgid "Display FAQ"
 msgstr ""
