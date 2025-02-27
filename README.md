@@ -3,9 +3,9 @@ Contributors: rrze-webteam
 Plugin URI: https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Tags: faq, shortcode, block, widget, categories
 Requires at least: 6.1
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 5.3.4
+Stable tag: 5.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Author: RRZE Webteam

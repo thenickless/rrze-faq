@@ -35,28 +35,6 @@ export default function Edit({attributes, setAttributes}) {
     const [tagstate, setSelectedTags] = useState(['']);
     const [idstate, setSelectedIDs] = useState(['']);
 
-    // useEffect(() => {
-    //     console.log('Test');
-    //     setAttributes({
-    //         category: category,
-    //         tag: tag,
-    //         id: id,
-    //         hstart: hstart,
-    //         order: order,
-    //         sort: sort,
-    //         lang: lang,
-    //         additional_class: additional_class,
-    //         color: color,
-    //         style: style,
-    //         load_open: load_open,
-    //         expand_all_link: expand_all_link,
-    //         hide_title: hide_title,
-    //         hide_accordion: hide_accordion,
-    //         glossarystyle: glossarystyle,
-    //         glossary: glossary
-    //     });
-    // }, [category, tag, id, hstart, order, sort, lang, additional_class, color, style, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary, setAttributes]);
-
     const categories = useSelect((select) => {
         return select('core').getEntityRecords('taxonomy', 'faq_category', {
             per_page: -1,
