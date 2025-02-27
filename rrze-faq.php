@@ -130,6 +130,8 @@ function deactivation()
 
 function rrze_faq_init() {
 	register_block_type( __DIR__ . '/build' );
+    $script_handle = generate_block_asset_handle( 'create-block/rrze-faq', 'editorScript' );
+    wp_set_script_translations( $script_handle, 'rrze-faq', plugin_dir_path( __FILE__ ) . 'languages' );
 }
 
 /**

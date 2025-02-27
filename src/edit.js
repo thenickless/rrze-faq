@@ -6,8 +6,8 @@
 import {__} from '@wordpress/i18n';
 import {useEffect, useState} from '@wordpress/element';
 import {useSelect} from '@wordpress/data';
-import {InspectorControls, useBlockProps} from '@wordpress/block-editor';
-import {PanelBody, TextControl, ToggleControl, SelectControl, RangeControl} from '@wordpress/components';
+import {InspectorControls, useBlockProps, HeadingLevelDropdown, BlockControls} from '@wordpress/block-editor';
+import {PanelBody, ToggleControl, SelectControl, RangeControl} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 
@@ -35,27 +35,27 @@ export default function Edit({attributes, setAttributes}) {
     const [tagstate, setSelectedTags] = useState(['']);
     const [idstate, setSelectedIDs] = useState(['']);
 
-    useEffect(() => {
-        console.log('Test');
-        setAttributes({
-            category: category,
-            tag: tag,
-            id: id,
-            hstart: hstart,
-            order: order,
-            sort: sort,
-            lang: lang,
-            additional_class: additional_class,
-            color: color,
-            style: style,
-            load_open: load_open,
-            expand_all_link: expand_all_link,
-            hide_title: hide_title,
-            hide_accordion: hide_accordion,
-            glossarystyle: glossarystyle,
-            glossary: glossary
-        });
-    }, [category, tag, id, hstart, order, sort, lang, additional_class, color, style, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary, setAttributes]);
+    // useEffect(() => {
+    //     console.log('Test');
+    //     setAttributes({
+    //         category: category,
+    //         tag: tag,
+    //         id: id,
+    //         hstart: hstart,
+    //         order: order,
+    //         sort: sort,
+    //         lang: lang,
+    //         additional_class: additional_class,
+    //         color: color,
+    //         style: style,
+    //         load_open: load_open,
+    //         expand_all_link: expand_all_link,
+    //         hide_title: hide_title,
+    //         hide_accordion: hide_accordion,
+    //         glossarystyle: glossarystyle,
+    //         glossary: glossary
+    //     });
+    // }, [category, tag, id, hstart, order, sort, lang, additional_class, color, style, load_open, expand_all_link, hide_title, hide_accordion, glossarystyle, glossary, setAttributes]);
 
     const categories = useSelect((select) => {
         return select('core').getEntityRecords('taxonomy', 'faq_category', {
@@ -271,8 +271,7 @@ export default function Edit({attributes, setAttributes}) {
         }
     ];
 
-    // console.log('edit.js attributes: ' + JSON.stringify(attributes));
-
+    //////// onChange handlers /////////
     const onChangeCategory = (newValues) => {
         setSelectedCategories(newValues);
         setAttributes({category: String(newValues)})
@@ -290,10 +289,20 @@ export default function Edit({attributes, setAttributes}) {
 
     return (
         <>
+            <BlockControls>
+                <HeadingLevelDropdown
+                    options={[2, 3, 4, 5, 6]}
+                    value={hstart}
+                    onChange={(value) => setAttributes({hstart: value})}
+                />
+            </BlockControls>
+
             <InspectorControls>
-                <PanelBody title={__('Filter', 'rrze-faq')}>
+                <PanelBody title={__('Filter options', 'rrze-faq')}
+                           header={__('Filter the FAQ-entries.', 'rrze-faq')}>
                     <SelectControl
                         label={__('Categories', 'rrze-faq')}
+                        help={__('Only show FAQ-entries with these selected categories.', 'rrze-faq')}
                         value={categorystate}
                         options={categoryoptions}
                         onChange={onChangeCategory}
@@ -301,13 +310,15 @@ export default function Edit({attributes, setAttributes}) {
                     />
                     <SelectControl
                         label={__('Tags', 'rrze-faq')}
+                        help={__('Only show FAQ-entries with these selected tags.', 'rrze-faq')}
                         value={tagstate}
                         options={tagoptions}
                         onChange={onChangeTag}
                         multiple
                     />
                     <SelectControl
-                        label={__('FAQ', 'rrze-faq')}
+                        label={__('Single FAQ-Entries', 'rrze-faq')}
+                        help={__('Only show these FAQ-entries.', 'rrze-faq')}
                         value={idstate}
                         options={faqoptions}
                         onChange={onChangeID}
@@ -316,61 +327,65 @@ export default function Edit({attributes, setAttributes}) {
                     <SelectControl
                         label={__('Language', 'rrze-faq'
                         )}
+                        help={__('Only show FAQ-entries in this language.', 'rrze-faq')}
                         options={langoptions}
                         onChange={(value) => setAttributes({lang: value})}
                     />
-
-                </PanelBody>
-            </InspectorControls>
-            <InspectorControls group="styles">
-                <PanelBody title={__('Styles', 'rrze-faq')}>
                     <SelectControl
-                        label={__('Glossary content', 'rrze-faq')}
+                        label={__('Group Glossary Content by', 'rrze-faq')}
+                        help={__('Group FAQ-entries by categories or tags.', 'rrze-faq')}
                         options={glossaryoptions}
                         onChange={(value) => setAttributes({glossary: value})}
                     />
+                </PanelBody>
+                <PanelBody title={__('Appearance', 'rrze-faq')} name={__('Appearance', 'rrze-faq')}
+                           icon='admin-appearance' initialOpen={false}>
                     <SelectControl
                         label={__('Glossary style', 'rrze-faq')}
                         options={glossarystyleoptions}
                         onChange={(value) => setAttributes({glossarystyle: value})}
                     />
-                    <ToggleControl
-                        checked={!!hide_accordion}
-                        label={__('Hide accordion', 'rrze-faq')}
-                        onChange={() => setAttributes({hide_accordion: !hide_accordion})}
-                    />
-                    <ToggleControl
-                        checked={!!hide_title}
-                        label={__('Hide title', 'rrze-faq')}
-                        onChange={() => setAttributes({hide_title: !hide_title})}
-                    />
-                    <ToggleControl
-                        checked={!!expand_all_link}
-                        label={__('Show "expand all" button', 'rrze-faq')}
-                        onChange={() => setAttributes({expand_all_link: !expand_all_link})}
-                    />
-                    <ToggleControl
-                        checked={!!load_open}
-                        label={__('Load website with opened accordions', 'rrze-faq')}
-                        onChange={() => setAttributes({load_open: !load_open})}
-                    />
-                    <SelectControl
-                        label={__('Color', 'rrze-faq')}
-                        options={coloroptions}
-                        onChange={(value) => setAttributes({color: value})}
-                    />
-                    <SelectControl
-                        label={__('Style', 'rrze-faq')}
-                        options={styleoptions}
-                        onChange={(value) => setAttributes({style: value})}
-                    />
-                    <TextControl
-                        label={__(
-                            'Additional CSS-class(es) for sourrounding DIV',
-                            'rrze-faq'
-                        )}
-                        onChange={(value) => setAttributes({additional_class: value})}
-                    />
+                    {(!glossary || glossary === 'none') && (
+                        <>
+                            <ToggleControl
+                                checked={!!hide_accordion}
+                                label={__('Hide accordion', 'rrze-faq')}
+                                onChange={() => setAttributes({hide_accordion: !hide_accordion})}
+                            />
+                            {!hide_accordion ? (
+                                <>
+                                    <ToggleControl
+                                        checked={!!expand_all_link}
+                                        label={__('Show "expand all" button', 'rrze-faq')}
+                                        onChange={() => setAttributes({expand_all_link: !expand_all_link})}
+                                    />
+                                    <ToggleControl
+                                        checked={!!load_open}
+                                        label={__('Load website with opened accordions', 'rrze-faq')}
+                                        onChange={() => setAttributes({load_open: !load_open})}
+                                    />
+                                    <SelectControl
+                                        label={__('Accordion-Style', 'rrze-faq')}
+                                        options={styleoptions}
+                                        onChange={(value) => setAttributes({style: value})}
+                                    />
+                                    <SelectControl
+                                        label={__('Color', 'rrze-faq')}
+                                        options={coloroptions}
+                                        onChange={(value) => setAttributes({color: value})}
+                                    />
+                                </>
+                            ) : (
+                                <ToggleControl
+                                    checked={!!hide_title}
+                                    label={__('Hide title', 'rrze-faq')}
+                                    onChange={() => setAttributes({hide_title: !hide_title})}
+                                />
+                            )}
+                        </>
+                    )}
+                </PanelBody>
+                <PanelBody title={__('Sorting options', 'rrze-faq')}>
                     <SelectControl
                         label={__('Sort', 'rrze-faq')}
                         options={sortoptions}
@@ -380,13 +395,6 @@ export default function Edit({attributes, setAttributes}) {
                         label={__('Order', 'rrze-faq')}
                         options={orderoptions}
                         onChange={(value) => setAttributes({order: value})}
-                    />
-                    <RangeControl
-                        label={__('Heading starts with...', 'rrze-faq')}
-                        onChange={(value) => setAttributes({hstart: value})}
-                        min={2}
-                        max={6}
-                        initialPosition={2}
                     />
                 </PanelBody>
             </InspectorControls>

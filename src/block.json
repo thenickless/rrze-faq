@@ -55,18 +55,12 @@
 			"type": "string"
 		},
 		"hstart": {
-			"type": "number"
+			"type": "number",
+			"default": 2
 		}
 	},	
 	"supports": {
-		"color": {
-			"background": false,
-			"text": true
-		},
-		"html": false,
-		"typography": {
-			"fontSize": true
-		}
+		"html": false
 	},
 	"textdomain": "rrze-faq",
 	"editorScript": "file:./index.js",
