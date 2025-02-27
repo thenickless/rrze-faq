@@ -4,7 +4,7 @@
 Plugin Name:     RRZE FAQ
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-faq
 Description:     Plugin, um FAQ zu erstellen und aus dem FAU-Netzwerk zu synchronisieren. Verwendbar als Shortcode, Block oder Widget. 
-Version:         5.3.4
+Version:         5.3.5
 Requires at least: 6.1
 Requires PHP:      8.0
 Author:          RRZE Webteam
@@ -130,6 +130,8 @@ function deactivation()
 
 function rrze_faq_init() {
 	register_block_type( __DIR__ . '/build' );
+    $script_handle = generate_block_asset_handle( 'create-block/rrze-faq', 'editorScript' );
+    wp_set_script_translations( $script_handle, 'rrze-faq', plugin_dir_path( __FILE__ ) . 'languages' );
 }
 
 /**

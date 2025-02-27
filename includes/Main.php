@@ -49,6 +49,9 @@ class Main
         add_action('update_option_rrze-faq', [$this, 'checkSync']);
         add_filter('pre_update_option_rrze-faq', [$this, 'switchTask'], 10, 1);
 
+        // Register the Custom RRZE Category, if it is not set by another plugin
+        add_filter('block_categories_all', [$this, 'my_custom_block_category'], 10, 2);
+
         $cpt = new CPT();
 
         $this->settings = new Settings($this->pluginFile);
@@ -201,5 +204,32 @@ class Main
         $message = __('Next automatically synchronization:', 'rrze-faq') . ' ' . wp_date('d.m.Y H:i:s', $timestamp);
         add_settings_error('AutoSyncComplete', 'autosynccomplete', $message, 'updated');
         settings_errors();
+    }
+
+    /**
+     * Adds custom block category if not already present.
+     *
+     * @param array   $categories Existing block categories.
+     * @param WP_Post $post       Current post object.
+     * @return array Modified block categories.
+     */
+    public function my_custom_block_category($categories, $post)
+    {
+        // Check if there is already a RRZE category present
+        foreach ($categories as $category) {
+            if (isset($category['slug']) && $category['slug'] === 'rrze') {
+                return $categories;
+            }
+        }
+
+        $custom_category = [
+            'slug'  => 'rrze',
+            'title' => __('RRZE', 'rrze-bluesky'),
+        ];
+
+        // Add RRZE to the end of the categories array
+        $categories[] = $custom_category;
+
+        return $categories;
     }
 }
