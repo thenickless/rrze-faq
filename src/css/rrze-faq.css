@@ -1,7 +1,6 @@
 .rrze-faq .letters li{
     display: inline-block;
     background: none;
-    margin: 0.2rem;
     border: 1px solid #e9edf2;
     color: #e9edf2;
     vertical-align: middle;
@@ -28,17 +27,7 @@
     background-color: #d2ddeb
 }
 
-.accordion{
-    margin: 0;
-    padding: 0;
-}
-
-ul.letters{
+.rrze-faq ul.letters{
     margin: 20px 0 10px !important;
     padding: 0 !important;
 }
-
-/* .accordion-body{
-    display: none !important;
-} */
-
