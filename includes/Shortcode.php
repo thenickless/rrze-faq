@@ -562,7 +562,7 @@ class Shortcode
 
         wp_enqueue_style('rrze-faq-style');
 
-        return '<div class="' . ($color ? '' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
+        return '<div class="rrze-faq ' . ($color ? '' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
     }
 
     public function sortIt(&$arr)
