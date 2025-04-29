@@ -201,8 +201,24 @@ class Shortcode
      * @param  string  $content Beiliegender Inhalt
      * @return string Gib den Inhalt zurück
      */
-    public function shortcodeOutput($atts)
+    public function shortcodeOutput($atts, $content = null, $shortcode_tag = '')
     {
+        global $post;
+
+        // In most cases, $post is defined. However, if do_shortcode() is called manually, 
+        // via AJAX callbacks, or within a REST API context, $post may not be available.
+        // Therefore, we check if $post is a valid WP_Post object before proceeding.
+        if (!($post instanceof \WP_Post) || !isset($post->post_content)) {
+            return ''; 
+        }
+    
+        // Workaround for a known Gutenberg issue where shortcodes within Preformatted blocks
+        // are incorrectly parsed and executed, even when wrapped in double brackets [[shortcode]].
+        // This check prevents execution by detecting the double-bracketed shortcode in the post content.
+        if (strpos($post->post_content, '[[' . $shortcode_tag . ']]') !== false) {
+            return esc_html("[[$shortcode_tag]]");
+        }
+
         if (empty($atts)) {
             $atts = array();
         } else {
