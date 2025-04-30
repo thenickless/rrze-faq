@@ -203,6 +203,10 @@ class Shortcode
      */
     public function shortcodeOutput($atts, $content = null, $shortcode_tag = '')
     {
+        // Workaround for a known Gutenberg issue where shortcodes within Preformatted blocks
+        // are incorrectly parsed and executed, even when wrapped in double brackets [[shortcode]].
+
+        // $post is only needed for the workaround
         global $post;
 
         // In most cases, $post is defined. However, if do_shortcode() is called manually, 
@@ -211,13 +215,13 @@ class Shortcode
         if (!($post instanceof \WP_Post) || !isset($post->post_content)) {
             return ''; 
         }
-    
-        // Workaround for a known Gutenberg issue where shortcodes within Preformatted blocks
-        // are incorrectly parsed and executed, even when wrapped in double brackets [[shortcode]].
+
         // This check prevents execution by detecting the double-bracketed shortcode in the post content.
         if (strpos($post->post_content, '[[' . $shortcode_tag . ']]') !== false) {
             return esc_html("[[$shortcode_tag]]");
         }
+
+        // END of Workaround
 
         if (empty($atts)) {
             $atts = array();
