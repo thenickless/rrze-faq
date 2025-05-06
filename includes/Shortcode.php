@@ -314,6 +314,32 @@ class Shortcode
         return false;
     }
 
+
+    /**
+     * Checks if the [collapsibles] shortcode is available.
+     *
+     * @return bool
+     */
+    private function isPluginElementsAvailable(): bool
+    {
+        return shortcode_exists('collapsibles');
+    }
+
+    /**
+     * Checks if the Gutenberg block rrze-elements/accordion is registered.
+     *
+     * @return bool
+     */
+    private function isPluginElementsBlockAvailable(): bool
+    {
+        if (!function_exists('register_block_type')) {
+            return false;
+        }
+
+        $block_registry = \WP_Block_Type_Registry::get_instance();
+        return $block_registry->is_registered('rrze-elements/accordion');
+    }
+
     /**
      * Gibt explizit angeforderte FAQs als Akkordeon oder einfachen Inhalt aus.
      *
@@ -662,7 +688,7 @@ class Shortcode
         } else {
             $content = $this->renderFilteredFAQs($atts, $hstart, $style, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $sort, $order, $category, $tag, $glossary, $glossarystyle, $schema);
         }
-        
+
         if ($schema) {
             $content .= RRZE_SCHEMA_START . $schema . RRZE_SCHEMA_END;
         }
