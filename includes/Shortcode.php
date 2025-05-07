@@ -5,6 +5,7 @@ namespace RRZE\FAQ;
 defined('ABSPATH') || exit;
 
 use function RRZE\FAQ\Config\getShortcodeSettings;
+use RRZE\FAQ\Tools;
 
 $settings;
 
@@ -33,166 +34,6 @@ class Shortcode
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
 
-    /**
-     * Enqueue der Skripte.
-     */
-    private function getLetter(&$txt)
-    {
-        return mb_strtoupper(mb_substr(remove_accents($txt), 0, 1), 'UTF-8');
-    }
-
-    private function createAZ(&$aSearch)
-    {
-        if (count($aSearch) == 1) {
-            return '';
-        }
-        $ret = '<div class="rrze-faq"><ul class="letters">';
-        foreach (range('A', 'Z') as $a) {
-            if (array_key_exists($a, $aSearch)) {
-                $ret .= '<li class="filled"><a href="#letter-' . $a . '">' . $a . '</a></li>';
-            } else {
-                $ret .= '<li>' . $a . '</li>';
-            }
-        }
-        return $ret . '</ul></div>';
-    }
-
-    private function createTabs(&$aTerms, $aPostIDs)
-    {
-        if (count($aTerms) == 1) {
-            return '';
-        }
-        $ret = '<div class="rrze-faq">';
-        foreach ($aTerms as $name => $aDetails) {
-            $ret .= '<a href="#ID-' . $aDetails['ID'] . '">' . $name . '</a> | ';
-        }
-        return rtrim($ret, ' | ') . '</div>';
-    }
-
-    private function createTagcloud(&$aTerms, $aPostIDs)
-    {
-        if (count($aTerms) == 1) {
-            return '';
-        }
-        $ret = '<div class="rrze-faq">';
-        $smallest = 12;
-        $largest = 22;
-        $aCounts = array();
-        foreach ($aTerms as $name => $aDetails) {
-            $aCounts[$aDetails['ID']] = count($aPostIDs[$aDetails['ID']]);
-        }
-        $iMax = max($aCounts);
-        $aSizes = array();
-        foreach ($aCounts as $ID => $cnt) {
-            $aSizes[$ID] = round(($cnt / $iMax) * $largest, 0);
-            $aSizes[$ID] = ($aSizes[$ID] < $smallest ? $smallest : $aSizes[$ID]);
-        }
-        foreach ($aTerms as $name => $aDetails) {
-            $ret .= '<a href="#ID-' . $aDetails['ID'] . '" style="font-size:' . $aSizes[$aDetails['ID']] . 'px">' . $name . '</a> | ';
-        }
-        return rtrim($ret, ' | ') . '</div>';
-    }
-
-    private function getTaxQuery(&$aTax)
-    {
-        $ret = array();
-
-        foreach ($aTax as $taxfield => $aEntries) {
-            $term_queries = array();
-            $sources = array();
-
-            foreach ($aEntries as $entry) {
-                $source = !empty($entry['source']) ? $entry['source'] : '';
-                $term_queries[$source][] = $entry['value'];
-            }
-
-            foreach ($term_queries as $source => $aTerms) {
-
-                $query = array(
-                    'taxonomy' => $taxfield,
-                    'field' => 'slug',
-                    'terms' => $aTerms,
-                );
-
-                if (count($aTerms) > 1) {
-                    $query['operator'] = 'IN';
-                }
-
-                if (!empty($source)) {
-                    $query['meta_key'] = 'source';
-                    $query['meta_value'] = $source;
-                }
-
-                $ret[$taxfield][] = $query;
-            }
-            if (count($ret[$taxfield]) > 1) {
-                $ret[$taxfield]['relation'] = 'OR';
-            }
-        }
-
-        if (count($ret) > 1) {
-            $ret['relation'] = 'AND';
-        }
-
-        return $ret;
-    }
-
-    private function searchArrayByKey(&$needle, &$aHaystack)
-    {
-        foreach ($aHaystack as $k => $v) {
-            if ($k === $needle) {
-                return $v;
-            }
-        }
-        return false;
-    }
-
-    private function getSchema($postID, $question, $answer)
-    {
-        $schema = '';
-        $source = get_post_meta($postID, "source", true);
-        $answer = wp_strip_all_tags($answer, true);
-        if ($source == 'website') {
-            $schema = RRZE_SCHEMA_QUESTION_START . $question . RRZE_SCHEMA_QUESTION_END;
-            $schema .= RRZE_SCHEMA_ANSWER_START . $answer . RRZE_SCHEMA_ANSWER_END;
-        }
-        return $schema;
-    }
-
-    // returns the pairs source and category(or tag) as an Array; values without source are added to "sourceless" 
-    // example:
-    // $atts['category'] = "rrze:allgemeines, fau:allgemeines, fau:neues, sonstiges";
-    // getTaxBySource($atts['category']) returns [faq_category] => ['source' => 'rrze', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'allgemeines'], ['source' => 'fau', 'value' => 'neues'], ['source' => '', 'value' => 'sonstiges']
-    private function getTaxBySource($input)
-    {
-        $result = [];
-
-        if (empty($input)) {
-            return $result;
-        }
-
-        // Teilen des Eingabestrings in einzelne Kategorien
-        $categories = explode(', ', $input);
-
-        foreach ($categories as $category) {
-            // Teilen der Kategorie in Quelle und Wert
-            list($source, $value) = array_pad(explode(':', $category, 2), 2, '');
-
-            // Überprüfen, ob $value leer ist
-            if ($value === '') {
-                $value = $source; // Wenn $value leer ist, setze $value auf $source
-                $source = ''; // Setze $source auf leer
-            }
-
-            // Erstellen des Ergebnisarrays für jede Kategorie
-            $result[] = array(
-                'source' => preg_replace('/[\s,]+$/', '', $source),
-                'value' => preg_replace('/[\s,]+$/', '', $value)
-            );
-        }
-
-        return $result;
-    }
 
     /**
      * Übersetzt zusammengesetzte Shortcode-Attribute in Einzeleigenschaften
@@ -284,61 +125,9 @@ class Shortcode
         $atts['load_open'] = (isset($atts['load_open']) && $atts['load_open'] ? ' load="open"' : '');
     }
 
-    /**
-     * Workaround for a known Gutenberg issue where shortcodes within Preformatted blocks
-     * are incorrectly parsed and executed, even when wrapped in double brackets [[shortcode]].
-     *
-     * $post is only needed for the workaround.
-     *
-     * In most cases, $post is defined. However, if do_shortcode() is called manually,
-     * via AJAX callbacks, or within a REST API context, $post may not be available.
-     * Therefore, we check if $post is a valid WP_Post object before proceeding.
-     *
-     * This check prevents execution by detecting the double-bracketed shortcode in the post content.
-     *
-     * @param string $shortcode_tag The shortcode name
-     * @return string|false Escaped placeholder if found, or false to continue normal processing
-     */
-    private function preventGutenbergDoubleBracketBug(string $shortcode_tag)
-    {
-        global $post;
-
-        if (!($post instanceof \WP_Post) || !isset($post->post_content)) {
-            return '';
-        }
-
-        if (strpos($post->post_content, '[[' . $shortcode_tag . ']]') !== false) {
-            return esc_html("[[$shortcode_tag]]");
-        }
-
-        return false;
-    }
+    
 
 
-    /**
-     * Checks if the [collapsibles] shortcode is available.
-     *
-     * @return bool
-     */
-    private function isPluginElementsAvailable(): bool
-    {
-        return shortcode_exists('collapsibles');
-    }
-
-    /**
-     * Checks if the Gutenberg block rrze-elements/accordion is registered.
-     *
-     * @return bool
-     */
-    private function isPluginElementsBlockAvailable(): bool
-    {
-        if (!function_exists('register_block_type')) {
-            return false;
-        }
-
-        $block_registry = \WP_Block_Type_Registry::get_instance();
-        return $block_registry->is_registered('rrze-elements/accordion');
-    }
 
     /**
      * Gibt explizit angeforderte FAQs als Akkordeon oder einfachen Inhalt aus.
@@ -394,7 +183,7 @@ class Shortcode
                     if ($description) {
                         $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="' . $anchorfield . '"' . $load_open . ']' .
                             $description . '[/collapse]';
-                        $schema .= $this->getSchema($id, $title, $description);
+                        $schema .= Tools::getSchema($id, $title, $description);
                     }
                 }
 
@@ -455,12 +244,12 @@ class Shortcode
 
         // filter by category and/or tag and -if given- by domain related to category/tag, too
         $aTax = [];
-        $aTax['faq_category'] = $this->getTaxBySource($category);
-        $aTax['faq_tag'] = $this->getTaxBySource($tag);
+        $aTax['faq_category'] = Tools::getTaxBySource($category);
+        $aTax['faq_tag'] = Tools::getTaxBySource($tag);
         $aTax = array_filter($aTax); // delete empty entries
 
         if ($aTax) {
-            $tax_query = $this->getTaxQuery($aTax);
+            $tax_query = Tools::getTaxQuery($aTax);
             if ($tax_query) {
                 $postQuery['tax_query'] = $tax_query;
             }
@@ -538,7 +327,7 @@ class Shortcode
                                 continue;
                             }
                             $aTermIds[] = $t->term_id;
-                            $letter = $this->getLetter($t->name);
+                            $letter = Tools::getLetter($t->name);
                             $aLetters[$letter] = true;
                             $aUsedTerms[$t->name] = array('letter' => $letter, 'ID' => $t->term_id);
                             $aPostIDs[$t->term_id][] = $post->ID;
@@ -550,14 +339,14 @@ class Shortcode
                 if ($aLetters) {
                     switch ($glossarystyle) {
                         case 'a-z':
-                            $content = $this->createAZ($aLetters);
+                            $content = Tools::createAZ($aLetters);
                             $anchor = 'letter';
                             break;
                         case 'tabs':
-                            $content = $this->createTabs($aUsedTerms, $aPostIDs);
+                            $content = Tools::createTabs($aUsedTerms, $aPostIDs);
                             break;
                         case 'tagcloud':
-                            $content = $this->createTagcloud($aUsedTerms, $aPostIDs);
+                            $content = Tools::createTagCloud($aUsedTerms, $aPostIDs);
                             break;
                     }
                 }
@@ -573,7 +362,7 @@ class Shortcode
                     $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']';
 
                     // find the postIDs to this tag
-                    $aIDs = $this->searchArrayByKey($aVal['ID'], $aPostIDs);
+                    $aIDs = Tools::searchArrayByKey($aVal['ID'], $aPostIDs);
 
                     foreach ($aIDs as $ID) {
                         $tmp = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $ID)));
@@ -589,7 +378,7 @@ class Shortcode
                         }
 
                         $accordion .= '[accordion][accordion-item title="' . $title . '" name="' . $anchorfield . '"]' . $tmp . '[/accordion-item][/accordion]';
-                        $schema .= $this->getSchema($ID, $title, $tmp);
+                        $schema .= Tools::getSchema($ID, $title, $tmp);
                     }
                     $accordion .= '[/collapse]';
                     $last_anchor = $aVal[$anchor];
@@ -605,7 +394,7 @@ class Shortcode
                 foreach ($posts as $post) {
 
                     $title = get_the_title($post->ID);
-                    $letter = $this->getLetter($title);
+                    $letter = Tools::getLetter($title);
                     $aLetters[$letter] = true;
 
                     $tmp = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $post->ID)));
@@ -627,7 +416,7 @@ class Shortcode
                     } else {
                         $content .= ($hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>') . ($tmp ? '<p>' . $tmp . '</p>' : '');
                     }
-                    $schema .= $this->getSchema($post->ID, $title, $tmp);
+                    $schema .= Tools::getSchema($post->ID, $title, $tmp);
                     $last_anchor = $letter;
                 }
 
@@ -651,7 +440,7 @@ class Shortcode
     public function shortcodeOutput($atts, $content = null, $shortcode_tag = '')
     {
         // Workaround - see: https://github.com/RRZE-Webteam/rrze-faq/issues/132#issuecomment-2839668060
-        if (($skip = $this->preventGutenbergDoubleBracketBug($shortcode_tag)) !== false) {
+        if (($skip = Tools::preventGutenbergDoubleBracketBug($shortcode_tag)) !== false) {
             return $skip;
         }
 
@@ -705,12 +494,6 @@ class Shortcode
         return '<div class="rrze-faq ' . ($color ? '' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
     }
 
-    public function sortIt(&$arr)
-    {
-        uasort($arr, function ($a, $b) {
-            return strtolower($a) <=> strtolower($b);
-        });
-    }
 
 
 
