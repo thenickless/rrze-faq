@@ -31,3 +31,18 @@
     margin: 20px 0 10px !important;
     padding: 0 !important;
 }
+
+details.faq-term summary,
+details.faq-item summary {
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 0.5em;
+}
+
+.faq-term-content {
+    margin-left: 1em;
+}
+
+.faq-content {
+    margin-top: 0.5em;
+}

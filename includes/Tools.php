@@ -7,31 +7,6 @@ defined('ABSPATH') || exit;
 class Tools
 {
     /**
-     * Checks if the [collapsibles] shortcode is registered and available.
-     *
-     * @return bool True if the shortcode exists, false otherwise.
-     */
-    private function isPluginElementsAvailable(): bool
-    {
-        return shortcode_exists('collapsibles');
-    }
-
-    /**
-     * Checks if the Gutenberg block 'rrze-elements/accordion' is registered.
-     *
-     * @return bool True if the block is available, false otherwise.
-     */
-    private function isPluginElementsBlockAvailable(): bool
-    {
-        if (!function_exists('register_block_type')) {
-            return false;
-        }
-
-        $block_registry = \WP_Block_Type_Registry::get_instance();
-        return $block_registry->is_registered('rrze-elements/accordion');
-    }
-
-    /**
      * Workaround for a known Gutenberg issue where shortcodes within Preformatted blocks
      * are incorrectly parsed and executed, even when wrapped in double brackets [[shortcode]].
      *

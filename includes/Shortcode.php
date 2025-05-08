@@ -159,7 +159,6 @@ class Shortcode
         }
 
         $found = false;
-        $accordion = '[collapsibles hstart="' . $hstart . '" ' . $style . ' ' . $expand_all_link . ']';
 
         foreach ($aIDs as $id) {
             $id = trim($id);
@@ -181,19 +180,17 @@ class Shortcode
                         ($description ? '<p>' . $description . '</p>' : '');
                 } else {
                     if ($description) {
-                        $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="' . $anchorfield . '"' . $load_open . ']' .
-                            $description . '[/collapse]';
+                        $content .= '<details' . ($load_open ? ' open' : '') . ' id="' . esc_attr($anchorfield) . '" class="faq-item' . ($color ? ' color-' . esc_attr($color) : '') . '">';
+                        $content .= '<summary>' . esc_html($title) . '</summary>';
+                        $content .= '<div class="faq-content">' . $description . '</div>';
+                        $content .= '</details>';
+
                         $schema .= Tools::getSchema($id, $title, $description);
                     }
                 }
 
                 $found = true;
             }
-        }
-
-        if ($found && !$hide_accordion) {
-            $accordion .= '[/collapsibles]';
-            $content = do_shortcode($accordion);
         }
 
         return $content;
@@ -350,46 +347,46 @@ class Shortcode
                             break;
                     }
                 }
-                $accordion = '[collapsibles hstart="' . $hstart . '" ' . $style . ' ' . $expand_all_link . ']';
+
                 $last_anchor = '';
                 foreach ($aUsedTerms as $k => $aVal) {
                     if ($glossarystyle == 'a-z' && $content) {
-                        $accordion_anchor = '';
-                        $accordion .= ($last_anchor != $aVal[$anchor] ? '<h2 id="' . $anchor . '-' . $aVal[$anchor] . '">' . $aVal[$anchor] . '</h2>' : '');
-                    } else {
-                        $accordion_anchor = 'name="' . $anchor . '-' . $aVal[$anchor] . '"';
+                        $content .= ($last_anchor != $aVal[$anchor] ? '<h2 id="' . $anchor . '-' . $aVal[$anchor] . '">' . esc_html($aVal[$anchor]) . '</h2>' : '');
                     }
-                    $accordion .= '[collapse title="' . $k . '" color="' . $color . '" ' . $accordion_anchor . $load_open . ']';
-
+                
+                    $term_id_attr = $anchor . '-' . $aVal[$anchor];
+                    $content .= '<details' . ($load_open ? ' open' : '') . ' id="' . esc_attr($term_id_attr) . '" class="faq-term' . ($color ? ' color-' . esc_attr($color) : '') . '">';
+                    $content .= '<summary>' . esc_html($k) . '</summary>';
+                    $content .= '<div class="faq-term-content">';
+                
                     // find the postIDs to this tag
                     $aIDs = Tools::searchArrayByKey($aVal['ID'], $aPostIDs);
-
+                
                     foreach ($aIDs as $ID) {
                         $tmp = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $ID)));
                         if (!isset($tmp) || (mb_strlen($tmp) < 1)) {
                             $tmp = get_post_meta($ID, 'description', true);
                         }
                         $title = get_the_title($ID);
-
+                
                         $anchorfield = get_post_meta($ID, 'anchorfield', true);
-
                         if (empty($anchorfield)) {
                             $anchorfield = 'innerID-' . $ID;
                         }
-
-                        $accordion .= '[accordion][accordion-item title="' . $title . '" name="' . $anchorfield . '"]' . $tmp . '[/accordion-item][/accordion]';
+                
+                        $content .= '<details id="' . esc_attr($anchorfield) . '" class="faq-item">';
+                        $content .= '<summary>' . esc_html($title) . '</summary>';
+                        $content .= '<div class="faq-content">' . $tmp . '</div>';
+                        $content .= '</details>';
+                
                         $schema .= Tools::getSchema($ID, $title, $tmp);
                     }
-                    $accordion .= '[/collapse]';
+                
+                    $content .= '</div></details>';
                     $last_anchor = $aVal[$anchor];
                 }
-                $accordion .= '[/collapsibles]';
-                $content .= do_shortcode($accordion);
             } else {
                 // attribut glossary is not given
-                if (!$hide_accordion) {
-                    $accordion = '[collapsibles hstart="' . $hstart . '" ' . $style . ' ' . $expand_all_link . ']';
-                }
                 $last_anchor = '';
                 foreach ($posts as $post) {
 
@@ -410,9 +407,13 @@ class Shortcode
                         }
 
                         if ($glossarystyle == 'a-z' && count($posts) > 1) {
-                            $accordion .= ($last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '');
+                            $content .= ($last_anchor != $letter ? '<h2 id="letter-' . $letter . '">' . $letter . '</h2>' : '');
                         }
-                        $accordion .= '[collapse title="' . $title . '" color="' . $color . '" name="' . $anchorfield . '"' . $load_open . ']' . $tmp . '[/collapse]';
+                        $content .= '<details' . ($load_open ? ' open' : '') . ' id="' . esc_attr($anchorfield) . '" class="faq-item' . ($color ? ' color-' . esc_attr($color) : '') . '">';
+                        $content .= '<summary>' . esc_html($title) . '</summary>';
+                        $content .= '<div class="faq-content">' . $tmp . '</div>';
+                        $content .= '</details>';
+                        
                     } else {
                         $content .= ($hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>') . ($tmp ? '<p>' . $tmp . '</p>' : '');
                     }
@@ -420,10 +421,6 @@ class Shortcode
                     $last_anchor = $letter;
                 }
 
-                if (!$hide_accordion) {
-                    $accordion .= '[/collapsibles]';
-                    $content .= do_shortcode($accordion);
-                }
             }
         }
 
