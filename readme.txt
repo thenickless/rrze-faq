@@ -4,7 +4,7 @@ Tags: faq, shortcode, block, widget, categories
 Requires at least: 6.1
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 5.3.18
+Stable tag: 5.3.19
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,13 +64,13 @@ Das Plugin unterstützt die WordPress REST-API v2 mit erweiterten Filtermöglich
 
 == Changelog ==
 
-= 5.3.18 =
+= 5.3.19 =
 * Diverse Fehlerbehebungen
 * Verbesserte Kompatibilität mit WordPress 6.7
 
 == Upgrade Notice ==
 
-= 5.3.18 =
+= 5.3.19 =
 Diese Version behebt kleinere Darstellungsfehler und verbessert die API-Kompatibilität.
 
 == License ==
