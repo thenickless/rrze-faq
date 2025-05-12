@@ -41,6 +41,60 @@ hstart=".."
 
 All attributes are optional.
 
+## Explanation and Values for Shortcode Attributes
+
+All attributes are optional.
+
+**glossary**: Defines how the FAQ items are grouped. Possible values are `"category"` or `"tag"`.  
+If omitted, no grouping is applied. You can also define the visual style of the glossary:  
+- `"a-z"`: Alphabetical index (default)  
+- `"tabs"`: Glossary terms as tabs  
+- `"tagcloud"`: Terms shown with font size proportional to their frequency
+
+**category**: Specifies the categories for which matching FAQs should be displayed.  
+Multiple categories can be listed using their slugs (as found under `FAQ → Categories`) and separated by commas.  
+You can also filter by data source:  
+Example: `category="rrze:general, info"` filters for the "general" category from the "rrze" source and any "info" category regardless of source.
+
+**tag**: Specifies the tags for which matching FAQs should be shown.  
+Use the tag slugs from `FAQ → Tags`, separated by commas.  
+Filtering by source is also possible:  
+Example: `tag="rrze:keyword1, keyword2"` filters for "keyword1" from source "rrze", and "keyword2" from any source.
+
+**domain**: Filters FAQs by their data source.  
+Multiple domains can be listed, separated by commas.
+
+**id**: Outputs one or more specific FAQs by ID.  
+You can find the ID in the admin panel under `FAQ → All FAQs` or in the "Insert into pages/posts" box when editing an FAQ.  
+The output order follows the order of the IDs listed.
+
+**hide**: Controls which default elements should be hidden.  
+- `"accordion"`: Shows FAQs as plain question/answer instead of collapsible panels  
+- `"title"`: Hides the FAQ question  
+- `"glossary"`: Disables the glossary display  
+Default: accordion view is enabled
+
+**show**:  
+- `"expand-all-link"`: Adds a button to expand all accordion sections  
+- `"load-open"`: Loads all accordions in an expanded state  
+By default, accordions are collapsed and no "expand all" button is shown.
+
+**class**: Allows you to set the color of the left border of the accordion.  
+Possible values: `"fau"` (default), or faculty identifiers like `"med"`, `"nat"`, `"rw"`, `"phil"`, or `"tf"`.  
+You can also add additional CSS classes separated by spaces.
+
+**sort**: Controls sorting of the output.  
+- `"title"`: Sort alphabetically by title (default)  
+- `"id"`: Sort by FAQ ID  
+- `"sortfield"`: Sort using the custom field defined per FAQ, then by title
+
+**order**: Determines the sort direction.  
+- `"asc"`: Ascending (default)  
+- `"desc"`: Descending
+
+**hstart**: Defines the heading level for the first title.  
+Default is `2`, which renders headings as `<h2>`.
+
 ## Examples
 
 ```html
