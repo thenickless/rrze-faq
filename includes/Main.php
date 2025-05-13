@@ -16,21 +16,22 @@ use RRZE\FAQ\Widget;
 
 
 /**
- * Hauptklasse (Main)
+ * Main class (Main)
  */
 class Main
 {
     /**
-     * Der vollständige Pfad- und Dateiname der Plugin-Datei.
+     * The complete path and file name of the plug-in file.
      * @var string
      */
+
     protected $pluginFile;
 
     protected $settings;
 
     /**
-     * Variablen Werte zuweisen.
-     * @param string $pluginFile Pfad- und Dateiname der Plugin-Datei
+     * Assign values to variables.
+     * @param string $pluginFile Path and file name of the plugin file
      */
     public function __construct($pluginFile)
     {
@@ -38,7 +39,7 @@ class Main
     }
 
     /**
-     * Es wird ausgeführt, sobald die Klasse instanziiert wird.
+     * It is executed as soon as the class is instantiated.
      */
     public function onLoaded()
     {
@@ -76,7 +77,7 @@ class Main
     }
 
     /**
-     * Enqueue der globale Skripte.
+     * Enqueue the global scripts.
      */
     public function enqueueScripts()
     {
@@ -176,7 +177,7 @@ class Main
 
     public function setFAQCronjob()
     {
-        // Entferne die Verwendung von date_default_timezone_set, da WordPress eigene Zeitzoneneinstellungen hat
+        // Remove the use of date_default_timezone_set, as WordPress has its own time zone settings
 
         $options = get_option('rrze-faq');
 
@@ -199,7 +200,7 @@ class Main
         wp_clear_scheduled_hook('rrze_faq_auto_sync');
         wp_schedule_event($nextcron, $options['faqsync_frequency'], 'rrze_faq_auto_sync');
 
-        // Verwende wp_date() anstelle von date(), um die Zeitzone korrekt zu berücksichtigen
+        // Use wp_date() instead of date() to correctly take the time zone into account
         $timestamp = wp_next_scheduled('rrze_faq_auto_sync');
         $message = __('Next automatically synchronization:', 'rrze-faq') . ' ' . wp_date('d.m.Y H:i:s', $timestamp);
         add_settings_error('AutoSyncComplete', 'autosynccomplete', $message, 'updated');

@@ -358,6 +358,14 @@ function getShortcodeSettings()
 			'label' => __('Style', 'rrze-faq'),
 			'type' => 'string'
 		],
+		'masonry' => [
+			'field_type' => 'toggle',
+			'label' => __('Grid', 'rrze-faq'),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked' => FALSE
+		],
+
 		'additional_class' => [
 			'default' => '',
 			'field_type' => 'text',

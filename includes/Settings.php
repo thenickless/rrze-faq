@@ -14,79 +14,79 @@ use RRZE\FAQ\API;
 
 
 /**
- * Settings-Klasse
+ * Settings class
  */
 class Settings
 {
     /**
-     * Der vollständige Pfad- und Dateiname der Plugin-Datei.
+     * The complete path and file name of the plugin file.
      * @var string
      */
     protected $pluginFile;
 
     /**
-     * Optionsname
+     * Option name
      * @var string
      */
     protected $optionName;
 
     /**
-     * Einstellungsoptionen
+     * Settings options
      * @var array
      */
     protected $options;
 
     /**
-     * Settings-Menü
+     * Settings menue
      * @var array
      */
     protected $settingsMenu;
 
     /**
-     * Settings-Bereiche
+     * Settings areas
      * @var array
      */
     protected $settingsSections;
 
     /**
-     * Settings-Felder
+     * Settings fields
      * @var array
      */
     protected $settingsFields;
 
     /**
-     * Alle Registerkarte
+     * All tabs
      * @var array
      */
     protected $allTabs = [];
 
     /**
-     * Standard-Registerkarte
+     * Standard tab
      * @var string
      */
     protected $defaultTab = '';
 
     /**
-     * Aktuelle Registerkarte
+     * Current tab
      * @var string
      */
     protected $currentTab = '';
 
 
     /**
-     * Registrierte Domains
+     * Registered domains
      * @var string
      */
     protected $domains = array();
 
     /**
-     * Optionsseite
+     * Options page
      * @var string
      */
     protected $optionsPage;
 
     /**
-     * Variablen Werte zuweisen.
+     * Assign values to variables.
      * @param string $pluginFile [description]
      */
     public function __construct($pluginFile)
@@ -95,7 +95,7 @@ class Settings
     }
 
     /**
-     * Er wird ausgeführt, sobald die Klasse instanziiert wird.
+     * It is executed as soon as the class is instantiated.
      * @return void
      */
     public function onLoaded()
@@ -164,7 +164,7 @@ class Settings
     }
 
     /**
-     * Einstellungsbereiche einstellen.
+     * Set setting ranges.
      */
     protected function setSections()
     {
@@ -172,8 +172,8 @@ class Settings
     }
 
     /**
-     * Einen einzelnen Einstellungsbereich hinzufügen.
-     * @param array   $section
+     * Add a single settings section.
+     * @param array $section
      */
     protected function addSection($section)
     {
@@ -181,7 +181,7 @@ class Settings
     }
 
     /**
-     * Einstellungsfelder einstellen.
+     * Set settings fields.
      */
     protected function setFields()
     {
@@ -193,9 +193,9 @@ class Settings
     }
 
     /**
-     * Ein einzelnes Einstellungsfeld hinzufügen.
+     * Add a single settings field.
      * @param [type] $section [description]
-     * @param [type] $field   [description]
+     * @param [type] $field [description]
      */
     protected function addField($section, $field)
     {
@@ -211,7 +211,7 @@ class Settings
     }
 
     /**
-     * Gibt die Standardeinstellungen zurück.
+     * Returns the default settings.
      * @return array
      */
     protected function defaultOptions()
@@ -229,7 +229,7 @@ class Settings
     }
 
     /**
-     * Gibt die Einstellungen zurück.
+     * Returns the settings.
      * @return array
      */
     public function getOptions()
@@ -244,10 +244,10 @@ class Settings
     }
 
     /**
-     * Gibt den Wert eines Einstellungsfelds zurück.
-     * @param string  $name  settings field name
-     * @param string  $section the section name this field belongs to
-     * @param string  $default default text if it's not found
+     * Returns the value of a settings field.
+     * @param string $name the name of the settings field
+     * @param string $section the name of the section to which the field belongs
+     * @param string $default Default text if it is not found
      * @return string
      */
     public function getOption($section, $name, $default = '')
@@ -262,7 +262,7 @@ class Settings
     }
 
     /**
-     * Sanitize-Callback für die Optionen.
+     * Sanitize callback for the options.
      * @return mixed
      */
     public function sanitizeOptions($options)
@@ -283,9 +283,9 @@ class Settings
     }
 
     /**
-     * Gibt die Sanitize-Callback-Funktion für die angegebene Option-Key.
+     * Returns the sanitize callback function for the specified option key.
      * @param string $key Option-Key
-     * @return mixed string oder (bool) false
+     * @return mixed string or (bool) false
      */
     protected function getSanitizeCallback($key = '')
     {
@@ -307,8 +307,8 @@ class Settings
     }
 
     /**
-     * Einstellungsbereiche als Registerkarte anzeigen.
-     * Zeigt alle Beschriftungen der Einstellungsbereiche als Registerkarte an.
+     * Show settings areas as a tab.
+     * Shows all labels of the settings areas as a tab.
      */
     public function showTabs()
     {
@@ -337,8 +337,8 @@ class Settings
     }
 
     /**
-     * Anzeigen der Einstellungsbereiche.
-     * Zeigt für jeden Einstellungsbereich das entsprechende Formular an.
+     * Display the settings areas.
+     * Displays the corresponding form for each settings area.
      */
     public function showSections()
     {
@@ -377,7 +377,7 @@ class Settings
     }
 
     /**
-     * Optionen Seitenausgabe
+     * Page output options
      */
     public function pageOutput()
     {
@@ -453,7 +453,7 @@ class Settings
     }
 
     /**
-     * Erstellt die Kontexthilfe der Einstellungsseite.
+     * Creates the context help for the settings page.
      */
     public function adminHelpTab()
     {
@@ -482,13 +482,13 @@ class Settings
     }
 
     /**
-     * Initialisierung und Registrierung der Bereiche und Felder.
+     * Initialization and registration of areas and fields.
      */
     public function adminInit()
     {
         add_filter('wp_kses_allowed_html', [$this, 'my_custom_allowed_html'], 10, 2);
 
-        // Hinzufügen von Einstellungsbereichen
+        // Adding setting areas
         foreach ($this->settingsSections as $section) {
             if (isset($section['desc']) && !empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
@@ -504,7 +504,7 @@ class Settings
             add_settings_section($section['id'], $section['title'], $callback, $section['id']);
         }
 
-        // Hinzufügen von Einstellungsfelder
+        // Add settings fields
         foreach ($this->settingsFields as $section => $field) {
             foreach ($field as $option) {
                 $name = $option['name'];
@@ -538,14 +538,15 @@ class Settings
             }
         }
 
-        // Registrieren der Einstellungen
+        // Register the settings
         foreach ($this->settingsSections as $section) {
             register_setting($section['id'], $this->optionName, [$this, 'sanitizeOptions']);
         }
     }
 
+
     /**
-     * Hinzufügen der Optionen-Seite
+     * Add the options page
      * @return void
      */
     public function adminMenu()
@@ -562,7 +563,7 @@ class Settings
     }
 
     /**
-     * Registerkarten einstellen
+     * Set tabs
      */
     protected function setTabs()
     {
@@ -577,7 +578,7 @@ class Settings
     }
 
     /**
-     * Enqueue Skripte und Style
+     * Enqueue scripts and style
      * @return void
      */
     public function adminEnqueueScripts()
@@ -587,7 +588,7 @@ class Settings
     }
 
     /**
-     * Enqueue WP-Color-Picker-Skripte.
+     * Enqueue WP color picker scripts.
      * @return [type] [description]
      */
     public function colorEnqueueScripts()
@@ -599,7 +600,7 @@ class Settings
     }
 
     /**
-     * Enqueue WP-Media-Skripte.
+     * Enqueue WP-Media scripts.
      * @return [type] [description]
      */
     public function fileEnqueueScripts()
@@ -610,8 +611,8 @@ class Settings
     }
 
     /**
-     * Gibt die Feldbeschreibung des Einstellungsfelds zurück.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Returns the field description of the settings field.
+     * @param array $args Arguments of the settings field
      */
     public function getFieldDescription($args)
     {
@@ -625,8 +626,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Textfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a text field for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackText($args)
     {
@@ -652,8 +653,8 @@ class Settings
 
 
     /**
-     * Zeigt ein Zahlenfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a number field for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackNumber($args)
     {
@@ -684,8 +685,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Kontrollkästchen (Checkbox) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a checkbox for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackCheckbox($args)
     {
@@ -720,8 +721,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Multicheckbox für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a multicheckbox for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackMulticheck($args)
     {
@@ -759,8 +760,8 @@ class Settings
     }
 
     /**
-     * Zeigt einen Auswahlknopf (Radio-Button) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a radio button for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackRadio($args)
     {
@@ -795,8 +796,8 @@ class Settings
     }
 
     /**
-     * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a selection list (select box) for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackMultiSelect($args)
     {
@@ -828,8 +829,8 @@ class Settings
 
 
     /**
-     * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a selection list (select box) for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackSelect($args)
     {
@@ -859,8 +860,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Textfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a text field for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackTextarea($args)
     {
@@ -883,8 +884,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Rich-Text-Textfeld (WP-Editor) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a rich text text field (WP editor) for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackWysiwyg($args)
     {
@@ -911,8 +912,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Datei-Upload-Feld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a file upload field for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackFile($args)
     {
@@ -936,8 +937,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Passwortfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a password field for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackPassword($args)
     {
@@ -958,8 +959,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Farbauswahlfeld (WP-Color-Picker) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a color picker field (WP-Color-Picker) for a settings field.
+     * @param array $args Arguments of the settings field
      */
     public function callbackColor($args)
     {

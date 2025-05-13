@@ -26,22 +26,21 @@ class Shortcode
     {
         $this->settings = getShortcodeSettings();
         $this->pluginname = $this->settings['block']['blockname'];
-        // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [fau_glossar ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
-        // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [glossary ...] wird in eigenes Plugin rrze-glossary ausgelagert, weil aus historischen Gründen inkompatibler Code in FAU-Einrichtungen besteht, was beim Umbau von rrze-faq nicht bekannt war
+        // add_shortcode( 'fau_glossar', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [fau_glossar ...] is moved to its own plugin rrze-glossary, because for historical reasons incompatible code exists in FAU institutions, which was not known when rrze-faq was rebuilt
+        // add_shortcode( 'glossary', [ $this, 'shortcodeOutput' ]); // BK 2020-06-05 Shortcode [glossary ...] is outsourced to its own plugin rrze-glossary, because for historical reasons incompatible code exists in FAU facilities, which was not known when rrze-faq was rebuilt
 
         add_shortcode('faq', [$this, 'shortcodeOutput']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
 
-
     /**
-     * Übersetzt zusammengesetzte Shortcode-Attribute in Einzeleigenschaften
+     * Translates composite shortcode attributes into individual properties
      * 
-     * Zerlegt die Werte von Attributen wie "glossary", "hide", "show" und "class" in Teilbegriffe 
-     * und weist diesen logische Einzelfelder im Attribut-Array zu. Dadurch wird die interne Weiterverarbeitung vereinfacht.
+     * Splits the values of attributes such as “glossary”, “hide”, “show” and “class” into sub-terms 
+     * and assigns these to logical individual fields in the attribute array. This simplifies further internal processing.
      * 
-     * @param array $atts Referenz auf das Shortcode-Attribut-Array
+     * @param array $atts Reference to the shortcode attribute array
      * @return void
      */
     private function translateNewAttributes(array &$atts): void
@@ -125,28 +124,31 @@ class Shortcode
         $atts['load_open'] = (isset($atts['load_open']) && $atts['load_open'] ? ' load="open"' : '');
     }
 
-    
+
 
 
 
     /**
-     * Gibt explizit angeforderte FAQs als Akkordeon oder einfachen Inhalt aus.
+     * Outputs explicitly requested FAQs as accordion or simple content.
      *
-     * Unterstützt sowohl Gutenberg-Blöcke (mehrere IDs als Array) als auch den klassischen Editor (kommasepariert).
+     * Supports both Gutenberg blocks (multiple IDs as an array) and the classic editor (comma-separated).
      *
-     * @param mixed  $id               Einzelne ID oder Array von IDs
-     * @param bool   $gutenberg        Ob Gutenberg verwendet wird
-     * @param int    $hstart           HTML-Überschrift-Level
-     * @param string $style            Inline-Styles für das Akkordeon
-     * @param string $expand_all_link  Attribut für "alle ausklappen"-Link
-     * @param bool   $hide_accordion   Ob das Akkordeon unterdrückt werden soll
-     * @param bool   $hide_title       Ob der Titel unterdrückt werden soll
-     * @param string $color            Farbattribut des Akkordeons
-     * @param string $load_open        Attribut für offenen Zustand
-     * @param string &$schema          Wird ergänzt um generiertes JSON-LD-Schema
-     * @return string Der generierte HTML-Inhalt
+     * @param mixed $id Single ID or array of IDs
+     * @param bool $gutenberg Whether Gutenberg is used
+     * @param int $hstart HTML heading level
+     * @param string $style Inline styles for the accordion
+     * @param bool $masonry Whether tiles should be displayed (fake masonry - see https://github.com/RRZE-Webteam/rrze-faq/issues/105#issuecomment-2873361435 )
+     * @param string $expand_all_link Attribute for “expand all” link
+     * @param bool $hide_accordion Whether the accordion should be suppressed
+     * @param bool $hide_title Whether the title should be suppressed
+     * @param string $color Color attribute of the accordion
+     * @param string $load_open Attribute for open state
+     * @param string &$schema Is supplemented by generated JSON-LD schema
+     * @return string The generated HTML content
      */
-    private function renderExplicitFAQs($id, bool $gutenberg, int $hstart, string $style, string $expand_all_link, bool $hide_accordion, bool $hide_title, string $color, string $load_open, string &$schema): string
+
+
+    private function renderExplicitFAQs($id, bool $gutenberg, int $hstart, string $style, bool $masonry, string $expand_all_link, bool $hide_accordion, bool $hide_title, string $color, string $load_open, string &$schema): string
     {
         $content = '';
 
@@ -198,26 +200,26 @@ class Shortcode
 
 
     /**
-     * Gibt FAQs basierend auf Taxonomien (Kategorie/Tag) oder Glossaransicht aus.
+     * Outputs FAQs based on taxonomies (category/tag) or glossary view.
      * 
-     * Unterstützt klassische und alphabetische Ausgabe, Tabs oder Tagcloud-Darstellung.
+     * Supports classic and alphabetical output, tabs or tag cloud display.
      * 
-     * @param array  $atts             Ursprüngliche Shortcode-Attribute
-     * @param int    $hstart           HTML-Überschrift-Level
-     * @param string $style            Inline-Styles für das Akkordeon
-     * @param string $expand_all_link  Attribut für "alle ausklappen"-Link
-     * @param bool   $hide_accordion   Ob das Akkordeon unterdrückt werden soll
-     * @param bool   $hide_title       Ob der Titel unterdrückt werden soll
-     * @param string $color            Farbattribut
-     * @param string $load_open        Attribut für offenen Zustand
-     * @param string $sort             Sortierkriterium (title, id, sortfield)
-     * @param string $order            Sortierreihenfolge
-     * @param mixed  $category         Kategorie(n) als String oder Array
-     * @param mixed  $tag              Tag(s) als String oder Array
-     * @param string $glossary         "category" oder "tag"
-     * @param string $glossarystyle    "a-z", "tabs", "tagcloud" oder leer
-     * @param string &$schema          Referenz auf das Schema-Markup
-     * @return string Gerenderter HTML-Inhalt
+     * @param array $atts Original shortcode attributes
+     * @param int $hstart HTML heading level
+     * @param string $style Inline styles for the accordion
+     * @param string $expand_all_link Attribute for “expand all” link
+     * @param bool $hide_accordion Whether the accordion should be suppressed
+     * @param bool $hide_title Whether the title should be suppressed
+     * @param string $color Color attribute
+     * @param string $load_open Attribute for open state
+     * @param string $sort Sort criterion (title, id, sortfield)
+     * @param string $order Sort order
+     * @param mixed $category Category(ies) as string or array
+     * @param mixed $tag Tag(s) as string or array
+     * @param string $glossary “category” or “tag”
+     * @param string $glossarystyle “a-z”, “tabs”, “tagcloud” or empty
+     * @param string &$schema Reference to the schema markup
+     * @return string Rendered HTML content
      */
     private function renderFilteredFAQs(array $atts, int $hstart, string $style, string $expand_all_link, bool $hide_accordion, bool $hide_title, string $color, string $load_open, string $sort, string $order, $category, $tag, string $glossary, string $glossarystyle, string &$schema): string
     {
@@ -353,35 +355,39 @@ class Shortcode
                     if ($glossarystyle == 'a-z' && $content) {
                         $content .= ($last_anchor != $aVal[$anchor] ? '<h2 id="' . $anchor . '-' . $aVal[$anchor] . '">' . esc_html($aVal[$anchor]) . '</h2>' : '');
                     }
-                
+
                     $term_id_attr = $anchor . '-' . $aVal[$anchor];
                     $content .= '<details' . ($load_open ? ' open' : '') . ' id="' . esc_attr($term_id_attr) . '" class="faq-term' . ($color ? ' color-' . esc_attr($color) : '') . '">';
                     $content .= '<summary>' . esc_html($k) . '</summary>';
                     $content .= '<div class="faq-term-content">';
-                
+
                     // find the postIDs to this tag
                     $aIDs = Tools::searchArrayByKey($aVal['ID'], $aPostIDs);
-                
+
                     foreach ($aIDs as $ID) {
                         $tmp = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_post_field('post_content', $ID)));
                         if (!isset($tmp) || (mb_strlen($tmp) < 1)) {
                             $tmp = get_post_meta($ID, 'description', true);
                         }
                         $title = get_the_title($ID);
-                
+
                         $anchorfield = get_post_meta($ID, 'anchorfield', true);
                         if (empty($anchorfield)) {
                             $anchorfield = 'innerID-' . $ID;
                         }
-                
+
+
+
+                        // HERE WE ARE
+
                         $content .= '<details id="' . esc_attr($anchorfield) . '" class="faq-item">';
                         $content .= '<summary>' . esc_html($title) . '</summary>';
                         $content .= '<div class="faq-content">' . $tmp . '</div>';
                         $content .= '</details>';
-                
+
                         $schema .= Tools::getSchema($ID, $title, $tmp);
                     }
-                
+
                     $content .= '</div></details>';
                     $last_anchor = $aVal[$anchor];
                 }
@@ -413,7 +419,7 @@ class Shortcode
                         $content .= '<summary>' . esc_html($title) . '</summary>';
                         $content .= '<div class="faq-content">' . $tmp . '</div>';
                         $content .= '</details>';
-                        
+
                     } else {
                         $content .= ($hide_title ? '' : '<h' . $hstart . '>' . $title . '</h' . $hstart . '>') . ($tmp ? '<p>' . $tmp . '</p>' : '');
                     }
@@ -429,10 +435,10 @@ class Shortcode
 
 
     /**
-     * Generieren Sie die Shortcode-Ausgabe
-     * @param  array   $atts Shortcode-Attribute
-     * @param  string  $content Beiliegender Inhalt
-     * @return string Gib den Inhalt zurück
+     * Generate the shortcode output
+     * @param array $atts Shortcode attributes
+     * @param string $content Enclosed content
+     * @return string Return the content
      */
     public function shortcodeOutput($atts, $content = null, $shortcode_tag = '')
     {
@@ -488,7 +494,10 @@ class Shortcode
 
         wp_enqueue_style('rrze-faq-style');
 
-        return '<div class="rrze-faq ' . ($color ? '' . $color . ' ' : '') . (isset($additional_class) ? $additional_class : '') . '">' . $content . '</div>';
+        $content = Tools::renderFAQWrapper($content, $header_id, $masonry, $color, $additional_class);
+
+        return $content;
+
     }
 
 

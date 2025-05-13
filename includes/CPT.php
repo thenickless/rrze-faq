@@ -128,7 +128,7 @@ class CPT
         foreach ($tax as $t) {
             $ret = register_taxonomy(
                 $t['name'],  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
-                'faq',   		 //post type name
+                'faq',   	
                 array(
                     'hierarchical' => $t['hierarchical'],
                     'label' => $t['label'], //Display name

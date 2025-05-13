@@ -21,7 +21,7 @@ class Tools
      * @param string $shortcode_tag The shortcode name
      * @return string|false Escaped placeholder if found, or false to continue normal processing
      */
-    private function preventGutenbergDoubleBracketBug(string $shortcode_tag)
+    public function preventGutenbergDoubleBracketBug(string $shortcode_tag)
     {
         global $post;
 
@@ -56,7 +56,7 @@ class Tools
      * @param array  $aHaystack The array to search in.
      * @return mixed The value if found, false otherwise.
      */
-    private function searchArrayByKey(&$needle, &$aHaystack)
+    public function searchArrayByKey(&$needle, &$aHaystack)
     {
         foreach ($aHaystack as $k => $v) {
             if ($k === $needle) {
@@ -67,12 +67,45 @@ class Tools
     }
 
     /**
+     * Wraps the given content in a DIV with optional layout classes and ARIA label binding.
+     *
+     * Uses the provided header ID for aria-labelledby. Supports optional Masonry layout,
+     * color scheme, and additional CSS classes.
+     *
+     * @param string &$content           The HTML content to wrap.
+     * @param string &$header_id         The header ID used for aria-labelledby.
+     * @param bool   &$masonry           Whether to apply Masonry layout classes.
+     * @param string &$color             Optional color class (e.g. 'blue', 'phil', ...).
+     * @param string &$additional_class  Additional CSS classes to append.
+     * @return string The wrapped HTML output.
+     */
+    public static function renderFAQWrapper(string &$content, string &$header_id, bool &$masonry, string &$color, string &$additional_class): string
+    {
+        $classes = 'rrze-faq';
+
+        if ($masonry) {
+            $classes .= ' faq-masonry';
+        }
+
+        if (!empty($color)) {
+            $classes .= ' ' . trim($color);
+        }
+
+        if (!empty($additional_class)) {
+            $classes .= ' ' . trim($additional_class);
+        }
+
+        return '<div class="' . esc_attr($classes) . '" aria-labeledby="' . esc_attr($header_id) . '">' . $content . '</div>';
+    }
+
+
+    /**
      * Extracts and returns the uppercase first letter of a given string.
      *
      * @param string $txt The input string.
      * @return string The uppercase initial letter.
      */
-    private function getLetter(&$txt)
+    public function getLetter(&$txt)
     {
         return mb_strtoupper(mb_substr(remove_accents($txt), 0, 1), 'UTF-8');
     }
@@ -83,12 +116,14 @@ class Tools
      * @param array &$aSearch Array of available letters.
      * @return string HTML output of the letter navigation.
      */
-    private function createAZ(&$aSearch)
+    public function createAZ(&$aSearch)
     {
+
+        // echo Tools::renderFaqWrapper($content, $headerId, false);
         if (count($aSearch) == 1) {
             return '';
         }
-        $ret = '<div class="rrze-faq"><ul class="letters">';
+        $ret = '<ul class="letters">';
 
         foreach (range('A', 'Z') as $a) {
             if (array_key_exists($a, $aSearch)) {
@@ -97,7 +132,7 @@ class Tools
                 $ret .= '<li>' . $a . '</li>';
             }
         }
-        return $ret . '</ul></div>';
+        return $ret . '</ul>';
     }
 
     /**
@@ -107,16 +142,16 @@ class Tools
      * @param array $aPostIDs Mapping of term IDs to post IDs.
      * @return string HTML output of the tab navigation.
      */
-    private function createTabs(&$aTerms, $aPostIDs)
+    public function createTabs(&$aTerms, $aPostIDs)
     {
         if (count($aTerms) == 1) {
             return '';
         }
-        $ret = '<div class="rrze-faq">';
+        $ret = '';
         foreach ($aTerms as $name => $aDetails) {
             $ret .= '<a href="#ID-' . $aDetails['ID'] . '">' . $name . '</a> | ';
         }
-        return rtrim($ret, ' | ') . '</div>';
+        return rtrim($ret, ' | ');
     }
 
     /**
@@ -126,12 +161,12 @@ class Tools
      * @param array $aPostIDs Mapping of term IDs to post IDs.
      * @return string HTML output of the tag cloud.
      */
-    private function createTagcloud(&$aTerms, $aPostIDs)
+    public function createTagcloud(&$aTerms, $aPostIDs)
     {
         if (count($aTerms) == 1) {
             return '';
         }
-        $ret = '<div class="rrze-faq">';
+        $ret = '';
         $smallest = 12;
         $largest = 22;
         $aCounts = array();
@@ -148,7 +183,7 @@ class Tools
             $ret .= '<a href="#ID-' . $aDetails['ID'] . '" style="font-size:' . $aSizes[$aDetails['ID']] . 'px">' . $name .
                 '</a> | ';
         }
-        return rtrim($ret, ' | ') . '</div>';
+        return rtrim($ret, ' | ');
     }
 
     /**
@@ -157,7 +192,7 @@ class Tools
      * @param array &$aTax The structured taxonomy input.
      * @return array A WP-compatible tax_query array.
      */
-    private function getTaxQuery(&$aTax)
+    public function getTaxQuery(&$aTax)
     {
         $ret = array();
 
@@ -209,7 +244,7 @@ class Tools
      * @param string $answer   The FAQ answer.
      * @return string JSON-LD schema markup string.
      */
-    private function getSchema($postID, $question, $answer)
+    public function getSchema($postID, $question, $answer)
     {
         $schema = '';
         $source = get_post_meta($postID, "source", true);
@@ -229,7 +264,7 @@ class Tools
      * @param string $input The raw input string.
      * @return array Parsed array of [ 'source' => string, 'value' => string ] pairs.
      */
-    private function getTaxBySource($input)
+    public function getTaxBySource($input)
     {
         $result = [];
 
@@ -259,4 +294,27 @@ class Tools
 
         return $result;
     }
+
+    /**
+     * Returns a comma-separated list of term links for a given taxonomy.
+     *
+     * Retrieves all terms assigned to the specified post and taxonomy,
+     * and outputs them as linked names pointing to the respective term archive pages.
+     *
+     * @param int    $postID     The ID of the post.
+     * @param string $mytaxonomy The taxonomy name (e.g., 'faq_category', 'faq_tag').
+     * @return string HTML string of linked term names, separated by commas.
+     */
+
+    public static function getTermLinks(&$postID, $mytaxonomy)
+    {
+        $ret = '';
+        $terms = wp_get_post_terms($postID, $mytaxonomy);
+
+        foreach ($terms as $term) {
+            $ret .= '<a href="' . get_term_link($term->slug, $mytaxonomy) . '">' . $term->name . '</a>, ';
+        }
+        return substr($ret, 0, -2);
+    }
+
 }

@@ -18,8 +18,9 @@ class Layout
 
         add_filter('pre_get_posts', [$this, 'makeFaqSortable']);
         add_filter('enter_title_here', [$this, 'changeTitleText']);
-        // show content in box if not editable ( = source is not "website" )
+        // show content in box if not editable ( not editable == source is not "website" - it is sychronized from another website )
         add_action('admin_menu', [$this, 'toggleEditor']);
+
         // Table "All FAQ"
         add_filter('manage_faq_posts_columns', [$this, 'addFaqColumns']);
         add_action('manage_faq_posts_custom_column', [$this, 'getFaqColumnsValues'], 10, 2);
@@ -31,6 +32,7 @@ class Layout
         add_filter('manage_edit-faq_category_columns', [$this, 'addTaxColumns']);
         add_filter('manage_faq_category_custom_column', [$this, 'getTaxColumnsValues'], 10, 3);
         add_filter('manage_edit-faq_category_sortable_columns', [$this, 'addTaxColumns']);
+        
         // Table "Tags"
         add_filter('manage_edit-faq_tag_columns', [$this, 'addTaxColumns']);
         add_filter('manage_faq_tag_custom_column', [$this, 'getTaxColumnsValues'], 10, 3);
@@ -331,17 +333,6 @@ class Layout
             $source = get_term_meta($term_id, 'source', true);
             echo esc_html($source);
         }
-    }
-    
-    public static function getTermLinks(&$postID, $mytaxonomy)
-    {
-        $ret = '';
-        $terms = wp_get_post_terms($postID, $mytaxonomy);
-
-        foreach ($terms as $term) {
-            $ret .= '<a href="' . get_term_link($term->slug, $mytaxonomy) . '">' . $term->name . '</a>, ';
-        }
-        return substr($ret, 0, -2);
     }
 
     public static function getThemeGroup()
