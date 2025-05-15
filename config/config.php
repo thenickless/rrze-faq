@@ -93,6 +93,10 @@ function getSections()
 			'title' => __('Synchronize', 'rrze-faq')
 		],
 		[
+			'id' => 'website',
+			'title' => __('Website', 'rrze-faq')
+		],
+		[
 			'id' => 'faqlog',
 			'title' => __('Logfile', 'rrze-faq')
 		]
@@ -178,6 +182,15 @@ function getFields()
 					'twicedaily' => __('twicedaily', 'rrze-faq')
 				],
 				'type' => 'select'
+			],
+		],
+		'website' => [
+			[
+				'name' => 'custom_faq_slug',
+				'label' => __('Slug', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
 			],
 		],
 		'faqlog' => [

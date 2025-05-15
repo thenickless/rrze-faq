@@ -46,10 +46,10 @@ class CPT
             'search_items' => __('Search FAQ', 'rrze-faq'),
         );
 
-        // Get the slug from the options; fallback to 'person' if not set.
+        // Get the slug from the options; fallback to 'faq' if not set.
         $options = get_option('rrze_faq_options');
-        $slug = isset($options['faq_slug']) && !empty($options['faq_slug'])
-            ? sanitize_title($options['faq_slug'])
+        $slug = isset($options['custom_faq_slug']) && !empty($options['custom_faq_slug'])
+            ? sanitize_title($options['custom_faq_slug'])
             : 'faq'; // Default
 
         $rewrite = array(

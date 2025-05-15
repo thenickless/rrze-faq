@@ -115,40 +115,12 @@ class Settings
 
 
 
-    // BK 2DO : set correct params
-
-    //      add_settings_field(
-    //     'rrze_faq_slug',
-    //     __('FAQ Slug', 'rrze-faq'),
-    //     'rrze_faq_slug_render',
-    //     'rrze_faq_website_settings',
-    //     'rrze_faq_TO_DO_section' 
-    // );
-
-    public function rrze_faq_slug_render() {
-        $options = get_option('rrze_faq_options'); // Get all plugin options
-        $default_slug = 'faq'; // Default slug value
-
-        // Retrieve the saved slug or use the default if not set
-        $slug = isset($options['faq_slug']) && !empty($options['faq_slug']) ? sanitize_text_field($options['faq_slug']) : $default_slug;
-
-        // Save the default slug if not already set
-        if (!isset($options['faq_slug']) || empty($options['faq_slug'])) {
-            $options['faq_slug'] = $default_slug;
-            update_option('rrze_faq_options', $options);
-        }
-
-        // BK 2DO : callbackText() stattdessen
-        echo '<input type="text"  class="regular-text"  id="rrze_faq_faq_slug" name="rrze_faq_options[faq_slug]" value="' . esc_attr($slug) . '" size="10">';
-        echo '<p class="description">' . esc_html__('Enter the slug for the faq post type.', 'rrze-faq') . '</p>';
-    }
-
 
     public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option) {
         if (  ($option === 'rrze_faq_options') 
-                 && (isset($old_value['faq_slug'])) 
-                 && (isset($value['faq_slug'])) 
-                 && ($old_value['faq_slug'] !== $value['faq_slug'])) {
+                 && (isset($old_value['custom_faq_slug'])) 
+                 && (isset($value['custom_faq_slug'])) 
+                 && ($old_value['custom_faq_slug'] !== $value['custom_faq_slug'])) {
             flush_rewrite_rules(); // Flush rewrite rules if the slug changes
         }
     }
@@ -161,7 +133,7 @@ class Settings
             return;
         }
 
-        $slug = !empty($options['faq_slug']) ? sanitize_title($options['faq_slug']) : 'faq';
+        $slug = !empty($options['custom_faq_slug']) ? sanitize_title($options['custom_faq_slug']) : 'faq';
 
         if (self::is_slug_request($slug)) {
             // Only in this case prevent canonical-redirect
@@ -183,7 +155,7 @@ class Settings
 
         // Check whether archive slug was called directly
         $options = get_option('rrze_faq_options');
-        $slug = !empty($options['faq_slug']) ? sanitize_title($options['faq_slug']) : 'faq';
+        $slug = !empty($options['custom_faq_slug']) ? sanitize_title($options['custom_faq_slug']) : 'faq';
         if (self::is_slug_request($slug)) {
 
             $redirect = trim($options['redirect_archivpage_uri'] ?? '');
