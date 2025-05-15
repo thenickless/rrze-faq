@@ -45,8 +45,15 @@ class CPT
             'all_items' => __('All FAQ', 'rrze-faq'),
             'search_items' => __('Search FAQ', 'rrze-faq'),
         );
+
+        // Get the slug from the options; fallback to 'person' if not set.
+        $options = get_option('rrze_faq_options');
+        $slug = isset($options['faq_slug']) && !empty($options['faq_slug'])
+            ? sanitize_title($options['faq_slug'])
+            : 'faq'; // Default
+
         $rewrite = array(
-            'slug' => 'faq',
+            'slug' => $slug, // dynamic slug
             'with_front' => true,
             'pages' => true,
             'feeds' => true,
@@ -128,7 +135,7 @@ class CPT
         foreach ($tax as $t) {
             $ret = register_taxonomy(
                 $t['name'],  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
-                'faq',   	
+                'faq',
                 array(
                     'hierarchical' => $t['hierarchical'],
                     'label' => $t['label'], //Display name
@@ -199,41 +206,44 @@ class CPT
 
 
 
-public static function add_category_page_field($taxonomy) {
-    $pages = get_pages();
-    echo '<div class="form-field term-linked-page-wrap">';
-    echo '<label for="linked_page">' . esc_html__('Linked Page', 'rrze-faq') . '</label>';
-    echo '<select name="linked_page">';
-    echo '<option value="">' . esc_html__('None', 'rrze-faq') . '</option>';
-    foreach ($pages as $page) {
-        echo '<option value="' . esc_attr($page->ID) . '">' . esc_html($page->post_title) . '</option>';
+    public static function add_category_page_field($taxonomy)
+    {
+        $pages = get_pages();
+        echo '<div class="form-field term-linked-page-wrap">';
+        echo '<label for="linked_page">' . esc_html__('Linked Page', 'rrze-faq') . '</label>';
+        echo '<select name="linked_page">';
+        echo '<option value="">' . esc_html__('None', 'rrze-faq') . '</option>';
+        foreach ($pages as $page) {
+            echo '<option value="' . esc_attr($page->ID) . '">' . esc_html($page->post_title) . '</option>';
+        }
+        echo '</select></div>';
     }
-    echo '</select></div>';
-}
 
-public static function edit_category_page_field($term) {
-    $pages = get_pages();
-    $selected = get_term_meta($term->term_id, 'linked_page', true);
-    echo '<tr class="form-field term-linked-page-wrap">';
-    echo '<th><label for="linked_page">' . esc_html__('Verlinkte Seite', 'rrze-faq') . '</label></th>';
-    echo '<td><select name="linked_page">';
-    echo '<option value="">' . esc_html__('None', 'rrze-faq') . '</option>';
-    foreach ($pages as $page) {
-        printf(
-            '<option value="%1$d" %2$s>%3$s</option>',
-            $page->ID,
-            selected($selected, $page->ID, false),
-            esc_html($page->post_title)
-        );
+    public static function edit_category_page_field($term)
+    {
+        $pages = get_pages();
+        $selected = get_term_meta($term->term_id, 'linked_page', true);
+        echo '<tr class="form-field term-linked-page-wrap">';
+        echo '<th><label for="linked_page">' . esc_html__('Verlinkte Seite', 'rrze-faq') . '</label></th>';
+        echo '<td><select name="linked_page">';
+        echo '<option value="">' . esc_html__('None', 'rrze-faq') . '</option>';
+        foreach ($pages as $page) {
+            printf(
+                '<option value="%1$d" %2$s>%3$s</option>',
+                $page->ID,
+                selected($selected, $page->ID, false),
+                esc_html($page->post_title)
+            );
+        }
+        echo '</select></td></tr>';
     }
-    echo '</select></td></tr>';
-}
 
-public static function save_category_page_field($term_id) {
-    if (isset($_POST['linked_page'])) {
-        update_term_meta($term_id, 'linked_page', (int) $_POST['linked_page']);
+    public static function save_category_page_field($term_id)
+    {
+        if (isset($_POST['linked_page'])) {
+            update_term_meta($term_id, 'linked_page', (int) $_POST['linked_page']);
+        }
     }
-}
 
     public function filter_single_template($template)
     {

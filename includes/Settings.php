@@ -102,9 +102,113 @@ class Settings
     {
         add_action('init', [$this, 'regularInit'], 1);
         add_action('admin_init', [$this, 'adminInit']);
+
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
+
+        add_action('update_option_rrze_faq_options',  [$this, 'rrze_faq_flush_rewrite_on_slug_change'], 10, 3); // Monitor slug change
+
+        add_action('template_redirect', [$this, 'maybe_disable_canonical_redirect'], 1);
+        add_action('template_redirect', [$this, 'custom_cpt_404_message']);
+
     }
+
+
+
+    // BK 2DO : set correct params
+
+    //      add_settings_field(
+    //     'rrze_faq_slug',
+    //     __('FAQ Slug', 'rrze-faq'),
+    //     'rrze_faq_slug_render',
+    //     'rrze_faq_website_settings',
+    //     'rrze_faq_TO_DO_section' 
+    // );
+
+    public function rrze_faq_slug_render() {
+        $options = get_option('rrze_faq_options'); // Get all plugin options
+        $default_slug = 'faq'; // Default slug value
+
+        // Retrieve the saved slug or use the default if not set
+        $slug = isset($options['faq_slug']) && !empty($options['faq_slug']) ? sanitize_text_field($options['faq_slug']) : $default_slug;
+
+        // Save the default slug if not already set
+        if (!isset($options['faq_slug']) || empty($options['faq_slug'])) {
+            $options['faq_slug'] = $default_slug;
+            update_option('rrze_faq_options', $options);
+        }
+
+        // BK 2DO : callbackText() stattdessen
+        echo '<input type="text"  class="regular-text"  id="rrze_faq_faq_slug" name="rrze_faq_options[faq_slug]" value="' . esc_attr($slug) . '" size="10">';
+        echo '<p class="description">' . esc_html__('Enter the slug for the faq post type.', 'rrze-faq') . '</p>';
+    }
+
+
+    public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option) {
+        if (  ($option === 'rrze_faq_options') 
+                 && (isset($old_value['faq_slug'])) 
+                 && (isset($value['faq_slug'])) 
+                 && ($old_value['faq_slug'] !== $value['faq_slug'])) {
+            flush_rewrite_rules(); // Flush rewrite rules if the slug changes
+        }
+    }
+
+    public static function maybe_disable_canonical_redirect(): void {
+        $options = get_option('rrze_faq_options');
+        $redirect = trim($options['redirect_archivpage_uri'] ?? '');
+
+        if (empty($redirect)) {
+            return;
+        }
+
+        $slug = !empty($options['faq_slug']) ? sanitize_title($options['faq_slug']) : 'faq';
+
+        if (self::is_slug_request($slug)) {
+            // Only in this case prevent canonical-redirect
+            remove_filter('template_redirect', 'redirect_canonical');
+        }
+    }
+
+    public static function custom_cpt_404_message() {
+        global $wp_query;
+
+       // Check CPT single view, but post not found → 404
+        if (isset($wp_query->query_vars['post_type']) &&
+            $wp_query->query_vars['post_type'] === 'custom_faq' &&
+            empty($wp_query->post) ) {
+            
+            self::render_custom_404();
+            return;
+        }
+
+        // Check whether archive slug was called directly
+        $options = get_option('rrze_faq_options');
+        $slug = !empty($options['faq_slug']) ? sanitize_title($options['faq_slug']) : 'faq';
+        if (self::is_slug_request($slug)) {
+
+            $redirect = trim($options['redirect_archivpage_uri'] ?? '');
+            if (!empty($redirect)) {
+
+                // If relative path → connect with home URL
+                if (str_starts_with($redirect, '/')) {
+                    $redirect = home_url($redirect);
+                }
+
+                // Validation and forwarding
+                if (filter_var($redirect, FILTER_VALIDATE_URL)) {
+                    wp_redirect(esc_url_raw($redirect), 301);
+                    exit;
+                }
+            }
+
+            // Fallback: Show 404
+            self::render_custom_404();
+        }
+    }
+    
+
+
+
 
     public function my_custom_allowed_html($allowed_tags, $context)
     {
