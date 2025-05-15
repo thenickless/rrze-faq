@@ -118,9 +118,21 @@ class Settings
 
     public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option) {
         if (  ($option === 'rrze_faq_options') 
-                 && (isset($old_value['custom_faq_slug'])) 
+                 && 
+                ((isset($old_value['custom_faq_slug'])) 
                  && (isset($value['custom_faq_slug'])) 
-                 && ($old_value['custom_faq_slug'] !== $value['custom_faq_slug'])) {
+                 && ($old_value['custom_faq_slug'] !== $value['custom_faq_slug']))
+                 ||
+                ((isset($old_value['custom_faq_category_slug'])) 
+                 && (isset($value['custom_faq_category_slug'])) 
+                 && ($old_value['custom_faq_category_slug'] !== $value['custom_faq_category_slug']))
+                 ||
+                ((isset($old_value['custom_faq_tag_slug'])) 
+                 && (isset($value['custom_faq_tag_slug'])) 
+                 && ($old_value['custom_faq_tag_slug'] !== $value['custom_faq_tag_slug']))
+
+                 
+                 ) {
             flush_rewrite_rules(); // Flush rewrite rules if the slug changes
         }
     }
@@ -144,7 +156,7 @@ class Settings
     public static function custom_cpt_404_message() {
         global $wp_query;
 
-       // Check CPT single view, but post not found → 404
+        // Check CPT single view, but post not found → 404
         if (isset($wp_query->query_vars['post_type']) &&
             $wp_query->query_vars['post_type'] === 'custom_faq' &&
             empty($wp_query->post) ) {

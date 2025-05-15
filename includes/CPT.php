@@ -85,11 +85,23 @@ class CPT
 
     public function registerFaqTaxonomy()
     {
+
+        // Get the slug from the options; fallback to 'faq' if not set.
+        $options = get_option('rrze_faq_options');
+
+        $slug_cat = isset($options['custom_faq_category_slug']) && !empty($options['custom_faq_category_slug'])
+            ? sanitize_title($options['custom_faq_category_slug'])
+            : 'faq_category'; // Default
+
+        $slug_tag = isset($options['custom_faq_tag_slug']) && !empty($options['custom_faq_tag_slug'])
+            ? sanitize_title($options['custom_faq_tag_slug'])
+            : 'faq_tag'; // Default
+
         $tax = [
             [
                 'name' => 'faq_category',
                 'label' => 'FAQ ' . __('Categories', 'rrze-faq'),
-                'slug' => 'faq_category',
+                'slug' => $slug_cat, // Dynamic slug
                 'rest_base' => 'faq_category',
                 'hierarchical' => TRUE,
                 'labels' => array(
@@ -111,7 +123,7 @@ class CPT
             [
                 'name' => 'faq_tag',
                 'label' => 'FAQ ' . __('Tags', 'rrze-faq'),
-                'slug' => 'faq_tag',
+                'slug' => $slug_tag, // Dynamic slug
                 'rest_base' => 'faq_tag',
                 'hierarchical' => FALSE,
                 'labels' => array(

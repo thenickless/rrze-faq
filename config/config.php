@@ -187,7 +187,21 @@ function getFields()
 		'website' => [
 			[
 				'name' => 'custom_faq_slug',
-				'label' => __('Slug', 'rrze-faq'),
+				'label' => __('Custom FAQ Slug', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
+			],
+			[
+				'name' => 'custom_faq_category_slug',
+				'label' => __('Custom FAQ Category Slug', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
+			],
+			[
+				'name' => 'custom_faq_tag_slug',
+				'label' => __('Custom FAQ Tag Slug', 'rrze-faq'),
 				'desc' => '',
 				'type' => 'text',
 				'default' => ''
