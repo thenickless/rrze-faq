@@ -106,7 +106,7 @@ class Settings
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
 
-        add_action('update_option_rrze_faq_options',  [$this, 'rrze_faq_flush_rewrite_on_slug_change'], 10, 3); // Monitor slug change
+        add_action('update_option_rrze_faq_options', [$this, 'rrze_faq_flush_rewrite_on_slug_change'], 10, 3); // Monitor slug change
 
         add_action('template_redirect', [$this, 'maybe_disable_canonical_redirect'], 1);
         add_action('template_redirect', [$this, 'custom_cpt_404_message']);
@@ -114,30 +114,70 @@ class Settings
     }
 
 
+    public function rrze_faq_get_redirect_page_url($options): string
+    {
+        $redirect_id = isset($options['redirect_archivpage_uri']) ? (int) $options['redirect_archivpage_uri'] : 0;
+        if ($redirect_id > 0) {
+            $post = get_post($redirect_id);
+            if ($post && get_post_status($post) === 'publish') {
+                return get_permalink($redirect_id);
+            }
+        }
+        return '';
+    }
+
+    public function rrze_faq_redirect_if_needed(string $custom_slug): void
+    {
+        $options = get_option('rrze_faq_options');
+        if (!RRZE\FAQ\Settings::is_slug_request($custom_slug)) {
+            return;
+        }
+
+        $target_url = rrze_faq_get_redirect_page_url($options);
+        if (!empty($target_url)) {
+            wp_redirect(esc_url_raw($target_url), 301);
+            exit;
+        }
+    }
+
+    public function rrze_faq_disable_canonical_redirect_if_needed(string $custom_slug): void
+    {
+        $options = get_option('rrze_faq_options');
+        if (!RRZE\FAQ\Settings::is_slug_request($custom_slug)) {
+            return;
+        }
+
+        $target_url = rrze_faq_get_redirect_page_url($options);
+        if (!empty($target_url)) {
+            remove_filter('template_redirect', 'redirect_canonical');
+        }
+    }
+
+    public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option)
+    {
+        if (
+            ($option === 'rrze_faq_options')
+            &&
+            ((isset($old_value['custom_faq_slug']))
+                && (isset($value['custom_faq_slug']))
+                && ($old_value['custom_faq_slug'] !== $value['custom_faq_slug']))
+            ||
+            ((isset($old_value['custom_faq_category_slug']))
+                && (isset($value['custom_faq_category_slug']))
+                && ($old_value['custom_faq_category_slug'] !== $value['custom_faq_category_slug']))
+            ||
+            ((isset($old_value['custom_faq_tag_slug']))
+                && (isset($value['custom_faq_tag_slug']))
+                && ($old_value['custom_faq_tag_slug'] !== $value['custom_faq_tag_slug']))
 
 
-    public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option) {
-        if (  ($option === 'rrze_faq_options') 
-                 && 
-                ((isset($old_value['custom_faq_slug'])) 
-                 && (isset($value['custom_faq_slug'])) 
-                 && ($old_value['custom_faq_slug'] !== $value['custom_faq_slug']))
-                 ||
-                ((isset($old_value['custom_faq_category_slug'])) 
-                 && (isset($value['custom_faq_category_slug'])) 
-                 && ($old_value['custom_faq_category_slug'] !== $value['custom_faq_category_slug']))
-                 ||
-                ((isset($old_value['custom_faq_tag_slug'])) 
-                 && (isset($value['custom_faq_tag_slug'])) 
-                 && ($old_value['custom_faq_tag_slug'] !== $value['custom_faq_tag_slug']))
-
-                 
-                 ) {
+        ) {
             flush_rewrite_rules(); // Flush rewrite rules if the slug changes
         }
     }
 
-    public static function maybe_disable_canonical_redirect(): void {
+    public static function maybe_disable_canonical_redirect(): void
+    {
         $options = get_option('rrze_faq_options');
         $redirect = trim($options['redirect_archivpage_uri'] ?? '');
 
@@ -153,14 +193,17 @@ class Settings
         }
     }
 
-    public static function custom_cpt_404_message() {
+    public static function custom_cpt_404_message()
+    {
         global $wp_query;
 
         // Check CPT single view, but post not found → 404
-        if (isset($wp_query->query_vars['post_type']) &&
+        if (
+            isset($wp_query->query_vars['post_type']) &&
             $wp_query->query_vars['post_type'] === 'custom_faq' &&
-            empty($wp_query->post) ) {
-            
+            empty($wp_query->post)
+        ) {
+
             self::render_custom_404();
             return;
         }
@@ -189,7 +232,7 @@ class Settings
             self::render_custom_404();
         }
     }
-    
+
 
 
 

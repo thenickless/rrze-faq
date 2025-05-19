@@ -103,6 +103,21 @@ function getSections()
 	];
 }
 
+
+function getPageList() {
+  $pages = \get_pages([
+        'sort_column' => 'post_title',
+        'sort_order' => 'asc',
+        'post_status' => 'publish'
+    ]);
+	
+	$options = ['' => __('Default archive', 'rrze-faq')];
+    foreach ($pages as $page) {
+        $options[get_permalink($page->ID)] = $page->post_title;
+    }
+    return $options;
+}
+
 /**
  * Gibt die Einstellungen der Optionsfelder zurück.
  * @return array [description]
@@ -185,6 +200,14 @@ function getFields()
 			],
 		],
 		'website' => [
+			[
+				'name' => 'redirect_archivpage_uri',
+				'label' => __('Custom archive page', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'select',
+                'options' => getPageList(),				
+				'default' => ''
+			],
 			[
 				'name' => 'custom_faq_slug',
 				'label' => __('Custom FAQ Slug', 'rrze-faq'),
