@@ -126,10 +126,23 @@ class Settings
         return '';
     }
 
+    public static function is_slug_request($slug): bool
+    {
+        if (empty($slug)) {
+            return false;
+        }
+
+        global $wp;
+        $request_path = trim($wp->request, '/');
+
+        return $request_path === trim($slug, '/');
+    }
+
+
     public function rrze_faq_redirect_if_needed(string $custom_slug): void
     {
         $options = get_option('rrze_faq_options');
-        if (!RRZE\FAQ\Settings::is_slug_request($custom_slug)) {
+        if (!self::is_slug_request($custom_slug)) {
             return;
         }
 
@@ -143,7 +156,7 @@ class Settings
     public function rrze_faq_disable_canonical_redirect_if_needed(string $custom_slug): void
     {
         $options = get_option('rrze_faq_options');
-        if (!RRZE\FAQ\Settings::is_slug_request($custom_slug)) {
+        if (!self::is_slug_request($custom_slug)) {
             return;
         }
 
@@ -179,57 +192,54 @@ class Settings
     public static function maybe_disable_canonical_redirect(): void
     {
         $options = get_option('rrze_faq_options');
-        $redirect = trim($options['redirect_archivpage_uri'] ?? '');
-
-        if (empty($redirect)) {
-            return;
-        }
-
         $slug = !empty($options['custom_faq_slug']) ? sanitize_title($options['custom_faq_slug']) : 'faq';
 
-        if (self::is_slug_request($slug)) {
-            // Only in this case prevent canonical-redirect
+        // Nur deaktivieren, wenn eine Weiterleitungsseite gesetzt ist UND exakt der Slug aufgerufen wird
+        $redirect_id = (int) ($options['redirect_archivpage_uri'] ?? 0);
+        if ($redirect_id > 0 && self::is_slug_request($slug)) {
             remove_filter('template_redirect', 'redirect_canonical');
         }
     }
 
-    public static function custom_cpt_404_message()
+    public static function render_custom_404(): void
+    {
+        global $wp_query;
+        $wp_query->set_404();
+        status_header(404);
+        nocache_headers();
+        include get_404_template();
+        exit;
+    }
+
+    public static function custom_cpt_404_message(): void
     {
         global $wp_query;
 
-        // Check CPT single view, but post not found → 404
+        $options = get_option('rrze_faq_options');
+        $slug = !empty($options['custom_faq_slug']) ? sanitize_title($options['custom_faq_slug']) : 'faq';
+
+        // CPT-Single 404
         if (
             isset($wp_query->query_vars['post_type']) &&
-            $wp_query->query_vars['post_type'] === 'custom_faq' &&
+            $wp_query->query_vars['post_type'] === 'faq' &&
             empty($wp_query->post)
         ) {
-
             self::render_custom_404();
             return;
         }
 
-        // Check whether archive slug was called directly
-        $options = get_option('rrze_faq_options');
-        $slug = !empty($options['custom_faq_slug']) ? sanitize_title($options['custom_faq_slug']) : 'faq';
+        // Archiv-Slug direkt aufgerufen?
         if (self::is_slug_request($slug)) {
+            $redirect_id = (int) ($options['redirect_archivpage_uri'] ?? 0);
 
-            $redirect = trim($options['redirect_archivpage_uri'] ?? '');
-            if (!empty($redirect)) {
-
-                // If relative path → connect with home URL
-                if (str_starts_with($redirect, '/')) {
-                    $redirect = home_url($redirect);
-                }
-
-                // Validation and forwarding
-                if (filter_var($redirect, FILTER_VALIDATE_URL)) {
-                    wp_redirect(esc_url_raw($redirect), 301);
+            if ($redirect_id > 0) {
+                $post = get_post($redirect_id);
+                if ($post && get_post_status($post) === 'publish') {
+                    wp_redirect(esc_url_raw(get_permalink($post)), 301);
                     exit;
                 }
             }
-
-            // Fallback: Show 404
-            self::render_custom_404();
+            // Andernfalls keine Weiterleitung, Archiv anzeigen lassen
         }
     }
 
