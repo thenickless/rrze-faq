@@ -93,10 +93,29 @@ function getSections()
 			'title' => __('Synchronize', 'rrze-faq')
 		],
 		[
+			'id' => 'website',
+			'title' => __('Website', 'rrze-faq')
+		],
+		[
 			'id' => 'faqlog',
 			'title' => __('Logfile', 'rrze-faq')
 		]
 	];
+}
+
+
+function getPageList() {
+  $pages = \get_pages([
+        'sort_column' => 'post_title',
+        'sort_order' => 'asc',
+        'post_status' => 'publish'
+    ]);
+	
+	$options = ['' => __('Default archive', 'rrze-faq')];
+    foreach ($pages as $page) {
+        $options[get_permalink($page->ID)] = $page->post_title;
+    }
+    return $options;
 }
 
 /**
@@ -178,6 +197,37 @@ function getFields()
 					'twicedaily' => __('twicedaily', 'rrze-faq')
 				],
 				'type' => 'select'
+			],
+		],
+		'website' => [
+			[
+				'name' => 'redirect_archivpage_uri',
+				'label' => __('Custom archive page', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'select',
+                'options' => getPageList(),				
+				'default' => ''
+			],
+			[
+				'name' => 'custom_faq_slug',
+				'label' => __('Custom FAQ Slug', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
+			],
+			[
+				'name' => 'custom_faq_category_slug',
+				'label' => __('Custom FAQ Category Slug', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
+			],
+			[
+				'name' => 'custom_faq_tag_slug',
+				'label' => __('Custom FAQ Tag Slug', 'rrze-faq'),
+				'desc' => '',
+				'type' => 'text',
+				'default' => ''
 			],
 		],
 		'faqlog' => [
@@ -358,6 +408,14 @@ function getShortcodeSettings()
 			'label' => __('Style', 'rrze-faq'),
 			'type' => 'string'
 		],
+		'masonry' => [
+			'field_type' => 'toggle',
+			'label' => __('Grid', 'rrze-faq'),
+			'type' => 'boolean',
+			'default' => FALSE,
+			'checked' => FALSE
+		],
+
 		'additional_class' => [
 			'default' => '',
 			'field_type' => 'text',

@@ -8,6 +8,9 @@
  * @since FAU 1.0
 */
 
+// 5.3.13 - Removed theme-specific templates for switches. Current and upcoming theme versions no longer require them. See https://github.com/RRZE-Webteam/rrze-faq/issues/131
+
+/*    
 if ($thisThemeGroup == 'fauthemes') { ?>
     </main>
 </div>
@@ -21,8 +24,13 @@ if ($thisThemeGroup == 'fauthemes') { ?>
 </div>
 
 <?php }else{ ?>
+*/
+?>
+
 </main>
 </div>
-<?php }
+
+<?php 
+//}
 
 get_footer();
