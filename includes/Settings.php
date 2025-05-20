@@ -88,10 +88,20 @@ class Settings
     /**
      * Assign values to variables.
      * @param string $pluginFile [description]
+     * 
      */
+
+    protected array $rewriteKeys = [];
+
     public function __construct($pluginFile)
     {
         $this->pluginFile = $pluginFile;
+
+        $this->rewriteKeys = [
+            'website_custom_faq_slug',
+            'website_custom_faq_category_slug',
+            'website_custom_faq_tag_slug',
+        ];
     }
 
     /**
@@ -166,31 +176,21 @@ class Settings
 
     public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option)
     {
-        if (
-            ($option === 'rrze-faq')
-            &&
-            ((isset($old_value['website_custom_faq_slug']))
-                && (isset($value['website_custom_faq_slug']))
-                && ($old_value['website_custom_faq_slug'] !== $value['website_custom_faq_slug']))
-            ||
-            ((isset($old_value['website_custom_faq_category_slug']))
-                && (isset($value['website_custom_faq_category_slug']))
-                && ($old_value['website_custom_faq_category_slug'] !== $value['website_custom_faq_category_slug']))
-            ||
-            ((isset($old_value['website_custom_faq_tag_slug']))
-                && (isset($value['website_custom_faq_tag_slug']))
-                && ($old_value['website_custom_faq_tag_slug'] !== $value['website_custom_faq_tag_slug']))
+        if ($option !== 'rrze-faq') {
+            return;
+        }
 
-
-        ) {
-            flush_rewrite_rules(); // Flush rewrite rules if the slug changes
+        foreach ($this->rewriteKeys as $key) {
+            if (isset($old_value[$key], $value[$key]) && $old_value[$key] !== $value[$key]) {
+                flush_rewrite_rules();
+                break;
+            }
         }
     }
-
     public function maybe_disable_canonical_redirect(): void
     {
 
-        $this->options = $this->getOptions();    
+        $this->options = $this->getOptions();
         $slug = !empty($this->options['website_custom_faq_slug']) ? sanitize_title($this->options['website_custom_faq_slug']) : 'faq';
 
 
