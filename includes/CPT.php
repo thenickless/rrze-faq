@@ -47,9 +47,9 @@ class CPT
         );
 
         // Get the slug from the options; fallback to 'faq' if not set.
-        $options = get_option('rrze_faq_options');
-        $slug = isset($options['custom_faq_slug']) && !empty($options['custom_faq_slug'])
-            ? sanitize_title($options['custom_faq_slug'])
+        $options = get_option('rrze-faq');
+        $slug = isset($options['website_custom_faq_slug']) && !empty($options['website_custom_faq_slug'])
+            ? sanitize_title($options['website_custom_faq_slug'])
             : 'faq'; // Default
 
         $rewrite = array(
@@ -87,14 +87,14 @@ class CPT
     {
 
         // Get the slug from the options; fallback to 'faq' if not set.
-        $options = get_option('rrze_faq_options');
+        $options = get_option('rrze-faq');
 
-        $slug_cat = isset($options['custom_faq_category_slug']) && !empty($options['custom_faq_category_slug'])
-            ? sanitize_title($options['custom_faq_category_slug'])
+        $slug_cat = isset($options['website_custom_faq_category_slug']) && !empty($options['website_custom_faq_category_slug'])
+            ? sanitize_title($options['website_custom_faq_category_slug'])
             : 'faq_category'; // Default
 
-        $slug_tag = isset($options['custom_faq_tag_slug']) && !empty($options['custom_faq_tag_slug'])
-            ? sanitize_title($options['custom_faq_tag_slug'])
+        $slug_tag = isset($options['website_custom_faq_tag_slug']) && !empty($options['website_custom_faq_tag_slug'])
+            ? sanitize_title($options['website_custom_faq_tag_slug'])
             : 'faq_tag'; // Default
 
         $tax = [

@@ -7,7 +7,6 @@ defined('ABSPATH') || exit;
 use function RRZE\FAQ\Config\getShortcodeSettings;
 use RRZE\FAQ\Tools;
 
-$settings;
 
 /**
  * Shortcode
