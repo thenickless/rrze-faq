@@ -85,10 +85,6 @@ class Settings
      */
     protected $optionsPage;
 
-
-    private bool $flushNeeded = false;
-
-
     /**
      * Assign values to variables.
      * @param string $pluginFile [description]
@@ -129,7 +125,7 @@ class Settings
 
         foreach ($rewriteKeys as $key) {
             if (isset($old_value[$key], $value[$key]) && $old_value[$key] !== $value[$key]) {
-                $this->flushNeeded = true;
+                set_transient('rrze_faq_flush_rewrite_needed', true, 60); // 1 minute is enough 
                 break;
             }
         }
@@ -137,8 +133,9 @@ class Settings
 
     public function maybeFlushRewriteRules()
     {
-        if ($this->flushNeeded) {
+        if (get_transient('rrze_faq_flush_rewrite_needed')) {
             flush_rewrite_rules();
+            delete_transient('rrze_faq_flush_rewrite_needed');
         }
     }
 
