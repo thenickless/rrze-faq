@@ -48,9 +48,7 @@ class CPT
 
         // Get the slug from the options; fallback to 'faq' if not set.
         $options = get_option('rrze-faq');
-        $slug = isset($options['website_custom_faq_slug']) && !empty($options['website_custom_faq_slug'])
-            ? sanitize_title($options['website_custom_faq_slug'])
-            : 'faq'; // Default
+        $slug = !empty($options['website_custom_faq_slug']) ? sanitize_title($options['website_custom_faq_slug'])  : 'faq';
 
         $rewrite = array(
             'slug' => $slug, // dynamic slug
@@ -88,20 +86,14 @@ class CPT
 
         // Get the slug from the options; fallback to 'faq' if not set.
         $options = get_option('rrze-faq');
-
-        $slug_cat = isset($options['website_custom_faq_category_slug']) && !empty($options['website_custom_faq_category_slug'])
-            ? sanitize_title($options['website_custom_faq_category_slug'])
-            : 'faq_category'; // Default
-
-        $slug_tag = isset($options['website_custom_faq_tag_slug']) && !empty($options['website_custom_faq_tag_slug'])
-            ? sanitize_title($options['website_custom_faq_tag_slug'])
-            : 'faq_tag'; // Default
+        $slug_category = !empty($options['website_custom_faq_category_slug']) ? sanitize_title($options['website_custom_faq_category_slug'])  : 'faq_category';
+        $slug_tag = !empty($options['website_custom_faq_tag_slug']) ? sanitize_title($options['website_custom_faq_tag_slug'])  : 'faq_tag';
 
         $tax = [
             [
                 'name' => 'faq_category',
                 'label' => 'FAQ ' . __('Categories', 'rrze-faq'),
-                'slug' => $slug_cat, // Dynamic slug
+                'slug' => $slug_category, // Dynamic slug
                 'rest_base' => 'faq_category',
                 'hierarchical' => TRUE,
                 'labels' => array(

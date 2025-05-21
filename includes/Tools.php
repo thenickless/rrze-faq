@@ -21,7 +21,7 @@ class Tools
      * @param string $shortcode_tag The shortcode name
      * @return string|false Escaped placeholder if found, or false to continue normal processing
      */
-    public function preventGutenbergDoubleBracketBug(string $shortcode_tag)
+    public static function preventGutenbergDoubleBracketBug(string $shortcode_tag)
     {
         global $post;
 
@@ -42,7 +42,7 @@ class Tools
      * @param array &$arr The array to sort.
      * @return void
      */
-    public function sortIt(&$arr)
+    public static function sortIt(&$arr)
     {
         uasort($arr, function ($a, $b) {
             return strtolower($a) <=> strtolower($b);
@@ -56,7 +56,7 @@ class Tools
      * @param array  $aHaystack The array to search in.
      * @return mixed The value if found, false otherwise.
      */
-    public function searchArrayByKey(&$needle, &$aHaystack)
+    public static function searchArrayByKey(&$needle, &$aHaystack)
     {
         foreach ($aHaystack as $k => $v) {
             if ($k === $needle) {
@@ -66,6 +66,12 @@ class Tools
         return false;
     }
 
+    public static function getHeaderID(?int $postID = null): string
+    {
+        $random = wp_rand(); // In case there are multiple FAQs on the same page
+        return 'header-' . ($postID ?? 'noid') . '-' . $random;
+    }
+
     /**
      * Wraps the given content in a DIV with optional layout classes and ARIA label binding.
      *
@@ -73,13 +79,13 @@ class Tools
      * color scheme, and additional CSS classes.
      *
      * @param string &$content           The HTML content to wrap.
-     * @param string &$header_id         The header ID used for aria-labelledby.
+     * @param string &$headerID         The header ID used for aria-labelledby.
      * @param bool   &$masonry           Whether to apply Masonry layout classes.
      * @param string &$color             Optional color class (e.g. 'blue', 'phil', ...).
      * @param string &$additional_class  Additional CSS classes to append.
      * @return string The wrapped HTML output.
      */
-    public static function renderFAQWrapper(string &$content, string &$header_id, bool &$masonry, string &$color, string &$additional_class): string
+    public static function renderFAQWrapper(string &$content, string &$headerID, bool &$masonry, string &$color, string &$additional_class): string
     {
         $classes = 'rrze-faq';
 
@@ -95,7 +101,7 @@ class Tools
             $classes .= ' ' . trim($additional_class);
         }
 
-        return '<div class="' . esc_attr($classes) . '" aria-labeledby="' . esc_attr($header_id) . '">' . $content . '</div>';
+        return '<div class="' . esc_attr($classes) . '" aria-labeledby="' . esc_attr($headerID) . '">' . $content . '</div>';
     }
 
 
@@ -105,7 +111,7 @@ class Tools
      * @param string $txt The input string.
      * @return string The uppercase initial letter.
      */
-    public function getLetter(&$txt)
+    public static function getLetter(&$txt)
     {
         return mb_strtoupper(mb_substr(remove_accents($txt), 0, 1), 'UTF-8');
     }
@@ -116,7 +122,7 @@ class Tools
      * @param array &$aSearch Array of available letters.
      * @return string HTML output of the letter navigation.
      */
-    public function createAZ(&$aSearch)
+    public static function createAZ(&$aSearch)
     {
 
         // echo Tools::renderFaqWrapper($content, $headerId, false);
@@ -142,7 +148,7 @@ class Tools
      * @param array $aPostIDs Mapping of term IDs to post IDs.
      * @return string HTML output of the tab navigation.
      */
-    public function createTabs(&$aTerms, $aPostIDs)
+    public static function createTabs(&$aTerms, $aPostIDs)
     {
         if (count($aTerms) == 1) {
             return '';
@@ -161,7 +167,7 @@ class Tools
      * @param array $aPostIDs Mapping of term IDs to post IDs.
      * @return string HTML output of the tag cloud.
      */
-    public function createTagcloud(&$aTerms, $aPostIDs)
+    public static function createTagcloud(&$aTerms, $aPostIDs)
     {
         if (count($aTerms) == 1) {
             return '';
@@ -192,7 +198,7 @@ class Tools
      * @param array &$aTax The structured taxonomy input.
      * @return array A WP-compatible tax_query array.
      */
-    public function getTaxQuery(&$aTax)
+    public static function getTaxQuery(&$aTax)
     {
         $ret = array();
 
@@ -244,7 +250,7 @@ class Tools
      * @param string $answer   The FAQ answer.
      * @return string JSON-LD schema markup string.
      */
-    public function getSchema($postID, $question, $answer)
+    public static function getSchema($postID, $question, $answer)
     {
         $schema = '';
         $source = get_post_meta($postID, "source", true);
@@ -264,7 +270,7 @@ class Tools
      * @param string $input The raw input string.
      * @return array Parsed array of [ 'source' => string, 'value' => string ] pairs.
      */
-    public function getTaxBySource($input)
+    public static function getTaxBySource($input)
     {
         $result = [];
 

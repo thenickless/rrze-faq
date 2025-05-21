@@ -491,9 +491,12 @@ class Shortcode
         //     wp_enqueue_script( 'fau-js-heroslider' );
         // }
 
+        $postID = get_the_ID();
+        $headerID = Tools::getHeaderID($postID);
+
         wp_enqueue_style('rrze-faq-style');
 
-        $content = Tools::renderFAQWrapper($content, $header_id, $masonry, $color, $additional_class);
+        $content = Tools::renderFAQWrapper($content, $headerID, $masonry, $color, $additional_class);
 
         return $content;
 

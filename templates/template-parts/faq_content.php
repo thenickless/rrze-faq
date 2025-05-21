@@ -12,8 +12,7 @@ namespace RRZE\FAQ;
 use RRZE\FAQ\Tools;
 
 $postID = get_the_ID();
-$random = wp_rand(); // In case there are multiple FAQs on the same page
-$header_id = 'header-' . $postID . '-' . $random;
+$headerID = Tools::getHeaderID($postID);
 
 $cats = Tools::getTermLinks($postID, 'faq_category');
 $tags = Tools::getTermLinks($postID, 'faq_tag');
@@ -21,7 +20,7 @@ $tags = Tools::getTermLinks($postID, 'faq_tag');
 $content = '';
 $content .= '<article>';
 $content .= '<header>';
-$content .= '<h1 id="' . esc_attr($header_id) . '">' . esc_html(get_the_title()) . '</h1>';
+$content .= '<h1 id="' . esc_attr($headerID) . '">' . esc_html(get_the_title()) . '</h1>';
 $content .= '</header>';
 $content .= apply_filters('the_content', get_the_content());
 $content .= '<footer><p class="meta-footer">';
@@ -50,5 +49,5 @@ $masonry = false;
 $color = '';
 $additional_class = '';
 
-echo Tools::renderFaqWrapper($content, $header_id, $masonry, $color, $additional_class);
+echo Tools::renderFaqWrapper($content, $headerID, $masonry, $color, $additional_class);
 

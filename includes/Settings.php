@@ -85,23 +85,19 @@ class Settings
      */
     protected $optionsPage;
 
+
+    private bool $flushNeeded = false;
+
+
     /**
      * Assign values to variables.
      * @param string $pluginFile [description]
      * 
      */
 
-    protected array $rewriteKeys = [];
-
     public function __construct($pluginFile)
     {
         $this->pluginFile = $pluginFile;
-
-        $this->rewriteKeys = [
-            'website_custom_faq_slug',
-            'website_custom_faq_category_slug',
-            'website_custom_faq_tag_slug',
-        ];
     }
 
     /**
@@ -116,13 +112,35 @@ class Settings
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
 
-        add_action('update_option_rrze-faq', [$this, 'rrze_faq_flush_rewrite_on_slug_change'], 10, 3); // Monitor slug change
+        add_action('init', [$this, 'maybeFlushRewriteRules'], 20);
+        add_action('update_option_rrze-faq', [$this, 'checkSlugChange'], 10, 2);
 
         add_action('template_redirect', [$this, 'maybe_disable_canonical_redirect'], 1);
         add_action('template_redirect', [$this, 'custom_cpt_404_message']);
 
     }
+    public function checkSlugChange($old_value, $value)
+    {
+        $rewriteKeys = [
+            'website_custom_faq_slug',
+            'website_custom_faq_category_slug',
+            'website_custom_faq_tag_slug',
+        ];
 
+        foreach ($rewriteKeys as $key) {
+            if (isset($old_value[$key], $value[$key]) && $old_value[$key] !== $value[$key]) {
+                $this->flushNeeded = true;
+                break;
+            }
+        }
+    }
+
+    public function maybeFlushRewriteRules()
+    {
+        if ($this->flushNeeded) {
+            flush_rewrite_rules();
+        }
+    }
 
     public function rrze_faq_get_redirect_page_url($options): string
     {
@@ -174,25 +192,10 @@ class Settings
         }
     }
 
-    public function rrze_faq_flush_rewrite_on_slug_change($old_value, $value, $option)
-    {
-        if ($option !== 'rrze-faq') {
-            return;
-        }
-
-        foreach ($this->rewriteKeys as $key) {
-            if (isset($old_value[$key], $value[$key]) && $old_value[$key] !== $value[$key]) {
-                flush_rewrite_rules();
-                break;
-            }
-        }
-    }
     public function maybe_disable_canonical_redirect(): void
     {
-
         $this->options = $this->getOptions();
         $slug = !empty($this->options['website_custom_faq_slug']) ? sanitize_title($this->options['website_custom_faq_slug']) : 'faq';
-
 
         // Nur deaktivieren, wenn eine Weiterleitungsseite gesetzt ist UND exakt der Slug aufgerufen wird
         $redirect_id = (int) ($this->options['website_redirect_archivpage_uri'] ?? 0);
