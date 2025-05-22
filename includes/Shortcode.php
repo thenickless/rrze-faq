@@ -475,7 +475,7 @@ class Shortcode
         $gutenberg = (is_array($id) ? true : false);
 
         if ($id && (!$gutenberg || $gutenberg && $id[0])) {
-            $content = $this->renderExplicitFAQs($id, $gutenberg, $hstart, $style, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $schema);
+            $content = $this->renderExplicitFAQs($id, $gutenberg, $hstart, $style, $masonry, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $schema);
         } else {
             $content = $this->renderFilteredFAQs($atts, $hstart, $style, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $sort, $order, $category, $tag, $glossary, $glossarystyle, $schema);
         }
