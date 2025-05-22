@@ -7,7 +7,6 @@ defined('ABSPATH') || exit;
 use function RRZE\FAQ\Config\getShortcodeSettings;
 use RRZE\FAQ\Tools;
 
-$settings;
 
 /**
  * Shortcode
@@ -476,7 +475,7 @@ class Shortcode
         $gutenberg = (is_array($id) ? true : false);
 
         if ($id && (!$gutenberg || $gutenberg && $id[0])) {
-            $content = $this->renderExplicitFAQs($id, $gutenberg, $hstart, $style, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $schema);
+            $content = $this->renderExplicitFAQs($id, $gutenberg, $hstart, $style, $masonry, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $schema);
         } else {
             $content = $this->renderFilteredFAQs($atts, $hstart, $style, $expand_all_link, $hide_accordion, $hide_title, $color, $load_open, $sort, $order, $category, $tag, $glossary, $glossarystyle, $schema);
         }
@@ -492,9 +491,12 @@ class Shortcode
         //     wp_enqueue_script( 'fau-js-heroslider' );
         // }
 
-        wp_enqueue_style('rrze-faq-style');
+        $postID = get_the_ID();
+        $headerID = Tools::getHeaderID($postID);
 
-        $content = Tools::renderFAQWrapper($content, $header_id, $masonry, $color, $additional_class);
+        wp_enqueue_style('rrze-faq-css');
+
+        $content = Tools::renderFAQWrapper($content, $headerID, $masonry, $color, $additional_class);
 
         return $content;
 

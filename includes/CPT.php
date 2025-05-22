@@ -47,10 +47,8 @@ class CPT
         );
 
         // Get the slug from the options; fallback to 'faq' if not set.
-        $options = get_option('rrze_faq_options');
-        $slug = isset($options['custom_faq_slug']) && !empty($options['custom_faq_slug'])
-            ? sanitize_title($options['custom_faq_slug'])
-            : 'faq'; // Default
+        $options = get_option('rrze-faq');
+        $slug = !empty($options['website_custom_faq_slug']) ? sanitize_title($options['website_custom_faq_slug'])  : 'faq';
 
         $rewrite = array(
             'slug' => $slug, // dynamic slug
@@ -86,22 +84,16 @@ class CPT
     public function registerFaqTaxonomy()
     {
 
-        // Get the slug from the options; fallback to 'faq' if not set.
-        $options = get_option('rrze_faq_options');
-
-        $slug_cat = isset($options['custom_faq_category_slug']) && !empty($options['custom_faq_category_slug'])
-            ? sanitize_title($options['custom_faq_category_slug'])
-            : 'faq_category'; // Default
-
-        $slug_tag = isset($options['custom_faq_tag_slug']) && !empty($options['custom_faq_tag_slug'])
-            ? sanitize_title($options['custom_faq_tag_slug'])
-            : 'faq_tag'; // Default
+        // Get the slug from the options; fallback to 'faq_category' and 'faq_tag' if not set.
+        $options = get_option('rrze-faq');
+        $slug_category = !empty($options['website_custom_faq_category_slug']) ? sanitize_title($options['website_custom_faq_category_slug'])  : 'faq_category';
+        $slug_tag = !empty($options['website_custom_faq_tag_slug']) ? sanitize_title($options['website_custom_faq_tag_slug'])  : 'faq_tag';
 
         $tax = [
             [
                 'name' => 'faq_category',
                 'label' => 'FAQ ' . __('Categories', 'rrze-faq'),
-                'slug' => $slug_cat, // Dynamic slug
+                'slug' => $slug_category, // Dynamic slug
                 'rest_base' => 'faq_category',
                 'hierarchical' => TRUE,
                 'labels' => array(
@@ -123,7 +115,7 @@ class CPT
             [
                 'name' => 'faq_tag',
                 'label' => 'FAQ ' . __('Tags', 'rrze-faq'),
-                'slug' => $slug_tag, // Dynamic slug
+                'slug' => $slug_tag, // dynamic slug
                 'rest_base' => 'faq_tag',
                 'hierarchical' => FALSE,
                 'labels' => array(
@@ -146,18 +138,18 @@ class CPT
 
         foreach ($tax as $t) {
             $ret = register_taxonomy(
-                $t['name'],  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
+                $t['name'], 
                 'faq',
                 array(
                     'hierarchical' => $t['hierarchical'],
-                    'label' => $t['label'], //Display name
+                    'label' => $t['label'],
                     'labels' => $t['labels'],
                     'show_ui' => TRUE,
                     'show_admin_column' => TRUE,
                     'query_var' => TRUE,
                     'rewrite' => array(
-                        'slug' => $t['slug'], // This controls the base slug that will display before each term
-                        'with_front' => TRUE // Don't display the category base before
+                        'slug' => $t['slug'], // base slug that will display before each term
+                        'with_front' => TRUE
                     ),
                     'show_in_rest' => TRUE,
                     'rest_base' => $t['rest_base'],

@@ -16,7 +16,7 @@ $tax_post_args = array(
         array(
             'taxonomy' => $taxonomy,
             'field' => 'slug',
-            'terms' => esc_attr($cat_slug) // Optional, aber empfohlen
+            'terms' => esc_attr($cat_slug)
         )
     )
 );
